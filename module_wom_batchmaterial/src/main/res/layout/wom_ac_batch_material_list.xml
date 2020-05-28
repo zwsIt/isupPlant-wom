@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@color/list_bg_color"
+    android:orientation="vertical">
+    <com.supcon.mes.mbap.view.CustomHorizontalSearchTitleBar
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:title_background_color="@color/themeColor"
+        android:id="@+id/searchTitleBar"
+        android:tag="searchTitleBar"
+        app:title_text="@string/wom_batch_material_management"
+        app:title_right_btn_need="false"
+        app:title_length="@dimen/dp_80"/>
+
+    <com.supcon.mes.mbap.view.CustomTab
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/dp_40"
+        android:id="@+id/customTab"
+        android:tag="customTab"
+        app:select_text_color="@color/themeColor"
+        app:unselect_text_color="@color/titleTextColor"
+        app:select_bg_color="@color/white"
+        app:unselect_bg_color="@color/white"
+        app:indicator_color="@color/themeColor"
+        />
+    <com.supcon.mes.mbap.view.NoScrollViewPager
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/viewPager"
+        android:tag="viewPager"/>
+</LinearLayout>

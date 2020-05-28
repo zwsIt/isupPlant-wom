@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/list_bg_color"
+    android:orientation="vertical">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:background="@color/white"
+        android:id="@+id/topLl">
+        <!--HorizontalScrollView ：android:fillViewport="true"  撑满屏幕-->
+        <HorizontalScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/radioGroupScrollView"
+            android:layout_toStartOf="@+id/rightLl"
+            android:fillViewport="true"
+            android:scrollbars="none">
+            <RadioGroup
+                android:id="@+id/waitStateRadioGroup"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:orientation="horizontal"
+                android:padding="@dimen/dp_5"
+                android:tag="waitStateRadioGroup">
+
+                <RadioButton
+                    android:id="@+id/batchRBtn"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center_vertical"
+                    android:button="@null"
+                    android:tag="batchRBtn"
+                    android:text="@string/wom_wait_batch"
+                    android:textColor="@drawable/wom_sl_radio_text"
+                    android:textSize="@dimen/fontSize_14sp"
+                    android:checked="true"/>
+                <RadioButton
+                    android:id="@+id/deliverRBtn"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginStart="@dimen/dp_20"
+                    android:button="@null"
+                    android:tag="deliverRBtn"
+                    android:text="@string/wom_wait_deliver"
+                    android:textColor="@drawable/wom_sl_radio_text"
+                    android:textSize="@dimen/fontSize_14sp" />
+                <RadioButton
+                    android:id="@+id/signRBtn"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginStart="@dimen/dp_20"
+                    android:button="@null"
+                    android:tag="signRBtn"
+                    android:text="@string/wom_wait_sign"
+                    android:textColor="@drawable/wom_sl_radio_text"
+                    android:textSize="@dimen/fontSize_14sp" />
+                <RadioButton
+                    android:id="@+id/allocateRBtn"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginStart="@dimen/dp_20"
+                    android:button="@null"
+                    android:tag="allocateRBtn"
+                    android:text="@string/wom_wait_allocate"
+                    android:textColor="@drawable/wom_sl_radio_text"
+                    android:textSize="@dimen/fontSize_14sp" />
+
+            </RadioGroup>
+        </HorizontalScrollView>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:id="@+id/rightLl">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:id="@+id/recallTv"
+                android:tag="recallTv"
+                android:background="@drawable/sl_press_no_stroke"
+                android:paddingStart="@dimen/dp_20"
+                android:paddingEnd="@dimen/dp_10"
+                android:gravity="center"
+                android:text="@string/wom_recall"
+                android:textColor="@color/dark_text"
+                android:textSize="@dimen/dp_16"/>
+            <View
+                android:layout_width="1dp"
+                android:layout_height="@dimen/dp_25"
+                android:background="@color/line_gray"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:id="@+id/recallBackTv"
+                android:tag="recallBackTv"
+                android:background="@drawable/sl_press_no_stroke"
+                android:paddingStart="@dimen/dp_10"
+                android:paddingEnd="@dimen/dp_20"
+                android:gravity="center"
+                android:text="@string/wom_recall_back"
+                android:textColor="@color/dark_text"
+                android:textSize="@dimen/dp_16"/>
+        </LinearLayout>
+
+    </RelativeLayout>
+
+
+    <include layout="@layout/ly_recyclerview"
+        android:layout_below="@+id/topLl"
+        android:layout_above="@+id/operateBtnLl"
+        android:layout_height="match_parent"
+        android:layout_width="match_parent" />
+
+    <include layout="@layout/wom_ly_all_choose_sign"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/operateBtnLl"
+        android:orientation="horizontal"
+        android:layout_alignParentBottom="true"
+        android:visibility="gone"/>
+</RelativeLayout>

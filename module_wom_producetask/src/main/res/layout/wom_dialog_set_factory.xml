@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/wom_sh_white_bg"
+    android:padding="@dimen/dp_10">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/dp_30"
+        android:text="@string/wom_setting"
+        android:textStyle="bold"
+        android:gravity="center"
+        android:textColor="@color/black"/>
+    <com.supcon.mes.mbap.view.CustomTextView
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/dp_100"
+        android:id="@+id/factoryCustomTv"
+        android:tag="factoryCustomTv"
+        app:key="工作单元"
+        app:editable="true"
+        app:necessary="true"/>
+    <include layout="@layout/ly_line_light"/>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingTop="@dimen/dp_5">
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="@dimen/dp_30"
+            android:layout_weight="1"
+            android:background="@drawable/sl_press_no_stroke"
+            android:id="@+id/cancelTv"
+            android:tag="cancelTv"
+            android:text="@string/wom_cancel"
+            android:textColor="@color/black"
+            android:gravity="center"/>
+        <include layout="@layout/ly_vertical_line"/>
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="@dimen/dp_30"
+            android:layout_weight="1"
+            android:background="@drawable/sl_press_no_stroke"
+            android:id="@+id/confirmTv"
+            android:tag="confirmTv"
+            android:text="@string/wom_confirm"
+            android:textColor="@color/themeColor"
+            android:gravity="center"/>
+    </LinearLayout>
+
+</LinearLayout>

@@ -1,0 +1,1288 @@
+{
+  "code": 200,
+  "success": true,
+  "data": {
+    "first": 1,
+    "hasNext": true,
+    "hasPre": false,
+    "nextPage": 2,
+    "pageNo": 1,
+    "pageSize": 20,
+    "prePage": 1,
+    "result": [
+      {
+        "actStaffId": {
+          "code": "linjiechao",
+          "id": 1002,
+          "name": "林皆超"
+        },
+        "actStaffName": "林皆超",
+        "activeName": null,
+        "actualEndTime": null,
+        "actualStartTime": 1585102434907,
+        "attrMap": null,
+        "cid": 1000,
+        "createStaff": null,
+        "createTime": null,
+        "exeState": {
+          "id": "WOM_runState/runing",
+          "value": "执行中"
+        },
+        "exeSystem": null,
+        "formulaId": {
+          "formualCode": "20200224002_V1.0",
+          "id": 1280
+        },
+        "id": 1391,
+        "isAlige": false,
+        "lineCode": null,
+        "lineName": "MES开发线",
+        "planEndTime": null,
+        "planNum": null,
+        "planStartTime": null,
+        "procReportId": {
+          "id": null
+        },
+        "processName": null,
+        "produceBatchNum": "202003251028",
+        "productId": {
+          "code": "F",
+          "id": 1004,
+          "mainUnit": {
+            "id": 1003,
+            "name": "1"
+          },
+          "name": "F"
+        },
+        "recordType": {
+          "id": "WOM_recordType/workOrder",
+          "value": "工单"
+        },
+        "status": null,
+        "tableInfoId": null,
+        "tableNo": null,
+        "taskActiveId": {
+          "id": null
+        },
+        "taskId": {
+          "id": 1265
+        },
+        "taskProcessId": {
+          "id": null
+        },
+        "valid": true,
+        "version": 0
+      },
+      {
+        "actStaffId": {
+          "code": "ch",
+          "id": 1009,
+          "name": "陈豪"
+        },
+        "actStaffName": "陈豪",
+        "activeName": null,
+        "actualEndTime": null,
+        "actualStartTime": null,
+        "attrMap": null,
+        "cid": 1000,
+        "createStaff": null,
+        "createTime": null,
+        "exeState": {
+          "id": "WOM_runState/finished",
+          "value": "已完成"
+        },
+        "exeSystem": null,
+        "formulaId": {
+          "formualCode": "20200318-平行工序和活动，机动活动",
+          "id": 1318
+        },
+        "id": 1390,
+        "isAlige": false,
+        "lineCode": "MES",
+        "lineName": "MES开发线",
+        "planEndTime": null,
+        "planNum": null,
+        "planStartTime": null,
+        "procReportId": {
+          "id": null
+        },
+        "processName": "工序1-2",
+        "produceBatchNum": "2020325002",
+        "productId": {
+          "code": "F",
+          "id": 1004,
+          "mainUnit": {
+            "id": 1003,
+            "name": "1"
+          },
+          "name": "F"
+        },
+        "recordType": {
+          "id": "WOM_recordType/process",
+          "value": "工序"
+        },
+        "status": null,
+        "tableInfoId": null,
+        "tableNo": null,
+        "taskActiveId": {
+          "id": null
+        },
+        "taskId": {
+          "id": 1264
+        },
+        "taskProcessId": {
+          "id": 1499
+        },
+        "valid": true,
+        "version": 0
+      },
+      {
+        "actStaffId": {
+          "code": "ch",
+          "id": 1009,
+          "name": "陈豪"
+        },
+        "actStaffName": "陈豪",
+        "activeName": null,
+        "actualEndTime": null,
+        "actualStartTime": null,
+        "attrMap": null,
+        "cid": 1000,
+        "createStaff": null,
+        "createTime": null,
+        "exeState": {
+          "id": "WOM_runState/finished",
+          "value": "已完成"
+        },
+        "exeSystem": null,
+        "formulaId": {
+          "formualCode": "20200318-平行工序和活动，机动活动",
+          "id": 1318
+        },
+        "id": 1389,
+        "isAlige": false,
+        "lineCode": "MES",
+        "lineName": "MES开发线",
+        "planEndTime": null,
+        "planNum": null,
+        "planStartTime": null,
+        "procReportId": {
+          "id": null
+        },
+        "processName": "工序1-1",
+        "produceBatchNum": "2020325002",
+        "productId": {
+          "code": "F",
+          "id": 1004,
+          "mainUnit": {
+            "id": 1003,
+            "name": "1"
+          },
+          "name": "F"
+        },
+        "recordType": {
+          "id": "WOM_recordType/process",
+          "value": "工序"
+        },
+        "status": null,
+        "tableInfoId": null,
+        "tableNo": null,
+        "taskActiveId": {
+          "id": null
+        },
+        "taskId": {
+          "id": 1264
+        },
+        "taskProcessId": {
+          "id": 1498
+        },
+        "valid": true,
+        "version": 0
+      },
+      {
+        "actStaffId": {
+          "code": "ch",
+          "id": 1009,
+          "name": "陈豪"
+        },
+        "actStaffName": "陈豪",
+        "activeName": null,
+        "actualEndTime": 1585097941673,
+        "actualStartTime": 1585097242478,
+        "attrMap": null,
+        "cid": 1000,
+        "createStaff": null,
+        "createTime": null,
+        "exeState": {
+          "id": "WOM_runState/finished",
+          "value": "已完成"
+        },
+        "exeSystem": null,
+        "formulaId": {
+          "formualCode": "20200318-平行工序和活动，机动活动",
+          "id": 1318
+        },
+        "id": 1388,
+        "isAlige": false,
+        "lineCode": null,
+        "lineName": "MES开发线",
+        "planEndTime": null,
+        "planNum": null,
+        "planStartTime": null,
+        "procReportId": {
+          "id": null
+        },
+        "processName": null,
+        "produceBatchNum": "2020325002",
+        "productId": {
+          "code": "F",
+          "id": 1004,
+          "mainUnit": {
+            "id": 1003,
+            "name": "1"
+          },
+          "name": "F"
+        },
+        "recordType": {
+          "id": "WOM_recordType/workOrder",
+          "value": "工单"
+        },
+        "status": null,
+        "tableInfoId": null,
+        "tableNo": null,
+        "taskActiveId": {
+          "id": null
+        },
+        "taskId": {
+          "id": 1264
+        },
+        "taskProcessId": {
+          "id": null
+        },
+        "valid": true,
+        "version": 0
+      },
+      {
+        "actStaffId": {
+          "code": "ch",
+          "id": 1009,
+          "name": "陈豪"
+        },
+        "actStaffName": "陈豪",
+        "activeName": null,
+        "actualEndTime": null,
+        "actualStartTime": null,
+        "attrMap": null,
+        "cid": 1000,
+        "createStaff": null,
+        "createTime": null,
+        "exeState": {
+          "id": "WOM_runState/waitForRun",
+          "value": "待执行"
+        },
+        "exeSystem": null,
+        "formulaId": {
+          "formualCode": "20200318-平行工序和活动，机动活动",
+          "id": 1318
+        },
+        "id": 1387,
+        "isAlige": false,
+        "lineCode": "MES",
+        "lineName": "MES开发线",
+        "planEndTime": null,
+        "planNum": null,
+        "planStartTime": null,
+        "procReportId": {
+          "id": null
+        },
+        "processName": "工序1-2",
+        "produceBatchNum": "20200325001",
+        "productId": {
+          "code": "F",
+          "id": 1004,
+          "mainUnit": {
+            "id": 1003,
+            "name": "1"
+          },
+          "name": "F"
+        },
+        "recordType": {
+          "id": "WOM_recordType/process",
+          "value": "工序"
+        },
+        "status": null,
+        "tableInfoId": null,
+        "tableNo": null,
+        "taskActiveId": {
+          "id": null
+        },
+        "taskId": {
+          "id": 1263
+        },
+        "taskProcessId": {
+          "id": 1494
+        },
+        "valid": true,
+        "version": 0
+      },
+      {
+        "actStaffId": {
+          "code": "ch",
+          "id": 1009,
+          "name": "陈豪"
+        },
+        "actStaffName": "陈豪",
+        "activeName": null,
+        "actualEndTime": null,
+        "actualStartTime": null,
+        "attrMap": null,
+        "cid": 1000,
+        "createStaff": null,
+        "createTime": null,
+        "exeState": {
+          "id": "WOM_runState/waitForRun",
+          "value": "待执行"
+        },
+        "exeSystem": null,
+        "formulaId": {
+          "formualCode": "20200318-平行工序和活动，机动活动",
+          "id": 1318
+        },
+        "id": 1386,
+        "isAlige": false,
+        "lineCode": "MES",
+        "lineName": "MES开发线",
+        "planEndTime": null,
+        "planNum": null,
+        "planStartTime": null,
+        "procReportId": {
+          "id": null
+        },
+        "processName": "工序1-1",
+        "produceBatchNum": "20200325001",
+        "productId": {
+          "code": "F",
+          "id": 1004,
+          "mainUnit": {
+            "id": 1003,
+            "name": "1"
+          },
+          "name": "F"
+        },
+        "recordType": {
+          "id": "WOM_recordType/process",
+          "value": "工序"
+        },
+        "status": null,
+        "tableInfoId": null,
+        "tableNo": null,
+        "taskActiveId": {
+          "id": null
+        },
+        "taskId": {
+          "id": 1263
+        },
+        "taskProcessId": {
+          "id": 1493
+        },
+        "valid": true,
+        "version": 0
+      },
+      {
+        "actStaffId": {
+          "code": "ch",
+          "id": 1009,
+          "name": "陈豪"
+        },
+        "actStaffName": "陈豪",
+        "activeName": null,
+        "actualEndTime": null,
+        "actualStartTime": null,
+        "attrMap": null,
+        "cid": 1000,
+        "createStaff": null,
+        "createTime": null,
+        "exeState": {
+          "id": "WOM_runState/runing",
+          "value": "执行中"
+        },
+        "exeSystem": null,
+        "formulaId": {
+          "formualCode": "20200318-平行工序和活动，机动活动",
+          "id": 1318
+        },
+        "id": 1385,
+        "isAlige": false,
+        "lineCode": null,
+        "lineName": "MES开发线",
+        "planEndTime": null,
+        "planNum": null,
+        "planStartTime": null,
+        "procReportId": {
+          "id": null
+        },
+        "processName": null,
+        "produceBatchNum": "20200325001",
+        "productId": {
+          "code": "F",
+          "id": 1004,
+          "mainUnit": {
+            "id": 1003,
+            "name": "1"
+          },
+          "name": "F"
+        },
+        "recordType": {
+          "id": "WOM_recordType/workOrder",
+          "value": "工单"
+        },
+        "status": null,
+        "tableInfoId": null,
+        "tableNo": null,
+        "taskActiveId": {
+          "id": null
+        },
+        "taskId": {
+          "id": 1263
+        },
+        "taskProcessId": {
+          "id": null
+        },
+        "valid": true,
+        "version": 0
+      },
+      {
+        "actStaffId": {
+          "code": "heyichao",
+          "id": 1003,
+          "name": "何轶超"
+        },
+        "actStaffName": "何轶超",
+        "activeName": null,
+        "actualEndTime": null,
+        "actualStartTime": null,
+        "attrMap": null,
+        "cid": 1000,
+        "createStaff": null,
+        "createTime": null,
+        "exeState": {
+          "id": "WOM_runState/waitForRun",
+          "value": "待执行"
+        },
+        "exeSystem": null,
+        "formulaId": {
+          "formualCode": "test0320",
+          "id": 1323
+        },
+        "id": 1384,
+        "isAlige": false,
+        "lineCode": null,
+        "lineName": "MES开发线",
+        "planEndTime": null,
+        "planNum": null,
+        "planStartTime": null,
+        "procReportId": {
+          "id": null
+        },
+        "processName": null,
+        "produceBatchNum": "0324001",
+        "productId": {
+          "code": "Prod001",
+          "id": 1006,
+          "mainUnit": {
+            "id": 1003,
+            "name": "1"
+          },
+          "name": "产品001"
+        },
+        "recordType": {
+          "id": "WOM_recordType/workOrder",
+          "value": "工单"
+        },
+        "status": null,
+        "tableInfoId": null,
+        "tableNo": null,
+        "taskActiveId": {
+          "id": null
+        },
+        "taskId": {
+          "id": 1262
+        },
+        "taskProcessId": {
+          "id": null
+        },
+        "valid": true,
+        "version": 0
+      },
+      {
+        "actStaffId": {
+          "code": "ch",
+          "id": 1009,
+          "name": "陈豪"
+        },
+        "actStaffName": "陈豪",
+        "activeName": null,
+        "actualEndTime": null,
+        "actualStartTime": null,
+        "attrMap": null,
+        "cid": 1000,
+        "createStaff": null,
+        "createTime": null,
+        "exeState": {
+          "id": "WOM_runState/waitForRun",
+          "value": "待执行"
+        },
+        "exeSystem": null,
+        "formulaId": {
+          "formualCode": "20200316-test",
+          "id": 1315
+        },
+        "id": 1383,
+        "isAlige": false,
+        "lineCode": "MES",
+        "lineName": "MES开发线",
+        "planEndTime": null,
+        "planNum": null,
+        "planStartTime": null,
+        "procReportId": {
+          "id": null
+        },
+        "processName": "工序一",
+        "produceBatchNum": "20200324-A-001",
+        "productId": {
+          "code": "A",
+          "id": 1003,
+          "mainUnit": {
+            "id": 1003,
+            "name": "1"
+          },
+          "name": "A"
+        },
+        "recordType": {
+          "id": "WOM_recordType/process",
+          "value": "工序"
+        },
+        "status": null,
+        "tableInfoId": null,
+        "tableNo": null,
+        "taskActiveId": {
+          "id": null
+        },
+        "taskId": {
+          "id": 1261
+        },
+        "taskProcessId": {
+          "id": 1488
+        },
+        "valid": true,
+        "version": 0
+      },
+      {
+        "actStaffId": {
+          "code": "ch",
+          "id": 1009,
+          "name": "陈豪"
+        },
+        "actStaffName": "陈豪",
+        "activeName": null,
+        "actualEndTime": null,
+        "actualStartTime": null,
+        "attrMap": null,
+        "cid": 1000,
+        "createStaff": null,
+        "createTime": null,
+        "exeState": {
+          "id": "WOM_runState/runing",
+          "value": "执行中"
+        },
+        "exeSystem": null,
+        "formulaId": {
+          "formualCode": "20200316-test",
+          "id": 1315
+        },
+        "id": 1382,
+        "isAlige": false,
+        "lineCode": null,
+        "lineName": "MES开发线",
+        "planEndTime": null,
+        "planNum": null,
+        "planStartTime": null,
+        "procReportId": {
+          "id": null
+        },
+        "processName": null,
+        "produceBatchNum": "20200324-A-001",
+        "productId": {
+          "code": "A",
+          "id": 1003,
+          "mainUnit": {
+            "id": 1003,
+            "name": "1"
+          },
+          "name": "A"
+        },
+        "recordType": {
+          "id": "WOM_recordType/workOrder",
+          "value": "工单"
+        },
+        "status": null,
+        "tableInfoId": null,
+        "tableNo": null,
+        "taskActiveId": {
+          "id": null
+        },
+        "taskId": {
+          "id": 1261
+        },
+        "taskProcessId": {
+          "id": null
+        },
+        "valid": true,
+        "version": 0
+      },
+      {
+        "actStaffId": {
+          "code": "ch",
+          "id": 1009,
+          "name": "陈豪"
+        },
+        "actStaffName": "陈豪",
+        "activeName": "1-2~机动人工投料Mat001",
+        "actualEndTime": null,
+        "actualStartTime": null,
+        "attrMap": null,
+        "cid": 1000,
+        "createStaff": null,
+        "createTime": null,
+        "exeState": {
+          "id": "WOM_runState/finished",
+          "value": "已完成"
+        },
+        "exeSystem": null,
+        "formulaId": {
+          "formualCode": "20200318-平行工序和活动，机动活动",
+          "id": 1318
+        },
+        "id": 1381,
+        "isAlige": false,
+        "lineCode": "MES",
+        "lineName": "MES开发线",
+        "planEndTime": null,
+        "planNum": null,
+        "planStartTime": null,
+        "procReportId": {
+          "id": null
+        },
+        "processName": "工序1-1",
+        "produceBatchNum": "2020034",
+        "productId": {
+          "code": "F",
+          "id": 1004,
+          "mainUnit": {
+            "id": 1003,
+            "name": "1"
+          },
+          "name": "F"
+        },
+        "recordType": {
+          "id": "WOM_recordType/active",
+          "value": "活动"
+        },
+        "status": null,
+        "tableInfoId": null,
+        "tableNo": null,
+        "taskActiveId": {
+          "id": 4257
+        },
+        "taskId": {
+          "id": 1260
+        },
+        "taskProcessId": {
+          "id": 1485
+        },
+        "valid": true,
+        "version": 0
+      },
+      {
+        "actStaffId": {
+          "code": "ch",
+          "id": 1009,
+          "name": "陈豪"
+        },
+        "actStaffName": "陈豪",
+        "activeName": "1-1~常规1-2",
+        "actualEndTime": null,
+        "actualStartTime": null,
+        "attrMap": null,
+        "cid": 1000,
+        "createStaff": null,
+        "createTime": null,
+        "exeState": {
+          "id": "WOM_runState/finished",
+          "value": "已完成"
+        },
+        "exeSystem": {
+          "id": "RM_exeSystem/mes",
+          "value": "MES系统"
+        },
+        "formulaId": {
+          "formualCode": "20200318-平行工序和活动，机动活动",
+          "id": 1318
+        },
+        "id": 1380,
+        "isAlige": false,
+        "lineCode": "MES",
+        "lineName": "MES开发线",
+        "planEndTime": null,
+        "planNum": null,
+        "planStartTime": null,
+        "procReportId": {
+          "id": null
+        },
+        "processName": "工序1-1",
+        "produceBatchNum": "2020034",
+        "productId": {
+          "code": "F",
+          "id": 1004,
+          "mainUnit": {
+            "id": 1003,
+            "name": "1"
+          },
+          "name": "F"
+        },
+        "recordType": {
+          "id": "WOM_recordType/active",
+          "value": "活动"
+        },
+        "status": null,
+        "tableInfoId": null,
+        "tableNo": null,
+        "taskActiveId": {
+          "id": 4255
+        },
+        "taskId": {
+          "id": 1260
+        },
+        "taskProcessId": {
+          "id": 1485
+        },
+        "valid": true,
+        "version": 0
+      },
+      {
+        "actStaffId": {
+          "code": "ch",
+          "id": 1009,
+          "name": "陈豪"
+        },
+        "actStaffName": "陈豪",
+        "activeName": "1-1~检查1-1",
+        "actualEndTime": null,
+        "actualStartTime": null,
+        "attrMap": null,
+        "cid": 1000,
+        "createStaff": null,
+        "createTime": null,
+        "exeState": {
+          "id": "WOM_runState/finished",
+          "value": "已完成"
+        },
+        "exeSystem": {
+          "id": "RM_exeSystem/mes",
+          "value": "MES系统"
+        },
+        "formulaId": {
+          "formualCode": "20200318-平行工序和活动，机动活动",
+          "id": 1318
+        },
+        "id": 1379,
+        "isAlige": false,
+        "lineCode": "MES",
+        "lineName": "MES开发线",
+        "planEndTime": null,
+        "planNum": null,
+        "planStartTime": null,
+        "procReportId": {
+          "id": null
+        },
+        "processName": "工序1-1",
+        "produceBatchNum": "2020034",
+        "productId": {
+          "code": "F",
+          "id": 1004,
+          "mainUnit": {
+            "id": 1003,
+            "name": "1"
+          },
+          "name": "F"
+        },
+        "recordType": {
+          "id": "WOM_recordType/active",
+          "value": "活动"
+        },
+        "status": null,
+        "tableInfoId": null,
+        "tableNo": null,
+        "taskActiveId": {
+          "id": 4254
+        },
+        "taskId": {
+          "id": 1260
+        },
+        "taskProcessId": {
+          "id": 1485
+        },
+        "valid": true,
+        "version": 0
+      },
+      {
+        "actStaffId": {
+          "code": "ch",
+          "id": 1009,
+          "name": "陈豪"
+        },
+        "actStaffName": "陈豪",
+        "activeName": "1-2~机动人工投料Mat002",
+        "actualEndTime": null,
+        "actualStartTime": null,
+        "attrMap": null,
+        "cid": 1000,
+        "createStaff": null,
+        "createTime": null,
+        "exeState": {
+          "id": "WOM_runState/finished",
+          "value": "已完成"
+        },
+        "exeSystem": null,
+        "formulaId": {
+          "formualCode": "20200318-平行工序和活动，机动活动",
+          "id": 1318
+        },
+        "id": 1378,
+        "isAlige": false,
+        "lineCode": "MES",
+        "lineName": "MES开发线",
+        "planEndTime": null,
+        "planNum": null,
+        "planStartTime": null,
+        "procReportId": {
+          "id": null
+        },
+        "processName": "工序1-2",
+        "produceBatchNum": "2020034",
+        "productId": {
+          "code": "F",
+          "id": 1004,
+          "mainUnit": {
+            "id": 1003,
+            "name": "1"
+          },
+          "name": "F"
+        },
+        "recordType": {
+          "id": "WOM_recordType/active",
+          "value": "活动"
+        },
+        "status": null,
+        "tableInfoId": null,
+        "tableNo": null,
+        "taskActiveId": {
+          "id": 4260
+        },
+        "taskId": {
+          "id": 1260
+        },
+        "taskProcessId": {
+          "id": 1486
+        },
+        "valid": true,
+        "version": 0
+      },
+      {
+        "actStaffId": {
+          "code": "ch",
+          "id": 1009,
+          "name": "陈豪"
+        },
+        "actStaffName": "陈豪",
+        "activeName": "1-2~机动人工投料Mat001",
+        "actualEndTime": null,
+        "actualStartTime": null,
+        "attrMap": null,
+        "cid": 1000,
+        "createStaff": null,
+        "createTime": null,
+        "exeState": {
+          "id": "WOM_runState/finished",
+          "value": "已完成"
+        },
+        "exeSystem": null,
+        "formulaId": {
+          "formualCode": "20200318-平行工序和活动，机动活动",
+          "id": 1318
+        },
+        "id": 1377,
+        "isAlige": false,
+        "lineCode": "MES",
+        "lineName": "MES开发线",
+        "planEndTime": null,
+        "planNum": null,
+        "planStartTime": null,
+        "procReportId": {
+          "id": null
+        },
+        "processName": "工序1-2",
+        "produceBatchNum": "2020034",
+        "productId": {
+          "code": "F",
+          "id": 1004,
+          "mainUnit": {
+            "id": 1003,
+            "name": "1"
+          },
+          "name": "F"
+        },
+        "recordType": {
+          "id": "WOM_recordType/active",
+          "value": "活动"
+        },
+        "status": null,
+        "tableInfoId": null,
+        "tableNo": null,
+        "taskActiveId": {
+          "id": 4259
+        },
+        "taskId": {
+          "id": 1260
+        },
+        "taskProcessId": {
+          "id": 1486
+        },
+        "valid": true,
+        "version": 0
+      },
+      {
+        "actStaffId": {
+          "code": "ch",
+          "id": 1009,
+          "name": "陈豪"
+        },
+        "actStaffName": "陈豪",
+        "activeName": "1-2~投料1",
+        "actualEndTime": null,
+        "actualStartTime": null,
+        "attrMap": null,
+        "cid": 1000,
+        "createStaff": null,
+        "createTime": null,
+        "exeState": {
+          "id": "WOM_runState/finished",
+          "value": "已完成"
+        },
+        "exeSystem": {
+          "id": "RM_exeSystem/mes",
+          "value": "MES系统"
+        },
+        "formulaId": {
+          "formualCode": "20200318-平行工序和活动，机动活动",
+          "id": 1318
+        },
+        "id": 1376,
+        "isAlige": false,
+        "lineCode": "MES",
+        "lineName": "MES开发线",
+        "planEndTime": null,
+        "planNum": 100,
+        "planStartTime": null,
+        "procReportId": {
+          "id": 1823
+        },
+        "processName": "工序1-2",
+        "produceBatchNum": "2020034",
+        "productId": {
+          "code": "F",
+          "id": 1004,
+          "mainUnit": {
+            "id": 1003,
+            "name": "1"
+          },
+          "name": "F"
+        },
+        "recordType": {
+          "id": "WOM_recordType/active",
+          "value": "活动"
+        },
+        "status": null,
+        "tableInfoId": null,
+        "tableNo": null,
+        "taskActiveId": {
+          "id": 4258
+        },
+        "taskId": {
+          "id": 1260
+        },
+        "taskProcessId": {
+          "id": 1486
+        },
+        "valid": true,
+        "version": 0
+      },
+      {
+        "actStaffId": {
+          "code": "ch",
+          "id": 1009,
+          "name": "陈豪"
+        },
+        "actStaffName": "陈豪",
+        "activeName": null,
+        "actualEndTime": null,
+        "actualStartTime": null,
+        "attrMap": null,
+        "cid": 1000,
+        "createStaff": null,
+        "createTime": null,
+        "exeState": {
+          "id": "WOM_runState/finished",
+          "value": "已完成"
+        },
+        "exeSystem": null,
+        "formulaId": {
+          "formualCode": "20200318-平行工序和活动，机动活动",
+          "id": 1318
+        },
+        "id": 1375,
+        "isAlige": false,
+        "lineCode": "MES",
+        "lineName": "MES开发线",
+        "planEndTime": null,
+        "planNum": null,
+        "planStartTime": null,
+        "procReportId": {
+          "id": null
+        },
+        "processName": "工序1-2",
+        "produceBatchNum": "2020034",
+        "productId": {
+          "code": "F",
+          "id": 1004,
+          "mainUnit": {
+            "id": 1003,
+            "name": "1"
+          },
+          "name": "F"
+        },
+        "recordType": {
+          "id": "WOM_recordType/process",
+          "value": "工序"
+        },
+        "status": null,
+        "tableInfoId": null,
+        "tableNo": null,
+        "taskActiveId": {
+          "id": null
+        },
+        "taskId": {
+          "id": 1260
+        },
+        "taskProcessId": {
+          "id": 1486
+        },
+        "valid": true,
+        "version": 0
+      },
+      {
+        "actStaffId": {
+          "code": "ch",
+          "id": 1009,
+          "name": "陈豪"
+        },
+        "actStaffName": "陈豪",
+        "activeName": null,
+        "actualEndTime": null,
+        "actualStartTime": null,
+        "attrMap": null,
+        "cid": 1000,
+        "createStaff": null,
+        "createTime": null,
+        "exeState": {
+          "id": "WOM_runState/finished",
+          "value": "已完成"
+        },
+        "exeSystem": null,
+        "formulaId": {
+          "formualCode": "20200318-平行工序和活动，机动活动",
+          "id": 1318
+        },
+        "id": 1374,
+        "isAlige": false,
+        "lineCode": "MES",
+        "lineName": "MES开发线",
+        "planEndTime": null,
+        "planNum": null,
+        "planStartTime": null,
+        "procReportId": {
+          "id": null
+        },
+        "processName": "工序1-1",
+        "produceBatchNum": "2020034",
+        "productId": {
+          "code": "F",
+          "id": 1004,
+          "mainUnit": {
+            "id": 1003,
+            "name": "1"
+          },
+          "name": "F"
+        },
+        "recordType": {
+          "id": "WOM_recordType/process",
+          "value": "工序"
+        },
+        "status": null,
+        "tableInfoId": null,
+        "tableNo": null,
+        "taskActiveId": {
+          "id": null
+        },
+        "taskId": {
+          "id": 1260
+        },
+        "taskProcessId": {
+          "id": 1485
+        },
+        "valid": true,
+        "version": 0
+      },
+      {
+        "actStaffId": {
+          "code": "ch",
+          "id": 1009,
+          "name": "陈豪"
+        },
+        "actStaffName": "陈豪",
+        "activeName": null,
+        "actualEndTime": null,
+        "actualStartTime": null,
+        "attrMap": null,
+        "cid": 1000,
+        "createStaff": null,
+        "createTime": null,
+        "exeState": {
+          "id": "WOM_runState/finished",
+          "value": "已完成"
+        },
+        "exeSystem": null,
+        "formulaId": {
+          "formualCode": "20200318-平行工序和活动，机动活动",
+          "id": 1318
+        },
+        "id": 1373,
+        "isAlige": false,
+        "lineCode": null,
+        "lineName": "MES开发线",
+        "planEndTime": null,
+        "planNum": null,
+        "planStartTime": null,
+        "procReportId": {
+          "id": null
+        },
+        "processName": null,
+        "produceBatchNum": "2020034",
+        "productId": {
+          "code": "F",
+          "id": 1004,
+          "mainUnit": {
+            "id": 1003,
+            "name": "1"
+          },
+          "name": "F"
+        },
+        "recordType": {
+          "id": "WOM_recordType/workOrder",
+          "value": "工单"
+        },
+        "status": null,
+        "tableInfoId": null,
+        "tableNo": null,
+        "taskActiveId": {
+          "id": null
+        },
+        "taskId": {
+          "id": 1260
+        },
+        "taskProcessId": {
+          "id": null
+        },
+        "valid": true,
+        "version": 0
+      },
+      {
+        "actStaffId": {
+          "code": "heyichao",
+          "id": 1003,
+          "name": "何轶超"
+        },
+        "actStaffName": "何轶超",
+        "activeName": null,
+        "actualEndTime": null,
+        "actualStartTime": null,
+        "attrMap": null,
+        "cid": 1000,
+        "createStaff": null,
+        "createTime": null,
+        "exeState": {
+          "id": "WOM_runState/waitForRun",
+          "value": "待执行"
+        },
+        "exeSystem": null,
+        "formulaId": {
+          "formualCode": "test0320",
+          "id": 1323
+        },
+        "id": 1372,
+        "isAlige": false,
+        "lineCode": null,
+        "lineName": "MES开发线",
+        "planEndTime": null,
+        "planNum": null,
+        "planStartTime": null,
+        "procReportId": {
+          "id": null
+        },
+        "processName": null,
+        "produceBatchNum": "0323001",
+        "productId": {
+          "code": "Prod001",
+          "id": 1006,
+          "mainUnit": {
+            "id": 1003,
+            "name": "1"
+          },
+          "name": "产品001"
+        },
+        "recordType": {
+          "id": "WOM_recordType/workOrder",
+          "value": "工单"
+        },
+        "status": null,
+        "tableInfoId": null,
+        "tableNo": null,
+        "taskActiveId": {
+          "id": null
+        },
+        "taskId": {
+          "id": 1259
+        },
+        "taskProcessId": {
+          "id": null
+        },
+        "valid": true,
+        "version": 0
+      }
+    ],
+    "totalCount": 374,
+    "totalPages": 19,
+    "treeToSurfaceMode": false
+  },
+  "msg": "操作成功"
+}

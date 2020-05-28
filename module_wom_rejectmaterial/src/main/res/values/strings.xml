@@ -1,0 +1,16 @@
+<resources>
+    <string name="app_name">module_wom_rejectmaterial</string>
+    <string name="wom_reject_management">退料管理</string>
+    <string name="wom_table_no">请输入单据编号</string>
+    <string name="wom_batch_reject_material">配料退料</string>
+    <string name="wom_prepare_reject_material">备料退料</string>
+    <string name="wom_type">类型</string>
+    <string name="wom_apply_staff">申请人</string>
+    <string name="wom_reject_material_edit">退料编辑</string>
+    <string name="wom_reject_material_details">退料明细</string>
+    <string name="wom_reject_type">退料类型</string>
+    <string name="wom_into_warehouse">入库仓</string>
+    <string name="wom_into_storeset">入库货位</string>
+    <string name="wom_reject_num">退料数量</string>
+    <string name="wom_back_reason">退料原因</string>
+</resources>

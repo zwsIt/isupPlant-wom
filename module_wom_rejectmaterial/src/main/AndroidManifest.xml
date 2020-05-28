@@ -1,0 +1,15 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.supcon.mes.module_wom_rejectmaterial" >
+
+    <application>
+        <activity android:name=".ui.activity.RejectMaterialListActivity"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustPan|stateAlwaysHidden"
+            android:theme="@style/AppNoTitleBarTheme"
+            />
+        <activity android:name=".ui.activity.RejectMaterialEditActivity"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustPan|stateAlwaysHidden"
+            android:theme="@style/AppNoTitleBarTheme"/>
+    </application>
+</manifest>

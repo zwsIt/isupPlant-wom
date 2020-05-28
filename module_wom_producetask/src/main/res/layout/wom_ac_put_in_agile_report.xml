@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white">
+
+    <include layout="@layout/ly_titlebar_local"/>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="@dimen/dp_50"
+        android:layout_above="@+id/submitBtn"
+        android:orientation="vertical">
+<!--        <com.supcon.mes.mbap.view.CustomTextView-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="@dimen/dp_40"-->
+<!--            android:paddingStart="@dimen/dp_12"-->
+<!--            android:paddingEnd="@dimen/dp_12"-->
+<!--            android:id="@+id/materialName"-->
+<!--            android:tag="materialName"-->
+<!--            app:key="@string/wom_material_name"-->
+<!--            app:key_size="16"-->
+<!--            app:gravity="right|center_vertical"-->
+<!--            app:key_color="@color/dark_text"-->
+<!--            app:content_color="@color/titleTextColor"/>-->
+<!--        <include layout="@layout/ly_line_light"/>-->
+<!--        <com.supcon.mes.mbap.view.CustomTextView-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="@dimen/dp_40"-->
+<!--            android:paddingStart="@dimen/dp_12"-->
+<!--            android:paddingEnd="@dimen/dp_12"-->
+<!--            android:layout_marginTop="@dimen/dp_1"-->
+<!--            android:id="@+id/materialCode"-->
+<!--            android:tag="materialCode"-->
+<!--            app:key="@string/wom_material_code"-->
+<!--            app:key_size="16"-->
+<!--            app:gravity="right|center_vertical"-->
+<!--            app:content_color="@color/titleTextColor"/>-->
+        <com.supcon.mes.mbap.view.CustomTextView
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/dp_40"
+            android:paddingStart="@dimen/dp_12"
+            android:paddingEnd="@dimen/dp_12"
+            android:id="@+id/taskProcess"
+            android:tag="taskProcess"
+            app:key="@string/wom_process_name"
+            app:key_size="14"
+            app:key_color="@color/titleTextColor"
+            app:content_color="@color/dark_text"/>
+        <include layout="@layout/ly_line_light"/>
+        <com.supcon.mes.mbap.view.CustomTextView
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/dp_40"
+            android:paddingStart="@dimen/dp_12"
+            android:paddingEnd="@dimen/dp_12"
+            android:layout_marginTop="@dimen/dp_1"
+            android:id="@+id/planNum"
+            android:tag="planNum"
+            app:key="@string/wom_plan_num"
+            app:key_size="14"
+            app:key_color="@color/titleTextColor"
+            app:content_color="@color/dark_text"/>
+
+        <include layout="@layout/ly_detail_title_bar_no_recycleview"/>
+
+       <include layout="@layout/ly_recyclerview"/>
+
+    </LinearLayout>
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/dp_40"
+        android:layout_marginStart="@dimen/dp_12"
+        android:layout_marginEnd="@dimen/dp_12"
+        android:layout_marginBottom="@dimen/dp_5"
+        android:layout_marginTop="@dimen/dp_5"
+        android:layout_alignParentBottom="true"
+        android:background="@color/themeColor"
+        android:id="@+id/submitBtn"
+        android:tag="submitBtn"
+        android:text="@string/wom_submit"
+        android:textColor="@color/white"
+        android:textSize="@dimen/fontSize_16sp"/>
+
+</RelativeLayout>

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/list_bg_color">
+
+    <com.supcon.mes.mbap.view.CustomHorizontalSearchTitleBar
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:title_background_color="@color/themeColor"
+        android:id="@+id/searchTitleBar"
+        android:tag="searchTitleBar"
+        app:title_right_btn_need="false"
+        app:title_length="@dimen/dp_70" />
+
+    <include layout="@layout/ly_recyclerview"
+        android:layout_marginTop="@dimen/dp_50"
+        android:layout_above="@+id/submitBtnInclude"
+        android:layout_height="match_parent"
+        android:layout_width="match_parent"/>
+
+    <include layout="@layout/wom_ly_all_choose_submit"
+        android:layout_alignParentBottom="true"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/submitBtnInclude"/>
+
+
+</RelativeLayout>

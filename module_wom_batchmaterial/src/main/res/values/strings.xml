@@ -1,0 +1,32 @@
+<resources>
+    <string name="app_name">module_wom_batchmaterial</string>
+    <string name="wom_batch_material_instruction">配料指令</string>
+    <string name="wom_batch_material_records">配料记录</string>
+    <string name="wom_batch_material">配料</string>
+    <string name="wom_material_place_container">配放于容器</string>
+    <string name="wom_material_sum_plan_num">已配/需配</string>
+    <string name="wom_create_staff">创建人</string>
+    <string name="wom_material_instruction_edit">配料指令编辑</string>
+    <string name="wom_need">需配</string>
+    <string name="wom_offer">已配</string>
+    <string name="wom_no_material_state">未配料</string>
+    <string name="wom_wait_batch">未配料</string>
+    <string name="wom_wait_deliver">待派送</string>
+    <string name="wom_wait_sign">待签收</string>
+    <string name="wom_wait_allocate">待放</string>
+    <string name="wom_batch_material_finish">配料完成</string>
+    <string name="wom_reject_sign">拒签</string>
+    <string name="wom_sign">签收</string>
+    <string name="wom_deliver">派   送</string>
+    <string name="wom_allocate">配  放</string>
+    <string name="wom_recall">撤回</string>
+    <string name="wom_choose_batch_material_records">请选择配料记录</string>
+    <string name="wom_confirm_batch_material_operate">确认将所选配料记录进行[</string>
+    <string name="wom_middle_right_brackets">]</string>
+    <string name="wom_material_reject">物料拒签</string>
+    <string name="wom_reject_reason">拒签原因</string>
+    <string name="wom_recall_back">退废</string>
+    <string name="wom_abandon_status">退废状态</string>
+    <string name="wom_batch_material_mode">配料模式</string>
+    <string name="wom_no_support_view">暂不支持该环节的查看</string>
+</resources>

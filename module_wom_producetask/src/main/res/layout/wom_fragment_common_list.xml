@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/list_bg_color"
+    android:orientation="vertical">
+    <!--<HorizontalScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/white"
+        android:scrollbars="none">
+        <RadioGroup
+            android:id="@+id/waitStateRadioGroup"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:orientation="horizontal"
+            android:padding="@dimen/dp_5"
+            android:tag="waitStateRadioGroup">
+
+            <RadioButton
+                android:id="@+id/allRBtn"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_gravity="center_vertical"
+                android:button="@null"
+                android:tag="allRBtn"
+                android:text="@string/wom_all"
+                android:textSize="@dimen/fontSize_14sp"
+                android:textColor="@drawable/wom_sl_radio_text"
+                android:checked="true"/>
+
+            <RadioButton
+                android:id="@+id/waitExecutedRBtn"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_gravity="center_vertical"
+                android:layout_marginStart="@dimen/dp_20"
+                android:button="@null"
+                android:tag="waitExecutedRBtn"
+                android:text="@string/wom_wait_executed"
+                android:textColor="@drawable/wom_sl_radio_text"
+                android:textSize="@dimen/fontSize_14sp" />
+            <RadioButton
+                android:id="@+id/executingRBtn"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_gravity="center_vertical"
+                android:layout_marginStart="@dimen/dp_20"
+                android:button="@null"
+                android:tag="executingRBtn"
+                android:text="@string/wom_executing"
+                android:textColor="@drawable/wom_sl_radio_text"
+                android:textSize="@dimen/fontSize_14sp" />
+            <RadioButton
+                android:id="@+id/pausedRBtn"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_gravity="center_vertical"
+                android:layout_marginStart="@dimen/dp_20"
+                android:button="@null"
+                android:tag="pausedRBtn"
+                android:text="@string/wom_paused"
+                android:textColor="@drawable/wom_sl_radio_text"
+                android:textSize="@dimen/fontSize_14sp" />
+            <RadioButton
+                android:id="@+id/stoppedRBtn"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_gravity="center_vertical"
+                android:layout_marginStart="@dimen/dp_20"
+                android:button="@null"
+                android:tag="stoppedRBtn"
+                android:text="@string/wom_stopped"
+                android:textColor="@drawable/wom_sl_radio_text"
+                android:textSize="@dimen/fontSize_14sp" />
+            <RadioButton
+                android:id="@+id/abandonedRBtn"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_gravity="center_vertical"
+                android:layout_marginStart="@dimen/dp_20"
+                android:button="@null"
+                android:tag="abandonedRBtn"
+                android:text="@string/wom_abandoned"
+                android:textColor="@drawable/wom_sl_radio_text"
+                android:textSize="@dimen/fontSize_14sp" />
+
+        </RadioGroup>
+    </HorizontalScrollView>-->
+
+    <include layout="@layout/ly_recyclerview"/>
+</LinearLayout>
