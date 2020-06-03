@@ -30,7 +30,7 @@ import io.reactivex.schedulers.Schedulers;
  * Email zhangwenshuai1@supcon.com
  * Desc 退料管理list
  */
-@Router(Constant.Router.WOM_RM_LIST)
+@Router(Constant.AppCode.WOM_AdjustMaterial)
 public class RejectMaterialListActivity extends BaseFragmentActivity {
 
     @BindByTag("searchTitleBar")
