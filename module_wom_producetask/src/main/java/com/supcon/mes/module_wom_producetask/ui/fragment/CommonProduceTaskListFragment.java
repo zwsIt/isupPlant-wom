@@ -434,7 +434,10 @@ public class CommonProduceTaskListFragment extends BaseRefreshRecyclerFragment<W
 
     public void search(String searchContent){
         queryParams.put(Constant.BAPQuery.PRODUCE_BATCH_NUM, searchContent);
-        refreshListController.refreshBegin();
+        if(refreshListController!=null){
+            refreshListController.refreshBegin();
+        }
+
     }
 
 

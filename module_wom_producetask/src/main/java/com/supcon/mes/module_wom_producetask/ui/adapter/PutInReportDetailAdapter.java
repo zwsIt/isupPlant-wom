@@ -105,6 +105,11 @@ public class PutInReportDetailAdapter extends BaseListDataRecyclerViewAdapter<Pu
                                 data.setUseNum(null);
                                 return false;
                             }
+                            if(charSequence.toString().startsWith(".")){
+                                numEt.editText().setText("0.");
+                                numEt.editText().setSelection(numEt.getContent().length());
+                                return false;
+                            }
                             // 用料量大于可用量判断
                             if (data.getAvailableNum() != null && new BigDecimal(charSequence.toString().trim()).compareTo(data.getAvailableNum()) > 0){
                                 ToastUtils.show(context,context.getString(R.string.wom_putin_num_compare) + data.getAvailableNum());

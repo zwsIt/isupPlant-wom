@@ -89,6 +89,11 @@ public class ProduceTaskEndReportDetailAdapter extends BaseListDataRecyclerViewA
                                 getItem(getAdapterPosition()).setOutputNum(null);
                                 return false;
                             }
+                            if(charSequence.toString().startsWith(".")){
+                                numEt.editText().setText("0.");
+                                numEt.editText().setSelection(numEt.getContent().length());
+                                return false;
+                            }
                             return true;
                         }
                     })

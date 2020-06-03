@@ -109,6 +109,11 @@ public class OutputAgileReportDetailAdapter extends BaseListDataRecyclerViewAdap
                                 getItem(getAdapterPosition()).setReportNum(getItem(getAdapterPosition()).getOutputNum());
                                 return false;
                             }
+                            if(charSequence.toString().startsWith(".")){
+                                numEt.editText().setText("0.");
+                                numEt.editText().setSelection(numEt.getContent().length());
+                                return false;
+                            }
                             return true;
                         }
                     })
