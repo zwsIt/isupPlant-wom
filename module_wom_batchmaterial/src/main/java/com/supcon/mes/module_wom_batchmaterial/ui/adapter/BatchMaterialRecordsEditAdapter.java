@@ -108,6 +108,10 @@ public class BatchMaterialRecordsEditAdapter extends BaseListDataRecyclerViewAda
                                 getItem(getAdapterPosition()).setOfferNum(null);
                                 return false;
                             }
+                            if(charSequence.toString().startsWith(".")){
+                                numEt.editText().setText("0.");
+                                return false;
+                            }
                             return true;
                         }
                     })

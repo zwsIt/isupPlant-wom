@@ -81,7 +81,7 @@ import io.reactivex.schedulers.Schedulers;
  * Email zhangwenshuai1@supcon.com
  * Desc 生产工单list
  */
-@Router(Constant.Router.WOM_PT_LIST)
+@Router(Constant.AppCode.WOM_Production)
 public class ProduceTaskListActivity extends BaseMultiFragmentActivity {
     @BindByTag("searchTitleBar")
     CustomHorizontalSearchTitleBar searchTitleBar;

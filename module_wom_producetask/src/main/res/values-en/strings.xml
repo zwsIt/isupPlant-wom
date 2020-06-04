@@ -2,6 +2,13 @@
 <resources>
     <string name="app_name">module_wom_producetask</string>
     <string name="wom_all">all</string>
+    <string name="wom_wait_executed">Wait</string>
+    <string name="wom_executing">Executing</string>
+    <string name="wom_paused">Paused</string>
+    <string name="wom_stopped">Stopped</string>
+    <string name="wom_abandoned">Abandoned</string>
+    <string name="wom_product">Produce</string>
+    <string name="wom_execute_system">Produce execute system</string>
     <string name="wom_production_line">生产线</string>
     <string name="wom_formula">formula</string>
     <string name="wom_time">时间</string>

@@ -108,6 +108,11 @@ public class PutInAgileReportDetailAdapter extends BaseListDataRecyclerViewAdapt
                                 getItem(getAdapterPosition()).setUseNum(null);
                                 return false;
                             }
+                            if(charSequence.toString().startsWith(".")){
+                                numEt.editText().setText("0.");
+                                numEt.editText().setSelection(numEt.getContent().length());
+                                return false;
+                            }
                             return true;
                         }
                     })

@@ -135,9 +135,17 @@ public class FormulaActivityListAdapter extends BaseListDataRecyclerViewAdapter<
             sequenceCustomTv.setContent(data.getTaskActiveId().getExecSort());
             factoryModelUnitCustomTv.setContent(data.getTaskProcessId().getEquipmentId().getName());
             timeCustomTv.setContent(data.getActualStartTime() == null ? "" : DateUtil.dateTimeFormat(data.getActualStartTime()));
+            routineStartTv.setEnabled(true);
             if (WomConstant.SystemCode.EXE_STATE_WAIT.equals(data.getExeState().id)) {
-                routineStartTv.setText(context.getResources().getString(R.string.wom_start));
-                routineStartTv.setBackgroundResource(R.drawable.wom_sh_start_bg);
+                if(data.getTaskId().getBatchContral()!=null && data.getTaskId().getBatchContral()){
+                    routineStartTv.setBackgroundResource(R.drawable.wom_sh_disable_bg);
+                    routineStartTv.setText(context.getResources().getString(R.string.wom_end));
+                    routineStartTv.setEnabled(false);
+                }
+                else {
+                    routineStartTv.setText(context.getResources().getString(R.string.wom_start));
+                    routineStartTv.setBackgroundResource(R.drawable.wom_sh_start_bg);
+                }
             } else {
                 routineStartTv.setText(context.getResources().getString(R.string.wom_end));
                 routineStartTv.setBackgroundResource(R.drawable.wom_sh_end_bg);
@@ -210,9 +218,17 @@ public class FormulaActivityListAdapter extends BaseListDataRecyclerViewAdapter<
             sequenceCustomTv.setContent(data.getTaskActiveId().getExecSort());
             factoryModelUnitCustomTv.setContent(data.getTaskProcessId().getEquipmentId().getName());
             timeCustomTv.setContent(data.getActualStartTime() == null ? "" : DateUtil.dateTimeFormat(data.getActualStartTime()));
+            checkStartTv.setEnabled(true);
             if (WomConstant.SystemCode.EXE_STATE_WAIT.equals(data.getExeState().id)) {
-                checkStartTv.setText(context.getResources().getString(R.string.wom_start));
-                checkStartTv.setBackgroundResource(R.drawable.wom_sh_start_bg);
+                if(data.getTaskId().getBatchContral()!=null && data.getTaskId().getBatchContral()){
+                    checkStartTv.setBackgroundResource(R.drawable.wom_sh_disable_bg);
+                    checkStartTv.setEnabled(false);
+                    checkStartTv.setText(context.getResources().getString(R.string.wom_end));
+                }
+                else {
+                    checkStartTv.setText(context.getResources().getString(R.string.wom_start));
+                    checkStartTv.setBackgroundResource(R.drawable.wom_sh_start_bg);
+                }
             } else {
                 checkStartTv.setText(context.getResources().getString(R.string.wom_end));
                 checkStartTv.setBackgroundResource(R.drawable.wom_sh_end_bg);
@@ -283,9 +299,17 @@ public class FormulaActivityListAdapter extends BaseListDataRecyclerViewAdapter<
             numCustomTv.setContent(data.getTaskActiveId().getPlanQuantity() == null ? "" : data.getTaskActiveId().getPlanQuantity().toPlainString());
             factoryModelUnitCustomTv.setContent(data.getTaskProcessId().getEquipmentId().getName());
             timeCustomTv.setContent(data.getActualStartTime() == null ? "" : DateUtil.dateTimeFormat(data.getActualStartTime()));
+            putInStartTv.setEnabled(true);
             if (WomConstant.SystemCode.EXE_STATE_WAIT.equals(data.getExeState().id)) {
-                putInStartTv.setText(context.getResources().getString(R.string.wom_start));
-                putInStartTv.setBackgroundResource(R.drawable.wom_sh_start_bg);
+                if(data.getTaskId().getBatchContral()!=null && data.getTaskId().getBatchContral()){
+                    putInStartTv.setBackgroundResource(R.drawable.wom_sh_disable_bg);
+                    putInStartTv.setEnabled(false);
+                    putInStartTv.setText(context.getResources().getString(R.string.wom_end));
+                }
+                else {
+                    putInStartTv.setText(context.getResources().getString(R.string.wom_start));
+                    putInStartTv.setBackgroundResource(R.drawable.wom_sh_start_bg);
+                }
             } else {
                 putInStartTv.setText(context.getResources().getString(R.string.wom_end));
                 putInStartTv.setBackgroundResource(R.drawable.wom_sh_end_bg);
@@ -357,10 +381,12 @@ public class FormulaActivityListAdapter extends BaseListDataRecyclerViewAdapter<
             numCustomTv.setContent(data.getTaskActiveId().getPlanQuantity() == null ? "" : data.getTaskActiveId().getPlanQuantity().toPlainString());
             factoryModelUnitCustomTv.setContent(data.getTaskProcessId().getEquipmentId().getName());
             timeCustomTv.setContent(data.getActualStartTime() == null ? "" : DateUtil.dateTimeFormat(data.getActualStartTime()));
-            putInStartTv.setVisibility(View.VISIBLE);
+            putInStartTv.setEnabled(true);
             if (WomConstant.SystemCode.EXE_STATE_WAIT.equals(data.getExeState().id)) {
                 if(data.getTaskId().getBatchContral()!=null && data.getTaskId().getBatchContral()){
-                    putInStartTv.setVisibility(View.GONE);
+                    putInStartTv.setBackgroundResource(R.drawable.wom_sh_disable_bg);
+                    putInStartTv.setEnabled(false);
+                    putInStartTv.setText(context.getResources().getString(R.string.wom_end));
                 }
                 else {
                     putInStartTv.setText(context.getResources().getString(R.string.wom_start));
@@ -437,9 +463,17 @@ public class FormulaActivityListAdapter extends BaseListDataRecyclerViewAdapter<
             numCustomTv.setContent(data.getTaskActiveId().getPlanQuantity() == null ? "" : data.getTaskActiveId().getPlanQuantity().toPlainString());
             factoryModelUnitCustomTv.setContent(data.getTaskProcessId().getEquipmentId().getName());
             timeCustomTv.setContent(data.getActualStartTime() == null ? "" : DateUtil.dateTimeFormat(data.getActualStartTime()));
+            putInStartTv.setEnabled(true);
             if (WomConstant.SystemCode.EXE_STATE_WAIT.equals(data.getExeState().id)) {
-                putInStartTv.setText(context.getResources().getString(R.string.wom_start));
-                putInStartTv.setBackgroundResource(R.drawable.wom_sh_start_bg);
+                if(data.getTaskId().getBatchContral()!=null && data.getTaskId().getBatchContral()){
+                    putInStartTv.setBackgroundResource(R.drawable.wom_sh_disable_bg);
+                    putInStartTv.setEnabled(false);
+                    putInStartTv.setText(context.getResources().getString(R.string.wom_end));
+                }
+                else {
+                    putInStartTv.setText(context.getResources().getString(R.string.wom_start));
+                    putInStartTv.setBackgroundResource(R.drawable.wom_sh_start_bg);
+                }
             } else {
                 putInStartTv.setText(context.getResources().getString(R.string.wom_end));
                 putInStartTv.setBackgroundResource(R.drawable.wom_sh_end_bg);

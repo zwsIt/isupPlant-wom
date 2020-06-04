@@ -197,8 +197,5 @@
     <orderEntry type="module" module-name="middleware" />
     <orderEntry type="module" module-name="module_wom_producetask" />
     <orderEntry type="module" module-name="module_wom_preparematerial" />
-    <orderEntry type="module" module-name="middleware" />
-    <orderEntry type="module" module-name="module_wom_producetask" />
-    <orderEntry type="module" module-name="module_wom_preparematerial" />
   </component>
 </module>

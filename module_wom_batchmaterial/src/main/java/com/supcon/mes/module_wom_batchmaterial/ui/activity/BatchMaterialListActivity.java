@@ -31,7 +31,7 @@ import io.reactivex.schedulers.Schedulers;
  * Email zhangwenshuai1@supcon.com
  * Desc 配料管理list
  */
-@Router(Constant.Router.WOM_BM_LIST)
+@Router(Constant.AppCode.WOM_DeployMaterial)
 public class BatchMaterialListActivity extends BaseFragmentActivity {
 
     @BindByTag("searchTitleBar")
