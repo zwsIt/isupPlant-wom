@@ -53,6 +53,7 @@ public class PrepareMaterialEntity extends BaseEntity {
     private Long prePareDate; // 备料时间
     private PrePareNeedPartIdEntity prePareNeedPartId; // 备料需求明细id
     private StaffEntity prePareStaff; // 备料指令创建人
+    private StaffEntity rejectApplyStaff;// 退料申请人
     private MaterialEntity productId; // 物料
     private String remark;
     private BigDecimal returnNum; // 已退数量
@@ -228,6 +229,14 @@ public class PrepareMaterialEntity extends BaseEntity {
 
     public void setVersion(int version) {
         this.version = version;
+    }
+
+    public StaffEntity getRejectApplyStaff() {
+        return rejectApplyStaff;
+    }
+
+    public void setRejectApplyStaff(StaffEntity rejectApplyStaff) {
+        this.rejectApplyStaff = rejectApplyStaff;
     }
 
     public static class PrePareNeedPartIdEntity extends BaseEntity {

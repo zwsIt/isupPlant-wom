@@ -24,12 +24,8 @@ import com.supcon.mes.module_wom_producetask.model.api.CommonListAPI;
 import com.supcon.mes.module_wom_producetask.model.contract.CommonListContract;
 import com.supcon.mes.module_wom_producetask.presenter.CommonListPresenter;
 import com.supcon.mes.module_wom_rejectmaterial.R;
-import com.supcon.mes.module_wom_rejectmaterial.model.bean.RejectMaterialEntity;
 import com.supcon.mes.module_wom_rejectmaterial.model.bean.RejectRecordMaterialEntity;
-import com.supcon.mes.module_wom_rejectmaterial.ui.activity.RejectMaterialListActivity;
 import com.supcon.mes.module_wom_rejectmaterial.ui.adapter.RejectRecordMaterialAdapter;
-
-import org.greenrobot.eventbus.EventBus;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -101,7 +97,7 @@ public class RejectRecordMaterialFragment extends BaseRefreshRecyclerFragment<Re
 
     @Override
     public void listSuccess(BAP5CommonEntity entity) {
-        CommonBAPListEntity commonBAPListEntity = GsonUtil.gsonToBean(GsonUtil.gsonString(entity.data),CommonBAPListEntity.class);
+        CommonBAPListEntity commonBAPListEntity = GsonUtil.gsonToBean(GsonUtil.gsonString(entity.data), CommonBAPListEntity.class);
         refreshListController.refreshComplete(GsonUtil.jsonToList(GsonUtil.gsonString((Object)commonBAPListEntity.result), RejectRecordMaterialEntity.class));
     }
 
