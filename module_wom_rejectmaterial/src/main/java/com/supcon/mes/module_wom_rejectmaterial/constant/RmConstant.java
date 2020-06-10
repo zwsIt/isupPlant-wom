@@ -50,6 +50,8 @@ public interface RmConstant {
                 "datagridCode=WOM_1.0.0_rejectMaterilal_prePareRejectEdit" + DG_NAME.DG_PREPARE_BATCH_MATERIAL_EDIT; // 备料退料编辑dg_list
         String REJECT_BATCH_MATERIAL_EDIT__URL = "/msService/WOM/rejectMaterilal/rejectMaterial/batchRejectEdit"; // 配料退料编辑提交
         String REJECT_PREPARE_MATERIAL_EDIT_URL = "/msService/WOM/rejectMaterilal/rejectMaterial/prePareRejectEdit"; // 备料退料编辑提交
+        String REJECT_BATCH_RECORD_MATERIAL_LIST_URL = "/msService/WOM/rejectMaterilal/rejctMatalPart/batchRejectPrtList-query"; // 配料退料记录
+        String REJECT_PREPARE_RECORD_MATERIAL_LIST_URL = "/msService/WOM/rejectMaterilal/rejctMatalPart/prePareRejectPrtList-query"; // 备料退料记录
     }
 
     /**

@@ -8,13 +8,16 @@ import android.support.v4.view.ViewPager;
 
 import com.app.annotation.BindByTag;
 import com.app.annotation.apt.Router;
+import com.jakewharton.rxbinding2.view.RxView;
 import com.jakewharton.rxbinding2.widget.RxTextView;
 import com.supcon.common.view.base.activity.BaseFragmentActivity;
 import com.supcon.common.view.util.StatusBarUtils;
 import com.supcon.mes.mbap.view.CustomHorizontalSearchTitleBar;
+import com.supcon.mes.mbap.view.CustomImageButton;
 import com.supcon.mes.mbap.view.CustomTab;
 import com.supcon.mes.mbap.view.NoScrollViewPager;
 import com.supcon.mes.middleware.constant.Constant;
+import com.supcon.mes.module_wom_rejectmaterial.IntentRouter;
 import com.supcon.mes.module_wom_rejectmaterial.R;
 import com.supcon.mes.module_wom_rejectmaterial.constant.RmConstant;
 import com.supcon.mes.module_wom_rejectmaterial.ui.fragment.RejectBatchMaterialFragment;
@@ -22,6 +25,7 @@ import com.supcon.mes.module_wom_rejectmaterial.ui.fragment.RejectBatchMaterialF
 import java.util.concurrent.TimeUnit;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
 
 /**
@@ -35,6 +39,8 @@ public class RejectMaterialListActivity extends BaseFragmentActivity {
 
     @BindByTag("searchTitleBar")
     CustomHorizontalSearchTitleBar searchTitleBar;
+    @BindByTag("btnTitleNotes")
+    CustomImageButton btnTitleNotes;
     @BindByTag("customTab")
     CustomTab customTab;
     @BindByTag("viewPager")
@@ -93,6 +99,14 @@ public class RejectMaterialListActivity extends BaseFragmentActivity {
                 searchTitleBar.searchView().setInputTextColor(R.color.black);
             }
         });
+        RxView.clicks(btnTitleNotes)
+                .throttleFirst(200, TimeUnit.MILLISECONDS)
+                .subscribe(new Consumer<Object>() {
+                    @Override
+                    public void accept(Object o) throws Exception {
+                        IntentRouter.go(context,Constant.Router.REJECT_RECORD_METERIAL);
+                    }
+                });
         RxTextView.textChanges(searchTitleBar.editText()).skipInitialValue()
                 .debounce(500, TimeUnit.MILLISECONDS)
                 .subscribeOn(Schedulers.io())
