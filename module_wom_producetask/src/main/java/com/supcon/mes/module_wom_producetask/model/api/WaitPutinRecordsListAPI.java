@@ -22,5 +22,5 @@ public interface WaitPutinRecordsListAPI {
      * @return
      * @author zhangwenshuai1 2020/3/23
      */
-    void listWaitPutinRecords(int pageNo, Map<String,Object> queryParams);
+    void listWaitPutinRecords(int pageNo, int pageSize, Map<String,Object> queryParams);
 }

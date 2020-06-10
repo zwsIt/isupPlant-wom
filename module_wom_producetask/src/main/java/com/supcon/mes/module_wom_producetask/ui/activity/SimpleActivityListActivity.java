@@ -123,7 +123,7 @@ public class SimpleActivityListActivity extends BaseRefreshRecyclerActivity<Wait
         super.initListener();
         leftBtn.setOnClickListener(v -> finish());
         refreshListController.setOnRefreshPageListener(pageIndex -> {
-            presenterRouter.create(WaitPutinRecordsListAPI.class).listWaitPutinRecords(pageIndex, queryParams);
+            presenterRouter.create(WaitPutinRecordsListAPI.class).listWaitPutinRecords(pageIndex, 20, queryParams);
         });
 
         mSimpleActivityListAdapter.setOnItemChildViewClickListener((childView, position, action, obj) -> {

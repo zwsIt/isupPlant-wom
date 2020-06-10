@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@drawable/sh_white_stroke"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <include layout="@layout/ly_widget_title"/>
+    <include layout="@layout/ly_line_light_light"/>
+    <com.supcon.mes.mbap.view.CustomTab
+        android:id="@+id/womPendingTab"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:tag="womPendingTab"
+        app:indicator_color="@color/themeColor"
+        app:indicator_visible="true"
+        app:select_bg_color="@color/white"
+        app:select_text_color="@color/themeColor"
+        app:unselect_bg_color="@color/white"
+        app:unselect_text_color="@color/textColorlightblack" />
+
+    <com.supcon.mes.mbap.view.NoScrollViewPager
+        android:id="@+id/womPendingVP"
+        android:layout_width="match_parent"
+        android:layout_height="350dp"
+        android:tag="womPendingVP" />
+</LinearLayout>

@@ -137,9 +137,9 @@ public class CommonProduceTaskListFragment extends BaseRefreshRecyclerFragment<W
         super.initListener();
         refreshListController.setOnRefreshPageListener(pageIndex -> {
             if (mIsTaskLoad) {
-                presenterRouter.create(WaitPutinRecordsListAPI.class).listWaitPutinRecords(pageIndex, queryParams);
+                presenterRouter.create(WaitPutinRecordsListAPI.class).listWaitPutinRecords(pageIndex, 20, queryParams);
             } else {
-                presenterRouter.create(WaitPutinRecordsListAPI.class).listWaitPutinRecords(pageIndex, processQueryParams);
+                presenterRouter.create(WaitPutinRecordsListAPI.class).listWaitPutinRecords(pageIndex, 20, processQueryParams);
             }
         });
 
