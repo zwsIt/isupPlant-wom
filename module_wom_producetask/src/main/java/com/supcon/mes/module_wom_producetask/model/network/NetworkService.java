@@ -15,8 +15,11 @@ import java.util.Map;
 
 import io.reactivex.Flowable;
 import retrofit2.http.Body;
+import retrofit2.http.GET;
 import retrofit2.http.POST;
+import retrofit2.http.Path;
 import retrofit2.http.Query;
+import retrofit2.http.QueryMap;
 import retrofit2.http.Url;
 
 /**
@@ -78,8 +81,8 @@ public interface NetworkService {
      * @param paramMap
      * @return
      */
-    @POST("/msService/HierarchicalMod/factoryModel/factoryModel/factoryUnitRef2-query")
-    Flowable<BAP5CommonEntity<CommonBAPListEntity<FactoryModelEntity>>> factoryUnitRef2Query(@Body Map<String, Object> paramMap);
+    @GET(" /msService/WOM/produceTask/produceTask/unitGroupAndUnit/2/{productLineId}/{processId}")
+    Flowable<BAP5CommonEntity<CommonBAPListEntity<FactoryModelEntity>>> factoryUnitRef2Query(@Path("productLineId") String productLineId, @Path("processId") String processId,@QueryMap Map<String,Object> paramMap);
 
     /**
      * 工序工作单元update

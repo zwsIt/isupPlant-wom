@@ -140,7 +140,8 @@ public class PutInAgileReportDetailAdapter extends BaseListDataRecyclerViewAdapt
 
         @Override
         protected void update(PutInDetailEntity data) {
-            materialName.setContent(data.getMaterialId() == null ? "" : String.format("%s(%s)", data.getMaterialId().getName(), data.getMaterialId().getCode()));
+
+            materialName.setContent(data.getMaterialId().getId()==null ? "" : String.format("%s(%s)", data.getMaterialId().getName(), data.getMaterialId().getCode()));
             batchNum.setContent(data.getMaterialBatchNum());
             numEt.setContent(data.getPutinNum() == null ? "" : String.valueOf(data.getPutinNum()));
             warehouseTv.setContent(data.getWareId() == null ? "" : data.getWareId().getName());

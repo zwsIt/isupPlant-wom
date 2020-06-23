@@ -6,6 +6,8 @@ import android.support.annotation.NonNull;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
+import android.widget.ImageButton;
+import android.widget.TextView;
 
 import com.app.annotation.BindByTag;
 import com.app.annotation.Presenter;
@@ -49,11 +51,16 @@ import io.reactivex.schedulers.Schedulers;
 @Router(Constant.Router.WOM_FACTORY_LIST)
 @Presenter(value = {FactoryModelPresenter.class})
 public class FactoryModelUnitListActivity extends BaseRefreshRecyclerActivity<FactoryModelEntity> implements FactoryModelContract.View {
-    @BindByTag("searchTitleBar")
-    CustomHorizontalSearchTitleBar searchTitleBar;
+//    @BindByTag("searchTitleBar")
+//    CustomHorizontalSearchTitleBar searchTitleBar;
     @BindByTag("contentView")
     RecyclerView contentView;
 
+    @BindByTag("leftBtn")
+    ImageButton leftBtn;
+
+    @BindByTag("titleText")
+    TextView titleText;
     Map<String, Object> queryParams = new HashMap<>();
     Map<String, Object> customCondition = new HashMap<>();
     private FactoryModelUnitListAdapter mFactoryModelUnitListAdapter;
@@ -94,25 +101,31 @@ public class FactoryModelUnitListActivity extends BaseRefreshRecyclerActivity<Fa
     protected void initView() {
         super.initView();
         StatusBarUtils.setWindowStatusBarColor(this, R.color.themeColor);
-        searchTitleBar.searchView().setHint("请输入工作单元名称");
-        searchTitleBar.disableRightBtn();
+        titleText.setText("工作单元");
+//        searchTitleBar.searchView().setHint("请输入工作单元名称");
+//        searchTitleBar.disableRightBtn();
     }
 
     @SuppressLint("CheckResult")
     @Override
     protected void initListener() {
         super.initListener();
-        searchTitleBar.leftBtn().setOnClickListener(v -> finish());
-        refreshListController.setOnRefreshPageListener(pageIndex -> presenterRouter.create(FactoryModelAPI.class).listFactoryModelUnit(pageIndex, customCondition, queryParams));
-        RxTextView.textChanges(searchTitleBar.editText())
-                .skipInitialValue()
-                .debounce(300, TimeUnit.MILLISECONDS)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(charSequence -> {
-                    queryParams.put(Constant.BAPQuery.NAME, charSequence.toString().trim());
-                    refreshListController.refreshBegin();
-                });
+        leftBtn.setOnClickListener(v -> finish());
+
+//        refreshListController.setOnRefreshPageListener(pageIndex ->
+//                presenterRouter.create(FactoryModelAPI.class).listFactoryModelUnit(pageIndex, customCondition, queryParams));
+        refreshListController.setOnRefreshListener(()->{
+            presenterRouter.create(FactoryModelAPI.class).listFactoryModelUnit(1, customCondition, queryParams);
+        });
+//        RxTextView.textChanges(searchTitleBar.editText())
+//                .skipInitialValue()
+//                .debounce(300, TimeUnit.MILLISECONDS)
+//                .subscribeOn(Schedulers.io())
+//                .observeOn(AndroidSchedulers.mainThread())
+//                .subscribe(charSequence -> {
+//                    queryParams.put(Constant.BAPQuery.NAME, charSequence.toString().trim());
+//                    refreshListController.refreshBegin();
+//                });
 
         mFactoryModelUnitListAdapter.setOnItemChildViewClickListener((childView, position, action, obj) -> {
             SelectDataEvent<FactoryModelEntity> dataEvent = new SelectDataEvent<>((FactoryModelEntity) obj,"");
