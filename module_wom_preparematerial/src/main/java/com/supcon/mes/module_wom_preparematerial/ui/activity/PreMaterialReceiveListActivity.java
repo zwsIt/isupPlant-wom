@@ -59,14 +59,11 @@ public class PreMaterialReceiveListActivity extends BaseRefreshRecyclerActivity<
     @BindByTag("titleText")
     TextView titleText;
 
-    @BindByTag("searchTitleBar")
-    CustomHorizontalSearchTitleBar searchTitleBar;
+    @BindByTag("customSearchTitleBar")
+    CustomHorizontalSearchTitleBar customSearchTitleBar;
 
     @BindByTag("searchView")
     CustomSearchView searchView;
-
-    @BindByTag("submitRightBtn")
-    ImageView submitRightBtn;
 
     @BindByTag("contentView")
     RecyclerView contentView;
@@ -99,9 +96,9 @@ public class PreMaterialReceiveListActivity extends BaseRefreshRecyclerActivity<
     protected void initView() {
         super.initView();
         StatusBarUtils.setWindowStatusBarColor(this, com.supcon.mes.module_wom_producetask.R.color.themeColor);
-        searchTitleBar.searchView().setHint("请输入派送单号/物料批号");
-        ViewUtil.setPaddingRight(searchTitleBar.searchView(), ViewUtil.dpToPx(context, 80));
-
+        ViewUtil.setPaddingRight(customSearchTitleBar.searchView(), ViewUtil.dpToPx(context, 80));
+        titleText.setText(R.string.wom_prepare_material_receive_list);
+        getController(SearchViewController.class).setExpandValue("请输入派送单号", "搜索");
         contentView.setLayoutManager(new LinearLayoutManager(context));
         contentView.addItemDecoration(new SpaceItemDecoration(DisplayUtil.dip2px(5, context)));
 
@@ -120,7 +117,7 @@ public class PreMaterialReceiveListActivity extends BaseRefreshRecyclerActivity<
                     }
                 });
 
-        RxView.clicks(submitRightBtn)
+        RxView.clicks(customSearchTitleBar.rightBtn())
                 .throttleFirst(200, TimeUnit.MILLISECONDS)
                 .subscribe(new Consumer<Object>() {
                     @Override
@@ -137,7 +134,6 @@ public class PreMaterialReceiveListActivity extends BaseRefreshRecyclerActivity<
             }
         });
 
-        getController(SearchViewController.class).setExpandValue("请输入派送单号", "搜索");
         getController(SearchViewController.class).setSearchList(new SearchViewController.SearchResultListener() {
             @Override
             public void searchResult(ISearchContent data) {
@@ -154,11 +150,7 @@ public class PreMaterialReceiveListActivity extends BaseRefreshRecyclerActivity<
 
             @Override
             public void isExpandSearch(boolean isExpand) {
-                if (isExpand) {
-                    submitRightBtn.setVisibility(View.GONE);
-                } else {
-                    submitRightBtn.setVisibility(View.VISIBLE);
-                }
+
             }
         });
     }

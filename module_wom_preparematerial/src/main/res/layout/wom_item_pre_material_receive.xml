@@ -4,6 +4,7 @@
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
+    android:background="@drawable/sh_white"
     android:paddingTop="@dimen/dp_5"
     android:paddingBottom="@dimen/dp_5">
     <RelativeLayout
@@ -21,7 +22,7 @@
             android:layout_centerVertical="true"
             />
         <com.supcon.mes.mbap.view.CustomTextView
-            android:layout_width="150dp"
+            android:layout_width="120dp"
             android:layout_height="25dp"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
@@ -30,11 +31,11 @@
             app:key_color="@color/hintColor"
             app:content_color="@color/dark_text"
             app:key="派单号:"
-            app:key_width="@dimen/dp_60"
+            app:key_width="@dimen/dp_50"
             app:content_value="1234543"
             />
     </RelativeLayout>
-    <include layout="@layout/ly_line_light"/>
+    <include layout="@layout/ly_line_light_light"/>
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -51,8 +52,8 @@
             android:scaleType="center"
             android:src="@color/customBlue4"
             app:text_color="@color/white"
-            app:round_width="@dimen/dp_30"
-            app:round_height="@dimen/dp_30"
+            app:round_width="@dimen/dp_40"
+            app:round_height="@dimen/dp_40"
             app:round_text_size="18sp"
             app:padding="@dimen/dp_10"
             android:tag="itemPreMaterialReceiveIc" />
@@ -153,36 +154,60 @@
             android:tag="itemPreMaterialReceiveCheck"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
-            android:layout_marginRight="10dp"
+            android:layout_marginRight="0dp"
             android:scaleType="centerInside"
             />
     </RelativeLayout>
-    <include layout="@layout/ly_line_light"/>
+    <include layout="@layout/ly_line_light_light"/>
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="40dp"
         android:orientation="horizontal"
         android:padding="@dimen/dp_4"
+        android:layout_marginLeft="@dimen/dp_10"
+        android:layout_marginRight="@dimen/dp_10"
         >
         <com.supcon.mes.mbap.view.CustomTextView
             android:layout_width="0dp"
             android:layout_height="match_parent"
+            android:layout_weight="1"
             app:key_width="0dp"
             app:content_hint="处理人"
             app:editable="true"
+            app:text_size="12"
+            android:paddingRight="@dimen/dp_5"
             />
         <include layout="@layout/ly_vertical_line"/>
         <Spinner
             android:layout_width="0dp"
             android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:paddingLeft="@dimen/dp_5"
+            android:paddingRight="@dimen/dp_5"
             />
         <include layout="@layout/ly_vertical_line"/>
         <com.supcon.mes.mbap.view.CustomEditText
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            app:key_width="0dp"
-            app:content_hint="处理人"
+            android:layout_weight="1"
+            android:paddingLeft="8dp"
+            app:text_width="0dp"
+            app:edit_hint="输入接收数量"
             app:editable="true"
+            app:icon_visible="false"
+            app:text_size="12"
             />
     </LinearLayout>
+    <include layout="@layout/ly_line_light_light"/>
+    <com.supcon.mes.mbap.view.CustomEditText
+        android:layout_width="match_parent"
+        android:layout_height="30dp"
+        android:layout_marginLeft="@dimen/dp_10"
+        android:layout_marginRight="10dp"
+        app:text_width="0dp"
+        app:edit_hint="请输入部分接收原因"
+        app:editable="true"
+        app:text_size="12"
+        app:icon_visible="false"
+        />
 </LinearLayout>
