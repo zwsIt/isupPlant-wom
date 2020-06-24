@@ -141,7 +141,7 @@ public class OutputAgileReportDetailAdapter extends BaseListDataRecyclerViewAdap
 
         @Override
         protected void update(OutputDetailEntity data) {
-            materialName.setContent(data.getProduct() == null ? "" : String.format("%s(%s)", data.getProduct().getName(), data.getProduct().getCode()));
+            materialName.setContent(data.getProduct() == null ? "" : String.format("%s(%s)",data.getProduct().getName(),data.getProduct().getCode()));
             batchNum.setContent(data.getMaterialBatchNum());
             numEt.setContent(data.getOutputNum() == null ? "" : String.valueOf(data.getOutputNum()));
             warehouseTv.setContent(data.getWareId() == null ? "" : data.getWareId().getName());
