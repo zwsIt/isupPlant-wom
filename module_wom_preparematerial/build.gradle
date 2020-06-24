@@ -62,4 +62,5 @@ dependencies {
     implementation project(':isupplant-shell:middleware')
     annotationProcessor "com.supcon.mes.common:apt:$rootProject.ext.aptVersion@jar"
     implementation project(path: ':isupplant-wom:module_wom_producetask')
+    implementation project(path: ':isupplant-shell:module_search')
 }
