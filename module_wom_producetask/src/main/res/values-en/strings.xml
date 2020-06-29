@@ -79,4 +79,7 @@
     <string name="wom_null_list">原因列表为空，请尝试重启应用</string>
     <string name="wom_report">报工</string>
     <string name="wom_putin_num_compare">用料量禁止大于可用量:</string>
+    <string name="wom_receive_reason_all">接收</string>
+    <string name="wom_receive_reason_part">部分接收</string>
+    <string name="wom_receive_reason_none">拒收</string>
 </resources>

@@ -47,7 +47,8 @@ public interface WomConstant {
         String RM_activeType_PIPE_BATCH_PUTIN = "RM_activeType/pipeBatchPutin";// 管道投配料
         String RM_activeType_PIPE_OUTPUT = "RM_activeType/pipeOutput";         // 管道产出
 
-
+        String WOM_receiveState = "WOM_receiveState";
+        String WOM_rejectReason = "WOM_rejectReason";
     }
 
     /**

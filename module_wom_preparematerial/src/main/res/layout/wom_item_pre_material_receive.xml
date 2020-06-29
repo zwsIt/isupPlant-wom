@@ -20,7 +20,8 @@
             android:textSize="15sp"
             android:text="bathmartalil_05212102d1"
             android:layout_centerVertical="true"
-            />
+            android:id="@+id/itemPreMaterialReceiveTableNo"
+            android:tag="itemPreMaterialReceiveTableNo" />
         <com.supcon.mes.mbap.view.CustomTextView
             android:layout_width="120dp"
             android:layout_height="25dp"
@@ -33,7 +34,8 @@
             app:key="派单号:"
             app:key_width="@dimen/dp_50"
             app:content_value="1234543"
-            />
+            android:id="@+id/itemPreMaterialReceiveDeliverCode"
+            android:tag="itemPreMaterialReceiveDeliverCode" />
     </RelativeLayout>
     <include layout="@layout/ly_line_light_light"/>
     <RelativeLayout
@@ -176,7 +178,8 @@
             app:editable="true"
             app:text_size="12"
             android:paddingRight="@dimen/dp_5"
-            />
+            android:id="@+id/itemPreMaterialReceiveStaff"
+            android:tag="itemPreMaterialReceiveStaff" />
         <include layout="@layout/ly_vertical_line"/>
         <Spinner
             android:layout_width="0dp"
@@ -184,6 +187,10 @@
             android:layout_weight="1"
             android:paddingLeft="@dimen/dp_5"
             android:paddingRight="@dimen/dp_5"
+            android:id="@+id/itemPreMaterialReceiveReasons"
+            android:tag="itemPreMaterialReceiveReasons"
+            android:prompt="@string/wom_receive_reason_all"
+            android:background="@drawable/sh_spinner_drop_down_blue"
             />
         <include layout="@layout/ly_vertical_line"/>
         <com.supcon.mes.mbap.view.CustomEditText
@@ -196,7 +203,8 @@
             app:editable="true"
             app:icon_visible="false"
             app:text_size="12"
-            />
+            android:id="@+id/itemPreMaterialReceiveRealNum"
+            android:tag="itemPreMaterialReceiveRealNum" />
     </LinearLayout>
     <include layout="@layout/ly_line_light_light"/>
     <com.supcon.mes.mbap.view.CustomEditText
@@ -209,5 +217,34 @@
         app:editable="true"
         app:text_size="12"
         app:icon_visible="false"
-        />
+        android:visibility="gone"
+        android:id="@+id/itemPreMaterialReceiveReason"
+        android:tag="itemPreMaterialReceiveReason" />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:orientation="horizontal"
+        android:layout_marginLeft="@dimen/dp_10"
+        android:layout_marginRight="@dimen/dp_10"
+        android:gravity="center_vertical"
+        android:id="@+id/itemPreMaterialRejectReasonLayout"
+        android:visibility="gone"
+        android:tag="itemPreMaterialRejectReasonLayout">
+        <TextView
+            android:layout_width="60dp"
+            android:layout_height="wrap_content"
+            android:text="拒收原因:"
+            android:textColor="@color/dark_text"
+            android:textSize="12sp"
+            />
+        <android.support.v7.widget.RecyclerView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/itemPreMaterialRejectReasonView"
+            android:tag="itemPreMaterialRejectReasonView"
+            app:grivate="left"
+            android:layout_gravity="left"
+            />
+    </LinearLayout>
+
 </LinearLayout>

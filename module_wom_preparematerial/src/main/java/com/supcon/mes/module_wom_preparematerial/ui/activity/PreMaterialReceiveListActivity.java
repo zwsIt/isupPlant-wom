@@ -25,9 +25,12 @@ import com.supcon.mes.mbap.utils.ViewUtil;
 import com.supcon.mes.mbap.view.CustomHorizontalSearchTitleBar;
 import com.supcon.mes.mbap.view.CustomSearchView;
 import com.supcon.mes.middleware.constant.Constant;
+import com.supcon.mes.middleware.controller.SystemCodeController;
+import com.supcon.mes.middleware.controller.SystemCodeJsonController;
 import com.supcon.mes.middleware.model.bean.CommonBAPListEntity;
 import com.supcon.mes.middleware.model.bean.SearchHistoryEntity;
 import com.supcon.mes.middleware.model.inter.ISearchContent;
+import com.supcon.mes.middleware.model.inter.SystemCode;
 import com.supcon.mes.middleware.util.ErrorMsgHelper;
 import com.supcon.mes.module_search.controller.SearchViewController;
 import com.supcon.mes.module_wom_preparematerial.R;
@@ -36,7 +39,9 @@ import com.supcon.mes.module_wom_preparematerial.model.bean.PreMaterialEntity;
 import com.supcon.mes.module_wom_preparematerial.model.contract.PreMaterialReceiveListContract;
 import com.supcon.mes.module_wom_preparematerial.presenter.PreMaterialReceiveListPresenter;
 import com.supcon.mes.module_wom_preparematerial.ui.adapter.PreMaterialReceiveListAdapter;
+import com.supcon.mes.module_wom_producetask.constant.WomConstant;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -50,8 +55,10 @@ import io.reactivex.functions.Consumer;
  */
 @Router(Constant.AppCode.WOM_AdjustMaterial)
 @Presenter(PreMaterialReceiveListPresenter.class)
-@Controller(SearchViewController.class)
-public class PreMaterialReceiveListActivity extends BaseRefreshRecyclerActivity<PreMaterialEntity> implements PreMaterialReceiveListContract.View {
+@Controller(value = {SearchViewController.class, SystemCodeJsonController.class})
+@SystemCode(entityCodes = {WomConstant.SystemCode.WOM_receiveState, WomConstant.SystemCode.WOM_rejectReason})
+public class PreMaterialReceiveListActivity extends BaseRefreshRecyclerActivity<PreMaterialEntity> implements
+        PreMaterialReceiveListContract.View{
 
     @BindByTag("leftBtn")
     ImageButton leftBtn;
@@ -162,10 +169,27 @@ public class PreMaterialReceiveListActivity extends BaseRefreshRecyclerActivity<
 
     @Override
     public void getPreMaterialReceiveListSuccess(CommonBAPListEntity entity) {
+
         if(entity == null || entity.result == null){
             refreshListController.refreshComplete(null);
             return;
         }
+
+        if(entity.pageNo == 1){
+            Map<String,String> rejectReasons =  getController(SystemCodeJsonController.class).getCodeMap(WomConstant.SystemCode.WOM_rejectReason);
+            List<String> rejectReasonList = new ArrayList<>();
+            if(rejectReasons!=null && rejectReasons.size()!=0){
+                rejectReasonList.addAll(rejectReasons.values());
+                mPreMaterialReceiveListAdapter.setRejectReasons(rejectReasonList);
+            }
+
+            Map<String,String> receiveStates =  getController(SystemCodeJsonController.class).getCodeMap(WomConstant.SystemCode.WOM_receiveState);
+
+            if(receiveStates!=null && receiveStates.size()!=0){
+                mPreMaterialReceiveListAdapter.setRejectStates(receiveStates);
+            }
+        }
+
         refreshListController.refreshComplete(entity.result);
     }
 
