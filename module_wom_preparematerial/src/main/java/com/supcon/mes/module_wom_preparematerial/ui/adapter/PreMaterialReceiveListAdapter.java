@@ -32,8 +32,8 @@ import java.util.Map;
  */
 public class PreMaterialReceiveListAdapter extends BaseListDataRecyclerViewAdapter<PreMaterialEntity> {
 
-    private List<String> rejectReasons;
-    private Map<String, String> rejectStates;
+    private List<String> rejectReasons ;
+    private Map<String, String> receiveStates;
     private RejectReasonAdapter mRejectReasonAdapter;
 
     public PreMaterialReceiveListAdapter(Context context) {
@@ -60,8 +60,8 @@ public class PreMaterialReceiveListAdapter extends BaseListDataRecyclerViewAdapt
         mRejectReasonAdapter.notifyDataSetChanged();
     }
 
-    public void setRejectStates(Map<String, String> rejectStates) {
-        this.rejectStates = rejectStates;
+    public void setRejectStates(Map<String, String> receiveStates) {
+        this.receiveStates = receiveStates;
     }
 
     class PreMaterialReceiveViewHolder extends BaseRecyclerViewHolder<PreMaterialEntity>{
@@ -70,7 +70,7 @@ public class PreMaterialReceiveListAdapter extends BaseListDataRecyclerViewAdapt
         TextView itemPreMaterialReceiveTableNo;
 
         @BindByTag("itemPreMaterialReceiveDeliverCode")
-        TextView itemPreMaterialReceiveDeliverCode;
+        CustomTextView itemPreMaterialReceiveDeliverCode;
 
         @BindByTag("itemPreMaterialReceiveIc")
         CustomRoundTextImageView itemPreMaterialReceiveIc;
@@ -124,10 +124,13 @@ public class PreMaterialReceiveListAdapter extends BaseListDataRecyclerViewAdapt
         protected void initView() {
             super.initView();
             itemPreMaterialRejectReasonView.setAdapter(mRejectReasonAdapter);
-            if(rejectStates!=null && rejectStates.size()!=0){
-                ArrayAdapter<String> adapter = new ArrayAdapter<>(context, R.layout.ly_spinner_item_dark, (List<String>) rejectStates.values());
+            if(receiveStates!=null && receiveStates.size()!=0){
+                List<String> receiveStateStr= new ArrayList<>();
+                receiveStateStr.addAll( receiveStates.values());
+                ArrayAdapter<String> adapter = new ArrayAdapter<>(context, R.layout.ly_spinner_item_dark, receiveStateStr);
                 adapter.setDropDownViewResource(R.layout.ly_spinner_dropdown_item);
                 itemPreMaterialReceiveReasons.setAdapter(adapter);
+                itemPreMaterialReceiveReasons.setSelection(1);
             }
         }
 
@@ -149,8 +152,8 @@ public class PreMaterialReceiveListAdapter extends BaseListDataRecyclerViewAdapt
                     if(TextUtils.isEmpty(value)){
                         return;
                     }
-                    for(String key: rejectStates.keySet()){
-                        if(value.equals(rejectStates.get(key))){
+                    for(String key: receiveStates.keySet()){
+                        if(value.equals(receiveStates.get(key))){
                             if("WOM_receiveState/partReceive".equals(key)){
                                 itemPreMaterialReceiveReason.setVisibility(View.VISIBLE);
                             }
@@ -173,7 +176,7 @@ public class PreMaterialReceiveListAdapter extends BaseListDataRecyclerViewAdapt
         @Override
         protected void update(PreMaterialEntity data) {
             itemPreMaterialReceiveTableNo.setText(data.preOrderId.orderTableNo);
-            itemPreMaterialReceiveDeliverCode.setText(data.deliverCode);
+            itemPreMaterialReceiveDeliverCode.setContent(data.deliverCode!=null?data.deliverCode:"");
             if(data.materialId!=null && data.materialId.name!=null){
                 StringBuilder stringBuilder = new StringBuilder();
                 stringBuilder.append(data.materialId.name);
@@ -204,7 +207,7 @@ public class PreMaterialReceiveListAdapter extends BaseListDataRecyclerViewAdapt
             ///=====================//
             itemPreMaterialReceiveStaff.setContent(SupPlantApplication.getAccountInfo().getStaffName());
 
-            if("WOM_receiveState/partReceive".equals(data.receiveState.id)){
+            if(data.receiveState!=null && "WOM_receiveState/partReceive".equals(data.receiveState.id)){
                 itemPreMaterialReceiveReason.setContent(data.remark);
                 itemPreMaterialReceiveReason.setVisibility(View.VISIBLE);
             }
@@ -212,7 +215,7 @@ public class PreMaterialReceiveListAdapter extends BaseListDataRecyclerViewAdapt
                 itemPreMaterialReceiveReason.setVisibility(View.GONE);
             }
 
-            if("WOM_receiveState/reject".equals(data.receiveState.id)){
+            if(data.receiveState!=null && "WOM_receiveState/reject".equals(data.receiveState.id)){
                 itemPreMaterialRejectReasonView.setVisibility(View.VISIBLE);
                 if(data.receiveReason!=null && data.receiveReason.value!=null) {
                     mRejectReasonAdapter.setPosition(rejectReasons.indexOf(data.receiveReason.value));

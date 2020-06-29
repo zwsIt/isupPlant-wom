@@ -97,7 +97,7 @@ public class RejectReasonAdapter extends BaseListDataRecyclerViewAdapter<String>
 
         @Override
         protected int layoutId() {
-            return com.supcon.mes.mbap.R.layout.item_filter;
+            return R.layout.wom_item_reject_reason;
         }
 
         @Override
