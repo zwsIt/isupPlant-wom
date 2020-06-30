@@ -4,14 +4,16 @@
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
-    android:background="@drawable/sh_white"
+    android:background="@drawable/sh_white_stroke"
     android:paddingTop="@dimen/dp_5"
-    android:paddingBottom="@dimen/dp_5">
+    android:paddingBottom="@dimen/dp_5"
+    >
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="30dp"
         android:paddingLeft="@dimen/dp_12"
-        android:paddingRight="@dimen/dp_12"
+        android:paddingRight="@dimen/dp_5"
+
         >
         <TextView
             android:layout_width="wrap_content"
@@ -23,7 +25,7 @@
             android:id="@+id/itemPreMaterialReceiveTableNo"
             android:tag="itemPreMaterialReceiveTableNo" />
         <com.supcon.mes.mbap.view.CustomTextView
-            android:layout_width="130dp"
+            android:layout_width="120dp"
             android:layout_height="25dp"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
@@ -48,15 +50,15 @@
         >
         <com.supcon.mes.mbap.view.CustomRoundTextImageView
             android:id="@+id/itemPreMaterialReceiveIc"
-            android:layout_width="80dp"
-            android:layout_height="80dp"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
             android:layout_marginTop="10dp"
             android:scaleType="center"
             android:src="@color/customBlue4"
             app:text_color="@color/white"
-            app:round_width="@dimen/dp_40"
-            app:round_height="@dimen/dp_40"
-            app:round_text_size="20sp"
+            app:round_width="@dimen/dp_30"
+            app:round_height="@dimen/dp_30"
+            app:round_text_size="18sp"
             app:padding="@dimen/dp_10"
             android:tag="itemPreMaterialReceiveIc" />
         <LinearLayout
@@ -64,7 +66,7 @@
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:layout_toRightOf="@+id/itemPreMaterialReceiveIc"
-            android:layout_marginLeft="@dimen/dp_10"
+            android:layout_marginLeft="@dimen/dp_20"
             >
             <TextView
                 android:layout_width="wrap_content"
@@ -155,7 +157,6 @@
             android:id="@+id/itemPreMaterialReceiveCheck"
             android:tag="itemPreMaterialReceiveCheck"
             android:layout_alignParentRight="true"
-            android:layout_centerVertical="true"
             android:layout_marginRight="0dp"
             android:scaleType="centerInside"
             />
@@ -166,8 +167,8 @@
         android:layout_height="40dp"
         android:orientation="horizontal"
         android:padding="@dimen/dp_4"
-        android:layout_marginLeft="@dimen/dp_10"
-        android:layout_marginRight="@dimen/dp_10"
+        android:layout_marginLeft="@dimen/dp_5"
+        android:layout_marginRight="@dimen/dp_5"
         >
         <com.supcon.mes.mbap.view.CustomTextView
             android:layout_width="0dp"
@@ -176,7 +177,9 @@
             app:key_width="0dp"
             app:content_hint="处理人"
             app:editable="true"
-            app:text_size="12"
+            app:text_size="14"
+            app:necessary="true"
+            app:text_color="@color/dark_text"
             android:paddingRight="@dimen/dp_5"
             android:id="@+id/itemPreMaterialReceiveStaff"
             android:tag="itemPreMaterialReceiveStaff" />
@@ -201,11 +204,19 @@
             app:edit_hint="输入接收数量"
             app:editable="true"
             app:icon_visible="false"
-            app:text_size="12"
+            app:text_size="14"
+            app:necessary="true"
+            app:text_color="@color/dark_text"
             android:id="@+id/itemPreMaterialReceiveRealNum"
             android:tag="itemPreMaterialReceiveRealNum" />
     </LinearLayout>
-    <include layout="@layout/ly_line_light_light"/>
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/line_gray_light"
+        android:id="@+id/itemPreMaterialReceiveLine" android:tag="itemPreMaterialReceiveLine"
+        />
+
     <com.supcon.mes.mbap.view.CustomEditText
         android:layout_width="match_parent"
         android:layout_height="30dp"
@@ -214,7 +225,8 @@
         app:text_width="0dp"
         app:edit_hint="请输入部分接收原因"
         app:editable="true"
-        app:text_size="12"
+        app:text_size="14"
+        app:necessary="true"
         app:icon_visible="false"
         android:visibility="gone"
         android:id="@+id/itemPreMaterialReceiveReason"
@@ -225,23 +237,25 @@
         android:orientation="horizontal"
         android:layout_marginLeft="@dimen/dp_10"
         android:layout_marginRight="@dimen/dp_10"
-        android:gravity="center_vertical"
         android:id="@+id/itemPreMaterialRejectReasonLayout"
         android:visibility="gone"
+        android:paddingTop="@dimen/dp_8"
         android:tag="itemPreMaterialRejectReasonLayout">
         <TextView
-            android:layout_width="60dp"
+            android:layout_width="70dp"
             android:layout_height="wrap_content"
-            android:text="拒收原因:"
+            android:text="拒收原因"
             android:textColor="@color/dark_text"
-            android:textSize="12sp"
-            />
+            android:textSize="14sp"
+            android:layout_gravity="center_vertical"
+            android:id="@+id/itemPreMaterialRejectReasonViewText"
+            android:tag="itemPreMaterialRejectReasonViewText" />
         <android.support.v7.widget.RecyclerView
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/dp_12"
             android:id="@+id/itemPreMaterialRejectReasonView"
             android:tag="itemPreMaterialRejectReasonView"
-            app:grivate="left"
             android:layout_gravity="left"
             />
     </LinearLayout>

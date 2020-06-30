@@ -72,14 +72,16 @@ public class PreMaterialEntity extends BaseEntity {
     public Long prePareDate;
     public StaffEntity preStaff;
     public ObjectEntity materialId;
-    public Long receiveDate;
+
     public SystemCodeEntity recordState;
     public ObjectEntity toStoreId;
     public ObjectEntity toWareId;
     public String remark;
-
+    public Long receiveDate;
     public SystemCodeEntity receiveState;
     public SystemCodeEntity receiveReason;
     public Float receiveNum;
     public ObjectEntity receiveStaff;
+
+    public boolean isChecked;
 }

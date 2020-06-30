@@ -108,14 +108,16 @@ public class RejectReasonAdapter extends BaseListDataRecyclerViewAdapter<String>
                     rejectReasonName.setTextColor(textColor);
                 }
                 else{
-                    rejectReasonName.setTextColor(context.getResources().getColor(com.supcon.mes.mbap.R.color.textColorlightblack));
+                    rejectReasonName.setTextColor(context.getResources().getColor(R.color.white));
+                    rejectReasonName.setBackgroundResource(R.drawable.sh_reject_reason_checked);
                 }
 
 //                filterName.setBackgroundResource(R.drawable.sh_filter_light_blue);
             }
             else{
-                rejectReasonName.setTextColor(context.getResources().getColor(com.supcon.mes.mbap.R.color.textColorlightblack));
+                rejectReasonName.setTextColor(context.getResources().getColor(R.color.dark_text99));
 //                filterName.setBackgroundResource(R.drawable.sl_transparent_press_no_stroke);
+                rejectReasonName.setBackgroundResource(R.drawable.sh_reject_reason_uncheck);
             }
             rejectReasonName.setText(data);
         }
@@ -126,7 +128,7 @@ public class RejectReasonAdapter extends BaseListDataRecyclerViewAdapter<String>
             RejectReasonAdapter.this.position = position;
             String reason = getItem(position);
             onItemChildViewClick(v, 0, reason);
-
+            notifyDataSetChanged();
         }
     }
 

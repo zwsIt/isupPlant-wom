@@ -38,7 +38,10 @@
         <LinearLayout
             android:orientation="vertical"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:layout_marginLeft="@dimen/dp_5"
+            android:layout_marginRight="@dimen/dp_5"
+            >
             <include layout="@layout/ly_recyclerview_with_scrollbar"/>
         </LinearLayout>
 

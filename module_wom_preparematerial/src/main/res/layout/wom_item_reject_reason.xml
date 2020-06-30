@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <TextView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="80dp"
-    android:layout_height="60dp"
+    android:layout_width="44dp"
+    android:layout_height="24dp"
     android:id="@+id/rejectReasonName"
     android:gravity="center"
     android:textSize="@dimen/fontSize_14sp"

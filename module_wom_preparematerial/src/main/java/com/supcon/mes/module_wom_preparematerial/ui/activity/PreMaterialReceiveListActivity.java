@@ -1,8 +1,10 @@
 package com.supcon.mes.module_wom_preparematerial.ui.activity;
 
 import android.annotation.SuppressLint;
+import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -13,40 +15,59 @@ import com.app.annotation.Controller;
 import com.app.annotation.Presenter;
 import com.app.annotation.apt.Router;
 import com.jakewharton.rxbinding2.view.RxView;
+import com.jakewharton.rxbinding2.widget.RxTextView;
 import com.supcon.common.view.base.activity.BaseRefreshRecyclerActivity;
 import com.supcon.common.view.base.adapter.IListAdapter;
+import com.supcon.common.view.listener.OnItemChildViewClickListener;
 import com.supcon.common.view.listener.OnRefreshPageListener;
 import com.supcon.common.view.util.DisplayUtil;
 import com.supcon.common.view.util.LogUtil;
 import com.supcon.common.view.util.StatusBarUtils;
+import com.supcon.common.view.util.ToastUtils;
 import com.supcon.mes.mbap.utils.GsonUtil;
 import com.supcon.mes.mbap.utils.SpaceItemDecoration;
 import com.supcon.mes.mbap.utils.ViewUtil;
 import com.supcon.mes.mbap.view.CustomHorizontalSearchTitleBar;
 import com.supcon.mes.mbap.view.CustomSearchView;
+import com.supcon.mes.middleware.IntentRouter;
 import com.supcon.mes.middleware.constant.Constant;
 import com.supcon.mes.middleware.controller.SystemCodeController;
 import com.supcon.mes.middleware.controller.SystemCodeJsonController;
+import com.supcon.mes.middleware.model.bean.BAP5CommonEntity;
 import com.supcon.mes.middleware.model.bean.CommonBAPListEntity;
+import com.supcon.mes.middleware.model.bean.ContactEntity;
+import com.supcon.mes.middleware.model.bean.ObjectEntity;
 import com.supcon.mes.middleware.model.bean.SearchHistoryEntity;
+import com.supcon.mes.middleware.model.event.SelectDataEvent;
 import com.supcon.mes.middleware.model.inter.ISearchContent;
 import com.supcon.mes.middleware.model.inter.SystemCode;
 import com.supcon.mes.middleware.util.ErrorMsgHelper;
 import com.supcon.mes.module_search.controller.SearchViewController;
 import com.supcon.mes.module_wom_preparematerial.R;
 import com.supcon.mes.module_wom_preparematerial.model.api.PreMaterialReceiveListAPI;
+import com.supcon.mes.module_wom_preparematerial.model.api.PreMaterialReceiveSubmitAPI;
 import com.supcon.mes.module_wom_preparematerial.model.bean.PreMaterialEntity;
+import com.supcon.mes.module_wom_preparematerial.model.bean.PreMaterialSubmitEntity;
+import com.supcon.mes.module_wom_preparematerial.model.bean.PreResultEntity;
 import com.supcon.mes.module_wom_preparematerial.model.contract.PreMaterialReceiveListContract;
+import com.supcon.mes.module_wom_preparematerial.model.contract.PreMaterialReceiveSubmitContract;
 import com.supcon.mes.module_wom_preparematerial.presenter.PreMaterialReceiveListPresenter;
+import com.supcon.mes.module_wom_preparematerial.presenter.PreMaterialReceiveSubmitPresenter;
 import com.supcon.mes.module_wom_preparematerial.ui.adapter.PreMaterialReceiveListAdapter;
 import com.supcon.mes.module_wom_producetask.constant.WomConstant;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
+import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.functions.Consumer;
 
 /**
@@ -54,11 +75,11 @@ import io.reactivex.functions.Consumer;
  * Email:wangshizhan@supcom.com
  */
 @Router(Constant.AppCode.WOM_AdjustMaterial)
-@Presenter(PreMaterialReceiveListPresenter.class)
+@Presenter(value = {PreMaterialReceiveListPresenter.class, PreMaterialReceiveSubmitPresenter.class})
 @Controller(value = {SearchViewController.class, SystemCodeJsonController.class})
 @SystemCode(entityCodes = {WomConstant.SystemCode.WOM_receiveState, WomConstant.SystemCode.WOM_rejectReason})
 public class PreMaterialReceiveListActivity extends BaseRefreshRecyclerActivity<PreMaterialEntity> implements
-        PreMaterialReceiveListContract.View{
+        PreMaterialReceiveListContract.View, PreMaterialReceiveSubmitContract.View {
 
     @BindByTag("leftBtn")
     ImageButton leftBtn;
@@ -69,8 +90,8 @@ public class PreMaterialReceiveListActivity extends BaseRefreshRecyclerActivity<
     @BindByTag("customSearchTitleBar")
     CustomHorizontalSearchTitleBar customSearchTitleBar;
 
-    @BindByTag("searchView")
-    CustomSearchView searchView;
+    @BindByTag("customSearchView")
+    CustomSearchView customSearchView;
 
     @BindByTag("contentView")
     RecyclerView contentView;
@@ -78,6 +99,7 @@ public class PreMaterialReceiveListActivity extends BaseRefreshRecyclerActivity<
 
     private PreMaterialReceiveListAdapter mPreMaterialReceiveListAdapter;
     private Map<String, Object> queryParams;
+    private int actionPosition = -1;
 
     @Override
     protected IListAdapter<PreMaterialEntity> createAdapter() {
@@ -97,6 +119,13 @@ public class PreMaterialReceiveListActivity extends BaseRefreshRecyclerActivity<
         refreshListController.setPullDownRefreshEnabled(false);
         queryParams = new HashMap<>();
         queryParams.put("RECORD_STATE","WOM_prePareState/waitCollecte");
+        EventBus.getDefault().register(this);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        EventBus.getDefault().unregister(this);
     }
 
     @Override
@@ -107,7 +136,7 @@ public class PreMaterialReceiveListActivity extends BaseRefreshRecyclerActivity<
         titleText.setText(R.string.wom_prepare_material_receive_list);
         getController(SearchViewController.class).setExpandValue("请输入派送单号", "搜索");
         contentView.setLayoutManager(new LinearLayoutManager(context));
-        contentView.addItemDecoration(new SpaceItemDecoration(DisplayUtil.dip2px(5, context)));
+        contentView.addItemDecoration(new SpaceItemDecoration(DisplayUtil.dip2px(8, context)));
 
     }
 
@@ -126,10 +155,12 @@ public class PreMaterialReceiveListActivity extends BaseRefreshRecyclerActivity<
 
         RxView.clicks(customSearchTitleBar.rightBtn())
                 .throttleFirst(200, TimeUnit.MILLISECONDS)
+                .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Consumer<Object>() {
                     @Override
                     public void accept(Object o) throws Exception {
                         //do submit
+                        doSubmit(mPreMaterialReceiveListAdapter.getList());
                     }
                 });
 
@@ -146,6 +177,7 @@ public class PreMaterialReceiveListActivity extends BaseRefreshRecyclerActivity<
             public void searchResult(ISearchContent data) {
                 SearchHistoryEntity historyEntity = (SearchHistoryEntity) data;
                 String content = historyEntity.getContent();
+                queryParams.put(Constant.BAPQuery.DELIVER_CODE, content);
                 refreshListController.refreshBegin();
             }
 
@@ -160,6 +192,113 @@ public class PreMaterialReceiveListActivity extends BaseRefreshRecyclerActivity<
 
             }
         });
+
+        RxTextView.textChanges(customSearchView.editText())
+                .skipInitialValue()
+                .debounce(500, TimeUnit.MILLISECONDS)
+                .subscribe(new Consumer<CharSequence>() {
+                    @Override
+                    public void accept(CharSequence charSequence) throws Exception {
+                        if(TextUtils.isEmpty(charSequence)){
+                            queryParams.remove(Constant.BAPQuery.DELIVER_CODE);
+                        }
+                        else{
+                            queryParams.put(Constant.BAPQuery.DELIVER_CODE, charSequence.toString());
+                        }
+
+                        refreshListController.refreshBegin();
+                    }
+                });
+
+        mPreMaterialReceiveListAdapter.setOnItemChildViewClickListener(new OnItemChildViewClickListener() {
+            @Override
+            public void onItemChildViewClick(View childView, int position, int action, Object obj) {
+
+                String tag = (String) childView.getTag();
+                actionPosition = position;
+                switch (tag){
+                    case "itemPreMaterialReceiveStaff":
+                        Bundle bundle = new Bundle();
+                        bundle.putBoolean(Constant.IntentKey.IS_MULTI, false);
+                        bundle.putBoolean(Constant.IntentKey.IS_SELECT, true);
+                        bundle.putString(Constant.IntentKey.SELECT_TAG, "itemPreMaterialReceiveStaff");
+                        IntentRouter.go(context, Constant.Router.CONTACT_SELECT, bundle);
+                        break;
+
+
+                }
+            }
+        });
+    }
+
+    private void doSubmit(List<PreMaterialEntity> list) {
+
+        List<PreMaterialSubmitEntity> preMaterialEntities = new ArrayList<>();
+        for(PreMaterialEntity preMaterialEntity : list){
+            if(preMaterialEntity.isChecked){
+                if(preMaterialEntity.receiveStaff==null || preMaterialEntity.receiveStaff.name==null){
+                    ToastUtils.show(context, "“接收人”不允许为空");
+                    return;
+                }
+
+
+                if(preMaterialEntity.receiveState==null){
+                    ToastUtils.show(context, "“接收类型”不允许为空");
+                    return;
+                }
+
+                if(preMaterialEntity.receiveNum==null){
+                    ToastUtils.show(context, "“接收数量”不允许为空");
+                    return;
+                }
+
+
+                if("WOM_receiveState/reject".equals(preMaterialEntity.receiveState.id) && preMaterialEntity.receiveReason==null){
+                    ToastUtils.show(context, "“拒收”时，“拒收原因”不允许为空");
+                    return;
+                }
+
+                if("WOM_receiveState/partReceive".equals(preMaterialEntity.receiveState.id) && TextUtils.isEmpty(preMaterialEntity.remark)){
+                    ToastUtils.show(context, "“部分接收”时，“部分接收原因”不允许为空");
+                    return;
+                }
+
+                preMaterialEntity.receiveDate = System.currentTimeMillis();
+
+                PreMaterialSubmitEntity submitEntity = GsonUtil.gsonToBean(preMaterialEntity.toString(), PreMaterialSubmitEntity.class);
+                preMaterialEntities.add(submitEntity);
+            }
+
+        }
+
+        if(preMaterialEntities.size() == 0){
+            ToastUtils.show(context, "请至少选择一条记录进行操作");
+            return;
+        }
+        onLoading("正在提交备料记录");
+        presenterRouter.create(PreMaterialReceiveSubmitAPI.class).doSubmitPreMaterial(preMaterialEntities);
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onDataSelect(SelectDataEvent event) {
+
+        if (event.getSelectTag().equals("itemPreMaterialReceiveStaff")) {
+            LogUtil.d("人员单选："+ GsonUtil.gsonString(event.getEntity()));
+            ContactEntity selectContactEntity = (ContactEntity) event.getEntity();
+            ObjectEntity objectEntity = new ObjectEntity(selectContactEntity.staffId);
+            objectEntity.name = selectContactEntity.name;
+
+            if(actionPosition == -1){
+                return;
+            }
+            PreMaterialEntity materialEntity = mPreMaterialReceiveListAdapter.getItem(actionPosition);
+
+            if (materialEntity == null) {
+                return;
+            }
+            materialEntity.receiveStaff = objectEntity;
+            mPreMaterialReceiveListAdapter.notifyItemChanged(actionPosition);
+        }
     }
 
     @Override
@@ -197,5 +336,22 @@ public class PreMaterialReceiveListActivity extends BaseRefreshRecyclerActivity<
     public void getPreMaterialReceiveListFailed(String errorMsg) {
         LogUtil.e(ErrorMsgHelper.msgParse(errorMsg));
         refreshListController.refreshComplete(null);
+    }
+
+
+    @Override
+    public void doSubmitPreMaterialSuccess(PreResultEntity entity) {
+        if(entity.dealSuccessFlag){
+            onLoadSuccess();
+            refreshListController.refreshBegin();
+        }
+        else{
+            onLoadFailed(""+entity.errMsg);
+        }
+    }
+
+    @Override
+    public void doSubmitPreMaterialFailed(String errorMsg) {
+        onLoadFailed(""+errorMsg);
     }
 }
