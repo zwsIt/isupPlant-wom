@@ -141,4 +141,9 @@ public class WOMWidgetActivityListFragment extends BaseRefreshRecyclerFragment<W
         ToastUtils.show(context, ErrorMsgHelper.msgParse(errorMsg));
     }
 
+    public void refresh(){
+        if (refreshListController !=null) {
+            refreshListController.refreshBegin();
+        }
+    }
 }

@@ -242,4 +242,10 @@ public class WOMWidgetProduceTaskListFragment extends BaseRefreshRecyclerFragmen
         onLoadFailed(ErrorMsgHelper.msgParse(errorMsg));
     }
 
+    public void refresh(){
+        if (refreshListController !=null) {
+            refreshListController.refreshBegin();
+        }
+    }
+
 }

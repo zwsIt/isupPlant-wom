@@ -63,6 +63,9 @@ public class WOMPendingWidget extends BaseWidgetLayout {
     protected void initView() {
         super.initView();
         widgetTitle.setText("生产待办");
+        if (context != null && context.toString().contains("com.supcon.mes.home.ui.MainActivity")) {
+            widgetMore.setImageResource(R.drawable.sl_refresh);
+        }
         initTabs();
         initViewPager();
     }
@@ -77,9 +80,10 @@ public class WOMPendingWidget extends BaseWidgetLayout {
         mWOMWidgetProduceTaskListFragment = new WOMWidgetProduceTaskListFragment();
         mWOMWidgetActivityListFragment = new WOMWidgetActivityListFragment();
 
-        LogUtil.d("contextv:"+context);
+        LogUtil.d("contextv:" + context);
 
-        womPendingVP.setAdapter(new MyFragmentAdapter(((FragmentActivity)context).getSupportFragmentManager()));
+
+        womPendingVP.setAdapter(new MyFragmentAdapter(((FragmentActivity) context).getSupportFragmentManager()));
 
         womPendingVP.setOffscreenPageLimit(2);
         womPendingTab.setCurrentTab(0);
@@ -142,6 +146,11 @@ public class WOMPendingWidget extends BaseWidgetLayout {
     }
 
     private void goProduceTaskList() {
+        if (context != null && context.toString().contains("com.supcon.mes.home.ui.MainActivity")) {
+            mWOMWidgetProduceTaskListFragment.refresh();
+            mWOMWidgetActivityListFragment.refresh();
+            return;
+        }
         IntentRouter.go(context, Constant.AppCode.WOM_Production);
     }
 
