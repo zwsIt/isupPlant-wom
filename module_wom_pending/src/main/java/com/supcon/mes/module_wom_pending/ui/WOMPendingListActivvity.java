@@ -14,7 +14,7 @@ import com.supcon.mes.module_wom_pending.ui.fragment.WOMWidgetProduceTaskListFra
  * Created by wangshizhan on 2020/6/9
  * Email:wangshizhan@supcom.com
  */
-@Router(Constant.AppCode.WOM_Pending)
+@Router("WOM_Pending_TEST")
 public class WOMPendingListActivvity extends BaseMultiFragmentActivity {
 
     @BindByTag("textTitle")

@@ -20,6 +20,8 @@ import com.supcon.mes.mbap.view.CustomTab;
 import com.supcon.mes.mbap.view.NoScrollViewPager;
 import com.supcon.mes.middleware.constant.Constant;
 import com.supcon.mes.module_wom_pending.R;
+import com.supcon.mes.module_wom_pending.controller.WOMWidgetActivityListController;
+import com.supcon.mes.module_wom_pending.controller.WOMWidgetProduceTaskListController;
 import com.supcon.mes.module_wom_pending.ui.fragment.WOMWidgetActivityListFragment;
 import com.supcon.mes.module_wom_pending.ui.fragment.WOMWidgetProduceTaskListFragment;
 import com.supcon.mes.module_wom_producetask.IntentRouter;
@@ -28,8 +30,8 @@ import com.supcon.mes.module_wom_producetask.IntentRouter;
  * Created by wangshizhan on 2020/6/9
  * Email:wangshizhan@supcom.com
  */
-//@Widget(Constant.Widget.WOM_PENDING)
-public class WOMPendingWidget extends BaseWidgetLayout {
+@Widget(Constant.Widget.WOM_PENDING)
+public class WOMPendingWidget2 extends BaseWidgetLayout {
 
     @BindByTag("widgetTitle")
     TextView widgetTitle;
@@ -40,23 +42,22 @@ public class WOMPendingWidget extends BaseWidgetLayout {
     @BindByTag("womPendingTab")
     CustomTab womPendingTab;
 
-    @BindByTag("womPendingVP")
-    NoScrollViewPager womPendingVP;
+    WOMWidgetProduceTaskListController mWOMWidgetProduceTaskListController;
+    WOMWidgetActivityListController mWOMWidgetActivityListController;
 
-    WOMWidgetProduceTaskListFragment mWOMWidgetProduceTaskListFragment;
-    WOMWidgetActivityListFragment mWOMWidgetActivityListFragment;
+    int currentPage = 0;
 
-    public WOMPendingWidget(Context context) {
+    public WOMPendingWidget2(Context context) {
         super(context);
     }
 
-    public WOMPendingWidget(Context context, AttributeSet attrs) {
+    public WOMPendingWidget2(Context context, AttributeSet attrs) {
         super(context, attrs);
     }
 
     @Override
     protected int layoutId() {
-        return R.layout.v_wom_widget_pending;
+        return R.layout.v_wom_widget_pending2;
     }
 
     @Override
@@ -67,27 +68,18 @@ public class WOMPendingWidget extends BaseWidgetLayout {
             widgetMore.setImageResource(R.drawable.sl_refresh);
         }
         initTabs();
-        initViewPager();
+        mWOMWidgetProduceTaskListController  = new WOMWidgetProduceTaskListController(rootView);
+        mWOMWidgetProduceTaskListController.onInit();
+        mWOMWidgetProduceTaskListController.initView();
+        mWOMWidgetActivityListController =  new WOMWidgetActivityListController(rootView);
+        mWOMWidgetActivityListController.onInit();
+        mWOMWidgetActivityListController.initView();
     }
 
     private void initTabs() {
         womPendingTab.addTab("指令单");
         womPendingTab.addTab("活动");
-    }
-
-    private void initViewPager() {
-
-        mWOMWidgetProduceTaskListFragment = new WOMWidgetProduceTaskListFragment();
-        mWOMWidgetActivityListFragment = new WOMWidgetActivityListFragment();
-
-        LogUtil.d("contextv:" + context);
-
-
-        womPendingVP.setAdapter(new MyFragmentAdapter(((FragmentActivity) context).getSupportFragmentManager()));
-
-        womPendingVP.setOffscreenPageLimit(2);
         womPendingTab.setCurrentTab(0);
-        womPendingVP.setCurrentItem(0);
     }
 
 
@@ -104,7 +96,8 @@ public class WOMPendingWidget extends BaseWidgetLayout {
     @Override
     protected void refresh() {
         super.refresh();
-
+        mWOMWidgetActivityListController.refresh();
+        mWOMWidgetProduceTaskListController.refresh();
     }
 
     @Override
@@ -119,63 +112,34 @@ public class WOMPendingWidget extends BaseWidgetLayout {
         });
 
         womPendingTab.setOnTabChangeListener(current -> {
-            womPendingVP.setCurrentItem(current);
+            if(current == currentPage){
+                return;
+            }
+
+            if(current == 0){
+                mWOMWidgetActivityListController.hide();
+                mWOMWidgetProduceTaskListController.show();
+                currentPage = 0;
+            }
+            else{
+                mWOMWidgetProduceTaskListController.hide();
+                mWOMWidgetActivityListController.show();
+                currentPage = 1;
+            }
 
         });
 
-        womPendingVP.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
-            @Override
-            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-
-            }
-
-            @Override
-            public void onPageSelected(int position) {
-
-                if (womPendingTab.getCurrentPosition() != position) {
-                    womPendingTab.setCurrentTab(position);
-                }
-            }
-
-            @Override
-            public void onPageScrollStateChanged(int state) {
-
-            }
-        });
-
+       mWOMWidgetActivityListController.initListener();
+       mWOMWidgetProduceTaskListController.initListener();
     }
 
     private void goProduceTaskList() {
         if (context != null && context.toString().contains("com.supcon.mes.home.ui.MainActivity")) {
-            mWOMWidgetProduceTaskListFragment.refresh();
-            mWOMWidgetActivityListFragment.refresh();
+            mWOMWidgetActivityListController.refresh();
+            mWOMWidgetProduceTaskListController.refresh();
             return;
         }
         IntentRouter.go(context, Constant.AppCode.WOM_Production);
     }
 
-    private class MyFragmentAdapter extends FragmentPagerAdapter {
-
-        public MyFragmentAdapter(FragmentManager fm) {
-            super(fm);
-        }
-
-        @Override
-        public Fragment getItem(int position) {
-            switch (position) {
-
-                case 0:
-                    return mWOMWidgetProduceTaskListFragment;
-                case 1:
-                    return mWOMWidgetActivityListFragment;
-
-            }
-            return null;
-        }
-
-        @Override
-        public int getCount() {
-            return 2;
-        }
-    }
 }
