@@ -16,6 +16,7 @@ import com.supcon.common.view.base.adapter.IListAdapter;
 import com.supcon.common.view.base.fragment.BaseRefreshRecyclerFragment;
 import com.supcon.common.view.listener.OnRefreshListener;
 import com.supcon.common.view.util.DisplayUtil;
+import com.supcon.common.view.util.LogUtil;
 import com.supcon.common.view.util.ToastUtils;
 import com.supcon.mes.mbap.view.CustomDialog;
 import com.supcon.mes.middleware.constant.Constant;
@@ -228,7 +229,8 @@ public class WOMWidgetProduceTaskListFragment extends BaseRefreshRecyclerFragmen
     @Override
     public void listWaitPutinRecordsFailed(String errorMsg) {
         refreshListController.refreshComplete();
-        ToastUtils.show(context, ErrorMsgHelper.msgParse(errorMsg));
+        LogUtil.e(ErrorMsgHelper.msgParse(errorMsg));
+//        ToastUtils.show(context, ErrorMsgHelper.msgParse(errorMsg));
     }
 
     @Override
