@@ -82,4 +82,5 @@
     <string name="wom_receive_reason_all">接收</string>
     <string name="wom_receive_reason_part">部分接收</string>
     <string name="wom_receive_reason_none">拒收</string>
+    <string name="wom_checking">检验中</string>
 </resources>

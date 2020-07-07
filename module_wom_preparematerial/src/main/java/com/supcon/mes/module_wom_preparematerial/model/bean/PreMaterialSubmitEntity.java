@@ -7,6 +7,7 @@ import com.supcon.mes.middleware.model.bean.SystemCodeEntity;
 /**
  * Created by wangshizhan on 2020/6/30
  * Email:wangshizhan@supcom.com
+ * 备料记录数据提交对象
  */
 public class PreMaterialSubmitEntity extends BaseEntity {
 
@@ -14,7 +15,7 @@ public class PreMaterialSubmitEntity extends BaseEntity {
     public String remark;
     public Long receiveDate;
     public SystemCodeUploadEntity receiveState;
-    public SystemCodeUploadEntity receiveReason;
+    public SystemCodeUploadEntity rejectReason;
     public Float receiveNum;
     public ObjectEntity receiveStaff;
 

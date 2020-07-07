@@ -78,8 +78,8 @@ public class PreMaterialEntity extends BaseEntity {
     public ObjectEntity toWareId;
     public String remark;
     public Long receiveDate;
-    public SystemCodeEntity receiveState;
-    public SystemCodeEntity receiveReason;
+    public SystemCodeEntity receiveState; // 接收状态
+    public SystemCodeEntity rejectReason; // 拒收原因
     public Float receiveNum;
     public ObjectEntity receiveStaff;
 

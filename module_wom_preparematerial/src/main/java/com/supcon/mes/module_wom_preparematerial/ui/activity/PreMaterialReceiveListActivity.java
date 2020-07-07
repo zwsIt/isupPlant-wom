@@ -118,7 +118,7 @@ public class PreMaterialReceiveListActivity extends BaseRefreshRecyclerActivity<
         refreshListController.setAutoPullDownRefresh(true);
         refreshListController.setPullDownRefreshEnabled(false);
         queryParams = new HashMap<>();
-        queryParams.put("RECORD_STATE","WOM_prePareState/waitCollecte");
+        queryParams.put("RECORD_STATE","WOM_prePareState/waitCollecte"); // 默认记录状态：待收
         EventBus.getDefault().register(this);
     }
 
@@ -131,8 +131,8 @@ public class PreMaterialReceiveListActivity extends BaseRefreshRecyclerActivity<
     @Override
     protected void initView() {
         super.initView();
-        StatusBarUtils.setWindowStatusBarColor(this, com.supcon.mes.module_wom_producetask.R.color.themeColor);
-        ViewUtil.setPaddingRight(customSearchTitleBar.searchView(), ViewUtil.dpToPx(context, 80));
+        StatusBarUtils.setWindowStatusBarColor(this, R.color.themeColor);
+//        ViewUtil.setPaddingRight(customSearchTitleBar.searchView(), ViewUtil.dpToPx(context, 80));
         titleText.setText(R.string.wom_prepare_material_receive_list);
         getController(SearchViewController.class).setExpandValue("请输入派送单号", "搜索");
         contentView.setLayoutManager(new LinearLayoutManager(context));
@@ -164,13 +164,7 @@ public class PreMaterialReceiveListActivity extends BaseRefreshRecyclerActivity<
                     }
                 });
 
-        refreshListController.setOnRefreshPageListener(new OnRefreshPageListener() {
-            @Override
-            public void onRefresh(int pageIndex) {
-
-                presenterRouter.create(PreMaterialReceiveListAPI.class).getPreMaterialReceiveList(pageIndex, queryParams);
-            }
-        });
+        refreshListController.setOnRefreshPageListener(pageIndex -> presenterRouter.create(PreMaterialReceiveListAPI.class).getPreMaterialReceiveList(pageIndex, queryParams));
 
         getController(SearchViewController.class).setSearchList(new SearchViewController.SearchResultListener() {
             @Override
@@ -253,7 +247,7 @@ public class PreMaterialReceiveListActivity extends BaseRefreshRecyclerActivity<
                 }
 
 
-                if("WOM_receiveState/reject".equals(preMaterialEntity.receiveState.id) && preMaterialEntity.receiveReason==null){
+                if("WOM_receiveState/reject".equals(preMaterialEntity.receiveState.id) && preMaterialEntity.rejectReason==null){
                     ToastUtils.show(context, "“拒收”时，“拒收原因”不允许为空");
                     return;
                 }

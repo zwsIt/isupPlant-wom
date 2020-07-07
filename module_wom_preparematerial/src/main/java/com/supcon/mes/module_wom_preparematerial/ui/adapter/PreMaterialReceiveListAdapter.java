@@ -195,19 +195,21 @@ public class PreMaterialReceiveListAdapter extends BaseListDataRecyclerViewAdapt
                     for(String key: receiveStates.keySet()){
                         if(value.equals(receiveStates.get(key))){
                             entity.receiveState = SystemCodeManager.getInstance().getSystemCodeEntity(key);
-                            itemPreMaterialReceiveRealNum.setEnabled(true);
+
                             if("WOM_receiveState/partReceive".equals(key)){
                                 itemPreMaterialReceiveLine.setVisibility(View.VISIBLE);
                                 itemPreMaterialReceiveReason.setVisibility(View.VISIBLE);
                                 itemPreMaterialRejectReasonLayout.setVisibility(View.GONE);
-
+                                itemPreMaterialReceiveRealNum.setEditable(true);
+                                itemPreMaterialReceiveRealNum.setContent(null);
+                                entity.receiveNum = null;
                             }
                             else if("WOM_receiveState/reject".equals(key)){
                                 itemPreMaterialReceiveLine.setVisibility(View.VISIBLE);
                                 itemPreMaterialReceiveReason.setVisibility(View.GONE);
                                 itemPreMaterialRejectReasonLayout.setVisibility(View.VISIBLE);
-                                if(entity.receiveReason!=null && entity.receiveReason.value!=null) {
-                                    mRejectReasonAdapter.setPosition(rejectReasons.indexOf(entity.receiveReason.value));
+                                if(entity.rejectReason!=null && entity.rejectReason.value!=null) {
+                                    mRejectReasonAdapter.setPosition(rejectReasons.indexOf(entity.rejectReason.value));
                                 }
                                 else{
                                     mRejectReasonAdapter.setPosition(-1);
@@ -216,8 +218,11 @@ public class PreMaterialReceiveListAdapter extends BaseListDataRecyclerViewAdapt
                                 mRejectReasonAdapter.notifyDataSetChanged();
 
                                 itemPreMaterialReceiveRealNum.setEnabled(false);
+                                itemPreMaterialReceiveRealNum.setContent(null);
+                                entity.receiveNum = null;
                             }
                             else{
+                                itemPreMaterialReceiveRealNum.setEnabled(false);
                                 if(entity.preNum!=null)
                                     itemPreMaterialReceiveRealNum.setContent(String.valueOf(entity.preNum));
                                 itemPreMaterialReceiveLine.setVisibility(View.GONE);
@@ -255,7 +260,7 @@ public class PreMaterialReceiveListAdapter extends BaseListDataRecyclerViewAdapt
                 public void onItemChildViewClick(View childView, int position, int action, Object obj) {
                     String reason = (String) obj;
                     PreMaterialEntity materialEntity = getItem(getAdapterPosition());
-                    materialEntity.receiveReason = SystemCodeManager.getInstance().getSystemCodeEntity(WomConstant.SystemCode.WOM_rejectReason, reason);
+                    materialEntity.rejectReason = SystemCodeManager.getInstance().getSystemCodeEntity(WomConstant.SystemCode.WOM_rejectReason, reason);
                 }
             });
 
@@ -361,10 +366,8 @@ public class PreMaterialReceiveListAdapter extends BaseListDataRecyclerViewAdapt
                 itemPreMaterialReceiveStoreLocation.setText("--/--");
             }
 
-            itemPreMaterialReceiveBatchNum.setText(data.materialBatchNum!=null?String.valueOf(data.materialBatchNum):"--");
+            itemPreMaterialReceiveBatchNum.setText(data.materialBatchNum!=null? data.materialBatchNum :"--");
             itemPreMaterialReceiveNum.setText(String.valueOf(data.preNum));
-
-            ///=====================//
 
             if(data.receiveStaff != null && data.receiveStaff.name!=null){
                 itemPreMaterialReceiveStaff.setContent(data.receiveStaff.name);
@@ -377,9 +380,9 @@ public class PreMaterialReceiveListAdapter extends BaseListDataRecyclerViewAdapt
             }
 
             if(data.receiveState == null ){
-                data.receiveState = SystemCodeManager.getInstance().getSystemCodeEntity("WOM_receiveState/partReceive");
+                data.receiveState = SystemCodeManager.getInstance().getSystemCodeEntity("WOM_receiveState/receive");
             }
-            itemPreMaterialReceiveRealNum.setEnabled(true);
+//            itemPreMaterialReceiveRealNum.setEnabled(true);
             if("WOM_receiveState/partReceive".equals(data.receiveState.id)){
                 itemPreMaterialReceiveReason.setContent(data.remark);
                 itemPreMaterialReceiveLine.setVisibility(View.VISIBLE);
@@ -390,19 +393,22 @@ public class PreMaterialReceiveListAdapter extends BaseListDataRecyclerViewAdapt
                 itemPreMaterialRejectReasonLayout.setVisibility(View.VISIBLE);
                 itemPreMaterialReceiveLine.setVisibility(View.VISIBLE);
                 itemPreMaterialReceiveReason.setVisibility(View.GONE);
-                if(data.receiveReason!=null && data.receiveReason.value!=null) {
-                    mRejectReasonAdapter.setPosition(rejectReasons.indexOf(data.receiveReason.value));
+                if(data.rejectReason!=null && data.rejectReason.value!=null) {
+                    mRejectReasonAdapter.setPosition(rejectReasons.indexOf(data.rejectReason.value));
                 }
                 mRejectReasonAdapter.notifyDataSetChanged();
                 itemPreMaterialReceiveRealNum.setEnabled(false);
+                data.receiveNum = null;
             }
             else{
                 itemPreMaterialRejectReasonLayout.setVisibility(View.GONE);
                 itemPreMaterialReceiveLine.setVisibility(View.GONE);
                 itemPreMaterialReceiveReason.setVisibility(View.GONE);
+
+                data.receiveNum = data.preNum;
             }
 
-            itemPreMaterialReceiveRealNum.setText(data.receiveNum!=null?String.valueOf(data.receiveNum):"");
+            itemPreMaterialReceiveRealNum.setContent(data.receiveNum!=null?String.valueOf(data.receiveNum):"");
 
             if(data.isChecked){
                 itemPreMaterialReceiveCheck.setImageResource(R.drawable.ic_check_yes);

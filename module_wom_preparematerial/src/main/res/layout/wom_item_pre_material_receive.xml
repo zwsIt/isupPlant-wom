@@ -10,24 +10,24 @@
     >
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="30dp"
-        android:paddingLeft="@dimen/dp_12"
-        android:paddingRight="@dimen/dp_5"
-
-        >
+        android:layout_height="wrap_content"
+        android:paddingStart="@dimen/dp_12"
+        android:paddingEnd="@dimen/dp_5">
         <TextView
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textColor="@color/themeColor"
+            android:paddingEnd="@dimen/dp_10"
             android:textSize="15sp"
-            android:text="bathmartalil_05212102d1"
+            android:text="bathmartalil_05212102d"
             android:layout_centerVertical="true"
             android:id="@+id/itemPreMaterialReceiveTableNo"
-            android:tag="itemPreMaterialReceiveTableNo" />
+            android:tag="itemPreMaterialReceiveTableNo"
+            android:layout_toStartOf="@+id/itemPreMaterialReceiveDeliverCode"/>
         <com.supcon.mes.mbap.view.CustomTextView
             android:layout_width="120dp"
-            android:layout_height="25dp"
-            android:layout_alignParentRight="true"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
             android:layout_centerVertical="true"
             app:text_size="12"
             app:key_size="12"
@@ -35,7 +35,8 @@
             app:content_color="@color/dark_text"
             app:key="派单号:"
             app:key_width="@dimen/dp_50"
-            app:content_value="1234543"
+            app:content_value="1234"
+            app:max_lines="3"
             android:id="@+id/itemPreMaterialReceiveDeliverCode"
             android:tag="itemPreMaterialReceiveDeliverCode" />
     </RelativeLayout>

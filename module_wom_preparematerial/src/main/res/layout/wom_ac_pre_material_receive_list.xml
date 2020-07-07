@@ -14,7 +14,7 @@
             android:layout_height="45dp"
             android:tag="customSearchTitleBar"
             app:title_background_color="@color/themeColor"
-            app:title_length="80dp"
+            app:title_length="70dp"
             app:title_right_btn_need="false"
             app:right_btn_res="@drawable/sl_top_submit"
             app:title_text=""
