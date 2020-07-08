@@ -115,7 +115,7 @@ public class TemporaryActivityListFragment extends BaseRefreshRecyclerFragment<W
     protected void initListener() {
         super.initListener();
         refreshListController.setOnRefreshPageListener(pageIndex -> {
-            presenterRouter.create(WaitPutinRecordsListAPI.class).listWaitPutinRecords(pageIndex, 20, queryParams);
+            presenterRouter.create(WaitPutinRecordsListAPI.class).listWaitPutinRecords(pageIndex, 20, queryParams,false);
         });
 
         mTemporaryActivityListAdapter.setOnItemChildViewClickListener((childView, position, action, obj) -> {

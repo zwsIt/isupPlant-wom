@@ -404,7 +404,8 @@ public class PreMaterialReceiveListAdapter extends BaseListDataRecyclerViewAdapt
                 itemPreMaterialRejectReasonLayout.setVisibility(View.GONE);
                 itemPreMaterialReceiveLine.setVisibility(View.GONE);
                 itemPreMaterialReceiveReason.setVisibility(View.GONE);
-
+                itemPreMaterialReceiveReasons.setSelection(1);
+                itemPreMaterialReceiveRealNum.setEnabled(false);
                 data.receiveNum = data.preNum;
             }
 

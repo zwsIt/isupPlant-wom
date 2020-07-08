@@ -29,6 +29,7 @@ import com.supcon.mes.module_wom_producetask.IntentRouter;
  * Email:wangshizhan@supcom.com
  */
 //@Widget(Constant.Widget.WOM_PENDING)
+@Deprecated
 public class WOMPendingWidget extends BaseWidgetLayout {
 
     @BindByTag("widgetTitle")

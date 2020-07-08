@@ -98,6 +98,8 @@ public class ProduceTaskListAdapter extends BaseListDataRecyclerViewAdapter<Wait
         LinearLayout tvOperateLl;
         @BindByTag("expandIv")
         ImageView expandIv;
+        @BindByTag("batchIv")
+        ImageView batchIv;
 
         public TaskProduceTaskItemViewHolder(Context context) {
             super(context);
@@ -171,6 +173,12 @@ public class ProduceTaskListAdapter extends BaseListDataRecyclerViewAdapter<Wait
                 }
             }else { // 普通配方
                 expandIv.setVisibility(View.GONE);
+            }
+
+            if (data.getTaskId().getBatchContral()){
+                batchIv.setVisibility(View.VISIBLE);
+            }else {
+                batchIv.setVisibility(View.GONE);
             }
 
             tvOperateLl.setVisibility(View.VISIBLE);

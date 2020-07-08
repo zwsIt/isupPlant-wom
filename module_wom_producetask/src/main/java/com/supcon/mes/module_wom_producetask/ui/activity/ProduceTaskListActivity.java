@@ -22,7 +22,9 @@ import com.supcon.mes.module_wom_producetask.ui.fragment.SimpleProduceTaskListFr
 
 import java.util.concurrent.TimeUnit;
 
+import io.reactivex.ObservableSource;
 import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
 
 /**
@@ -118,15 +120,21 @@ public class ProduceTaskListActivity extends BaseMultiFragmentActivity {
             }
         });
         RxTextView.textChanges(searchTitleBar.editText()).skipInitialValue()
-                .debounce(300, TimeUnit.MILLISECONDS)
+                .debounce(500, TimeUnit.MILLISECONDS)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
+//                .switchMap(new Function<CharSequence, ObservableSource<?>>() {
+//                    @Override
+//                    public ObservableSource<?> apply(CharSequence charSequence) throws Exception {
+//                        return null;
+//                    }
+//                })
                 .subscribe(charSequence -> {
-                    if (customTab.getCurrentPosition() == 0) {
+//                    if (customTab.getCurrentPosition() == 0) {
                         mCommonProduceTaskListFragment.search(charSequence.toString().trim());
-                    } else if (customTab.getCurrentPosition() == 1) {
+//                    } else if (customTab.getCurrentPosition() == 1) {
                         mSimpleProduceTaskListFragment.search(charSequence.toString().trim());
-                    }
+//                    }
                 });
         customTab.setOnTabChangeListener(current -> viewPager.setCurrentItem(current));
         viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {

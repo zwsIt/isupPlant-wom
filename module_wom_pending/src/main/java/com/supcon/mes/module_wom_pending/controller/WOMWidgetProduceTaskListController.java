@@ -8,6 +8,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.app.annotation.BindByTag;
 import com.app.annotation.Presenter;
@@ -55,6 +56,8 @@ public class WOMWidgetProduceTaskListController extends BaseViewController imple
 
     @BindByTag("womPendingProduceTaskListView")
     RecyclerView womPendingProduceTaskListView;
+    @BindByTag("noDataTv")
+    TextView noDataTv;
     private WOMWidgetProduceTaskAdapter mProduceTaskListAdapter;
     Map<String, Object> queryParams = new HashMap<>();          // 指令单查询
     private WaitPutinRecordEntity mWaitPutinRecordEntity;   // 当前操作项
@@ -192,15 +195,22 @@ public class WOMWidgetProduceTaskListController extends BaseViewController imple
 
     @Override
     public void listWaitPutinRecordsSuccess(CommonBAPListEntity entity) {
-        if(entity!=null && entity.result!=null) {
+        if(entity!=null && entity.result!=null && entity.result.size() > 0) {
+            womPendingProduceTaskListView.setVisibility(View.VISIBLE);
+            noDataTv.setVisibility(View.GONE);
             mProduceTaskListAdapter.setList(entity.result);
             mProduceTaskListAdapter.notifyDataSetChanged();
+        }else {
+            womPendingProduceTaskListView.setVisibility(View.GONE);
+            noDataTv.setVisibility(View.VISIBLE);
         }
     }
 
 
     @Override
     public void listWaitPutinRecordsFailed(String errorMsg) {
+        womPendingProduceTaskListView.setVisibility(View.GONE);
+        noDataTv.setVisibility(View.VISIBLE);
         LogUtil.e(ErrorMsgHelper.msgParse(errorMsg));
     }
 
@@ -215,12 +225,13 @@ public class WOMWidgetProduceTaskListController extends BaseViewController imple
     }
 
     public void refresh(){
-        presenterRouter.create(WaitPutinRecordsListAPI.class).listWaitPutinRecords(1, 2, queryParams);
+        presenterRouter.create(WaitPutinRecordsListAPI.class).listWaitPutinRecords(1, 2, queryParams,true);
     }
 
     public void show(){
-        womPendingProduceTaskListView.setVisibility(View.VISIBLE);
-        mProduceTaskListAdapter.notifyDataSetChanged();
+        refresh();
+//        womPendingProduceTaskListView.setVisibility(View.VISIBLE);
+//        mProduceTaskListAdapter.notifyDataSetChanged();
     }
 
     public void hide(){

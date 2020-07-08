@@ -6,6 +6,7 @@ import android.support.annotation.NonNull;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
+import android.widget.TextView;
 
 import com.app.annotation.BindByTag;
 import com.app.annotation.Presenter;
@@ -47,6 +48,8 @@ public class WOMWidgetActivityListController extends BaseViewController implemen
 
     @BindByTag("womPendingActivityListView")
     RecyclerView womPendingActivityListView;
+    @BindByTag("noDataTv")
+    TextView noDataTv;
     private WOMWidgetActivityAdapter mWidgetActivityAdapter;
     Map<String, Object> queryParams = new HashMap<>();          // 活动查询
     private WaitPutinRecordEntity mWaitPutinRecordEntity;   // 当前操作项
@@ -109,25 +112,33 @@ public class WOMWidgetActivityListController extends BaseViewController implemen
 
     @Override
     public void listWaitPutinRecordsSuccess(CommonBAPListEntity entity) {
-        if(entity!=null){
+        if(entity!=null && entity.result!=null && entity.result.size() > 0) {
+            womPendingActivityListView.setVisibility(View.VISIBLE);
+            noDataTv.setVisibility(View.GONE);
             mWidgetActivityAdapter.setList(entity.result);
             mWidgetActivityAdapter.notifyDataSetChanged();
+        }else {
+            womPendingActivityListView.setVisibility(View.GONE);
+            noDataTv.setVisibility(View.VISIBLE);
         }
 
     }
 
     @Override
     public void listWaitPutinRecordsFailed(String errorMsg) {
+        womPendingActivityListView.setVisibility(View.GONE);
+        noDataTv.setVisibility(View.VISIBLE);
         LogUtil.e(ErrorMsgHelper.msgParse(errorMsg));
     }
 
     public void refresh(){
-        presenterRouter.create(WaitPutinRecordsListAPI.class).listWaitPutinRecords(1, 2, queryParams);
+        presenterRouter.create(WaitPutinRecordsListAPI.class).listWaitPutinRecords(1, 2, queryParams,false);
     }
 
     public void show(){
-        womPendingActivityListView.setVisibility(View.VISIBLE);
-        mWidgetActivityAdapter.notifyDataSetChanged();
+        refresh();
+//        womPendingActivityListView.setVisibility(View.VISIBLE);
+//        mWidgetActivityAdapter.notifyDataSetChanged();
     }
 
     public void hide(){

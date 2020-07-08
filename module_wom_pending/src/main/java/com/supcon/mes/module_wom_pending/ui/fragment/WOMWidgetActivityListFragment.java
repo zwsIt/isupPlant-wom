@@ -108,7 +108,7 @@ public class WOMWidgetActivityListFragment extends BaseRefreshRecyclerFragment<W
         refreshListController.setOnRefreshListener(new OnRefreshListener() {
             @Override
             public void onRefresh() {
-                presenterRouter.create(WaitPutinRecordsListAPI.class).listWaitPutinRecords(1, 2, queryParams);
+                presenterRouter.create(WaitPutinRecordsListAPI.class).listWaitPutinRecords(1, 2, queryParams,false);
             }
         });
     }

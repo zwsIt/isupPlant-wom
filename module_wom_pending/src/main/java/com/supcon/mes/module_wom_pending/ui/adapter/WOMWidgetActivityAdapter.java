@@ -39,8 +39,6 @@ public class WOMWidgetActivityAdapter extends BaseListDataRecyclerViewAdapter<Wa
         return new ActivityItemViewHolder(context);
     }
 
-
-
     /**
      * CheckItemViewHolder
      * created by zhangwenshuai1 2020/4/7

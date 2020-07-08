@@ -29,8 +29,8 @@ import io.reactivex.Flowable;
 public class WaitPutinRecordPresenter extends WaitPutinRecordsListContract.Presenter {
 
     @Override
-    public void listWaitPutinRecords(int pageNo, int pageSize, Map<String, Object> queryParams) {
-
+    public void listWaitPutinRecords(int pageNo, int pageSize, Map<String, Object> queryParams, boolean like) {
+        BAPQueryParamsHelper.setLike(like);
         Map<String, Object> requestParamsMap = PageParamUtil.pageParam(null, pageNo, pageSize, true);
         Map<String, Object> subconds = new HashMap<>();
         Map<String, Object> joinSubconds = new HashMap<>();

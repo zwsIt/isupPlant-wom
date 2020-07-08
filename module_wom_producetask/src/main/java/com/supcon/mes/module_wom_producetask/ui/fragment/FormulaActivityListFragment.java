@@ -111,7 +111,7 @@ public class FormulaActivityListFragment extends BaseRefreshRecyclerFragment<Wai
     protected void initListener() {
         super.initListener();
         refreshListController.setOnRefreshPageListener(pageIndex -> {
-            presenterRouter.create(WaitPutinRecordsListAPI.class).listWaitPutinRecords(pageIndex,20, queryParams);
+            presenterRouter.create(WaitPutinRecordsListAPI.class).listWaitPutinRecords(pageIndex,20, queryParams,false);
         });
 
         mFormulaActivityListAdapter.setOnItemChildViewClickListener((childView, position, action, obj) -> {

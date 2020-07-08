@@ -6,37 +6,51 @@
     android:background="@color/white"
     android:orientation="vertical"
     android:elevation="@dimen/dp_2">
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center_vertical"
-        android:padding="@dimen/dp_10">
-        <TextView
-            android:layout_width="0dp"
+        android:orientation="horizontal">
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:gravity="center_vertical"
-            android:layout_marginEnd="@dimen/dp_10"
-            android:textStyle="bold"
-            android:textColor="@color/dark_text"
-            android:id="@+id/produceBatchNumTv"
-            android:tag="produceBatchNumTv"/>
-        <TextView
-            android:id="@+id/statusTv"
+            android:padding="@dimen/dp_10"
+            android:layout_toStartOf="@+id/batchIv">
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center_vertical"
+                android:layout_marginEnd="@dimen/dp_10"
+                android:textStyle="bold"
+                android:textColor="@color/dark_text"
+                android:id="@+id/produceBatchNumTv"
+                android:tag="produceBatchNumTv"/>
+            <TextView
+                android:id="@+id/statusTv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/sh_status"
+                android:maxWidth="@dimen/dp_120"
+                android:maxLines="1"
+                android:paddingStart="12dp"
+                android:paddingTop="3dp"
+                android:paddingEnd="12dp"
+                android:paddingBottom="3dp"
+                android:tag="statusTv"
+                android:textColor="@color/wom_tv_status_color"
+                android:textSize="14sp"
+                android:text="@string/wom_executing" />
+        </LinearLayout>
+        <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@drawable/sh_status"
-            android:maxWidth="@dimen/dp_120"
-            android:maxLines="1"
-            android:paddingStart="12dp"
-            android:paddingTop="3dp"
-            android:paddingEnd="12dp"
-            android:paddingBottom="3dp"
-            android:tag="statusTv"
-            android:textColor="@color/wom_tv_status_color"
-            android:textSize="14sp"
-            android:text="@string/wom_executing" />
-    </LinearLayout>
+            android:layout_alignParentEnd="true"
+            android:id="@+id/batchIv"
+            android:tag="batchIv"
+            android:src="@drawable/wom_ic_batch"
+            android:visibility="gone"/>
+    </RelativeLayout>
     <include layout="@layout/ly_line_light"/>
     <LinearLayout
         android:layout_width="match_parent"

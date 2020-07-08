@@ -137,9 +137,9 @@ public class CommonProduceTaskListFragment extends BaseRefreshRecyclerFragment<W
         super.initListener();
         refreshListController.setOnRefreshPageListener(pageIndex -> {
             if (mIsTaskLoad) {
-                presenterRouter.create(WaitPutinRecordsListAPI.class).listWaitPutinRecords(pageIndex, 20, queryParams);
+                presenterRouter.create(WaitPutinRecordsListAPI.class).listWaitPutinRecords(pageIndex, 20, queryParams,true);
             } else {
-                presenterRouter.create(WaitPutinRecordsListAPI.class).listWaitPutinRecords(pageIndex, 20, processQueryParams);
+                presenterRouter.create(WaitPutinRecordsListAPI.class).listWaitPutinRecords(pageIndex, 20, processQueryParams,false);
             }
         });
 
@@ -421,7 +421,8 @@ public class CommonProduceTaskListFragment extends BaseRefreshRecyclerFragment<W
         }else {
             WaitPutinRecordEntity waitPutinRecordEntity = mProduceTaskListAdapter.getList().get(mCurrentItemPos);
             waitPutinRecordEntity.setExeState(process.getProcessRunState());
-            waitPutinRecordEntity.getTaskProcessId().setActStartTime(process.getActStartTime());
+            waitPutinRecordEntity.setTaskProcessId(process);
+//            waitPutinRecordEntity.getTaskProcessId().setActStartTime(process.getActStartTime());
             mProduceTaskListAdapter.notifyItemRangeChanged(mCurrentItemPos,1);
         }
 

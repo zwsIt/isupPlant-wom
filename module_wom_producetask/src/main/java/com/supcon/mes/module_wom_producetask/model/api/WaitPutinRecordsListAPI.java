@@ -19,8 +19,9 @@ public interface WaitPutinRecordsListAPI {
      * @description 获取待办list
      * @param queryParams:produceBatchNum 生产批号
      * @param queryParams:recordType 待办类型：工单(WOM_recordType/workOrder);工序(WOM_recordType/process);活动(WOM_recordType/active)
+     * @param queryParams:like  是否模糊
      * @return
      * @author zhangwenshuai1 2020/3/23
      */
-    void listWaitPutinRecords(int pageNo, int pageSize, Map<String,Object> queryParams);
+    void listWaitPutinRecords(int pageNo, int pageSize, Map<String,Object> queryParams, boolean like);
 }
