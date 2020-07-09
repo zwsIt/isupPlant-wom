@@ -52,7 +52,6 @@ public class WOMWidgetActivityListController extends BaseViewController implemen
     TextView noDataTv;
     private WOMWidgetActivityAdapter mWidgetActivityAdapter;
     Map<String, Object> queryParams = new HashMap<>();          // 活动查询
-    private WaitPutinRecordEntity mWaitPutinRecordEntity;   // 当前操作项
 
     public WOMWidgetActivityListController(View rootView) {
         super(rootView);
@@ -103,8 +102,6 @@ public class WOMWidgetActivityListController extends BaseViewController implemen
         EventBus.getDefault().unregister(this);
     }
 
-
-
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void refresh(RefreshEvent refreshEvent) {
         refresh();
@@ -136,6 +133,7 @@ public class WOMWidgetActivityListController extends BaseViewController implemen
     }
 
     public void show(){
+
         refresh();
 //        womPendingActivityListView.setVisibility(View.VISIBLE);
 //        mWidgetActivityAdapter.notifyDataSetChanged();

@@ -96,8 +96,12 @@ public class WOMPendingWidget2 extends BaseWidgetLayout {
     @Override
     protected void refresh() {
         super.refresh();
-        mWOMWidgetActivityListController.refresh();
-        mWOMWidgetProduceTaskListController.refresh();
+        if(currentPage == 0){
+            mWOMWidgetProduceTaskListController.refresh();
+        }else {
+            mWOMWidgetActivityListController.refresh();
+        }
+
     }
 
     @Override
