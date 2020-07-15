@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:background="@color/white">
+
+    <com.supcon.mes.mbap.view.CustomTextView
+        android:id="@+id/customBleTv"
+        android:tag="customBleTv"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/dp_40"
+        app:key="名称:"
+        android:paddingLeft="@dimen/dp_15"
+        android:layout_toLeftOf="@+id/imgChecked"
+        android:layout_marginRight="@dimen/dp_10"
+        app:key_width="@dimen/dp_50"
+        app:content_value="1111"
+        />
+    <com.supcon.mes.mbap.view.CustomTextView
+        android:layout_below="@+id/customBleTv"
+        android:id="@+id/customBleMacTv"
+        android:tag="customBleMacTv"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/dp_40"
+        app:key="MAC:"
+        android:paddingLeft="@dimen/dp_15"
+        android:layout_toLeftOf="@+id/imgChecked"
+        android:layout_marginRight="@dimen/dp_10"
+        app:key_width="@dimen/dp_50"
+        app:content_value="1111"
+        />
+    <ImageView
+        android:id="@+id/imgChecked"
+        android:tag="imgChecked"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="@dimen/dp_10"
+        android:src="@drawable/ic_check_yes"
+        android:visibility="gone"
+        />
+</RelativeLayout>
