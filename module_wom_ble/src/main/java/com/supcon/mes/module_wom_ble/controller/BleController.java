@@ -1,5 +1,6 @@
 package com.supcon.mes.module_wom_ble.controller;
 
+import android.Manifest;
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
@@ -9,8 +10,11 @@ import android.bluetooth.BluetoothGattCharacteristic;
 import android.bluetooth.BluetoothGattService;
 import android.bluetooth.BluetoothManager;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Handler;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -100,7 +104,31 @@ public class BleController extends BasePresenterController {
      * @return
      */
     private boolean isBlueAdapterEnable() {
-        return mBluetoothAdapter != null && mBluetoothAdapter.isEnabled();
+        if(mBluetoothAdapter != null && mBluetoothAdapter.isEnabled()){
+            return checkBluetoothPermission();
+        }
+        return false;
+    }
+    private final int REQUEST_ENABLE_BT=1000;
+    private boolean bluePermission=true;
+    private boolean checkBluetoothPermission() {
+        if (Build.VERSION.SDK_INT >= 23) {
+            //校验是否已具有模糊定位权限
+            if (ContextCompat.checkSelfPermission(context,
+                    Manifest.permission.ACCESS_FINE_LOCATION)
+                    != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(context,
+                        new String[]{Manifest.permission.ACCESS_COARSE_LOCATION,Manifest.permission.ACCESS_FINE_LOCATION},
+                        REQUEST_ENABLE_BT);
+                ToastUtils.show(context,"请打开蓝牙权限");
+                bluePermission=false;
+            }else{
+                bluePermission=true;
+            }
+        }else{
+            bluePermission=true;
+        }
+        return bluePermission;
     }
 
     /**
