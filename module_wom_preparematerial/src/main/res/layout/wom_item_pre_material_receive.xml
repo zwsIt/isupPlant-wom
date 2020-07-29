@@ -176,7 +176,7 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             app:key_width="0dp"
-            app:content_hint="处理人"
+            app:content_hint="接收人"
             app:editable="true"
             app:text_size="14"
             app:necessary="true"

@@ -181,7 +181,7 @@ public class CheckItemListActivity extends BaseRefreshRecyclerActivity<ProCheckD
             return true;
         }
         for (ProCheckDetailEntity proCheckDetailEntity : mCheckItemListAdapter.getList()){
-            if (!TextUtils.isEmpty(proCheckDetailEntity.getStandard()) && proCheckDetailEntity.getReportValue() == null){
+            if (!TextUtils.isEmpty(proCheckDetailEntity.getStandard()) && TextUtils.isEmpty(proCheckDetailEntity.getReportValue())){
                 ToastUtils.show(context, "第【" + (mCheckItemListAdapter.getList().indexOf(proCheckDetailEntity) + 1) + "】项请填写入报出值");
                 return true;
             }
