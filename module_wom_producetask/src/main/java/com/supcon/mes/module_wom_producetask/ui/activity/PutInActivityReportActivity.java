@@ -27,6 +27,7 @@ import com.supcon.common.view.base.adapter.IListAdapter;
 import com.supcon.common.view.listener.OnItemChildViewClickListener;
 import com.supcon.common.view.listener.OnRefreshListener;
 import com.supcon.common.view.util.DisplayUtil;
+import com.supcon.common.view.util.LogUtil;
 import com.supcon.common.view.util.StatusBarUtils;
 import com.supcon.common.view.util.ToastUtils;
 import com.supcon.common.view.view.CustomSwipeLayout;
@@ -259,6 +260,7 @@ public class PutInActivityReportActivity extends BaseRefreshRecyclerActivity<Put
      */
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onCodeReceiver(CodeResultEvent codeResultEvent) {
+        LogUtil.d(this.getLocalClassName(),codeResultEvent.scanResult);
         String[] arr = MaterQRUtil.materialQRCode(codeResultEvent.scanResult);
         if (arr != null && arr.length == 8) {
             String incode = arr[0].replace("incode=", "");
