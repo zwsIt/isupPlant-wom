@@ -265,6 +265,7 @@ public class PutInAgileActivityReportActivity extends BaseRefreshRecyclerActivit
                                 PutInDetailEntity putInDetailEntity = new PutInDetailEntity();
                                 putInDetailEntity.setMaterialId(materialEntity);
                                 putInDetailEntity.setMaterialBatchNum(batchno);
+                                putInDetailEntity.setWareId(mWaitPutinRecordEntity.getWare());
                                 putInDetailEntity.setPutinNum(!TextUtils.isEmpty(specs)?new BigDecimal(specs):null);
                                 putInDetailEntity.setPutinTime(new Date().getTime());  // 投料时间
                                 mPutInAgileReportDetailAdapter.addData(putInDetailEntity);

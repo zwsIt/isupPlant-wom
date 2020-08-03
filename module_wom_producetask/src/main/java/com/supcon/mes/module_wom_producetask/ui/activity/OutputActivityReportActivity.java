@@ -217,6 +217,8 @@ public class OutputActivityReportActivity extends BaseRefreshRecyclerActivity<Ou
             OutputDetailEntity outputDetailEntity = new OutputDetailEntity();
             outputDetailEntity.setProduct(mWaitPutinRecordEntity.getTaskActiveId().getMaterialId()); // 物料
             outputDetailEntity.setPutinTime(new Date().getTime());  // 投料时间
+            outputDetailEntity.setWareId(mOutputDetailEntity.getWareId());
+            outputDetailEntity.setMaterialBatchNum(mWaitPutinRecordEntity.getProduceBatchNum());
             mOutputReportDetailAdapter.addData(outputDetailEntity);
             mOutputReportDetailAdapter.notifyItemRangeInserted(mOutputReportDetailAdapter.getItemCount() - 1, 1);
             mOutputReportDetailAdapter.notifyItemRangeChanged(mOutputReportDetailAdapter.getItemCount() - 1, 1);
@@ -282,9 +284,14 @@ public class OutputActivityReportActivity extends BaseRefreshRecyclerActivity<Ou
             String orderno = arr[6].replace("orderno=", "");
             String specs=arr[7].replace("specs=","");
             if (materCode.equals(incode)){
+                if (!TextUtils.isEmpty(mWaitPutinRecordEntity.getProduceBatchNum()) && !mWaitPutinRecordEntity.getProduceBatchNum().equals(batchno)){
+                    ToastUtils.show(context,"非当前物料批号，请重新扫描");
+                    return;
+                }
                 OutputDetailEntity outputDetailEntity = new OutputDetailEntity();
                 outputDetailEntity.setMaterialBatchNum(batchno);
                 outputDetailEntity.setOutputNum(!TextUtils.isEmpty(specs)?new BigDecimal(specs):null);
+                outputDetailEntity.setWareId(mWaitPutinRecordEntity.getWare());
                 outputDetailEntity.setProduct(mWaitPutinRecordEntity.getTaskActiveId().getMaterialId()); // 物料
                 outputDetailEntity.setPutinTime(new Date().getTime());  // 投料时间
                 mOutputReportDetailAdapter.addData(outputDetailEntity);
@@ -295,7 +302,7 @@ public class OutputActivityReportActivity extends BaseRefreshRecyclerActivity<Ou
                 ToastUtils.show(context,"非当前所投物料，请重新扫描");
             }
         } else {
-            ToastUtils.show(context, "二维码退料信息解析异常！");
+            ToastUtils.show(context, "二维码信息解析异常！");
         }
     }
 

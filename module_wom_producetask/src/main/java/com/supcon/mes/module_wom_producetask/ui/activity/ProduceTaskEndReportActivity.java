@@ -220,10 +220,12 @@ public class ProduceTaskEndReportActivity extends BaseRefreshRecyclerActivity<Ou
             if (mWaitPutinRecordEntity.getProductId().getCode().equals(incode)){
                 OutputDetailEntity outputDetailEntity = new OutputDetailEntity();
                 outputDetailEntity.setProduct(mWaitPutinRecordEntity.getProductId()); // 产品
+
                 if (!TextUtils.isEmpty(mWaitPutinRecordEntity.getProduceBatchNum()) && !mWaitPutinRecordEntity.getProduceBatchNum().equals(batchno)){
-                    ToastUtils.show(context,"非当前指令单物料批号，请重新扫描");
+                    ToastUtils.show(context,"非当前物料指定批号，请重新扫描");
                     return;
                 }
+                outputDetailEntity.setWareId(mWaitPutinRecordEntity.getWare());
                 outputDetailEntity.setMaterialBatchNum(batchno); // 生产批默认入库批号
                 outputDetailEntity.setOutputNum(!TextUtils.isEmpty(specs)?new BigDecimal(specs) :mWaitPutinRecordEntity.getTaskId().getPlanNum());  // 默认入库数量为计划数量
                 mProduceTaskEndReportDetailAdapter.addData(outputDetailEntity);
@@ -232,10 +234,10 @@ public class ProduceTaskEndReportActivity extends BaseRefreshRecyclerActivity<Ou
 
                 contentView.smoothScrollToPosition(mProduceTaskEndReportDetailAdapter.getItemCount() - 1);
             }else {
-                ToastUtils.show(context,"非当前指令单物料，请重新扫描");
+                ToastUtils.show(context,"非当前物料，请重新扫描");
             }
         } else {
-            ToastUtils.show(context, "二维码退料信息解析异常！");
+            ToastUtils.show(context, "二维码信息解析异常！");
         }
 
     }

@@ -263,6 +263,7 @@ public class OutputAgileActivityReportActivity extends BaseRefreshRecyclerActivi
                                 OutputDetailEntity outputDetailEntity = new OutputDetailEntity();
                                 outputDetailEntity.setProduct(materialEntity);
                                 outputDetailEntity.setMaterialBatchNum(batchno);
+                                outputDetailEntity.setWareId(mWaitPutinRecordEntity.getWare());
                                 outputDetailEntity.setOutputNum(!TextUtils.isEmpty(specs)?new BigDecimal(specs):null);
                                 outputDetailEntity.setPutinTime(new Date().getTime());  // 投料时间
                                 mOutputAgileReportDetailAdapter.addData(outputDetailEntity);
