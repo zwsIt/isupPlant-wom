@@ -31,6 +31,7 @@ import com.supcon.mes.mbap.view.CustomImageButton;
 import com.supcon.mes.mbap.view.CustomTextView;
 import com.supcon.mes.middleware.constant.Constant;
 import com.supcon.mes.middleware.controller.GetPowerCodeController;
+import com.supcon.mes.middleware.controller.ProductController;
 import com.supcon.mes.middleware.model.bean.BAP5CommonEntity;
 import com.supcon.mes.middleware.model.bean.CommonBAPListEntity;
 import com.supcon.mes.middleware.model.bean.Good;
@@ -41,12 +42,16 @@ import com.supcon.mes.middleware.model.event.EventInfo;
 import com.supcon.mes.middleware.model.event.RefreshEvent;
 import com.supcon.mes.middleware.model.event.SelectDataEvent;
 import com.supcon.mes.middleware.model.inter.PowerCode;
+import com.supcon.mes.middleware.model.listener.OnSuccessListener;
 import com.supcon.mes.middleware.util.ErrorMsgHelper;
+import com.supcon.mes.module_scan.controller.CommonScanController;
+import com.supcon.mes.module_scan.model.event.CodeResultEvent;
 import com.supcon.mes.module_wom_producetask.IntentRouter;
 import com.supcon.mes.module_wom_producetask.R;
 import com.supcon.mes.module_wom_producetask.constant.WomConstant;
 import com.supcon.mes.module_wom_producetask.model.api.CommonListAPI;
 import com.supcon.mes.module_wom_producetask.model.api.PutInReportAPI;
+import com.supcon.mes.module_wom_producetask.model.bean.OutputDetailEntity;
 import com.supcon.mes.module_wom_producetask.model.bean.PutInDetailEntity;
 import com.supcon.mes.module_wom_producetask.model.bean.WaitPutinRecordEntity;
 import com.supcon.mes.module_wom_producetask.model.contract.CommonListContract;
@@ -56,12 +61,14 @@ import com.supcon.mes.module_wom_producetask.presenter.CommonListPresenter;
 import com.supcon.mes.module_wom_producetask.presenter.PutInReportPresenter;
 import com.supcon.mes.module_wom_producetask.ui.adapter.PutInAgileReportDetailAdapter;
 import com.supcon.mes.module_wom_producetask.ui.adapter.PutInReportDetailAdapter;
+import com.supcon.mes.module_wom_producetask.util.MaterQRUtil;
 import com.supcon.mes.module_wom_producetask.util.SmoothScrollLayoutManager;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -78,7 +85,7 @@ import io.reactivex.functions.Consumer;
 @Router(Constant.Router.WOM_PUT_IN_AGILE_REPORT)
 @Presenter(value = {CommonListPresenter.class, PutInReportPresenter.class})
 @PowerCode(entityCode = WomConstant.PowerCode.PRODUCE_TASK_LIST)
-@Controller(value = {GetPowerCodeController.class})
+@Controller(value = {GetPowerCodeController.class, CommonScanController.class, ProductController.class})
 public class PutInAgileActivityReportActivity extends BaseRefreshRecyclerActivity<PutInDetailEntity> implements CommonListContract.View, PutInReportContract.View {
     @BindByTag("leftBtn")
     CustomImageButton leftBtn;
@@ -164,7 +171,10 @@ public class PutInAgileActivityReportActivity extends BaseRefreshRecyclerActivit
     protected void initListener() {
         super.initListener();
         leftBtn.setOnClickListener(v -> finish());
-        rightBtn.setOnClickListener(v -> ToastUtils.show(context, "待实现"));
+        getController(CommonScanController.class).openInfrared();
+        rightBtn.setOnClickListener(v -> {
+            getController(CommonScanController.class).openCameraScan();
+        });
         refreshListController.setOnRefreshListener(new OnRefreshListener() {
             @Override
             public void onRefresh() {
@@ -224,6 +234,54 @@ public class PutInAgileActivityReportActivity extends BaseRefreshRecyclerActivit
                 });
     }
 
+    /**
+     * 扫描功能：红外、摄像头扫描监听事件
+     * @param codeResultEvent
+     */
+    Map<String, Object> goodMap = new HashMap<>();
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onCodeReceiver(CodeResultEvent codeResultEvent) {
+        String[] arr = MaterQRUtil.materialQRCode(codeResultEvent.scanResult);
+        if (arr != null && arr.length == 8) {
+            String incode = arr[0].replace("incode=", "");
+            String batchno = arr[1].replace("batchno=", "");
+            String batchno2 = arr[2].replace("batchno2=", "");
+            String packqty = arr[3].replace("packqty=", "");
+            String packs = arr[4].replace("packs=", "");
+            String purcode = arr[5].replace("purcode=", "");
+            String orderno = arr[6].replace("orderno=", "");
+            String specs=arr[7].replace("specs=","");
+            goodMap.put(Constant.BAPQuery.CODE, incode);            getController(ProductController.class)
+                    .getProduct(goodMap)
+                    .setOnSuccessListener(new OnSuccessListener() {
+                        @Override
+                        public void onSuccess(Object result) {
+                            if (result instanceof Good) {
+                                Good good = (Good) result;
+                                MaterialEntity materialEntity = new MaterialEntity();
+                                materialEntity.setId(good.id);
+                                materialEntity.setCode(good.code);
+                                materialEntity.setName(good.name);
+                                PutInDetailEntity putInDetailEntity = new PutInDetailEntity();
+                                putInDetailEntity.setMaterialId(materialEntity);
+                                putInDetailEntity.setMaterialBatchNum(batchno);
+                                putInDetailEntity.setPutinNum(!TextUtils.isEmpty(specs)?new BigDecimal(specs):null);
+                                putInDetailEntity.setPutinTime(new Date().getTime());  // 投料时间
+                                mPutInAgileReportDetailAdapter.addData(putInDetailEntity);
+                                mPutInAgileReportDetailAdapter.notifyItemRangeInserted(mPutInAgileReportDetailAdapter.getItemCount() - 1, 1);
+                                mPutInAgileReportDetailAdapter.notifyItemRangeChanged(mPutInAgileReportDetailAdapter.getItemCount() - 1, 1);
+                                contentView.smoothScrollToPosition(mPutInAgileReportDetailAdapter.getItemCount() - 1);
+                            } else {
+                                ToastUtils.show(context, result.toString());
+                            }
+                        }
+                    });
+
+
+        } else {
+            ToastUtils.show(context, "二维码退料信息解析异常！");
+        }
+    }
     /**
      * @param
      * @return

@@ -40,26 +40,32 @@ import com.supcon.mes.middleware.model.event.RefreshEvent;
 import com.supcon.mes.middleware.model.event.SelectDataEvent;
 import com.supcon.mes.middleware.model.inter.PowerCode;
 import com.supcon.mes.middleware.util.ErrorMsgHelper;
+import com.supcon.mes.module_scan.controller.CommonScanController;
+import com.supcon.mes.module_scan.model.event.CodeResultEvent;
 import com.supcon.mes.module_wom_producetask.IntentRouter;
 import com.supcon.mes.module_wom_producetask.R;
 import com.supcon.mes.module_wom_producetask.constant.WomConstant;
 import com.supcon.mes.module_wom_producetask.model.api.CommonListAPI;
 import com.supcon.mes.module_wom_producetask.model.api.PutInReportAPI;
 import com.supcon.mes.module_wom_producetask.model.bean.BatchMaterialPartEntity;
+import com.supcon.mes.module_wom_producetask.model.bean.OutputDetailEntity;
 import com.supcon.mes.module_wom_producetask.model.bean.PutInDetailEntity;
 import com.supcon.mes.module_wom_producetask.model.bean.WaitPutinRecordEntity;
 import com.supcon.mes.module_wom_producetask.model.contract.CommonListContract;
 import com.supcon.mes.module_wom_producetask.model.contract.PutInReportContract;
 import com.supcon.mes.module_wom_producetask.model.dto.BatchPutinDetailDTO;
 import com.supcon.mes.module_wom_producetask.model.dto.PutinDetailDTO;
+import com.supcon.mes.module_wom_producetask.presenter.BatchMaterialRecordsRefPresenter;
 import com.supcon.mes.module_wom_producetask.presenter.CommonListPresenter;
 import com.supcon.mes.module_wom_producetask.presenter.PutInReportPresenter;
 import com.supcon.mes.module_wom_producetask.ui.adapter.PutInReportDetailAdapter;
+import com.supcon.mes.module_wom_producetask.util.MaterQRUtil;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -78,7 +84,7 @@ import io.reactivex.functions.Consumer;
 @Router(Constant.Router.WOM_BATCH_PUT_IN_REPORT)
 @Presenter(value = {CommonListPresenter.class, PutInReportPresenter.class})
 @PowerCode(entityCode = WomConstant.PowerCode.PRODUCE_TASK_LIST)
-@Controller(value = {GetPowerCodeController.class})
+@Controller(value = {GetPowerCodeController.class, CommonScanController.class})
 public class BatchPutInActivityReportActivity extends BaseRefreshRecyclerActivity<PutInDetailEntity> implements CommonListContract.View, PutInReportContract.View {
     @BindByTag("leftBtn")
     CustomImageButton leftBtn;
@@ -164,7 +170,10 @@ public class BatchPutInActivityReportActivity extends BaseRefreshRecyclerActivit
     protected void initListener() {
         super.initListener();
         leftBtn.setOnClickListener(v -> finish());
-        rightBtn.setOnClickListener(v -> ToastUtils.show(context, "待实现"));
+        getController(CommonScanController.class).openInfrared();
+        rightBtn.setOnClickListener(v -> {
+            getController(CommonScanController.class).openCameraScan();
+        });
         refreshListController.setOnRefreshListener(new OnRefreshListener() {
             @Override
             public void onRefresh() {
@@ -282,7 +291,48 @@ public class BatchPutInActivityReportActivity extends BaseRefreshRecyclerActivit
     @Override
     public void listSuccess(BAP5CommonEntity entity) {
         CommonBAPListEntity commonBAPListEntity = GsonUtil.gsonToBean(GsonUtil.gsonString(entity.data), CommonBAPListEntity.class);
-        refreshListController.refreshComplete(GsonUtil.jsonToList(GsonUtil.gsonString((Object) commonBAPListEntity.result), PutInDetailEntity.class));
+        if (scan){
+            scan=false;
+            List<BatchMaterialPartEntity> list=GsonUtil.jsonToList(GsonUtil.gsonString((Object) commonBAPListEntity.result), BatchMaterialPartEntity.class);
+            if (!list.isEmpty()){
+                List<Long> currentListId = new ArrayList<>();
+                for (PutInDetailEntity putInDetailEntity : mPutInReportDetailAdapter.getList()) {
+                    currentListId.add(putInDetailEntity.getBatchingRecordId());
+                }
+                PutInDetailEntity putInDetailEntity;
+                List<PutInDetailEntity> putInDetailEntityList = new ArrayList<>();
+                for (BatchMaterialPartEntity batchMaterialPartEntity : list){
+                    // 防止重复添加
+                    if (currentListId.contains(batchMaterialPartEntity.getId())){
+                        ToastUtils.show(context,"【"+batchMaterialPartEntity.getMaterialId().getName()+"】物料已存在，请重新扫描");
+                        return;
+                    }
+                    if (!TextUtils.isEmpty(batchno) && !batchno.equals(batchMaterialPartEntity.getMaterialBatchNum())){
+                        ToastUtils.show(context,"非当前【"+batchMaterialPartEntity.getMaterialId().getName()+"】物料批号，请重新扫描");
+                        return;
+                    }
+                    putInDetailEntity = new PutInDetailEntity();
+                    putInDetailEntity.setBatchingRecordId(batchMaterialPartEntity.getId()); // require
+                    putInDetailEntity.setMaterialId(batchMaterialPartEntity.getMaterialId());
+                    putInDetailEntity.setMaterialBatchNum(batchMaterialPartEntity.getMaterialBatchNum());
+                    putInDetailEntity.setWareId(batchMaterialPartEntity.getWareId());
+                    putInDetailEntity.setStoreId(batchMaterialPartEntity.getStoreId());
+                    putInDetailEntity.setPutinNum(!TextUtils.isEmpty(specs)?new BigDecimal(specs):batchMaterialPartEntity.getOfferNum()); // 默认配料数量
+                    putInDetailEntity.setAvailableNum(batchMaterialPartEntity.getOfferNum());
+                    putInDetailEntity.setPutinTime(new Date().getTime());
+                    putInDetailEntityList.add(putInDetailEntity);
+                }
+                if (putInDetailEntityList.size() <= 0){
+                    return;
+                }
+                mPutInReportDetailAdapter.addList(putInDetailEntityList);
+                mPutInReportDetailAdapter.notifyItemRangeInserted(mPutInReportDetailAdapter.getList().size() - putInDetailEntityList.size(), putInDetailEntityList.size());
+                mPutInReportDetailAdapter.notifyItemRangeChanged(mPutInReportDetailAdapter.getList().size() - putInDetailEntityList.size(), putInDetailEntityList.size());
+            }
+        }else {
+            refreshListController.refreshComplete(GsonUtil.jsonToList(GsonUtil.gsonString((Object) commonBAPListEntity.result), PutInDetailEntity.class));
+        }
+
     }
 
     @Override
@@ -303,6 +353,32 @@ public class BatchPutInActivityReportActivity extends BaseRefreshRecyclerActivit
         onLoadFailed(ErrorMsgHelper.msgParse(errorMsg));
     }
 
+
+    private boolean scan=false;
+    String batchno;
+    String specs;
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onCodeReceiver(CodeResultEvent codeResultEvent) {
+        String[] arr = MaterQRUtil.materialQRCode(codeResultEvent.scanResult);
+        if (arr != null && arr.length == 8) {
+            String materCode=mWaitPutinRecordEntity.getTaskActiveId().getMaterialId().getCode();
+            String incode = arr[0].replace("incode=", "");
+            batchno = arr[1].replace("batchno=", "");
+            String batchno2 = arr[2].replace("batchno2=", "");
+            String packqty = arr[3].replace("packqty=", "");
+            String packs = arr[4].replace("packs=", "");
+            String purcode = arr[5].replace("purcode=", "");
+            String orderno = arr[6].replace("orderno=", "");
+            specs=arr[7].replace("specs=","");
+            customCondition.put("taskActiveId", mWaitPutinRecordEntity.getTaskActiveId().getId());
+            queryParams.put(Constant.BAPQuery.CODE, incode);
+            scan=true;
+            presenterRouter.create(CommonListAPI.class).list(1, customCondition, queryParams, WomConstant.URL.BATCH_MATERIAL_LIST_REF_URL, "batMaterilPart");
+
+        } else {
+            ToastUtils.show(context, "二维码退料信息解析异常！");
+        }
+    }
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void getEventPost(SelectDataEvent selectDataEvent) {
         if (selectDataEvent.getEntity() instanceof List) {
@@ -343,7 +419,7 @@ public class BatchPutInActivityReportActivity extends BaseRefreshRecyclerActivit
             putInDetailEntity.setMaterialBatchNum(entity.getMaterialBatchNum());
             putInDetailEntity.setWareId(entity.getWareId());
             putInDetailEntity.setStoreId(entity.getStoreId());
-            putInDetailEntity.setPutinNum(entity.getOfferNum()); // 默认配料数量
+            putInDetailEntity.setPutinNum(entity.getPutinNum());
             putInDetailEntity.setAvailableNum(entity.getOfferNum());
             putInDetailEntity.setPutinTime(new Date().getTime());
             putInDetailEntityList.add(putInDetailEntity);

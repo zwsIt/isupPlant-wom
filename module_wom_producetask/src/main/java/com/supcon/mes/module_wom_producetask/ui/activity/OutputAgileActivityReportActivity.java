@@ -34,6 +34,7 @@ import com.supcon.mes.mbap.view.CustomImageButton;
 import com.supcon.mes.mbap.view.CustomTextView;
 import com.supcon.mes.middleware.constant.Constant;
 import com.supcon.mes.middleware.controller.GetPowerCodeController;
+import com.supcon.mes.middleware.controller.ProductController;
 import com.supcon.mes.middleware.model.bean.BAP5CommonEntity;
 import com.supcon.mes.middleware.model.bean.CommonBAPListEntity;
 import com.supcon.mes.middleware.model.bean.Good;
@@ -43,7 +44,10 @@ import com.supcon.mes.middleware.model.bean.wom.WarehouseEntity;
 import com.supcon.mes.middleware.model.event.RefreshEvent;
 import com.supcon.mes.middleware.model.event.SelectDataEvent;
 import com.supcon.mes.middleware.model.inter.PowerCode;
+import com.supcon.mes.middleware.model.listener.OnSuccessListener;
 import com.supcon.mes.middleware.util.ErrorMsgHelper;
+import com.supcon.mes.module_scan.controller.CommonScanController;
+import com.supcon.mes.module_scan.model.event.CodeResultEvent;
 import com.supcon.mes.module_wom_producetask.IntentRouter;
 import com.supcon.mes.module_wom_producetask.R;
 import com.supcon.mes.module_wom_producetask.constant.WomConstant;
@@ -58,12 +62,14 @@ import com.supcon.mes.module_wom_producetask.presenter.CommonListPresenter;
 import com.supcon.mes.module_wom_producetask.presenter.OutputReportPresenter;
 import com.supcon.mes.module_wom_producetask.ui.adapter.OutputAgileReportDetailAdapter;
 import com.supcon.mes.module_wom_producetask.ui.adapter.OutputReportDetailAdapter;
+import com.supcon.mes.module_wom_producetask.util.MaterQRUtil;
 import com.supcon.mes.module_wom_producetask.util.SmoothScrollLayoutManager;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -80,7 +86,7 @@ import io.reactivex.functions.Consumer;
 @Router(Constant.Router.WOM_OUTPUT_AGILE_REPORT)
 @Presenter(value = {CommonListPresenter.class, OutputReportPresenter.class})
 @PowerCode(entityCode = WomConstant.PowerCode.PRODUCE_TASK_LIST)
-@Controller(value = {GetPowerCodeController.class})
+@Controller(value = {GetPowerCodeController.class, CommonScanController.class, ProductController.class})
 public class OutputAgileActivityReportActivity extends BaseRefreshRecyclerActivity<OutputDetailEntity> implements CommonListContract.View, OutputReportContract.View {
     @BindByTag("leftBtn")
     CustomImageButton leftBtn;
@@ -162,7 +168,10 @@ public class OutputAgileActivityReportActivity extends BaseRefreshRecyclerActivi
     protected void initListener() {
         super.initListener();
         leftBtn.setOnClickListener(v -> finish());
-        rightBtn.setOnClickListener(v -> ToastUtils.show(context, "待实现"));
+        getController(CommonScanController.class).openInfrared();
+        rightBtn.setOnClickListener(v -> {
+            getController(CommonScanController.class).openCameraScan();
+        });
         refreshListController.setOnRefreshListener(new OnRefreshListener() {
             @Override
             public void onRefresh() {
@@ -222,7 +231,54 @@ public class OutputAgileActivityReportActivity extends BaseRefreshRecyclerActivi
                     }
                 });
     }
+    /**
+     * 扫描功能：红外、摄像头扫描监听事件
+     * @param codeResultEvent
+     */
+    Map<String, Object> goodMap = new HashMap<>();
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onCodeReceiver(CodeResultEvent codeResultEvent) {
+        String[] arr = MaterQRUtil.materialQRCode(codeResultEvent.scanResult);
+        if (arr != null && arr.length == 8) {
+            String incode = arr[0].replace("incode=", "");
+            String batchno = arr[1].replace("batchno=", "");
+            String batchno2 = arr[2].replace("batchno2=", "");
+            String packqty = arr[3].replace("packqty=", "");
+            String packs = arr[4].replace("packs=", "");
+            String purcode = arr[5].replace("purcode=", "");
+            String orderno = arr[6].replace("orderno=", "");
+            String specs=arr[7].replace("specs=","");
+            goodMap.put(Constant.BAPQuery.CODE, incode);
+            getController(ProductController.class)
+                    .getProduct(goodMap)
+                    .setOnSuccessListener(new OnSuccessListener() {
+                        @Override
+                        public void onSuccess(Object result) {
+                            if (result instanceof Good) {
+                                Good good = (Good) result;
+                                MaterialEntity materialEntity = new MaterialEntity();
+                                materialEntity.setId(good.id);
+                                materialEntity.setCode(good.code);
+                                materialEntity.setName(good.name);
+                                OutputDetailEntity outputDetailEntity = new OutputDetailEntity();
+                                outputDetailEntity.setProduct(materialEntity);
+                                outputDetailEntity.setMaterialBatchNum(batchno);
+                                outputDetailEntity.setOutputNum(!TextUtils.isEmpty(specs)?new BigDecimal(specs):null);
+                                outputDetailEntity.setPutinTime(new Date().getTime());  // 投料时间
+                                mOutputAgileReportDetailAdapter.addData(outputDetailEntity);
+                                mOutputAgileReportDetailAdapter.notifyItemRangeInserted(mOutputAgileReportDetailAdapter.getItemCount() - 1, 1);
+                                mOutputAgileReportDetailAdapter.notifyItemRangeChanged(mOutputAgileReportDetailAdapter.getItemCount() - 1, 1);
+                                contentView.smoothScrollToPosition(mOutputAgileReportDetailAdapter.getItemCount() - 1);
+                            } else {
+                                ToastUtils.show(context, result.toString());
+                            }
+                        }
+                    });
+        } else {
+            ToastUtils.show(context, "二维码退料信息解析异常！");
+        }
 
+    }
     /**
      * @param
      * @return

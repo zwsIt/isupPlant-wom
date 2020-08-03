@@ -43,6 +43,8 @@ import com.supcon.mes.middleware.model.event.RefreshEvent;
 import com.supcon.mes.middleware.model.event.SelectDataEvent;
 import com.supcon.mes.middleware.model.inter.PowerCode;
 import com.supcon.mes.middleware.util.ErrorMsgHelper;
+import com.supcon.mes.module_scan.controller.CommonScanController;
+import com.supcon.mes.module_scan.model.event.CodeResultEvent;
 import com.supcon.mes.module_wom_producetask.IntentRouter;
 import com.supcon.mes.module_wom_producetask.R;
 import com.supcon.mes.module_wom_producetask.constant.WomConstant;
@@ -62,12 +64,14 @@ import com.supcon.mes.module_wom_producetask.presenter.OutputReportPresenter;
 import com.supcon.mes.module_wom_producetask.presenter.PutInReportPresenter;
 import com.supcon.mes.module_wom_producetask.ui.adapter.OutputReportDetailAdapter;
 import com.supcon.mes.module_wom_producetask.ui.adapter.PutInReportDetailAdapter;
+import com.supcon.mes.module_wom_producetask.util.MaterQRUtil;
 import com.supcon.mes.module_wom_producetask.util.SmoothScrollLayoutManager;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -84,7 +88,10 @@ import io.reactivex.functions.Consumer;
 @Router(Constant.Router.WOM_OUTPUT_REPORT)
 @Presenter(value = {CommonListPresenter.class, OutputReportPresenter.class})
 @PowerCode(entityCode = WomConstant.PowerCode.PRODUCE_TASK_LIST)
-@Controller(value = {GetPowerCodeController.class})
+@Controller(value = {
+        GetPowerCodeController.class,
+        CommonScanController.class
+})
 public class OutputActivityReportActivity extends BaseRefreshRecyclerActivity<OutputDetailEntity> implements CommonListContract.View, OutputReportContract.View {
     @BindByTag("leftBtn")
     CustomImageButton leftBtn;
@@ -168,7 +175,7 @@ public class OutputActivityReportActivity extends BaseRefreshRecyclerActivity<Ou
 //        materialCode.setContent(mWaitPutinRecordEntity.getTaskActiveId().getMaterialId().getCode());
 //        planNum.setContent(String.valueOf(mWaitPutinRecordEntity.getTaskActiveId().getPlanQuantity()));
 
-        SpannableString planNumSpan = new SpannableString(getString(R.string.wom_plan) +"\n\n" + (mWaitPutinRecordEntity.getTaskActiveId().getPlanQuantity() == null ? "--" : mWaitPutinRecordEntity.getTaskActiveId().getPlanQuantity()));
+        SpannableString planNumSpan = new SpannableString(getString(R.string.wom_plan) + "\n\n" + (mWaitPutinRecordEntity.getTaskActiveId().getPlanQuantity() == null ? "--" : mWaitPutinRecordEntity.getTaskActiveId().getPlanQuantity()));
         planNumSpan.setSpan(new ForegroundColorSpan(context.getResources().getColor(R.color.dark_blue)), 4, planNumSpan.length(), Spanned.SPAN_INCLUSIVE_INCLUSIVE);
         planNumSpan.setSpan(new AbsoluteSizeSpan(DisplayUtil.dip2px(18, context)), 4, planNumSpan.length(), Spanned.SPAN_INCLUSIVE_INCLUSIVE);
         planNumTv.setText(planNumSpan);
@@ -195,7 +202,10 @@ public class OutputActivityReportActivity extends BaseRefreshRecyclerActivity<Ou
     protected void initListener() {
         super.initListener();
         leftBtn.setOnClickListener(v -> finish());
-        rightBtn.setOnClickListener(v -> ToastUtils.show(context, "待实现"));
+        getController(CommonScanController.class).openInfrared();
+        rightBtn.setOnClickListener(v -> {
+            getController(CommonScanController.class).openCameraScan();
+        });
         refreshListController.setOnRefreshListener(new OnRefreshListener() {
             @Override
             public void onRefresh() {
@@ -233,7 +243,7 @@ public class OutputActivityReportActivity extends BaseRefreshRecyclerActivity<Ou
                     case "itemViewDelBtn":
                         mOutputReportDetailAdapter.getList().remove(obj);
                         mOutputReportDetailAdapter.notifyItemRangeRemoved(position, 1);
-                        mOutputReportDetailAdapter.notifyItemRangeChanged(position, mOutputReportDetailAdapter.getItemCount()-position);
+                        mOutputReportDetailAdapter.notifyItemRangeChanged(position, mOutputReportDetailAdapter.getItemCount() - position);
                         if (mOutputDetailEntity.getId() != null) {
                             dgDeletedIds += mOutputDetailEntity.getId() + ",";
                         }
@@ -250,6 +260,43 @@ public class OutputActivityReportActivity extends BaseRefreshRecyclerActivity<Ou
                         submitReport();
                     }
                 });
+    }
+
+
+    /**
+     * 扫描功能：红外、摄像头扫描监听事件
+     *
+     * @param codeResultEvent
+     */
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onCodeReceiver(CodeResultEvent codeResultEvent) {
+        String[] arr = MaterQRUtil.materialQRCode(codeResultEvent.scanResult);
+        if (arr != null && arr.length == 8) {
+            String materCode=mWaitPutinRecordEntity.getTaskActiveId().getMaterialId().getCode();
+            String incode = arr[0].replace("incode=", "");
+            String batchno = arr[1].replace("batchno=", "");
+            String batchno2 = arr[2].replace("batchno2=", "");
+            String packqty = arr[3].replace("packqty=", "");
+            String packs = arr[4].replace("packs=", "");
+            String purcode = arr[5].replace("purcode=", "");
+            String orderno = arr[6].replace("orderno=", "");
+            String specs=arr[7].replace("specs=","");
+            if (materCode.equals(incode)){
+                OutputDetailEntity outputDetailEntity = new OutputDetailEntity();
+                outputDetailEntity.setMaterialBatchNum(batchno);
+                outputDetailEntity.setOutputNum(!TextUtils.isEmpty(specs)?new BigDecimal(specs):null);
+                outputDetailEntity.setProduct(mWaitPutinRecordEntity.getTaskActiveId().getMaterialId()); // 物料
+                outputDetailEntity.setPutinTime(new Date().getTime());  // 投料时间
+                mOutputReportDetailAdapter.addData(outputDetailEntity);
+                mOutputReportDetailAdapter.notifyItemRangeInserted(mOutputReportDetailAdapter.getItemCount() - 1, 1);
+                mOutputReportDetailAdapter.notifyItemRangeChanged(mOutputReportDetailAdapter.getItemCount() - 1, 1);
+                contentView.smoothScrollToPosition(mOutputReportDetailAdapter.getItemCount() - 1);
+            }else {
+                ToastUtils.show(context,"非当前所投物料，请重新扫描");
+            }
+        } else {
+            ToastUtils.show(context, "二维码退料信息解析异常！");
+        }
     }
 
     /**

@@ -7,6 +7,7 @@ import com.supcon.mes.middleware.model.bean.SystemCodeEntity;
 import com.supcon.mes.middleware.model.bean.wom.FactoryModelEntity;
 import com.supcon.mes.middleware.model.bean.wom.FormulaEntity;
 import com.supcon.mes.middleware.model.bean.wom.MaterialEntity;
+import com.supcon.mes.middleware.model.bean.wom.WarehouseEntity;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -91,6 +92,7 @@ public class WaitPutinRecordEntity extends BaseEntity {
     private int version;
     private FormulaEntity formulaId;        // 配方
     private FactoryModelEntity euqId;       // 工作单元
+    private WarehouseEntity ware;
 
     public FactoryModelEntity getEuqId() {
         if (euqId == null){
@@ -419,4 +421,11 @@ public class WaitPutinRecordEntity extends BaseEntity {
         this.formulaId = formulaId;
     }
 
+    public WarehouseEntity getWare() {
+        return ware;
+    }
+
+    public void setWare(WarehouseEntity ware) {
+        this.ware = ware;
+    }
 }

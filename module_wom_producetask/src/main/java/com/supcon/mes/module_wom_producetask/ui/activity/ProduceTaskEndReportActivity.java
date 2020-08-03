@@ -36,6 +36,8 @@ import com.supcon.mes.middleware.model.bean.wom.WarehouseEntity;
 import com.supcon.mes.middleware.model.event.RefreshEvent;
 import com.supcon.mes.middleware.model.event.SelectDataEvent;
 import com.supcon.mes.middleware.util.ErrorMsgHelper;
+import com.supcon.mes.module_scan.controller.CommonScanController;
+import com.supcon.mes.module_scan.model.event.CodeResultEvent;
 import com.supcon.mes.module_wom_producetask.IntentRouter;
 import com.supcon.mes.module_wom_producetask.R;
 import com.supcon.mes.module_wom_producetask.controller.ProduceTaskEndReportDetailController;
@@ -45,12 +47,14 @@ import com.supcon.mes.module_wom_producetask.model.bean.WaitPutinRecordEntity;
 import com.supcon.mes.module_wom_producetask.model.contract.ProduceTaskOperateContract;
 import com.supcon.mes.module_wom_producetask.presenter.ProduceTaskOperatePresenter;
 import com.supcon.mes.module_wom_producetask.ui.adapter.ProduceTaskEndReportDetailAdapter;
+import com.supcon.mes.module_wom_producetask.util.MaterQRUtil;
 import com.supcon.mes.module_wom_producetask.util.SmoothScrollLayoutManager;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -63,7 +67,7 @@ import io.reactivex.functions.Consumer;
  * Desc 指令单结束报工
  */
 @Router(Constant.Router.WOM_PRODUCE_TASK_END_REPORT)
-//@Controller(value = {ProduceTaskEndReportDetailController.class})
+@Controller(value = {CommonScanController.class})
 @Presenter(value = {ProduceTaskOperatePresenter.class})
 public class ProduceTaskEndReportActivity extends BaseRefreshRecyclerActivity<OutputDetailEntity> implements ProduceTaskOperateContract.View {
     @BindByTag("leftBtn")
@@ -152,7 +156,10 @@ public class ProduceTaskEndReportActivity extends BaseRefreshRecyclerActivity<Ou
     protected void initListener() {
         super.initListener();
         leftBtn.setOnClickListener(v -> finish());
-        rightBtn.setOnClickListener(v -> ToastUtils.show(context,"待实现"));
+        getController(CommonScanController.class).openInfrared();
+        rightBtn.setOnClickListener(v -> {
+            getController(CommonScanController.class).openCameraScan();
+        });
         customListWidgetAdd.setOnClickListener(v -> {
             OutputDetailEntity outputDetailEntity = new OutputDetailEntity();
             outputDetailEntity.setProduct(mWaitPutinRecordEntity.getProductId()); // 产品
@@ -194,7 +201,44 @@ public class ProduceTaskEndReportActivity extends BaseRefreshRecyclerActivity<Ou
                     }
                 });
     }
+    /**
+     * 扫描功能：红外、摄像头扫描监听事件
+     * @param codeResultEvent
+     */
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onCodeReceiver(CodeResultEvent codeResultEvent) {
+        String[] arr = MaterQRUtil.materialQRCode(codeResultEvent.scanResult);
+        if (arr != null && arr.length == 8) {
+            String incode = arr[0].replace("incode=", "");
+            String batchno = arr[1].replace("batchno=", "");
+            String batchno2 = arr[2].replace("batchno2=", "");
+            String packqty = arr[3].replace("packqty=", "");
+            String packs = arr[4].replace("packs=", "");
+            String purcode = arr[5].replace("purcode=", "");
+            String orderno = arr[6].replace("orderno=", "");
+            String specs=arr[7].replace("specs=","");
+            if (mWaitPutinRecordEntity.getProductId().getCode().equals(incode)){
+                OutputDetailEntity outputDetailEntity = new OutputDetailEntity();
+                outputDetailEntity.setProduct(mWaitPutinRecordEntity.getProductId()); // 产品
+                if (!TextUtils.isEmpty(mWaitPutinRecordEntity.getProduceBatchNum()) && !mWaitPutinRecordEntity.getProduceBatchNum().equals(batchno)){
+                    ToastUtils.show(context,"非当前指令单物料批号，请重新扫描");
+                    return;
+                }
+                outputDetailEntity.setMaterialBatchNum(batchno); // 生产批默认入库批号
+                outputDetailEntity.setOutputNum(!TextUtils.isEmpty(specs)?new BigDecimal(specs) :mWaitPutinRecordEntity.getTaskId().getPlanNum());  // 默认入库数量为计划数量
+                mProduceTaskEndReportDetailAdapter.addData(outputDetailEntity);
+                mProduceTaskEndReportDetailAdapter.notifyItemRangeInserted(mProduceTaskEndReportDetailAdapter.getItemCount() - 1, 1);
+                mProduceTaskEndReportDetailAdapter.notifyItemRangeChanged(mProduceTaskEndReportDetailAdapter.getItemCount() - 1, 1);
 
+                contentView.smoothScrollToPosition(mProduceTaskEndReportDetailAdapter.getItemCount() - 1);
+            }else {
+                ToastUtils.show(context,"非当前指令单物料，请重新扫描");
+            }
+        } else {
+            ToastUtils.show(context, "二维码退料信息解析异常！");
+        }
+
+    }
     /**
      * @author zhangwenshuai1 2020/4/2
      * @param
