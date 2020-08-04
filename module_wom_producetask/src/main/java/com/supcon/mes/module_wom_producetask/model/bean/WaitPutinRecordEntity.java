@@ -93,7 +93,6 @@ public class WaitPutinRecordEntity extends BaseEntity {
     private FormulaEntity formulaId;        // 配方
     private FactoryModelEntity euqId;       // 工作单元
     private WarehouseEntity ware;
-    private String batchCode;//物料批号
 
     public FactoryModelEntity getEuqId() {
         if (euqId == null){
@@ -428,13 +427,5 @@ public class WaitPutinRecordEntity extends BaseEntity {
 
     public void setWare(WarehouseEntity ware) {
         this.ware = ware;
-    }
-
-    public void setBatchCode(String batchCode) {
-        this.batchCode = batchCode;
-    }
-
-    public String getBatchCode() {
-        return batchCode;
     }
 }

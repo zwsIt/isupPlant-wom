@@ -68,7 +68,6 @@ public class ProduceTaskListAdapter extends BaseListDataRecyclerViewAdapter<Wait
      * created by zhangwenshuai1 2020/3/26
      * desc 指令单Item
      */
-    WaitPutinRecordEntity mWaitPutinRecordEntity;
     class TaskProduceTaskItemViewHolder extends BaseRecyclerViewHolder<WaitPutinRecordEntity> {
 
         @BindByTag("produceBatchNumTv")
@@ -136,7 +135,7 @@ public class ProduceTaskListAdapter extends BaseListDataRecyclerViewAdapter<Wait
             RxView.clicks(expandIv).throttleFirst(100, TimeUnit.MILLISECONDS)
                     .subscribe(o -> {
                         WaitPutinRecordEntity entity = getItem(getAdapterPosition());
-                        mWaitPutinRecordEntity=entity;
+
                         if (WomConstant.SystemCode.EXE_STATE_PAUSED.equals(entity.getExeState().id) || WomConstant.SystemCode.EXE_STATE_STOPPED.equals(entity.getExeState().id)
                          || WomConstant.SystemCode.EXE_STATE_ABANDONED.equals(entity.getExeState().id)){
                             ToastUtils.show(context,"当前工单状态下，无工序查看");
@@ -271,9 +270,7 @@ public class ProduceTaskListAdapter extends BaseListDataRecyclerViewAdapter<Wait
                         @Override
                         public void accept(Object o) throws Exception {
                             Bundle bundle = new Bundle();
-                            WaitPutinRecordEntity entity=getItem(getAdapterPosition());
-                            entity.setWare(mWaitPutinRecordEntity.getWare());
-                            bundle.putSerializable(Constant.IntentKey.WAIT_PUT_RECORD,entity);
+                            bundle.putSerializable(Constant.IntentKey.WAIT_PUT_RECORD,getItem(getAdapterPosition()));
                             IntentRouter.go(context,Constant.Router.WOM_ACTIVITY_LIST,bundle);
                         }
                     });

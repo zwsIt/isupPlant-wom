@@ -96,8 +96,6 @@ public class TaskActiveEntity extends BaseEntity {
     private ProduceTaskEntity taskId;               // 工单
     private TaskProcessEntity taskProcessId;        // 工单工序
     private int version;
-    private String batchCode;//物料批号
-
 
     public String getMaterialBatchNum() {
         return materialBatchNum;
@@ -422,13 +420,5 @@ public class TaskActiveEntity extends BaseEntity {
         public void setId(Long id) {
             this.id = id;
         }
-    }
-
-    public String getBatchCode() {
-        return batchCode;
-    }
-
-    public void setBatchCode(String batchCode) {
-        this.batchCode = batchCode;
     }
 }

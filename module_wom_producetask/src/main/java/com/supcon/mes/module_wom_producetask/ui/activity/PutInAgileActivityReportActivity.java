@@ -185,7 +185,6 @@ public class PutInAgileActivityReportActivity extends BaseRefreshRecyclerActivit
         customListWidgetAdd.setOnClickListener(v -> {
             PutInDetailEntity putInDetailEntity = new PutInDetailEntity();
             putInDetailEntity.setPutinTime(new Date().getTime());  // 投料时间
-            putInDetailEntity.setWareId(mWaitPutinRecordEntity.getWare());
             mPutInAgileReportDetailAdapter.addData(putInDetailEntity);
             mPutInAgileReportDetailAdapter.notifyItemRangeInserted(mPutInAgileReportDetailAdapter.getItemCount() - 1, 1);
             mPutInAgileReportDetailAdapter.notifyItemRangeChanged(mPutInAgileReportDetailAdapter.getItemCount() - 1, 1);
@@ -265,7 +264,6 @@ public class PutInAgileActivityReportActivity extends BaseRefreshRecyclerActivit
                                 materialEntity.setName(good.name);
                                 PutInDetailEntity putInDetailEntity = new PutInDetailEntity();
                                 putInDetailEntity.setMaterialId(materialEntity);
-                                putInDetailEntity.setWareId(mWaitPutinRecordEntity.getWare());
                                 putInDetailEntity.setMaterialBatchNum(batchno);
                                 putInDetailEntity.setPutinNum(!TextUtils.isEmpty(specs)?new BigDecimal(specs):null);
                                 putInDetailEntity.setPutinTime(new Date().getTime());  // 投料时间

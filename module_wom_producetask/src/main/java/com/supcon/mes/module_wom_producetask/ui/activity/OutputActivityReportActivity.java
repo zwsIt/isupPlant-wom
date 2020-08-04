@@ -168,7 +168,6 @@ public class OutputActivityReportActivity extends BaseRefreshRecyclerActivity<Ou
         titleText.setText(String.format("%s%s", mWaitPutinRecordEntity.getTaskActiveId().getActiveType().value, getString(R.string.wom_report)));
         rightBtn.setVisibility(View.VISIBLE);
         rightBtn.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_top_scan));
-        rightBtn.setVisibility(View.GONE);
         customListWidgetName.setText(context.getResources().getString(R.string.wom_produce_task_report_detail));
         customListWidgetEdit.setVisibility(View.GONE);
 
@@ -218,7 +217,6 @@ public class OutputActivityReportActivity extends BaseRefreshRecyclerActivity<Ou
             OutputDetailEntity outputDetailEntity = new OutputDetailEntity();
             outputDetailEntity.setProduct(mWaitPutinRecordEntity.getTaskActiveId().getMaterialId()); // 物料
             outputDetailEntity.setPutinTime(new Date().getTime());  // 投料时间
-            outputDetailEntity.setWareId(mWaitPutinRecordEntity.getWare());
             mOutputReportDetailAdapter.addData(outputDetailEntity);
             mOutputReportDetailAdapter.notifyItemRangeInserted(mOutputReportDetailAdapter.getItemCount() - 1, 1);
             mOutputReportDetailAdapter.notifyItemRangeChanged(mOutputReportDetailAdapter.getItemCount() - 1, 1);
@@ -272,7 +270,33 @@ public class OutputActivityReportActivity extends BaseRefreshRecyclerActivity<Ou
      */
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onCodeReceiver(CodeResultEvent codeResultEvent) {
-
+        String[] arr = MaterQRUtil.materialQRCode(codeResultEvent.scanResult);
+        if (arr != null && arr.length == 8) {
+            String materCode=mWaitPutinRecordEntity.getTaskActiveId().getMaterialId().getCode();
+            String incode = arr[0].replace("incode=", "");
+            String batchno = arr[1].replace("batchno=", "");
+            String batchno2 = arr[2].replace("batchno2=", "");
+            String packqty = arr[3].replace("packqty=", "");
+            String packs = arr[4].replace("packs=", "");
+            String purcode = arr[5].replace("purcode=", "");
+            String orderno = arr[6].replace("orderno=", "");
+            String specs=arr[7].replace("specs=","");
+            if (materCode.equals(incode)){
+                OutputDetailEntity outputDetailEntity = new OutputDetailEntity();
+                outputDetailEntity.setMaterialBatchNum(batchno);
+                outputDetailEntity.setOutputNum(!TextUtils.isEmpty(specs)?new BigDecimal(specs):null);
+                outputDetailEntity.setProduct(mWaitPutinRecordEntity.getTaskActiveId().getMaterialId()); // 物料
+                outputDetailEntity.setPutinTime(new Date().getTime());  // 投料时间
+                mOutputReportDetailAdapter.addData(outputDetailEntity);
+                mOutputReportDetailAdapter.notifyItemRangeInserted(mOutputReportDetailAdapter.getItemCount() - 1, 1);
+                mOutputReportDetailAdapter.notifyItemRangeChanged(mOutputReportDetailAdapter.getItemCount() - 1, 1);
+                contentView.smoothScrollToPosition(mOutputReportDetailAdapter.getItemCount() - 1);
+            }else {
+                ToastUtils.show(context,"非当前所投物料，请重新扫描");
+            }
+        } else {
+            ToastUtils.show(context, "二维码退料信息解析异常！");
+        }
     }
 
     /**
