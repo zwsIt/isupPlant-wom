@@ -96,6 +96,7 @@ public class FormulaActivityListFragment extends BaseRefreshRecyclerFragment<Wai
         queryParams.put(Constant.BAPQuery.RECORD_TYPE, WomConstant.SystemCode.RECORD_TYPE_ACTIVE); // 默认活动查询
         queryParams.put(Constant.BAPQuery.IS_MORE_OTHER, false); // 非其他活动
         WaitPutinRecordEntity waitPutinRecordEntity = (WaitPutinRecordEntity)getActivity().getIntent().getSerializableExtra(Constant.IntentKey.WAIT_PUT_RECORD);
+        mFormulaActivityListAdapter.setWarehouseEntity(waitPutinRecordEntity.getWare());
         queryParams.put(Constant.BAPQuery.PRODUCE_BATCH_NUM,waitPutinRecordEntity.getProduceBatchNum()); // 当前生产批
         if (WomConstant.SystemCode.RECORD_TYPE_PROCESS.equals(waitPutinRecordEntity.getRecordType().id)){
             queryParams.put(Constant.BAPQuery.TASK_PROCESS_ID,waitPutinRecordEntity.getTaskProcessId().getId()); // 当前工序

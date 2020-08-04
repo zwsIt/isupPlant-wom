@@ -157,6 +157,7 @@ public class BatchPutInActivityReportActivity extends BaseRefreshRecyclerActivit
         rightBtn.setVisibility(View.VISIBLE);
         rightBtn.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_top_scan));
         customListWidgetName.setText(context.getResources().getString(R.string.wom_produce_task_report_detail));
+        rightBtn.setVisibility(View.GONE);
         customListWidgetEdit.setVisibility(View.GONE);
         customListWidgetAdd.setImageResource(R.drawable.ic_add_new);
 
@@ -291,47 +292,7 @@ public class BatchPutInActivityReportActivity extends BaseRefreshRecyclerActivit
     @Override
     public void listSuccess(BAP5CommonEntity entity) {
         CommonBAPListEntity commonBAPListEntity = GsonUtil.gsonToBean(GsonUtil.gsonString(entity.data), CommonBAPListEntity.class);
-        if (scan){
-            scan=false;
-            List<BatchMaterialPartEntity> list=GsonUtil.jsonToList(GsonUtil.gsonString((Object) commonBAPListEntity.result), BatchMaterialPartEntity.class);
-            if (!list.isEmpty()){
-                List<Long> currentListId = new ArrayList<>();
-                for (PutInDetailEntity putInDetailEntity : mPutInReportDetailAdapter.getList()) {
-                    currentListId.add(putInDetailEntity.getBatchingRecordId());
-                }
-                PutInDetailEntity putInDetailEntity;
-                List<PutInDetailEntity> putInDetailEntityList = new ArrayList<>();
-                for (BatchMaterialPartEntity batchMaterialPartEntity : list){
-                    // 防止重复添加
-                    if (currentListId.contains(batchMaterialPartEntity.getId())){
-                        ToastUtils.show(context,"【"+batchMaterialPartEntity.getMaterialId().getName()+"】物料已存在，请重新扫描");
-                        return;
-                    }
-                    if (!TextUtils.isEmpty(batchno) && !batchno.equals(batchMaterialPartEntity.getMaterialBatchNum())){
-                        ToastUtils.show(context,"非当前【"+batchMaterialPartEntity.getMaterialId().getName()+"】物料批号，请重新扫描");
-                        return;
-                    }
-                    putInDetailEntity = new PutInDetailEntity();
-                    putInDetailEntity.setBatchingRecordId(batchMaterialPartEntity.getId()); // require
-                    putInDetailEntity.setMaterialId(batchMaterialPartEntity.getMaterialId());
-                    putInDetailEntity.setMaterialBatchNum(batchMaterialPartEntity.getMaterialBatchNum());
-                    putInDetailEntity.setWareId(batchMaterialPartEntity.getWareId());
-                    putInDetailEntity.setStoreId(batchMaterialPartEntity.getStoreId());
-                    putInDetailEntity.setPutinNum(!TextUtils.isEmpty(specs)?new BigDecimal(specs):batchMaterialPartEntity.getOfferNum()); // 默认配料数量
-                    putInDetailEntity.setAvailableNum(batchMaterialPartEntity.getOfferNum());
-                    putInDetailEntity.setPutinTime(new Date().getTime());
-                    putInDetailEntityList.add(putInDetailEntity);
-                }
-                if (putInDetailEntityList.size() <= 0){
-                    return;
-                }
-                mPutInReportDetailAdapter.addList(putInDetailEntityList);
-                mPutInReportDetailAdapter.notifyItemRangeInserted(mPutInReportDetailAdapter.getList().size() - putInDetailEntityList.size(), putInDetailEntityList.size());
-                mPutInReportDetailAdapter.notifyItemRangeChanged(mPutInReportDetailAdapter.getList().size() - putInDetailEntityList.size(), putInDetailEntityList.size());
-            }
-        }else {
-            refreshListController.refreshComplete(GsonUtil.jsonToList(GsonUtil.gsonString((Object) commonBAPListEntity.result), PutInDetailEntity.class));
-        }
+        refreshListController.refreshComplete(GsonUtil.jsonToList(GsonUtil.gsonString((Object) commonBAPListEntity.result), PutInDetailEntity.class));
 
     }
 
@@ -354,30 +315,10 @@ public class BatchPutInActivityReportActivity extends BaseRefreshRecyclerActivit
     }
 
 
-    private boolean scan=false;
-    String batchno;
-    String specs;
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onCodeReceiver(CodeResultEvent codeResultEvent) {
-        String[] arr = MaterQRUtil.materialQRCode(codeResultEvent.scanResult);
-        if (arr != null && arr.length == 8) {
-            String materCode=mWaitPutinRecordEntity.getTaskActiveId().getMaterialId().getCode();
-            String incode = arr[0].replace("incode=", "");
-            batchno = arr[1].replace("batchno=", "");
-            String batchno2 = arr[2].replace("batchno2=", "");
-            String packqty = arr[3].replace("packqty=", "");
-            String packs = arr[4].replace("packs=", "");
-            String purcode = arr[5].replace("purcode=", "");
-            String orderno = arr[6].replace("orderno=", "");
-            specs=arr[7].replace("specs=","");
-            customCondition.put("taskActiveId", mWaitPutinRecordEntity.getTaskActiveId().getId());
-            queryParams.put(Constant.BAPQuery.CODE, incode);
-            scan=true;
-            presenterRouter.create(CommonListAPI.class).list(1, customCondition, queryParams, WomConstant.URL.BATCH_MATERIAL_LIST_REF_URL, "batMaterilPart");
 
-        } else {
-            ToastUtils.show(context, "二维码退料信息解析异常！");
-        }
+
     }
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void getEventPost(SelectDataEvent selectDataEvent) {
