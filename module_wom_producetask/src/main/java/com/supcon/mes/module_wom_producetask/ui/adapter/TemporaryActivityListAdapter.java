@@ -15,6 +15,7 @@ import com.supcon.common.view.util.ToastUtils;
 import com.supcon.mes.mbap.utils.DateUtil;
 import com.supcon.mes.mbap.view.CustomTextView;
 import com.supcon.mes.middleware.constant.Constant;
+import com.supcon.mes.middleware.model.bean.wom.WarehouseEntity;
 import com.supcon.mes.module_wom_producetask.IntentRouter;
 import com.supcon.mes.module_wom_producetask.R;
 import com.supcon.mes.module_wom_producetask.constant.WomConstant;
@@ -69,6 +70,11 @@ public class TemporaryActivityListAdapter extends BaseListDataRecyclerViewAdapte
         } else {
             return -1;
         }
+    }
+    WarehouseEntity warehouseEntity;
+
+    public void setWarehouseEntity(WarehouseEntity warehouseEntity) {
+        this.warehouseEntity = warehouseEntity;
     }
 
     /**
@@ -251,8 +257,10 @@ public class TemporaryActivityListAdapter extends BaseListDataRecyclerViewAdapte
                     })
                     .subscribe(o -> {
                         Bundle bundle = new Bundle();
-                        bundle.putSerializable(Constant.IntentKey.WAIT_PUT_RECORD, getItem(getAdapterPosition()));
-                        if (getItem(getAdapterPosition()).getAgile()){
+                        WaitPutinRecordEntity entity=getItem(getAdapterPosition());
+                        entity.setWare(warehouseEntity);
+                        bundle.putSerializable(Constant.IntentKey.WAIT_PUT_RECORD, entity);
+                        if (entity.getAgile()){
                             IntentRouter.go(context, Constant.Router.WOM_PUT_IN_AGILE_REPORT, bundle);
                         }else {
                             IntentRouter.go(context, Constant.Router.WOM_PUT_IN_REPORT, bundle);
@@ -334,8 +342,10 @@ public class TemporaryActivityListAdapter extends BaseListDataRecyclerViewAdapte
                     })
                     .subscribe(o -> {
                         Bundle bundle = new Bundle();
-                        bundle.putSerializable(Constant.IntentKey.WAIT_PUT_RECORD, getItem(getAdapterPosition()));
-                        if (getItem(getAdapterPosition()).getAgile()){
+                        WaitPutinRecordEntity entity=getItem(getAdapterPosition());
+                        entity.setWare(warehouseEntity);
+                        bundle.putSerializable(Constant.IntentKey.WAIT_PUT_RECORD, entity);
+                        if (entity.getAgile()){
                             IntentRouter.go(context, Constant.Router.WOM_OUTPUT_AGILE_REPORT, bundle);
                         }else {
                             IntentRouter.go(context, Constant.Router.WOM_OUTPUT_REPORT, bundle);

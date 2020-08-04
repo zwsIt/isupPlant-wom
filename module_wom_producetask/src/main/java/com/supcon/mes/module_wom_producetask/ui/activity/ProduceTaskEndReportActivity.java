@@ -141,7 +141,7 @@ public class ProduceTaskEndReportActivity extends BaseRefreshRecyclerActivity<Ou
         titleText.setText(context.getResources().getString(R.string.wom_produce_task_end_report));
         rightBtn.setVisibility(View.VISIBLE);
         rightBtn.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_top_scan));
-
+        rightBtn.setVisibility(View.GONE);
         productName.setContent(mWaitPutinRecordEntity.getProductId().getName());
         productCode.setContent(mWaitPutinRecordEntity.getProductId().getCode());
         planNum.setContent(String.valueOf(mWaitPutinRecordEntity.getTaskId().getPlanNum()));
@@ -165,6 +165,7 @@ public class ProduceTaskEndReportActivity extends BaseRefreshRecyclerActivity<Ou
             outputDetailEntity.setProduct(mWaitPutinRecordEntity.getProductId()); // 产品
             outputDetailEntity.setMaterialBatchNum(mWaitPutinRecordEntity.getProduceBatchNum()); // 生产批默认入库批号
             outputDetailEntity.setOutputNum(mWaitPutinRecordEntity.getTaskId().getPlanNum());  // 默认入库数量为计划数量
+            outputDetailEntity.setWareId(mWaitPutinRecordEntity.getWare());
             mProduceTaskEndReportDetailAdapter.addData(outputDetailEntity);
             mProduceTaskEndReportDetailAdapter.notifyItemRangeInserted(mProduceTaskEndReportDetailAdapter.getItemCount() - 1, 1);
             mProduceTaskEndReportDetailAdapter.notifyItemRangeChanged(mProduceTaskEndReportDetailAdapter.getItemCount() - 1, 1);
@@ -201,44 +202,7 @@ public class ProduceTaskEndReportActivity extends BaseRefreshRecyclerActivity<Ou
                     }
                 });
     }
-    /**
-     * 扫描功能：红外、摄像头扫描监听事件
-     * @param codeResultEvent
-     */
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onCodeReceiver(CodeResultEvent codeResultEvent) {
-        String[] arr = MaterQRUtil.materialQRCode(codeResultEvent.scanResult);
-        if (arr != null && arr.length == 8) {
-            String incode = arr[0].replace("incode=", "");
-            String batchno = arr[1].replace("batchno=", "");
-            String batchno2 = arr[2].replace("batchno2=", "");
-            String packqty = arr[3].replace("packqty=", "");
-            String packs = arr[4].replace("packs=", "");
-            String purcode = arr[5].replace("purcode=", "");
-            String orderno = arr[6].replace("orderno=", "");
-            String specs=arr[7].replace("specs=","");
-            if (mWaitPutinRecordEntity.getProductId().getCode().equals(incode)){
-                OutputDetailEntity outputDetailEntity = new OutputDetailEntity();
-                outputDetailEntity.setProduct(mWaitPutinRecordEntity.getProductId()); // 产品
-                if (!TextUtils.isEmpty(mWaitPutinRecordEntity.getProduceBatchNum()) && !mWaitPutinRecordEntity.getProduceBatchNum().equals(batchno)){
-                    ToastUtils.show(context,"非当前指令单物料批号，请重新扫描");
-                    return;
-                }
-                outputDetailEntity.setMaterialBatchNum(batchno); // 生产批默认入库批号
-                outputDetailEntity.setOutputNum(!TextUtils.isEmpty(specs)?new BigDecimal(specs) :mWaitPutinRecordEntity.getTaskId().getPlanNum());  // 默认入库数量为计划数量
-                mProduceTaskEndReportDetailAdapter.addData(outputDetailEntity);
-                mProduceTaskEndReportDetailAdapter.notifyItemRangeInserted(mProduceTaskEndReportDetailAdapter.getItemCount() - 1, 1);
-                mProduceTaskEndReportDetailAdapter.notifyItemRangeChanged(mProduceTaskEndReportDetailAdapter.getItemCount() - 1, 1);
 
-                contentView.smoothScrollToPosition(mProduceTaskEndReportDetailAdapter.getItemCount() - 1);
-            }else {
-                ToastUtils.show(context,"非当前指令单物料，请重新扫描");
-            }
-        } else {
-            ToastUtils.show(context, "二维码退料信息解析异常！");
-        }
-
-    }
     /**
      * @author zhangwenshuai1 2020/4/2
      * @param

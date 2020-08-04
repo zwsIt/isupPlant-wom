@@ -12,6 +12,7 @@ import android.text.Spanned;
 import android.text.TextUtils;
 import android.text.style.AbsoluteSizeSpan;
 import android.text.style.ForegroundColorSpan;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -207,11 +208,14 @@ public class PutInActivityReportActivity extends BaseRefreshRecyclerActivity<Put
         customListWidgetAdd.setOnClickListener(v -> {
             PutInDetailEntity putInDetailEntity = new PutInDetailEntity();
             putInDetailEntity.setMaterialId(mWaitPutinRecordEntity.getTaskActiveId().getMaterialId()); // 物料
+            putInDetailEntity.setWareId(mWaitPutinRecordEntity.getWare());
+            putInDetailEntity.setMaterialBatchNum(mWaitPutinRecordEntity.getTaskActiveId().getBatchCode());
             putInDetailEntity.setPutinTime(new Date().getTime());  // 投料时间
             mPutInReportDetailAdapter.addData(putInDetailEntity);
             mPutInReportDetailAdapter.notifyItemRangeInserted(mPutInReportDetailAdapter.getItemCount() - 1, 1);
             mPutInReportDetailAdapter.notifyItemRangeChanged(mPutInReportDetailAdapter.getItemCount() - 1, 1);
             contentView.smoothScrollToPosition(mPutInReportDetailAdapter.getItemCount() - 1);
+
         });
         mPutInReportDetailAdapter.setOnItemChildViewClickListener(new OnItemChildViewClickListener() {
             @Override
@@ -257,33 +261,42 @@ public class PutInActivityReportActivity extends BaseRefreshRecyclerActivity<Put
      * 扫描功能：红外、摄像头扫描监听事件
      * @param codeResultEvent
      */
+    long lastTime;
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onCodeReceiver(CodeResultEvent codeResultEvent) {
         String[] arr = MaterQRUtil.materialQRCode(codeResultEvent.scanResult);
-        if (arr != null && arr.length == 8) {
-            String incode = arr[0].replace("incode=", "");
-            String batchno = arr[1].replace("batchno=", "");
-            String batchno2 = arr[2].replace("batchno2=", "");
-            String packqty = arr[3].replace("packqty=", "");
-            String packs = arr[4].replace("packs=", "");
-            String purcode = arr[5].replace("purcode=", "");
-            String orderno = arr[6].replace("orderno=", "");
-            String specs=arr[7].replace("specs=","");
-            if (incode.equals(mWaitPutinRecordEntity.getTaskActiveId().getMaterialId().getCode())){
-                PutInDetailEntity putInDetailEntity = new PutInDetailEntity();
-                putInDetailEntity.setMaterialId(mWaitPutinRecordEntity.getTaskActiveId().getMaterialId()); // 物料
-                putInDetailEntity.setMaterialBatchNum(batchno);
-                putInDetailEntity.setPutinNum(!TextUtils.isEmpty(specs)?new BigDecimal(specs):null);
-                putInDetailEntity.setPutinTime(new Date().getTime());  // 投料时间
-                mPutInReportDetailAdapter.addData(putInDetailEntity);
-                mPutInReportDetailAdapter.notifyItemRangeInserted(mPutInReportDetailAdapter.getItemCount() - 1, 1);
-                mPutInReportDetailAdapter.notifyItemRangeChanged(mPutInReportDetailAdapter.getItemCount() - 1, 1);
-                contentView.smoothScrollToPosition(mPutInReportDetailAdapter.getItemCount() - 1);
-            }else{
-                ToastUtils.show(context,"非当前所投物料，请重新扫描");
+        long currentTime=System.currentTimeMillis();
+        if (currentTime-lastTime>=2000) {
+            if (arr != null && arr.length == 8) {
+                String incode = arr[0].replace("incode=", "");
+                String batchno = arr[1].replace("batchno=", "");
+                String batchno2 = arr[2].replace("batchno2=", "");
+                String packqty = arr[3].replace("packqty=", "");
+                String packs = arr[4].replace("packs=", "");
+                String purcode = arr[5].replace("purcode=", "");
+                String orderno = arr[6].replace("orderno=", "");
+                String specs = arr[7].replace("specs=", "");
+                if (incode.equals(mWaitPutinRecordEntity.getTaskActiveId().getMaterialId().getCode())) {
+                    if (!TextUtils.isEmpty(mWaitPutinRecordEntity.getTaskActiveId().getBatchCode()) && !(mWaitPutinRecordEntity.getTaskActiveId().getBatchCode().equals(batchno))) {
+                        ToastUtils.show(context, "非当前物料批号，请重新扫描");
+                        return;
+                    }
+                    PutInDetailEntity putInDetailEntity = new PutInDetailEntity();
+                    putInDetailEntity.setMaterialId(mWaitPutinRecordEntity.getTaskActiveId().getMaterialId()); // 物料
+                    putInDetailEntity.setMaterialBatchNum(batchno);
+                    putInDetailEntity.setWareId(mWaitPutinRecordEntity.getWare());
+                    putInDetailEntity.setPutinNum(!TextUtils.isEmpty(specs) ? new BigDecimal(specs) : null);
+                    putInDetailEntity.setPutinTime(new Date().getTime());  // 投料时间
+                    mPutInReportDetailAdapter.addData(putInDetailEntity);
+                    mPutInReportDetailAdapter.notifyDataSetChanged();
+                    contentView.smoothScrollToPosition(mPutInReportDetailAdapter.getItemCount() - 1);
+                } else {
+                    ToastUtils.show(context, "非当前物料，请重新扫描");
+                }
+            } else {
+                ToastUtils.show(context, "二维码退料信息解析异常！");
             }
-        } else {
-            ToastUtils.show(context, "二维码退料信息解析异常！");
+            lastTime = currentTime;
         }
 
     }

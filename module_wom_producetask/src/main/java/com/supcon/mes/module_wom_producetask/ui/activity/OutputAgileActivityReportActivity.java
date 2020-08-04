@@ -86,7 +86,7 @@ import io.reactivex.functions.Consumer;
 @Router(Constant.Router.WOM_OUTPUT_AGILE_REPORT)
 @Presenter(value = {CommonListPresenter.class, OutputReportPresenter.class})
 @PowerCode(entityCode = WomConstant.PowerCode.PRODUCE_TASK_LIST)
-@Controller(value = {GetPowerCodeController.class, CommonScanController.class, ProductController.class})
+@Controller(value = {GetPowerCodeController.class, CommonScanController.class})
 public class OutputAgileActivityReportActivity extends BaseRefreshRecyclerActivity<OutputDetailEntity> implements CommonListContract.View, OutputReportContract.View {
     @BindByTag("leftBtn")
     CustomImageButton leftBtn;
@@ -155,6 +155,7 @@ public class OutputAgileActivityReportActivity extends BaseRefreshRecyclerActivi
         titleText.setText(context.getResources().getString(R.string.wom_manual_agile_output_report));
         rightBtn.setVisibility(View.VISIBLE);
         rightBtn.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_top_scan));
+        rightBtn.setVisibility(View.GONE);
         customListWidgetName.setText(context.getResources().getString(R.string.wom_produce_task_report_detail));
         customListWidgetEdit.setVisibility(View.GONE);
 
@@ -182,6 +183,7 @@ public class OutputAgileActivityReportActivity extends BaseRefreshRecyclerActivi
         customListWidgetAdd.setOnClickListener(v -> {
             OutputDetailEntity outputDetailEntity = new OutputDetailEntity();
             outputDetailEntity.setPutinTime(new Date().getTime());  // 投料时间
+            outputDetailEntity.setWareId(mWaitPutinRecordEntity.getWare());
             mOutputAgileReportDetailAdapter.addData(outputDetailEntity);
             mOutputAgileReportDetailAdapter.notifyItemRangeInserted(mOutputAgileReportDetailAdapter.getItemCount() - 1, 1);
             mOutputAgileReportDetailAdapter.notifyItemRangeChanged(mOutputAgileReportDetailAdapter.getItemCount() - 1, 1);
@@ -238,45 +240,7 @@ public class OutputAgileActivityReportActivity extends BaseRefreshRecyclerActivi
     Map<String, Object> goodMap = new HashMap<>();
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onCodeReceiver(CodeResultEvent codeResultEvent) {
-        String[] arr = MaterQRUtil.materialQRCode(codeResultEvent.scanResult);
-        if (arr != null && arr.length == 8) {
-            String incode = arr[0].replace("incode=", "");
-            String batchno = arr[1].replace("batchno=", "");
-            String batchno2 = arr[2].replace("batchno2=", "");
-            String packqty = arr[3].replace("packqty=", "");
-            String packs = arr[4].replace("packs=", "");
-            String purcode = arr[5].replace("purcode=", "");
-            String orderno = arr[6].replace("orderno=", "");
-            String specs=arr[7].replace("specs=","");
-            goodMap.put(Constant.BAPQuery.CODE, incode);
-            getController(ProductController.class)
-                    .getProduct(goodMap)
-                    .setOnSuccessListener(new OnSuccessListener() {
-                        @Override
-                        public void onSuccess(Object result) {
-                            if (result instanceof Good) {
-                                Good good = (Good) result;
-                                MaterialEntity materialEntity = new MaterialEntity();
-                                materialEntity.setId(good.id);
-                                materialEntity.setCode(good.code);
-                                materialEntity.setName(good.name);
-                                OutputDetailEntity outputDetailEntity = new OutputDetailEntity();
-                                outputDetailEntity.setProduct(materialEntity);
-                                outputDetailEntity.setMaterialBatchNum(batchno);
-                                outputDetailEntity.setOutputNum(!TextUtils.isEmpty(specs)?new BigDecimal(specs):null);
-                                outputDetailEntity.setPutinTime(new Date().getTime());  // 投料时间
-                                mOutputAgileReportDetailAdapter.addData(outputDetailEntity);
-                                mOutputAgileReportDetailAdapter.notifyItemRangeInserted(mOutputAgileReportDetailAdapter.getItemCount() - 1, 1);
-                                mOutputAgileReportDetailAdapter.notifyItemRangeChanged(mOutputAgileReportDetailAdapter.getItemCount() - 1, 1);
-                                contentView.smoothScrollToPosition(mOutputAgileReportDetailAdapter.getItemCount() - 1);
-                            } else {
-                                ToastUtils.show(context, result.toString());
-                            }
-                        }
-                    });
-        } else {
-            ToastUtils.show(context, "二维码退料信息解析异常！");
-        }
+
 
     }
     /**

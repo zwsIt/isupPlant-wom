@@ -100,6 +100,7 @@ public class TemporaryActivityListFragment extends BaseRefreshRecyclerFragment<W
         queryParams.put(Constant.BAPQuery.IS_FOR_TEMP, true); // 机动活动
 
         WaitPutinRecordEntity waitPutinRecordEntity = (WaitPutinRecordEntity)getActivity().getIntent().getSerializableExtra(Constant.IntentKey.WAIT_PUT_RECORD);
+        mTemporaryActivityListAdapter.setWarehouseEntity(waitPutinRecordEntity.getWare());
         queryParams.put(Constant.BAPQuery.PRODUCE_BATCH_NUM,waitPutinRecordEntity.getProduceBatchNum()); // 当前生产批
         if (WomConstant.SystemCode.RECORD_TYPE_PROCESS.equals(waitPutinRecordEntity.getRecordType().id)){
             queryParams.put(Constant.BAPQuery.TASK_PROCESS_ID,waitPutinRecordEntity.getTaskProcessId().getId()); // 当前工序

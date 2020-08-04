@@ -17,6 +17,7 @@ import com.supcon.mes.mbap.utils.DateUtil;
 import com.supcon.mes.mbap.view.CustomContentTextDialog;
 import com.supcon.mes.mbap.view.CustomTextView;
 import com.supcon.mes.middleware.constant.Constant;
+import com.supcon.mes.middleware.model.bean.wom.WarehouseEntity;
 import com.supcon.mes.module_wom_producetask.IntentRouter;
 import com.supcon.mes.module_wom_producetask.R;
 import com.supcon.mes.module_wom_producetask.constant.WomConstant;
@@ -83,6 +84,12 @@ public class FormulaActivityListAdapter extends BaseListDataRecyclerViewAdapter<
         } else {
             return -1;
         }
+    }
+
+    WarehouseEntity warehouseEntity;
+
+    public void setWarehouseEntity(WarehouseEntity warehouseEntity) {
+        this.warehouseEntity = warehouseEntity;
     }
 
     /**
@@ -290,7 +297,9 @@ public class FormulaActivityListAdapter extends BaseListDataRecyclerViewAdapter<
                     })
                     .subscribe(o -> {
                         Bundle bundle = new Bundle();
-                        bundle.putSerializable(Constant.IntentKey.WAIT_PUT_RECORD, getItem(getAdapterPosition()));
+                        WaitPutinRecordEntity entity=getItem(getAdapterPosition());
+                        entity.setWare(warehouseEntity);
+                        bundle.putSerializable(Constant.IntentKey.WAIT_PUT_RECORD, entity);
                         IntentRouter.go(context, Constant.Router.WOM_PUT_IN_REPORT, bundle);
                     });
             RxView.clicks(putInStartTv).throttleFirst(200, TimeUnit.MILLISECONDS)
@@ -373,7 +382,9 @@ public class FormulaActivityListAdapter extends BaseListDataRecyclerViewAdapter<
                     })
                     .subscribe(o -> {
                         Bundle bundle = new Bundle();
-                        bundle.putSerializable(Constant.IntentKey.WAIT_PUT_RECORD, getItem(getAdapterPosition()));
+                        WaitPutinRecordEntity entity=getItem(getAdapterPosition());
+                        entity.setWare(warehouseEntity);
+                        bundle.putSerializable(Constant.IntentKey.WAIT_PUT_RECORD, entity);
                         IntentRouter.go(context, Constant.Router.WOM_BATCH_PUT_IN_REPORT, bundle);
                     });
             RxView.clicks(putInStartTv).throttleFirst(200, TimeUnit.MILLISECONDS)
@@ -455,7 +466,9 @@ public class FormulaActivityListAdapter extends BaseListDataRecyclerViewAdapter<
                     })
                     .subscribe(o -> {
                         Bundle bundle = new Bundle();
-                        bundle.putSerializable(Constant.IntentKey.WAIT_PUT_RECORD, getItem(getAdapterPosition()));
+                        WaitPutinRecordEntity entity=getItem(getAdapterPosition());
+                        entity.setWare(warehouseEntity);
+                        bundle.putSerializable(Constant.IntentKey.WAIT_PUT_RECORD, entity);
                         IntentRouter.go(context, Constant.Router.WOM_OUTPUT_REPORT, bundle);
                     });
             RxView.clicks(putInStartTv).throttleFirst(200, TimeUnit.MILLISECONDS)
