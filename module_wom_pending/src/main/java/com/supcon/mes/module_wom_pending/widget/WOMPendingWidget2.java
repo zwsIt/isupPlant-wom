@@ -139,8 +139,16 @@ public class WOMPendingWidget2 extends BaseWidgetLayout {
 
     private void goProduceTaskList() {
         if (context != null && context.toString().contains("com.supcon.mes.home.ui.MainActivity")) {
-            mWOMWidgetActivityListController.refresh();
-            mWOMWidgetProduceTaskListController.refresh();
+            if(currentPage == 0){
+                mWOMWidgetActivityListController.hide();
+                mWOMWidgetProduceTaskListController.show();
+            }
+            else{
+                mWOMWidgetProduceTaskListController.hide();
+                mWOMWidgetActivityListController.show();
+            }
+//            mWOMWidgetActivityListController.refresh();
+//            mWOMWidgetProduceTaskListController.refresh();
             return;
         }
         IntentRouter.go(context, Constant.AppCode.WOM_Production);
