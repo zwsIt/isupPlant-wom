@@ -65,6 +65,8 @@ public class PutInReportDetailAdapter extends BaseListDataRecyclerViewAdapter<Pu
         CustomEditText numEt;
         @BindByTag("itemViewDelBtn")
         TextView itemViewDelBtn;
+        @BindByTag("index")
+        TextView index;
 
         public ReportViewHolder(Context context) {
             super(context,parent);
@@ -93,7 +95,7 @@ public class PutInReportDetailAdapter extends BaseListDataRecyclerViewAdapter<Pu
             });
             RxTextView.textChanges(batchNum.editText())
                     .skipInitialValue()
-                    .subscribe(charSequence -> getItem(getAdapterPosition()).setMaterialBatchNum(charSequence.toString().trim()));
+                    .subscribe(charSequence -> getItem(getAdapterPosition()).setMaterialBatchNum(!TextUtils.isEmpty(charSequence)?charSequence.toString().trim():""));
             RxTextView.textChanges(numEt.editText())
                     .skipInitialValue()
                     .filter(new Predicate<CharSequence>() {
@@ -150,6 +152,7 @@ public class PutInReportDetailAdapter extends BaseListDataRecyclerViewAdapter<Pu
             numEt.setContent(data.getPutinNum() == null ? "" : String.valueOf(data.getPutinNum()));
             warehouseTv.setContent(data.getWareId() == null ? "" : data.getWareId().getName());
             storeSetTv.setContent(data.getStoreId() == null ? "" : data.getStoreId().getName());
+            index.setText((getAdapterPosition()+1)+"");
         }
     }
 

@@ -289,7 +289,8 @@ public class PutInActivityReportActivity extends BaseRefreshRecyclerActivity<Put
                     putInDetailEntity.setPutinNum(!TextUtils.isEmpty(specs) ? new BigDecimal(specs) : null);
                     putInDetailEntity.setPutinTime(new Date().getTime());  // 投料时间
                     mPutInReportDetailAdapter.addData(putInDetailEntity);
-                    mPutInReportDetailAdapter.notifyDataSetChanged();
+                    mPutInReportDetailAdapter.notifyItemRangeInserted(mPutInReportDetailAdapter.getItemCount() - 1, 1);
+                    mPutInReportDetailAdapter.notifyItemRangeChanged(mPutInReportDetailAdapter.getItemCount() - 1, 1);
                     contentView.smoothScrollToPosition(mPutInReportDetailAdapter.getItemCount() - 1);
                 } else {
                     ToastUtils.show(context, "非当前物料，请重新扫描");
