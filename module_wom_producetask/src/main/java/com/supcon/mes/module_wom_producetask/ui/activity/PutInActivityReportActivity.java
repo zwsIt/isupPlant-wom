@@ -265,7 +265,7 @@ public class PutInActivityReportActivity extends BaseRefreshRecyclerActivity<Put
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onCodeReceiver(CodeResultEvent codeResultEvent) {
         long currentTime = System.currentTimeMillis();
-        if (currentTime - lastTime >= 300) {
+        if (currentTime - lastTime >= 100) {
             String[] arr = MaterQRUtil.materialQRCode(codeResultEvent.scanResult);
 
             if (arr != null && arr.length == 8) {
