@@ -264,9 +264,10 @@ public class PutInActivityReportActivity extends BaseRefreshRecyclerActivity<Put
     long lastTime;
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onCodeReceiver(CodeResultEvent codeResultEvent) {
-        String[] arr = MaterQRUtil.materialQRCode(codeResultEvent.scanResult);
-        long currentTime=System.currentTimeMillis();
-        if (currentTime-lastTime>=2000) {
+        long currentTime = System.currentTimeMillis();
+        if (currentTime - lastTime >= 300) {
+            String[] arr = MaterQRUtil.materialQRCode(codeResultEvent.scanResult);
+
             if (arr != null && arr.length == 8) {
                 String incode = arr[0].replace("incode=", "");
                 String batchno = arr[1].replace("batchno=", "");
@@ -298,6 +299,7 @@ public class PutInActivityReportActivity extends BaseRefreshRecyclerActivity<Put
             }
             lastTime = currentTime;
         }
+
 
     }
     /**
