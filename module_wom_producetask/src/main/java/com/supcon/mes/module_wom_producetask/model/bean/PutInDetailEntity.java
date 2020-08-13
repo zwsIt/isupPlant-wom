@@ -50,6 +50,9 @@ public class PutInDetailEntity extends BaseEntity {
     private BigDecimal beforeNum;       // 前重
     private BigDecimal afterNum;        // 后重
     private BigDecimal reveiveNum;      // 签收数量
+    private String beforeWeight;//前重
+    private String afterWeight;//后重
+    private boolean isAllPutInto=true;//是否投完 默认为是
 
     public Long getBatchingRecordId() {
         return batchingRecordId;
@@ -196,5 +199,29 @@ public class PutInDetailEntity extends BaseEntity {
 
     public void setWareId(WarehouseEntity wareId) {
         this.wareId = wareId;
+    }
+
+    public String getBeforeWeight() {
+        return beforeWeight;
+    }
+
+    public void setBeforeWeight(String beforeWeight) {
+        this.beforeWeight = beforeWeight;
+    }
+
+    public String getAfterWeight() {
+        return afterWeight;
+    }
+
+    public void setAfterWeight(String afterWeight) {
+        this.afterWeight = afterWeight;
+    }
+
+    public boolean isAllPutInto() {
+        return isAllPutInto;
+    }
+
+    public void setAllPutInto(boolean allPutInto) {
+        isAllPutInto = allPutInto;
     }
 }

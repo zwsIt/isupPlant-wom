@@ -55,142 +55,249 @@
                 android:id="@+id/index"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/dp_10"
                 android:paddingLeft="@dimen/dp_10"
                 android:tag="index"
                 android:text="1"
                 android:textColor="#e89300"
-                android:textSize="@dimen/fontSize_18sp"
-                android:layout_marginTop="@dimen/dp_10"
-                />
+                android:textSize="@dimen/fontSize_18sp" />
 
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                >
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center_vertical"
-                android:orientation="horizontal">
+                android:orientation="vertical">
 
-
-                <TextView
-                    android:layout_width="wrap_content"
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:drawableStart="@drawable/ic_batch_number"
-                    android:drawableEnd="@drawable/ic_necessary"
-                    android:drawablePadding="@dimen/dp_5"
                     android:gravity="center_vertical"
-                    android:paddingStart="@dimen/dp_10"
-                    android:text="@string/wom_material_batch_num"
-                    android:textColor="@color/titleTextColor"
-                    android:textSize="@dimen/fontSize_13sp" />
+                    android:orientation="horizontal">
 
-                <com.supcon.mes.mbap.view.CustomEditText
-                    android:id="@+id/batchNum"
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:drawableStart="@drawable/ic_batch_number"
+                        android:drawableEnd="@drawable/ic_necessary"
+                        android:drawablePadding="@dimen/dp_5"
+                        android:gravity="center_vertical"
+                        android:paddingStart="@dimen/dp_10"
+                        android:text="@string/wom_material_batch_num"
+                        android:textColor="@color/titleTextColor"
+                        android:textSize="@dimen/fontSize_13sp" />
+
+                    <com.supcon.mes.mbap.view.CustomEditText
+                        android:id="@+id/batchNum"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/dp_40"
+                        android:tag="batchNum"
+                        app:gravity="right|vertical_center"
+                        app:text_color="@color/dark_text"
+                        app:text_width="0dp" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:drawableStart="@drawable/wom_ic_stock"
+                        android:drawableEnd="@drawable/ic_necessary"
+                        android:drawablePadding="@dimen/dp_5"
+                        android:gravity="center_vertical"
+                        android:paddingStart="@dimen/dp_10"
+                        android:paddingEnd="@dimen/dp_10"
+                        android:text="@string/wom_warehouse"
+                        android:textColor="@color/titleTextColor"
+                        android:textSize="@dimen/fontSize_13sp" />
+
+                    <com.supcon.mes.mbap.view.CustomTextView
+                        android:id="@+id/warehouseTv"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/dp_40"
+                        android:tag="warehouseTv"
+                        app:content_color="@color/dark_text"
+                        app:editable="true"
+                        app:gravity="right|vertical_center"
+                        app:icon_res="@drawable/ic_right"
+                        app:text_width="0dp" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:drawableStart="@drawable/ic_store_set"
+                        android:drawablePadding="@dimen/dp_5"
+                        android:gravity="center_vertical"
+                        android:paddingStart="@dimen/dp_10"
+                        android:paddingEnd="@dimen/dp_10"
+                        android:text="@string/wom_storeset"
+                        android:textColor="@color/titleTextColor"
+                        android:textSize="@dimen/fontSize_13sp" />
+
+                    <com.supcon.mes.mbap.view.CustomTextView
+                        android:id="@+id/storeSetTv"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/dp_40"
+                        android:tag="storeSetTv"
+                        app:content_color="@color/dark_text"
+                        app:editable="true"
+                        app:gravity="right|vertical_center"
+                        app:icon_res="@drawable/ic_right"
+                        app:text_width="0dp" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:drawableStart="@drawable/ic_before_weight"
+                        android:drawablePadding="@dimen/dp_5"
+                        android:gravity="center_vertical"
+                        android:paddingStart="@dimen/dp_10"
+                        android:paddingEnd="@dimen/dp_10"
+                        android:text="@string/wom_before_weight"
+                        android:textColor="@color/titleTextColor"
+                        android:textSize="@dimen/fontSize_13sp" />
+
+                    <com.supcon.mes.mbap.view.CustomEditText
+                        android:id="@+id/beforeWeightTv"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/dp_40"
+                        android:tag="beforeWeightTv"
+                        app:content_color="@color/dark_text"
+                        app:editable="true"
+                        app:gravity="right|vertical_center"
+                        app:text_width="0dp" />
+                </LinearLayout>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:drawableStart="@drawable/ic_after_weight"
+                        android:drawablePadding="@dimen/dp_5"
+                        android:gravity="center_vertical"
+                        android:paddingStart="@dimen/dp_10"
+                        android:paddingEnd="@dimen/dp_10"
+                        android:text="@string/wom_after_weight"
+                        android:textColor="@color/titleTextColor"
+                        android:textSize="@dimen/fontSize_13sp" />
+
+                    <com.supcon.mes.mbap.view.CustomEditText
+                        android:id="@+id/afterWeightTv"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/dp_40"
+                        android:tag="afterWeightTv"
+                        app:content_color="@color/dark_text"
+                        app:editable="true"
+                        app:gravity="right|vertical_center"
+                        app:text_width="0dp" />
+                </LinearLayout>
+
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:drawableStart="@drawable/ic_amount"
+                        android:drawableEnd="@drawable/ic_necessary"
+                        android:drawablePadding="@dimen/dp_5"
+                        android:gravity="center_vertical"
+                        android:paddingStart="@dimen/dp_10"
+                        android:paddingEnd="@dimen/dp_10"
+                        android:text="@string/wom_put_in_num"
+                        android:textColor="@color/titleTextColor"
+                        android:textSize="@dimen/fontSize_13sp" />
+
+                    <com.supcon.mes.mbap.view.CustomEditText
+                        android:id="@+id/numEt"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/dp_40"
+                        android:tag="numEt"
+                        app:gravity="right|vertical_center"
+                        app:text_color="@color/dark_text"
+                        app:text_width="0dp" />
+                </LinearLayout>
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/dp_40"
-                    android:tag="batchNum"
-                    app:gravity="right|vertical_center"
-                    app:text_color="@color/dark_text"
-                    app:text_width="0dp" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center_vertical"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:drawableStart="@drawable/wom_ic_stock"
-                    android:drawableEnd="@drawable/ic_necessary"
-                    android:drawablePadding="@dimen/dp_5"
                     android:gravity="center_vertical"
-                    android:paddingStart="@dimen/dp_10"
-                    android:paddingEnd="@dimen/dp_10"
-                    android:text="@string/wom_warehouse"
-                    android:textColor="@color/titleTextColor"
-                    android:textSize="@dimen/fontSize_13sp" />
+                    android:orientation="horizontal">
 
-                <com.supcon.mes.mbap.view.CustomTextView
-                    android:id="@+id/warehouseTv"
-                    android:layout_width="match_parent"
-                    android:layout_height="@dimen/dp_40"
-                    android:tag="warehouseTv"
-                    app:content_color="@color/dark_text"
-                    app:editable="true"
-                    app:gravity="right|vertical_center"
-                    app:icon_res="@drawable/ic_right"
-                    app:text_width="0dp" />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="是否投完"
+                        android:textColor="@color/titleTextColor"
+                        android:textSize="@dimen/fontSize_13sp"
+                        android:layout_marginLeft="@dimen/dp_10"
+                        />
+
+                    <RadioGroup
+                        android:id="@+id/radioGroup"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+
+                        android:gravity="center_vertical|end"
+                        android:orientation="horizontal"
+                        android:tag="radioGroup">
+
+                        <RadioButton
+                            android:id="@+id/radioBtn_yes"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginEnd="@dimen/dp_20"
+                            android:background="@null"
+                            android:button="@null"
+                            android:checked="true"
+                            android:drawableStart="@drawable/sl_radiobutton_selector"
+                            android:drawablePadding="@dimen/dp_10"
+                            android:text="是" />
+
+                        <RadioButton
+                            android:id="@+id/radioBtn_no"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:background="@null"
+                            android:button="@null"
+                            android:drawableStart="@drawable/sl_radiobutton_selector"
+                            android:drawablePadding="@dimen/dp_10"
+                            android:text="否" />
+                    </RadioGroup>
+                </LinearLayout>
+
             </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center_vertical"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:drawableStart="@drawable/ic_store_set"
-                    android:drawablePadding="@dimen/dp_5"
-                    android:gravity="center_vertical"
-                    android:paddingStart="@dimen/dp_10"
-                    android:paddingEnd="@dimen/dp_10"
-                    android:text="@string/wom_storeset"
-                    android:textColor="@color/titleTextColor"
-                    android:textSize="@dimen/fontSize_13sp" />
-
-                <com.supcon.mes.mbap.view.CustomTextView
-                    android:id="@+id/storeSetTv"
-                    android:layout_width="match_parent"
-                    android:layout_height="@dimen/dp_40"
-                    android:tag="storeSetTv"
-                    app:content_color="@color/dark_text"
-                    app:editable="true"
-                    app:gravity="right|vertical_center"
-                    app:icon_res="@drawable/ic_right"
-                    app:text_width="0dp" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center_vertical"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:drawableStart="@drawable/ic_amount"
-                    android:drawableEnd="@drawable/ic_necessary"
-                    android:drawablePadding="@dimen/dp_5"
-                    android:gravity="center_vertical"
-                    android:paddingStart="@dimen/dp_10"
-                    android:paddingEnd="@dimen/dp_10"
-                    android:text="@string/wom_put_in_num"
-                    android:textColor="@color/titleTextColor"
-                    android:textSize="@dimen/fontSize_13sp" />
-
-                <com.supcon.mes.mbap.view.CustomEditText
-                    android:id="@+id/numEt"
-                    android:layout_width="match_parent"
-                    android:layout_height="@dimen/dp_40"
-                    android:tag="numEt"
-                    app:gravity="right|vertical_center"
-                    app:text_color="@color/dark_text"
-                    app:text_width="0dp" />
-            </LinearLayout>
-        </LinearLayout>
         </LinearLayout>
     </LinearLayout>
 

@@ -67,9 +67,12 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
@@ -123,6 +126,8 @@ public class PutInActivityReportActivity extends BaseRefreshRecyclerActivity<Put
     private PutInDetailEntity mPutInDetailEntity;
     private String dgDeletedIds = "";
 
+    private List<PutInDetailEntity> inDetailEntities=new ArrayList<>();
+
     @Override
     protected IListAdapter<PutInDetailEntity> createAdapter() {
         mPutInReportDetailAdapter = new PutInReportDetailAdapter(context);
@@ -161,7 +166,8 @@ public class PutInActivityReportActivity extends BaseRefreshRecyclerActivity<Put
         rightBtn.setVisibility(View.VISIBLE);
         rightBtn.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_top_scan));
         customListWidgetName.setText(context.getResources().getString(R.string.wom_produce_task_report_detail));
-        customListWidgetEdit.setVisibility(View.GONE);
+//        customListWidgetEdit.setVisibility(View.GONE);
+        customListWidgetEdit.setImageResource(R.drawable.ic_search_view);
 
         materialName.setContent(String.format("%s(%s)", mWaitPutinRecordEntity.getTaskActiveId().getMaterialId().getName(), mWaitPutinRecordEntity.getTaskActiveId().getMaterialId().getCode()));
 //        materialCode.setContent(mWaitPutinRecordEntity.getTaskActiveId().getMaterialId().getCode());
@@ -215,8 +221,18 @@ public class PutInActivityReportActivity extends BaseRefreshRecyclerActivity<Put
             mPutInReportDetailAdapter.notifyItemRangeInserted(mPutInReportDetailAdapter.getItemCount() - 1, 1);
             mPutInReportDetailAdapter.notifyItemRangeChanged(mPutInReportDetailAdapter.getItemCount() - 1, 1);
             contentView.smoothScrollToPosition(mPutInReportDetailAdapter.getItemCount() - 1);
-
         });
+        RxView.clicks(customListWidgetEdit)
+                .throttleFirst(2,TimeUnit.SECONDS)
+                .subscribe(o -> {
+                   if (inDetailEntities.isEmpty()){
+                       ToastUtils.show(context,"已投料为空");
+                       return;
+                   }
+                   Bundle bundle=new Bundle();
+                   bundle.putSerializable("list", (Serializable) inDetailEntities);
+                   IntentRouter.go(this,Constant.Router.WOM_PUT_IN_HISTORY,bundle);
+                });
         mPutInReportDetailAdapter.setOnItemChildViewClickListener(new OnItemChildViewClickListener() {
             @Override
             public void onItemChildViewClick(View childView, int position, int action, Object obj) {
@@ -296,7 +312,7 @@ public class PutInActivityReportActivity extends BaseRefreshRecyclerActivity<Put
                     ToastUtils.show(context, "非当前物料，请重新扫描");
                 }
             } else {
-                ToastUtils.show(context, "二维码退料信息解析异常！");
+                ToastUtils.show(context, "二维码信息解析异常！");
             }
             lastTime = currentTime;
         }
@@ -324,6 +340,7 @@ public class PutInActivityReportActivity extends BaseRefreshRecyclerActivity<Put
 
         PutinDetailDTO.DgListEntity dgListEntity = new PutinDetailDTO.DgListEntity();
         dgListEntity.setDg(GsonUtil.gsonString(mPutInReportDetailAdapter.getList()));
+        Log.i("PutinDetailDTO",GsonUtil.gsonString(mPutInReportDetailAdapter.getList()));
         putinDetailDTO.setDgList(dgListEntity);
 
         PutinDetailDTO.DgDeletedIdsEntity dgDeletedIdsEntity = new PutinDetailDTO.DgDeletedIdsEntity();
@@ -365,7 +382,9 @@ public class PutInActivityReportActivity extends BaseRefreshRecyclerActivity<Put
     @Override
     public void listSuccess(BAP5CommonEntity entity) {
         CommonBAPListEntity commonBAPListEntity = GsonUtil.gsonToBean(GsonUtil.gsonString(entity.data),CommonBAPListEntity.class);
-        refreshListController.refreshComplete(GsonUtil.jsonToList(GsonUtil.gsonString((Object) commonBAPListEntity.result),PutInDetailEntity.class));
+//        refreshListController.refreshComplete(GsonUtil.jsonToList(GsonUtil.gsonString((Object) commonBAPListEntity.result),PutInDetailEntity.class));
+        refreshListController.refreshComplete();
+        inDetailEntities.addAll(GsonUtil.jsonToList(GsonUtil.gsonString((Object) commonBAPListEntity.result),PutInDetailEntity.class));
     }
 
     @Override

@@ -68,9 +68,12 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
@@ -119,7 +122,7 @@ public class PutInAgileActivityReportActivity extends BaseRefreshRecyclerActivit
     private int mCurrentPosition;
     private PutInDetailEntity mPutInDetailEntity;
     private String dgDeletedIds = "";
-
+    private List<PutInDetailEntity> inDetailEntities=new ArrayList<>();
     @Override
     protected IListAdapter<PutInDetailEntity> createAdapter() {
         mPutInAgileReportDetailAdapter = new PutInAgileReportDetailAdapter(context);
@@ -159,8 +162,8 @@ public class PutInAgileActivityReportActivity extends BaseRefreshRecyclerActivit
         rightBtn.setVisibility(View.VISIBLE);
         rightBtn.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_top_scan));
         customListWidgetName.setText(context.getResources().getString(R.string.wom_produce_task_report_detail));
-        customListWidgetEdit.setVisibility(View.GONE);
-
+//        customListWidgetEdit.setVisibility(View.GONE);
+        customListWidgetEdit.setImageResource(R.drawable.ic_search_view);
         taskProcess.setContent(TextUtils.isEmpty(mWaitPutinRecordEntity.getTaskProcessId().getName()) ? mWaitPutinRecordEntity.getProcessName(): mWaitPutinRecordEntity.getTaskProcessId().getName());
         planNum.setContent(mWaitPutinRecordEntity.getTaskActiveId().getPlanQuantity() == null ? "--" : mWaitPutinRecordEntity.getTaskActiveId().getPlanQuantity().toString());
 
@@ -182,6 +185,17 @@ public class PutInAgileActivityReportActivity extends BaseRefreshRecyclerActivit
                         WomConstant.URL.PUT_IN_REPORT_LIST_URL + "&id=" + (mWaitPutinRecordEntity.getProcReportId().getId() == null ? -1 : mWaitPutinRecordEntity.getProcReportId().getId()), "");
             }
         });
+        RxView.clicks(customListWidgetEdit)
+                .throttleFirst(2,TimeUnit.SECONDS)
+                .subscribe(o -> {
+                    if (inDetailEntities.isEmpty()){
+                        ToastUtils.show(context,"已投料为空");
+                        return;
+                    }
+                    Bundle bundle=new Bundle();
+                    bundle.putSerializable("list", (Serializable) inDetailEntities);
+                    IntentRouter.go(this,Constant.Router.WOM_PUT_IN_HISTORY,bundle);
+                });
         customListWidgetAdd.setOnClickListener(v -> {
             PutInDetailEntity putInDetailEntity = new PutInDetailEntity();
             putInDetailEntity.setPutinTime(new Date().getTime());  // 投料时间
@@ -282,10 +296,8 @@ public class PutInAgileActivityReportActivity extends BaseRefreshRecyclerActivit
                                 }
                             }
                         });
-
-
             } else {
-                ToastUtils.show(context, "二维码退料信息解析异常！");
+                ToastUtils.show(context, "二维码信息解析异常！");
             }
         }
     }
@@ -354,7 +366,9 @@ public class PutInAgileActivityReportActivity extends BaseRefreshRecyclerActivit
     @Override
     public void listSuccess(BAP5CommonEntity entity) {
         CommonBAPListEntity commonBAPListEntity = GsonUtil.gsonToBean(GsonUtil.gsonString(entity.data), CommonBAPListEntity.class);
-        refreshListController.refreshComplete(GsonUtil.jsonToList(GsonUtil.gsonString((Object) commonBAPListEntity.result), PutInDetailEntity.class));
+        refreshListController.refreshComplete();
+        inDetailEntities.addAll(GsonUtil.jsonToList(GsonUtil.gsonString((Object) commonBAPListEntity.result),PutInDetailEntity.class));
+//        refreshListController.refreshComplete(GsonUtil.jsonToList(GsonUtil.gsonString((Object) commonBAPListEntity.result), PutInDetailEntity.class));
     }
 
     @Override
