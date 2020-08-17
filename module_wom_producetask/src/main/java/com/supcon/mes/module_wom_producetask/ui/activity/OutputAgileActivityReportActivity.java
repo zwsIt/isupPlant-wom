@@ -38,6 +38,7 @@ import com.supcon.mes.middleware.controller.ProductController;
 import com.supcon.mes.middleware.model.bean.BAP5CommonEntity;
 import com.supcon.mes.middleware.model.bean.CommonBAPListEntity;
 import com.supcon.mes.middleware.model.bean.Good;
+import com.supcon.mes.middleware.model.bean.MaterialQRCodeEntity;
 import com.supcon.mes.middleware.model.bean.wom.MaterialEntity;
 import com.supcon.mes.middleware.model.bean.wom.StoreSetEntity;
 import com.supcon.mes.middleware.model.bean.wom.WarehouseEntity;
@@ -238,45 +239,22 @@ public class OutputAgileActivityReportActivity extends BaseRefreshRecyclerActivi
     Map<String, Object> goodMap = new HashMap<>();
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onCodeReceiver(CodeResultEvent codeResultEvent) {
-        String[] arr = MaterQRUtil.materialQRCode(codeResultEvent.scanResult);
-        if (arr != null && arr.length == 8) {
-            String incode = arr[0].replace("incode=", "");
-            String batchno = arr[1].replace("batchno=", "");
-            String batchno2 = arr[2].replace("batchno2=", "");
-            String packqty = arr[3].replace("packqty=", "");
-            String packs = arr[4].replace("packs=", "");
-            String purcode = arr[5].replace("purcode=", "");
-            String orderno = arr[6].replace("orderno=", "");
-            String specs=arr[7].replace("specs=","");
-            goodMap.put(Constant.BAPQuery.CODE, incode);
-            getController(ProductController.class)
-                    .getProduct(goodMap)
-                    .setOnSuccessListener(new OnSuccessListener() {
-                        @Override
-                        public void onSuccess(Object result) {
-                            if (result instanceof Good) {
-                                Good good = (Good) result;
-                                MaterialEntity materialEntity = new MaterialEntity();
-                                materialEntity.setId(good.id);
-                                materialEntity.setCode(good.code);
-                                materialEntity.setName(good.name);
-                                OutputDetailEntity outputDetailEntity = new OutputDetailEntity();
-                                outputDetailEntity.setProduct(materialEntity);
-                                outputDetailEntity.setMaterialBatchNum(batchno);
-                                outputDetailEntity.setOutputNum(!TextUtils.isEmpty(specs)?new BigDecimal(specs):null);
-                                outputDetailEntity.setPutinTime(new Date().getTime());  // 投料时间
-                                mOutputAgileReportDetailAdapter.addData(outputDetailEntity);
-                                mOutputAgileReportDetailAdapter.notifyItemRangeInserted(mOutputAgileReportDetailAdapter.getItemCount() - 1, 1);
-                                mOutputAgileReportDetailAdapter.notifyItemRangeChanged(mOutputAgileReportDetailAdapter.getItemCount() - 1, 1);
-                                contentView.smoothScrollToPosition(mOutputAgileReportDetailAdapter.getItemCount() - 1);
-                            } else {
-                                ToastUtils.show(context, result.toString());
-                            }
-                        }
-                    });
-        } else {
-            ToastUtils.show(context, "二维码退料信息解析异常！");
-        }
+        MaterialQRCodeEntity materialQRCodeEntity = MaterQRUtil.materialQRCode(context,codeResultEvent.scanResult);
+        if (materialQRCodeEntity == null) return;
+
+        MaterialEntity materialEntity = new MaterialEntity();
+//        materialEntity.setId(good.id);
+        materialEntity.setCode(materialQRCodeEntity.getMaterialCode());
+        materialEntity.setName(materialQRCodeEntity.getMaterialName());
+        OutputDetailEntity outputDetailEntity = new OutputDetailEntity();
+        outputDetailEntity.setProduct(materialEntity);
+        outputDetailEntity.setMaterialBatchNum(materialQRCodeEntity.getMaterialBatchNo());
+        outputDetailEntity.setOutputNum(materialQRCodeEntity.getNum());
+        outputDetailEntity.setPutinTime(new Date().getTime());  // 产出时间
+        mOutputAgileReportDetailAdapter.addData(outputDetailEntity);
+        mOutputAgileReportDetailAdapter.notifyItemRangeInserted(mOutputAgileReportDetailAdapter.getItemCount() - 1, 1);
+        mOutputAgileReportDetailAdapter.notifyItemRangeChanged(mOutputAgileReportDetailAdapter.getItemCount() - 1, 1);
+        contentView.smoothScrollToPosition(mOutputAgileReportDetailAdapter.getItemCount() - 1);
 
     }
     /**

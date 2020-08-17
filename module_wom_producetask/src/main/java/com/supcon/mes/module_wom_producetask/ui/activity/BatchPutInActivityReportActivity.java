@@ -34,6 +34,7 @@ import com.supcon.mes.middleware.constant.Constant;
 import com.supcon.mes.middleware.controller.GetPowerCodeController;
 import com.supcon.mes.middleware.model.bean.BAP5CommonEntity;
 import com.supcon.mes.middleware.model.bean.CommonBAPListEntity;
+import com.supcon.mes.middleware.model.bean.MaterialQRCodeEntity;
 import com.supcon.mes.middleware.model.bean.wom.StoreSetEntity;
 import com.supcon.mes.middleware.model.bean.wom.WarehouseEntity;
 import com.supcon.mes.middleware.model.event.RefreshEvent;
@@ -174,13 +175,8 @@ public class BatchPutInActivityReportActivity extends BaseRefreshRecyclerActivit
         rightBtn.setOnClickListener(v -> {
             getController(CommonScanController.class).openCameraScan();
         });
-        refreshListController.setOnRefreshListener(new OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                presenterRouter.create(CommonListAPI.class).list(1, customCondition, queryParams,
-                        WomConstant.URL.BATCH_PUT_IN_REPORT_LIST_URL + "&id=" + (mWaitPutinRecordEntity.getProcReportId().getId() == null ? -1 : mWaitPutinRecordEntity.getProcReportId().getId()), "");
-            }
-        });
+        refreshListController.setOnRefreshListener(() -> presenterRouter.create(CommonListAPI.class).list(1, customCondition, queryParams,
+                WomConstant.URL.BATCH_PUT_IN_REPORT_LIST_URL + "&id=" + (mWaitPutinRecordEntity.getProcReportId().getId() == null ? -1 : mWaitPutinRecordEntity.getProcReportId().getId()), ""));
         customListWidgetAdd.setOnClickListener(v -> {
             Bundle bundle = new Bundle();
             bundle.putSerializable(Constant.IntentKey.WAIT_PUT_RECORD, mWaitPutinRecordEntity);
@@ -359,25 +355,19 @@ public class BatchPutInActivityReportActivity extends BaseRefreshRecyclerActivit
     String specs;
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onCodeReceiver(CodeResultEvent codeResultEvent) {
-        String[] arr = MaterQRUtil.materialQRCode(codeResultEvent.scanResult);
-        if (arr != null && arr.length == 8) {
-            String materCode=mWaitPutinRecordEntity.getTaskActiveId().getMaterialId().getCode();
-            String incode = arr[0].replace("incode=", "");
-            batchno = arr[1].replace("batchno=", "");
-            String batchno2 = arr[2].replace("batchno2=", "");
-            String packqty = arr[3].replace("packqty=", "");
-            String packs = arr[4].replace("packs=", "");
-            String purcode = arr[5].replace("purcode=", "");
-            String orderno = arr[6].replace("orderno=", "");
-            specs=arr[7].replace("specs=","");
-            customCondition.put("taskActiveId", mWaitPutinRecordEntity.getTaskActiveId().getId());
-            queryParams.put(Constant.BAPQuery.CODE, incode);
-            scan=true;
-            presenterRouter.create(CommonListAPI.class).list(1, customCondition, queryParams, WomConstant.URL.BATCH_MATERIAL_LIST_REF_URL, "batMaterilPart");
-
-        } else {
-            ToastUtils.show(context, "二维码退料信息解析异常！");
-        }
+        MaterialQRCodeEntity materialQRCodeEntity = MaterQRUtil.materialQRCode(context,codeResultEvent.scanResult);
+        if (materialQRCodeEntity == null) return;
+//        if (arr != null && arr.length == 8) {
+//            String materCode=mWaitPutinRecordEntity.getTaskActiveId().getMaterialId().getCode();
+//            specs=arr[7].replace("specs=","");
+//            customCondition.put("taskActiveId", mWaitPutinRecordEntity.getTaskActiveId().getId());
+//            queryParams.put(Constant.BAPQuery.CODE, incode);
+//            scan=true;
+//            presenterRouter.create(CommonListAPI.class).list(1, customCondition, queryParams, WomConstant.URL.BATCH_MATERIAL_LIST_REF_URL, "batMaterilPart");
+//
+//        } else {
+//            ToastUtils.show(context, "二维码退料信息解析异常！");
+//        }
     }
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void getEventPost(SelectDataEvent selectDataEvent) {

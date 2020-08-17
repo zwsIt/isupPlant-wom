@@ -38,6 +38,7 @@ import com.supcon.mes.middleware.constant.Constant;
 import com.supcon.mes.middleware.controller.GetPowerCodeController;
 import com.supcon.mes.middleware.model.bean.BAP5CommonEntity;
 import com.supcon.mes.middleware.model.bean.CommonBAPListEntity;
+import com.supcon.mes.middleware.model.bean.MaterialQRCodeEntity;
 import com.supcon.mes.middleware.model.bean.wom.StoreSetEntity;
 import com.supcon.mes.middleware.model.bean.wom.WarehouseEntity;
 import com.supcon.mes.middleware.model.event.RefreshEvent;
@@ -149,7 +150,7 @@ public class PutInActivityReportActivity extends BaseRefreshRecyclerActivity<Put
         });
         contentView.addOnItemTouchListener(new CustomSwipeLayout.OnSwipeItemTouchListener(context));
 
-
+        getController(CommonScanController.class).openInfrared();
     }
 
     @Override
@@ -193,7 +194,6 @@ public class PutInActivityReportActivity extends BaseRefreshRecyclerActivity<Put
     protected void initListener() {
         super.initListener();
         leftBtn.setOnClickListener(v -> finish());
-        getController(CommonScanController.class).openInfrared();
         rightBtn.setOnClickListener(v -> {
             getController(CommonScanController.class).openCameraScan();
         });
@@ -259,32 +259,26 @@ public class PutInActivityReportActivity extends BaseRefreshRecyclerActivity<Put
      */
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onCodeReceiver(CodeResultEvent codeResultEvent) {
-        String[] arr = MaterQRUtil.materialQRCode(codeResultEvent.scanResult);
-        if (arr != null && arr.length == 8) {
-            String incode = arr[0].replace("incode=", "");
-            String batchno = arr[1].replace("batchno=", "");
-            String batchno2 = arr[2].replace("batchno2=", "");
-            String packqty = arr[3].replace("packqty=", "");
-            String packs = arr[4].replace("packs=", "");
-            String purcode = arr[5].replace("purcode=", "");
-            String orderno = arr[6].replace("orderno=", "");
-            String specs=arr[7].replace("specs=","");
-            if (incode.equals(mWaitPutinRecordEntity.getTaskActiveId().getMaterialId().getCode())){
-                PutInDetailEntity putInDetailEntity = new PutInDetailEntity();
-                putInDetailEntity.setMaterialId(mWaitPutinRecordEntity.getTaskActiveId().getMaterialId()); // 物料
-                putInDetailEntity.setMaterialBatchNum(batchno);
-                putInDetailEntity.setPutinNum(!TextUtils.isEmpty(specs)?new BigDecimal(specs):null);
-                putInDetailEntity.setPutinTime(new Date().getTime());  // 投料时间
-                mPutInReportDetailAdapter.addData(putInDetailEntity);
-                mPutInReportDetailAdapter.notifyItemRangeInserted(mPutInReportDetailAdapter.getItemCount() - 1, 1);
-                mPutInReportDetailAdapter.notifyItemRangeChanged(mPutInReportDetailAdapter.getItemCount() - 1, 1);
-                contentView.smoothScrollToPosition(mPutInReportDetailAdapter.getItemCount() - 1);
-            }else{
-                ToastUtils.show(context,"非当前所投物料，请重新扫描");
-            }
-        } else {
-            ToastUtils.show(context, "二维码退料信息解析异常！");
+        MaterialQRCodeEntity materialQRCodeEntity = MaterQRUtil.materialQRCode(context,codeResultEvent.scanResult);
+        if (materialQRCodeEntity == null) return;
+        if (!materialQRCodeEntity.getMaterialCode().equals(mWaitPutinRecordEntity.getTaskActiveId().getMaterialId().getCode())){
+            ToastUtils.show(context, context.getResources().getString(R.string.wom_scan_material_error));
+            return;
         }
+        if (!materialQRCodeEntity.getMaterialBatchNo().equals(mWaitPutinRecordEntity.getTaskActiveId().getMaterialBatchNum())){
+            ToastUtils.show(context, context.getResources().getString(R.string.wom_scan_batchNo_error));
+            return;
+        }
+
+        PutInDetailEntity putInDetailEntity = new PutInDetailEntity();
+        putInDetailEntity.setMaterialId(mWaitPutinRecordEntity.getTaskActiveId().getMaterialId()); // 物料
+        putInDetailEntity.setMaterialBatchNum(materialQRCodeEntity.getMaterialBatchNo());
+        putInDetailEntity.setPutinNum(materialQRCodeEntity.getNum());
+        putInDetailEntity.setPutinTime(new Date().getTime());  // 投料时间
+        mPutInReportDetailAdapter.addData(putInDetailEntity);
+        mPutInReportDetailAdapter.notifyItemRangeInserted(mPutInReportDetailAdapter.getItemCount() - 1, 1);
+        mPutInReportDetailAdapter.notifyItemRangeChanged(mPutInReportDetailAdapter.getItemCount() - 1, 1);
+        contentView.smoothScrollToPosition(mPutInReportDetailAdapter.getItemCount() - 1);
 
     }
     /**

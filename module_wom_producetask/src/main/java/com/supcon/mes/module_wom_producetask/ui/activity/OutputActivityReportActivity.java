@@ -37,6 +37,7 @@ import com.supcon.mes.middleware.constant.Constant;
 import com.supcon.mes.middleware.controller.GetPowerCodeController;
 import com.supcon.mes.middleware.model.bean.BAP5CommonEntity;
 import com.supcon.mes.middleware.model.bean.CommonBAPListEntity;
+import com.supcon.mes.middleware.model.bean.MaterialQRCodeEntity;
 import com.supcon.mes.middleware.model.bean.wom.StoreSetEntity;
 import com.supcon.mes.middleware.model.bean.wom.WarehouseEntity;
 import com.supcon.mes.middleware.model.event.RefreshEvent;
@@ -270,33 +271,25 @@ public class OutputActivityReportActivity extends BaseRefreshRecyclerActivity<Ou
      */
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onCodeReceiver(CodeResultEvent codeResultEvent) {
-        String[] arr = MaterQRUtil.materialQRCode(codeResultEvent.scanResult);
-        if (arr != null && arr.length == 8) {
-            String materCode=mWaitPutinRecordEntity.getTaskActiveId().getMaterialId().getCode();
-            String incode = arr[0].replace("incode=", "");
-            String batchno = arr[1].replace("batchno=", "");
-            String batchno2 = arr[2].replace("batchno2=", "");
-            String packqty = arr[3].replace("packqty=", "");
-            String packs = arr[4].replace("packs=", "");
-            String purcode = arr[5].replace("purcode=", "");
-            String orderno = arr[6].replace("orderno=", "");
-            String specs=arr[7].replace("specs=","");
-            if (materCode.equals(incode)){
-                OutputDetailEntity outputDetailEntity = new OutputDetailEntity();
-                outputDetailEntity.setMaterialBatchNum(batchno);
-                outputDetailEntity.setOutputNum(!TextUtils.isEmpty(specs)?new BigDecimal(specs):null);
-                outputDetailEntity.setProduct(mWaitPutinRecordEntity.getTaskActiveId().getMaterialId()); // 物料
-                outputDetailEntity.setPutinTime(new Date().getTime());  // 投料时间
-                mOutputReportDetailAdapter.addData(outputDetailEntity);
-                mOutputReportDetailAdapter.notifyItemRangeInserted(mOutputReportDetailAdapter.getItemCount() - 1, 1);
-                mOutputReportDetailAdapter.notifyItemRangeChanged(mOutputReportDetailAdapter.getItemCount() - 1, 1);
-                contentView.smoothScrollToPosition(mOutputReportDetailAdapter.getItemCount() - 1);
-            }else {
-                ToastUtils.show(context,"非当前所投物料，请重新扫描");
-            }
-        } else {
-            ToastUtils.show(context, "二维码退料信息解析异常！");
+        MaterialQRCodeEntity materialQRCodeEntity = MaterQRUtil.materialQRCode(context,codeResultEvent.scanResult);
+        if (materialQRCodeEntity == null) return;
+        if (!mWaitPutinRecordEntity.getTaskActiveId().getMaterialId().getCode().equals(materialQRCodeEntity.getMaterialCode())){
+            ToastUtils.show(context, context.getResources().getString(R.string.wom_scan_material_error));
+            return;
         }
+        if (!materialQRCodeEntity.getMaterialBatchNo().equals(mWaitPutinRecordEntity.getTaskActiveId().getMaterialBatchNum())){
+            ToastUtils.show(context, context.getResources().getString(R.string.wom_scan_batchNo_error));
+            return;
+        }
+        OutputDetailEntity outputDetailEntity = new OutputDetailEntity();
+        outputDetailEntity.setMaterialBatchNum(materialQRCodeEntity.getMaterialBatchNo());
+        outputDetailEntity.setOutputNum(materialQRCodeEntity.getNum());
+        outputDetailEntity.setProduct(mWaitPutinRecordEntity.getTaskActiveId().getMaterialId()); // 物料
+        outputDetailEntity.setPutinTime(new Date().getTime());  // 投料时间
+        mOutputReportDetailAdapter.addData(outputDetailEntity);
+        mOutputReportDetailAdapter.notifyItemRangeInserted(mOutputReportDetailAdapter.getItemCount() - 1, 1);
+        mOutputReportDetailAdapter.notifyItemRangeChanged(mOutputReportDetailAdapter.getItemCount() - 1, 1);
+        contentView.smoothScrollToPosition(mOutputReportDetailAdapter.getItemCount() - 1);
     }
 
     /**

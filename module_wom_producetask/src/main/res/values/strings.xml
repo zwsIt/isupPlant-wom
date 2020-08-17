@@ -83,4 +83,6 @@
     <string name="wom_receive_reason_part">部分接收</string>
     <string name="wom_receive_reason_none">拒收</string>
     <string name="wom_checking">检验中</string>
+    <string name="wom_scan_material_error">扫描物料不匹配，请核对！</string>
+    <string name="wom_scan_batchNo_error">扫描物料批号不匹配，请核对！</string>
 </resources>
