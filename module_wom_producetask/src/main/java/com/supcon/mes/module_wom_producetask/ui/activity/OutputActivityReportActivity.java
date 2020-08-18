@@ -203,7 +203,6 @@ public class OutputActivityReportActivity extends BaseRefreshRecyclerActivity<Ou
     protected void initListener() {
         super.initListener();
         leftBtn.setOnClickListener(v -> finish());
-        getController(CommonScanController.class).openInfrared();
         rightBtn.setOnClickListener(v -> {
             getController(CommonScanController.class).openCameraScan();
         });
@@ -277,7 +276,7 @@ public class OutputActivityReportActivity extends BaseRefreshRecyclerActivity<Ou
             ToastUtils.show(context, context.getResources().getString(R.string.wom_scan_material_error));
             return;
         }
-        if (!materialQRCodeEntity.getMaterialBatchNo().equals(mWaitPutinRecordEntity.getTaskActiveId().getMaterialBatchNum())){
+        if (!TextUtils.isEmpty(mWaitPutinRecordEntity.getTaskActiveId().getMaterialBatchNum()) && !materialQRCodeEntity.getMaterialBatchNo().equals(mWaitPutinRecordEntity.getTaskActiveId().getMaterialBatchNum())){
             ToastUtils.show(context, context.getResources().getString(R.string.wom_scan_batchNo_error));
             return;
         }

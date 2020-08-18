@@ -149,8 +149,6 @@ public class PutInActivityReportActivity extends BaseRefreshRecyclerActivity<Put
             }
         });
         contentView.addOnItemTouchListener(new CustomSwipeLayout.OnSwipeItemTouchListener(context));
-
-        getController(CommonScanController.class).openInfrared();
     }
 
     @Override
@@ -265,7 +263,7 @@ public class PutInActivityReportActivity extends BaseRefreshRecyclerActivity<Put
             ToastUtils.show(context, context.getResources().getString(R.string.wom_scan_material_error));
             return;
         }
-        if (!materialQRCodeEntity.getMaterialBatchNo().equals(mWaitPutinRecordEntity.getTaskActiveId().getMaterialBatchNum())){
+        if (!TextUtils.isEmpty(mWaitPutinRecordEntity.getTaskActiveId().getMaterialBatchNum()) && !materialQRCodeEntity.getMaterialBatchNo().equals(mWaitPutinRecordEntity.getTaskActiveId().getMaterialBatchNum())){
             ToastUtils.show(context, context.getResources().getString(R.string.wom_scan_batchNo_error));
             return;
         }

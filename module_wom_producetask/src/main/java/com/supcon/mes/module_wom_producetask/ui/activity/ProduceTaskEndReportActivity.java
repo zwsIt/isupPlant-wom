@@ -157,7 +157,6 @@ public class ProduceTaskEndReportActivity extends BaseRefreshRecyclerActivity<Ou
     protected void initListener() {
         super.initListener();
         leftBtn.setOnClickListener(v -> finish());
-        getController(CommonScanController.class).openInfrared();
         rightBtn.setOnClickListener(v -> {
             getController(CommonScanController.class).openCameraScan();
         });
