@@ -100,6 +100,8 @@ public class ProduceTaskListAdapter extends BaseListDataRecyclerViewAdapter<Wait
         ImageView expandIv;
         @BindByTag("batchIv")
         ImageView batchIv;
+        @BindByTag("dischargeTv")
+        TextView dischargeTv;
 
         public TaskProduceTaskItemViewHolder(Context context) {
             super(context);
@@ -132,6 +134,7 @@ public class ProduceTaskListAdapter extends BaseListDataRecyclerViewAdapter<Wait
             initOperateViewListener(pauseTv);
             initOperateViewListener(resumeTv);
             initOperateViewListener(stopTv);
+            initOperateViewListener(dischargeTv);
             RxView.clicks(expandIv).throttleFirst(100, TimeUnit.MILLISECONDS)
                     .subscribe(o -> {
                         WaitPutinRecordEntity entity = getItem(getAdapterPosition());
@@ -202,6 +205,13 @@ public class ProduceTaskListAdapter extends BaseListDataRecyclerViewAdapter<Wait
                 resumeTv.setVisibility(View.GONE);
                 stopTv.setVisibility(View.VISIBLE);
                 timeCustomTv.setContent(data.getActualStartTime() == null ? "" : DateUtil.dateTimeFormat(data.getActualStartTime()));
+
+                if (data.getTaskId().getAdvanceCharge() && !data.getTaskId().getAdvanced()){
+                    dischargeTv.setVisibility(View.VISIBLE);
+                }else {
+                    dischargeTv.setVisibility(View.GONE);
+                }
+
             } else if (WomConstant.SystemCode.EXE_STATE_PAUSED.equals(data.getExeState().id)) { // 已暂停
                 statusTv.setTextColor(context.getResources().getColor(R.color.status_blue));
                 startTv.setVisibility(View.GONE);

@@ -219,6 +219,11 @@ public class CommonProduceTaskListFragment extends BaseRefreshRecyclerFragment<W
                 case "setEquipmentTv":
                     updateCurrentFactory();
                     break;
+                case "dischargeTv":
+                    paramsList.add(mWaitPutinRecordEntity.getTaskId().getFeedCondition() == null? "" : mWaitPutinRecordEntity.getTaskId().getFeedCondition());
+                    paramsList.add("discharge");
+                    showOperateConfirmDialog(paramsList, mWaitPutinRecordEntity, true);
+                    break;
             }
 
         });
@@ -283,13 +288,18 @@ public class CommonProduceTaskListFragment extends BaseRefreshRecyclerFragment<W
                 .layout(R.layout.wom_dialog_confirm, DisplayUtil.getScreenWidth(context) * 4 / 5, ViewGroup.LayoutParams.WRAP_CONTENT);
         Objects.requireNonNull(customDialog.getDialog().getWindow()).setBackgroundDrawableResource(R.color.transparent);
         if (isTask) {
-            customDialog.bindView(R.id.tipContentTv, "确认 " + paramsList.get(0) + " 该工单操作？")
-                    .bindClickListener(R.id.cancelTv, null, true)
+            if ("discharge".equals(paramsList.get(1))){
+                customDialog.bindView(R.id.tipContentTv, paramsList.get(0) + " ，是否开启提前放料操作？"); // "提前放料"
+            }else {
+                customDialog.bindView(R.id.tipContentTv, "确认 " + paramsList.get(0) + " 该工单操作？");
+            }
+            customDialog.bindClickListener(R.id.cancelTv, null, true)
                     .bindClickListener(R.id.confirmTv, v -> {
                         onLoading(getString(R.string.wom_dealing));
                         presenterRouter.create(ProduceTaskOperateAPI.class).operateProduceTask(waitPutinRecordEntity.getId(), String.valueOf(paramsList.get(1)),null);
                     }, true)
                     .show();
+
         } else {
             customDialog.bindView(R.id.tipContentTv, "确认 " + paramsList.get(0) + " 该工序操作？")
                     .bindClickListener(R.id.cancelTv, null, true)

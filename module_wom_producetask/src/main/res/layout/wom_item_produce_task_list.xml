@@ -185,6 +185,13 @@
                 style="@style/operateBtnStyle"
                 android:tag="stopTv"
                 android:text="@string/wom_end" />
+            <TextView
+                android:id="@+id/dischargeTv"
+                style="@style/operateBtnStyle"
+                android:background="@drawable/wom_sh_start_bg"
+                android:tag="dischargeTv"
+                android:text="@string/wom_discharge"
+                android:visibility="gone"/>
         </LinearLayout>
         <ImageView
             android:layout_width="wrap_content"

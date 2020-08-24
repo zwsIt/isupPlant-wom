@@ -28,7 +28,40 @@ public class ProduceTaskEntity extends BaseEntity {
     private Long planEndTime;           // 计划结束时间
     private Long actStartTime;          // 实际开始时间
     private Long actEndTime;            // 实际结束时间
-    private Boolean batchContral;       //是否批控
+    private Boolean batchContral;       // 是否批控
+    private Boolean advanceCharge;      // 允许提前放料
+    private Boolean isAdvanced;         // 是否提前放料
+    private String feedCondition;       // 放料条件
+
+    public String getFeedCondition() {
+        return feedCondition;
+    }
+
+    public void setFeedCondition(String feedCondition) {
+        this.feedCondition = feedCondition;
+    }
+
+    public Boolean getAdvanceCharge() {
+        if (advanceCharge == null){
+            advanceCharge = false;
+        }
+        return advanceCharge;
+    }
+
+    public void setAdvanceCharge(Boolean advanceCharge) {
+        this.advanceCharge = advanceCharge;
+    }
+
+    public Boolean getAdvanced() {
+        if (isAdvanced == null){
+            isAdvanced = false;
+        }
+        return isAdvanced;
+    }
+
+    public void setAdvanced(Boolean advanced) {
+        isAdvanced = advanced;
+    }
 
     public void setBatchContral(Boolean batchContral) {
         this.batchContral = batchContral;
