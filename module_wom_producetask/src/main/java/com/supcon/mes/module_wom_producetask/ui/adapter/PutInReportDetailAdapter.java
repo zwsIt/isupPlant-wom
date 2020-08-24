@@ -97,6 +97,7 @@ public class PutInReportDetailAdapter extends BaseListDataRecyclerViewAdapter<Pu
             if (batchPutInActivity) {
                 materialNameLl.setVisibility(View.VISIBLE);
             }
+
             batchNum.setEditable(edit);
             warehouseTv.setEditable(edit);
             storeSetTv.setEditable(edit);

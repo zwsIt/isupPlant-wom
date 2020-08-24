@@ -1,4 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="thumb_stroke_color">#d6d6d6</color>
+    <color name="active_log_mes_start">#75D0C7</color>
+    <color name="active_log_mes_end">#9BE3DB</color>
+    <color name="active_data_source">#D0F3EF</color>
+    <color name="active_log_batch_start">#75AED2</color>
+    <color name="active_log_batch_end">#9AC7E2</color>
+    <color name="active_data_source1">#D3E7F4</color>
 </resources>

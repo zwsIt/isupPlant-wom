@@ -200,7 +200,6 @@ public class PutInActivityReportActivity extends BaseRefreshRecyclerActivity<Put
     protected void initListener() {
         super.initListener();
         leftBtn.setOnClickListener(v -> finish());
-        getController(CommonScanController.class).openInfrared();
         rightBtn.setOnClickListener(v -> {
             getController(CommonScanController.class).openCameraScan();
         });
@@ -357,10 +356,10 @@ public class PutInActivityReportActivity extends BaseRefreshRecyclerActivity<Put
             return true;
         }
         for (PutInDetailEntity putInDetailEntity : mPutInReportDetailAdapter.getList()){
-            if (TextUtils.isEmpty(putInDetailEntity.getMaterialBatchNum())){
-                ToastUtils.show(context, "第【" + (mPutInReportDetailAdapter.getList().indexOf(putInDetailEntity) + 1) + "】项请填写物料批号");
-                return true;
-            }
+//            if (TextUtils.isEmpty(putInDetailEntity.getMaterialBatchNum())){
+//                ToastUtils.show(context, "第【" + (mPutInReportDetailAdapter.getList().indexOf(putInDetailEntity) + 1) + "】项请填写物料批号");
+//                return true;
+//            }
             if (putInDetailEntity.getWareId() == null){
                 ToastUtils.show(context, "第【" + (mPutInReportDetailAdapter.getList().indexOf(putInDetailEntity) + 1) + "】项请填写仓库");
                 return true;

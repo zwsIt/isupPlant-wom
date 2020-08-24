@@ -97,6 +97,7 @@ public class TaskActiveEntity extends BaseEntity {
     private TaskProcessEntity taskProcessId;        // 工单工序
     private int version;
     private String batchCode;//物料批号
+    public boolean isFinish;
 
 
     public String getMaterialBatchNum() {
@@ -220,6 +221,14 @@ public class TaskActiveEntity extends BaseEntity {
 
     public void setFinalInspection(Boolean finalInspection) {
         this.finalInspection = finalInspection;
+    }
+
+    public boolean isFinish() {
+        return isFinish;
+    }
+
+    public void setFinish(boolean finish) {
+        isFinish = finish;
     }
 
     public FormulaActiveIdEntity getFormulaActiveId() {

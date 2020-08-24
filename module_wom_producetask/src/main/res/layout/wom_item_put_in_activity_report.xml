@@ -79,7 +79,6 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_vertical"
                         android:drawableStart="@drawable/ic_batch_number"
-                        android:drawableEnd="@drawable/ic_necessary"
                         android:drawablePadding="@dimen/dp_5"
                         android:gravity="center_vertical"
                         android:paddingStart="@dimen/dp_10"

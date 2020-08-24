@@ -171,7 +171,7 @@ public class BatchPutInActivityReportActivity extends BaseRefreshRecyclerActivit
     protected void initListener() {
         super.initListener();
         leftBtn.setOnClickListener(v -> finish());
-        getController(CommonScanController.class).openInfrared();
+//        getController(CommonScanController.class).openInfrared();
         rightBtn.setOnClickListener(v -> {
             getController(CommonScanController.class).openCameraScan();
         });

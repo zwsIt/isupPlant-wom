@@ -85,4 +85,5 @@
     <string name="wom_checking">检验中</string>
     <string name="wom_before_weight">前重</string>
     <string name="wom_after_weight">后重</string>
+    <string name="taskState">Execution status</string>
 </resources>

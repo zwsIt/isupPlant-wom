@@ -2,6 +2,7 @@ package com.supcon.mes.module_wom_producetask.ui.activity;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
@@ -12,14 +13,19 @@ import android.widget.TextView;
 
 import com.app.annotation.BindByTag;
 import com.app.annotation.apt.Router;
+import com.jakewharton.rxbinding2.view.RxView;
 import com.supcon.common.view.base.activity.BaseMultiFragmentActivity;
 import com.supcon.common.view.util.StatusBarUtils;
 import com.supcon.mes.mbap.view.CustomTab;
 import com.supcon.mes.mbap.view.NoScrollViewPager;
 import com.supcon.mes.middleware.constant.Constant;
+import com.supcon.mes.module_wom_producetask.IntentRouter;
 import com.supcon.mes.module_wom_producetask.R;
+import com.supcon.mes.module_wom_producetask.model.bean.WaitPutinRecordEntity;
 import com.supcon.mes.module_wom_producetask.ui.fragment.FormulaActivityListFragment;
 import com.supcon.mes.module_wom_producetask.ui.fragment.TemporaryActivityListFragment;
+
+import java.util.concurrent.TimeUnit;
 
 /**
  * ClassName
@@ -33,12 +39,15 @@ public class ProduceTaskActivityListActivity extends BaseMultiFragmentActivity {
     ImageButton leftBtn;
     @BindByTag("titleText")
     TextView titleText;
+    @BindByTag("rightBtn")
+    ImageButton rightBtn;
     @BindByTag("customTab")
     CustomTab customTab;
     @BindByTag("viewPager")
     NoScrollViewPager viewPager;
     private FormulaActivityListFragment mFormulaActivityListFragment;
     private TemporaryActivityListFragment mTemporaryActivityListFragment;
+    WaitPutinRecordEntity waitPutinRecordEntity;
 
     @Override
     public int getFragmentContainerId() {
@@ -58,6 +67,7 @@ public class ProduceTaskActivityListActivity extends BaseMultiFragmentActivity {
     @Override
     protected void onInit() {
         super.onInit();
+        waitPutinRecordEntity= (WaitPutinRecordEntity) getIntent().getSerializableExtra(Constant.IntentKey.WAIT_PUT_RECORD);
     }
 
     @Override
@@ -65,6 +75,8 @@ public class ProduceTaskActivityListActivity extends BaseMultiFragmentActivity {
         super.initView();
         StatusBarUtils.setWindowStatusBarColor(this, R.color.themeColor);
         titleText.setText(context.getResources().getString(R.string.wom_activity_list));
+        rightBtn.setVisibility(View.VISIBLE);
+        rightBtn.setImageResource(R.drawable.ic_records);
         initTab();
         initViewPager();
     }
@@ -104,6 +116,14 @@ public class ProduceTaskActivityListActivity extends BaseMultiFragmentActivity {
                 finish();
             }
         });
+        RxView.clicks(rightBtn)
+                .throttleFirst(2000, TimeUnit.MILLISECONDS)
+                .subscribe(o->{
+                    Bundle bundle=new Bundle();
+                    bundle.putSerializable(Constant.IntentKey.WAIT_PUT_RECORD,waitPutinRecordEntity);
+                    IntentRouter.go(context,Constant.Router.ACTIVITY_EXEREDS_LIST,bundle);
+                });
+
         customTab.setOnTabChangeListener(current -> viewPager.setCurrentItem(current));
         viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override

@@ -5,6 +5,7 @@ import com.supcon.mes.middleware.model.bean.BAP5CommonEntity;
 import com.supcon.mes.middleware.model.bean.BapResultEntity;
 import com.supcon.mes.middleware.model.bean.CommonBAPListEntity;
 import com.supcon.mes.middleware.model.bean.wom.FactoryModelEntity;
+import com.supcon.mes.module_wom_producetask.model.bean.ActiExelogListEntity;
 import com.supcon.mes.module_wom_producetask.model.bean.WaitPutinRecordEntity;
 import com.supcon.mes.module_wom_producetask.model.dto.BatchPutinDetailDTO;
 import com.supcon.mes.module_wom_producetask.model.dto.OutputDetailDTO;
@@ -136,4 +137,6 @@ public interface NetworkService {
     @POST("/msService/WOM/procReport/procReport/outputFeedBackEdit/submit")
     Flowable<BAP5CommonEntity<BapResultEntity>> outputReportSubmit(@Query("id") Long id, @Query("__pc__") String __pc__,@Body OutputDetailDTO outputDetailDTO);
 
+    @POST("/msService/WOM/produceTask/actiExelog/activeExeLogList-query")
+    Flowable<ActiExelogListEntity> listActivityExeLog(@Body Map<String,Object> params);
 }
