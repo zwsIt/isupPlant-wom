@@ -194,6 +194,9 @@ public class ActiExelogEntity extends BaseEntity {
     }
 
     public ProduceTaskEntity getTaskId() {
+        if (taskId == null){
+            taskId = new ProduceTaskEntity();
+        }
         return taskId;
     }
 

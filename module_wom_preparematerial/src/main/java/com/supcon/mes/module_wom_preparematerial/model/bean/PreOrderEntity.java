@@ -4,6 +4,7 @@ import com.supcon.common.com_http.BaseEntity;
 import com.supcon.mes.middleware.model.bean.DepartmentEntity;
 import com.supcon.mes.middleware.model.bean.ObjectEntity;
 import com.supcon.mes.middleware.model.bean.SystemCodeEntity;
+import com.supcon.mes.middleware.model.bean.wom.FactoryModelEntity;
 
 /**
  * Created by wangshizhan on 2020/6/24
@@ -22,11 +23,11 @@ public class PreOrderEntity extends BaseEntity {
      * preSystem: {attrMap: null, code: "serviceUrl/001", id: 1001}
      */
 
-    public ObjectEntity factoryId;
+    public FactoryModelEntity factoryId;
     public Long id;
     public String orderTableNo;
     public DepartmentEntity preDepartMent;
     public SystemCodeEntity prePareMode;
-    public ObjectEntity preSystem;
+    public ObjectEntity preSystem; // 备料系统
 
 }

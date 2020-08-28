@@ -93,14 +93,27 @@
                     android:drawableLeft="@drawable/ic_store_location"
                     android:drawablePadding="@dimen/dp_5"
                     />
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textColor="@color/dark_text"
-                    android:textSize="14sp"
-                    android:text="原料仓库/101货位"
+                <com.supcon.mes.mbap.view.CustomTextView
+                    android:layout_width="0dp"
+                    android:layout_height="@dimen/dp_35"
+                    android:layout_weight="1"
+                    app:key_width="0dp"
+                    app:editable="true"
+                    app:text_size="14"
+                    app:content_color="@color/black"
+                    android:paddingRight="@dimen/dp_5"
+                    app:max_lines="1"
                     android:id="@+id/itemPreMaterialReceiveStoreLocation"
                     android:tag="itemPreMaterialReceiveStoreLocation" />
+
+<!--                <TextView-->
+<!--                    android:layout_width="wrap_content"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:textColor="@color/dark_text"-->
+<!--                    android:textSize="14sp"-->
+<!--                    android:text="原料仓库/101货位"-->
+<!--                    android:id="@+id/itemPreMaterialReceiveStoreLocation"-->
+<!--                    android:tag="itemPreMaterialReceiveStoreLocation" />-->
             </LinearLayout>
             <LinearLayout
                 android:layout_width="match_parent"

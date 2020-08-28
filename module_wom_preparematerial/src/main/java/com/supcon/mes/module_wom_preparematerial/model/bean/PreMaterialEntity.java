@@ -6,6 +6,8 @@ import com.supcon.mes.middleware.model.bean.PendingEntity;
 import com.supcon.mes.middleware.model.bean.StaffEntity;
 import com.supcon.mes.middleware.model.bean.SystemCodeEntity;
 import com.supcon.mes.middleware.model.bean.wom.MaterialEntity;
+import com.supcon.mes.middleware.model.bean.wom.StoreSetEntity;
+import com.supcon.mes.middleware.model.bean.wom.WarehouseEntity;
 
 import java.math.BigDecimal;
 
@@ -64,18 +66,18 @@ public class PreMaterialEntity extends BaseEntity {
     public Long deliverDate;
     public StaffEntity deliverStaff;
 
-    public ObjectEntity fromStore;
-    public ObjectEntity fromWare;
+    public StoreSetEntity fromStore;  // 源货位
+    public WarehouseEntity fromWare;   // 源仓库
     public String materialBatchNum;
     public Float preNum;
     public PreOrderEntity preOrderId;
     public Long prePareDate;
     public StaffEntity preStaff;
-    public ObjectEntity materialId;
+    public MaterialEntity materialId;
 
     public SystemCodeEntity recordState;
-    public ObjectEntity toStoreId;
-    public ObjectEntity toWareId;
+    public StoreSetEntity toStoreId; // 目的货位
+    public WarehouseEntity toWareId; // 目的仓库
     public String remark;
     public Long receiveDate;
     public SystemCodeEntity receiveState; // 接收状态

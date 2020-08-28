@@ -8,6 +8,7 @@ import android.support.v4.view.ViewPager;
 
 import com.app.annotation.BindByTag;
 import com.app.annotation.apt.Router;
+import com.jakewharton.rxbinding2.view.RxView;
 import com.jakewharton.rxbinding2.widget.RxTextView;
 import com.supcon.common.view.base.activity.BaseFragmentActivity;
 import com.supcon.common.view.base.activity.BaseMultiFragmentActivity;
@@ -23,6 +24,7 @@ import com.supcon.mes.module_wom_batchmaterial.ui.fragment.BatchMaterialRecordsF
 import java.util.concurrent.TimeUnit;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
 
 /**
@@ -58,6 +60,7 @@ public class BatchMaterialListActivity extends BaseFragmentActivity {
         super.initView();
         StatusBarUtils.setWindowStatusBarColor(this, R.color.themeColor);
         searchTitleBar.disableRightBtn();
+        searchTitleBar.rightBtn().setImageResource(R.drawable.ic_scan);
         searchTitleBar.editText().setHint(context.getResources().getString(R.string.wom_input_produce_batch_num));
 
         initTab();
@@ -87,6 +90,13 @@ public class BatchMaterialListActivity extends BaseFragmentActivity {
     protected void initListener() {
         super.initListener();
         searchTitleBar.leftBtn().setOnClickListener(v -> finish());
+        RxView.clicks(searchTitleBar.rightBtn()).throttleFirst(500,TimeUnit.MILLISECONDS)
+                .subscribe(new Consumer<Object>() {
+                    @Override
+                    public void accept(Object o) throws Exception {
+                        mBatchMaterialRecordsFragment.scan();
+                    }
+                });
         searchTitleBar.setOnExpandListener(isExpand -> {
             if (isExpand) {
 //                    searchTitleBar.searchView().setInputTextColor(R.color.black);
@@ -121,6 +131,12 @@ public class BatchMaterialListActivity extends BaseFragmentActivity {
             public void onPageSelected(int i) {
                 if (customTab.getCurrentPosition() != i){
                     customTab.setCurrentTab(i);
+                }
+
+                if (i == 1){
+                    searchTitleBar.enableRightBtn();
+                }else {
+                    searchTitleBar.disableRightBtn();
                 }
             }
 

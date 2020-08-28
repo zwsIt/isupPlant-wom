@@ -38,9 +38,11 @@ import com.supcon.mes.middleware.model.bean.CommonBAPListEntity;
 import com.supcon.mes.middleware.model.bean.ContactEntity;
 import com.supcon.mes.middleware.model.bean.ObjectEntity;
 import com.supcon.mes.middleware.model.bean.SearchHistoryEntity;
+import com.supcon.mes.middleware.model.bean.wom.StoreSetEntity;
 import com.supcon.mes.middleware.model.event.SelectDataEvent;
 import com.supcon.mes.middleware.model.inter.ISearchContent;
 import com.supcon.mes.middleware.model.inter.SystemCode;
+import com.supcon.mes.middleware.util.EmptyAdapterHelper;
 import com.supcon.mes.middleware.util.ErrorMsgHelper;
 import com.supcon.mes.module_search.controller.SearchViewController;
 import com.supcon.mes.module_wom_preparematerial.R;
@@ -100,6 +102,7 @@ public class PreMaterialReceiveListActivity extends BaseRefreshRecyclerActivity<
     private PreMaterialReceiveListAdapter mPreMaterialReceiveListAdapter;
     private Map<String, Object> queryParams;
     private int actionPosition = -1;
+    private PreMaterialEntity mPreMaterialEntity;
 
     @Override
     protected IListAdapter<PreMaterialEntity> createAdapter() {
@@ -116,7 +119,8 @@ public class PreMaterialReceiveListActivity extends BaseRefreshRecyclerActivity<
     protected void onInit() {
         super.onInit();
         refreshListController.setAutoPullDownRefresh(true);
-        refreshListController.setPullDownRefreshEnabled(false);
+        refreshListController.setPullDownRefreshEnabled(true);
+        refreshListController.setEmpterAdapter(EmptyAdapterHelper.getRecyclerEmptyAdapter(context,""));
         queryParams = new HashMap<>();
         queryParams.put("RECORD_STATE","WOM_prePareState/waitCollecte"); // 默认记录状态：待收
         EventBus.getDefault().register(this);
@@ -206,19 +210,24 @@ public class PreMaterialReceiveListActivity extends BaseRefreshRecyclerActivity<
 
         mPreMaterialReceiveListAdapter.setOnItemChildViewClickListener(new OnItemChildViewClickListener() {
             @Override
-            public void onItemChildViewClick(View childView, int position, int action, Object obj) {
-
+            public void onItemChildViewClick(View childView, int position, int action, Object object) {
+                Bundle bundle = new Bundle();
                 String tag = (String) childView.getTag();
+                mPreMaterialEntity = (PreMaterialEntity)object;
                 actionPosition = position;
                 switch (tag){
                     case "itemPreMaterialReceiveStaff":
-                        Bundle bundle = new Bundle();
+
                         bundle.putBoolean(Constant.IntentKey.IS_MULTI, false);
                         bundle.putBoolean(Constant.IntentKey.IS_SELECT, true);
                         bundle.putString(Constant.IntentKey.SELECT_TAG, "itemPreMaterialReceiveStaff");
                         IntentRouter.go(context, Constant.Router.CONTACT_SELECT, bundle);
                         break;
-
+                    case "itemPreMaterialReceiveStoreLocation":
+                        bundle.putLong(Constant.IntentKey.WARE_ID, mPreMaterialEntity.toWareId.getId());
+                        com.supcon.mes.module_wom_preparematerial.IntentRouter.go(context, Constant.Router.STORE_SET_LIST_REF, bundle);
+                        break;
+                        default:
 
                 }
             }
@@ -292,6 +301,9 @@ public class PreMaterialReceiveListActivity extends BaseRefreshRecyclerActivity<
             }
             materialEntity.receiveStaff = objectEntity;
             mPreMaterialReceiveListAdapter.notifyItemChanged(actionPosition);
+        }else if (event.getEntity() instanceof StoreSetEntity){
+            mPreMaterialEntity.toStoreId = ((StoreSetEntity) event.getEntity());
+            mPreMaterialReceiveListAdapter.notifyItemChanged(actionPosition);
         }
     }
 
@@ -328,8 +340,8 @@ public class PreMaterialReceiveListActivity extends BaseRefreshRecyclerActivity<
 
     @Override
     public void getPreMaterialReceiveListFailed(String errorMsg) {
-        LogUtil.e(ErrorMsgHelper.msgParse(errorMsg));
-        refreshListController.refreshComplete(null);
+        ToastUtils.show(context,ErrorMsgHelper.msgParse(errorMsg));
+        refreshListController.refreshComplete();
     }
 
 

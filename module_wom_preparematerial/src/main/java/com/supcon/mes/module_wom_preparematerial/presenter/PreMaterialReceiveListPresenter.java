@@ -5,6 +5,7 @@ import com.supcon.mes.middleware.model.bean.BAP5CommonEntity;
 import com.supcon.mes.middleware.model.bean.CommonBAPListEntity;
 import com.supcon.mes.middleware.model.bean.FastQueryCondEntity;
 import com.supcon.mes.middleware.util.BAPQueryParamsHelper;
+import com.supcon.mes.middleware.util.HttpErrorReturnUtil;
 import com.supcon.mes.module_wom_preparematerial.model.bean.PreMaterialEntity;
 import com.supcon.mes.module_wom_preparematerial.model.contract.PreMaterialReceiveListContract;
 import com.supcon.mes.module_wom_preparematerial.model.network.WomHttpClient;
@@ -37,7 +38,7 @@ public class PreMaterialReceiveListPresenter extends PreMaterialReceiveListContr
                             public BAP5CommonEntity<CommonBAPListEntity<PreMaterialEntity>> apply(Throwable throwable) throws Exception {
                                 BAP5CommonEntity bap5CommonEntity = new BAP5CommonEntity();
                                 bap5CommonEntity.success = false;
-                                bap5CommonEntity.msg = throwable.toString();
+                                bap5CommonEntity.msg = HttpErrorReturnUtil.getErrorInfo(throwable);
                                 return bap5CommonEntity;
                             }
                         })

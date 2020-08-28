@@ -2,6 +2,7 @@ package com.supcon.mes.module_wom_preparematerial.ui.adapter;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.InputType;
@@ -31,8 +32,10 @@ import com.supcon.mes.mbap.view.CustomEditText;
 import com.supcon.mes.mbap.view.CustomRoundTextImageView;
 import com.supcon.mes.mbap.view.CustomTextView;
 import com.supcon.mes.middleware.SupPlantApplication;
+import com.supcon.mes.middleware.constant.Constant;
 import com.supcon.mes.middleware.model.bean.ObjectEntity;
 import com.supcon.mes.middleware.util.SystemCodeManager;
+import com.supcon.mes.module_wom_preparematerial.IntentRouter;
 import com.supcon.mes.module_wom_preparematerial.R;
 import com.supcon.mes.module_wom_preparematerial.model.bean.PreMaterialEntity;
 import com.supcon.mes.module_wom_producetask.constant.WomConstant;
@@ -92,7 +95,7 @@ public class PreMaterialReceiveListAdapter extends BaseListDataRecyclerViewAdapt
         TextView itemPreMaterialReceiveMaterial;
 
         @BindByTag("itemPreMaterialReceiveStoreLocation")
-        TextView itemPreMaterialReceiveStoreLocation;
+        CustomTextView itemPreMaterialReceiveStoreLocation;
 
         @BindByTag("itemPreMaterialReceiveBatchNum")
         TextView itemPreMaterialReceiveBatchNum;
@@ -139,6 +142,11 @@ public class PreMaterialReceiveListAdapter extends BaseListDataRecyclerViewAdapt
 
         public PreMaterialReceiveViewHolder(View itemView) {
             super(itemView);
+        }
+
+        @Override
+        protected int layoutId() {
+            return R.layout.wom_item_pre_material_receive;
         }
 
         @Override
@@ -195,7 +203,8 @@ public class PreMaterialReceiveListAdapter extends BaseListDataRecyclerViewAdapt
                     for(String key: receiveStates.keySet()){
                         if(value.equals(receiveStates.get(key))){
                             entity.receiveState = SystemCodeManager.getInstance().getSystemCodeEntity(key);
-
+                            itemPreMaterialReceiveStoreLocation.setEditable(true);
+                            itemPreMaterialReceiveStoreLocation.findViewById(R.id.customDeleteIcon).setVisibility(View.GONE);
                             if("WOM_receiveState/partReceive".equals(key)){
                                 itemPreMaterialReceiveLine.setVisibility(View.VISIBLE);
                                 itemPreMaterialReceiveReason.setVisibility(View.VISIBLE);
@@ -205,6 +214,10 @@ public class PreMaterialReceiveListAdapter extends BaseListDataRecyclerViewAdapt
                                 entity.receiveNum = null;
                             }
                             else if("WOM_receiveState/reject".equals(key)){
+                                itemPreMaterialReceiveStoreLocation.setEditable(false);
+                                itemPreMaterialReceiveStoreLocation.findViewById(R.id.customDeleteIcon).setVisibility(View.GONE);
+
+
                                 itemPreMaterialReceiveLine.setVisibility(View.VISIBLE);
                                 itemPreMaterialReceiveReason.setVisibility(View.GONE);
                                 itemPreMaterialRejectReasonLayout.setVisibility(View.VISIBLE);
@@ -325,45 +338,45 @@ public class PreMaterialReceiveListAdapter extends BaseListDataRecyclerViewAdapt
 
                         }
                     });
-        }
-
-        @Override
-        protected int layoutId() {
-            return R.layout.wom_item_pre_material_receive;
+            itemPreMaterialReceiveStoreLocation.setOnChildViewClickListener(new OnChildViewClickListener() {
+                @Override
+                public void onChildViewClick(View childView, int action, Object obj) {
+                    onItemChildViewClick(itemPreMaterialReceiveStoreLocation,0,getItem(getAdapterPosition()));
+                }
+            });
         }
 
         @Override
         protected void update(PreMaterialEntity data) {
             itemPreMaterialReceiveTableNo.setText(data.preOrderId.orderTableNo);
             itemPreMaterialReceiveDeliverCode.setContent(data.deliverCode!=null?data.deliverCode:"");
-            if(data.materialId!=null && data.materialId.name!=null){
+            if(data.materialId!=null && data.materialId.getName()!=null){
                 StringBuilder stringBuilder = new StringBuilder();
-                stringBuilder.append(data.materialId.name);
+                stringBuilder.append(data.materialId.getName());
                 stringBuilder.append("(");
-                stringBuilder.append(data.materialId.code);
+                stringBuilder.append(data.materialId.getCode());
                 stringBuilder.append(")");
 
-                if(data.materialId.name.length()>2){
-                    itemPreMaterialReceiveIc.setText(data.materialId.name.substring(0,2));
+                if(data.materialId.getName().length()>2){
+                    itemPreMaterialReceiveIc.setText(data.materialId.getName().substring(0,2));
                 }
                 else{
-                    itemPreMaterialReceiveIc.setText(data.materialId.name);
+                    itemPreMaterialReceiveIc.setText(data.materialId.getName());
                 }
                 itemPreMaterialReceiveMaterial.setText(stringBuilder.toString());
             }
-            if(data.fromWare!=null && data.fromWare.name!=null){
-                StringBuilder fromStr = new StringBuilder(data.fromWare.name);
+            if(data.toWareId!=null && data.toWareId.getName()!=null){
+                StringBuilder fromStr = new StringBuilder(data.toWareId.getName());
                 fromStr.append("/");
-                if(data.fromStore!=null && data.fromStore.name!=null){
-                    fromStr.append(data.fromStore.name);
+                if(data.toStoreId!=null && data.toStoreId.getName()!=null){
+                    fromStr.append(data.toStoreId.getName());
                 }
                 else{
                     fromStr.append("--");
                 }
-                itemPreMaterialReceiveStoreLocation.setText(fromStr.toString());
-            }
-            else{
-                itemPreMaterialReceiveStoreLocation.setText("--/--");
+                itemPreMaterialReceiveStoreLocation.setContent(fromStr.toString());
+            } else{
+                itemPreMaterialReceiveStoreLocation.setContent("--/--");
             }
 
             itemPreMaterialReceiveBatchNum.setText(data.materialBatchNum!=null? data.materialBatchNum :"--");
@@ -371,8 +384,7 @@ public class PreMaterialReceiveListAdapter extends BaseListDataRecyclerViewAdapt
 
             if(data.receiveStaff != null && data.receiveStaff.name!=null){
                 itemPreMaterialReceiveStaff.setContent(data.receiveStaff.name);
-            }
-            else{
+            } else{
                 itemPreMaterialReceiveStaff.setContent(SupPlantApplication.getAccountInfo().getStaffName());
                 ObjectEntity staff = new ObjectEntity(SupPlantApplication.getAccountInfo().staffId);
                 staff.name = SupPlantApplication.getAccountInfo().getStaffName();

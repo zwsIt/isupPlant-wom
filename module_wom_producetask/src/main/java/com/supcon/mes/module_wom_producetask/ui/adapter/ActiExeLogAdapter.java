@@ -1,6 +1,7 @@
 package com.supcon.mes.module_wom_producetask.ui.adapter;
 
 import android.content.Context;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -78,7 +79,7 @@ public class ActiExeLogAdapter extends BaseListDataRecyclerViewAdapter<ActiExelo
                 dataSourceTv.setBackgroundResource(R.drawable.sh_datasource_mes_bg);
                 dataSourceTv.setTextColor(context.getResources().getColor(R.color.active_log_mes_start));
             }
-            activityName.setContent(data.name);
+            activityName.setContent(TextUtils.isEmpty(data.name) ? "--" : data.name);
             if (WomConstant.SystemCode.EXE_STATE_ING.equals(data.getRunState().id)){
                 taskState.setText("执行中");
                 taskState.setTextColor(context.getResources().getColor(R.color.lubricateBg));
@@ -98,7 +99,7 @@ public class ActiExeLogAdapter extends BaseListDataRecyclerViewAdapter<ActiExelo
                 materialRl.setVisibility(View.VISIBLE);
                 materialName.setContent(data.getMaterialId().getName());
                 materialCode.setContent(data.getMaterialId().getCode());
-                materialBatchNum.setContent(data.materialBatchNum);
+                materialBatchNum.setContent(TextUtils.isEmpty(data.materialBatchNum) ? "--" : data.materialBatchNum);
             }
 
             if (WomConstant.SystemCode.RM_activeType_QUALITY.equals(data.activeType.id)){
@@ -108,7 +109,13 @@ public class ActiExeLogAdapter extends BaseListDataRecyclerViewAdapter<ActiExelo
                 checkResult.setVisibility(View.GONE);
             }
 
-            taskProcessName.setContent(data.getTaskProcessId()== null ? "--" : data.getTaskProcessId().getName());
+            if (WomConstant.SystemCode.RM_TYPE_COMMON.equals(data.getTaskId().getFormulaId().getSetProcess().id)){
+                taskProcessName.setVisibility(View.VISIBLE);
+                taskProcessName.setContent(data.getTaskProcessId()== null ? "--" : data.getTaskProcessId().getName());
+            }else {
+                taskProcessName.setVisibility(View.GONE);
+            }
+
         }
     }
 
