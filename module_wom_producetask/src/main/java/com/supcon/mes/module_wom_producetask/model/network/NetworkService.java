@@ -145,4 +145,12 @@ public interface NetworkService {
     @POST("/msService/WOM/produceTask/actiExelog/activeExeLogList-query")
     Flowable<ActiExelogListEntity> listActivityExeLog(@Body Map<String,Object> params);
 
+    /**
+     * 调整活动：发起请检
+     * @param activeId
+     * @return
+     */
+    @GET("/msService/WOM/produceTask/produceTask/adjustFinish")
+    Flowable<BAP5CommonEntity> adjustFinish(@Query("ajustActiveId") Long activeId);
+
 }

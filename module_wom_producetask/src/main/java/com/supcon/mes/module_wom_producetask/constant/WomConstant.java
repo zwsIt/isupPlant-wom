@@ -47,8 +47,12 @@ public interface WomConstant {
         String RM_activeType_PIPE_BATCH_PUTIN = "RM_activeType/pipeBatchPutin";// 管道投配料
         String RM_activeType_PIPE_OUTPUT = "RM_activeType/pipeOutput";         // 管道产出
 
-        String WOM_receiveState = "WOM_receiveState";
-        String WOM_rejectReason = "WOM_rejectReason";
+        // 备料管理接收
+        String WOM_receiveState = "WOM_receiveState"; // 签收状态
+        String WOM_rejectReason = "WOM_rejectReason"; // 拒签原因
+
+        // 批次处理方式（基础模型-活动与批状态）
+        String BASE_DEAL_ADJUST = "BaseSet_dealType/adjust"; // 调整
     }
 
     /**
@@ -72,6 +76,8 @@ public interface WomConstant {
 
         String BATCH_MATERIAL_LIST_REF_URL = "/msService/WOM/batchMaterial/batMaterilPart/recodRefForReport-query"; // 配料记录参照list
         String BATCH_MATERIAL_RELECT_LIST_REF_URL = "/msService/WOM/batchMaterial/batMaterilPart/recodRefForReject-query"; // 退料配料记录参照list
+
+        String ADJUST_LIST_RUL = "/msService/WOM/produceTask/taskProcess/data-dg1576475211202?datagridCode=WOM_1.0.0_produceTask_adjustActiveViewdg1576475211202&id="; // 调整活动list
     }
 
     /**

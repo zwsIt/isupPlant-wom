@@ -37,13 +37,10 @@ public class CommonListPresenter extends CommonListContract.Presenter {
         }
         mCompositeSubscription.add(
                 WomHttpClient.list(url, requestParamsMap)
-                        .onErrorReturn(new Function<Throwable, BAP5CommonEntity<Object>>() {
-                            @Override
-                            public BAP5CommonEntity<Object> apply(Throwable throwable) throws Exception {
-                                BAP5CommonEntity<Object> bap5CommonEntity = new BAP5CommonEntity<>();
-                                bap5CommonEntity.msg = HttpErrorReturnUtil.getErrorInfo(throwable);
-                                return bap5CommonEntity;
-                            }
+                        .onErrorReturn(throwable -> {
+                            BAP5CommonEntity<Object> bap5CommonEntity = new BAP5CommonEntity<>();
+                            bap5CommonEntity.msg = HttpErrorReturnUtil.getErrorInfo(throwable);
+                            return bap5CommonEntity;
                         })
                         .subscribe(new Consumer<BAP5CommonEntity<Object>>() {
                             @Override

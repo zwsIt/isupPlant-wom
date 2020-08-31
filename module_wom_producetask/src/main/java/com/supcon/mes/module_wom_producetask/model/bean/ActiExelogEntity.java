@@ -5,6 +5,8 @@ import com.supcon.mes.middleware.model.bean.BaseIdValueEntity;
 import com.supcon.mes.middleware.model.bean.SystemCodeEntity;
 import com.supcon.mes.middleware.model.bean.wom.MaterialEntity;
 
+import java.math.BigDecimal;
+
 /**
  * Created by wanghaidong on 2020/8/17
  * Email:wanghaidong1@supcon.com
@@ -15,7 +17,7 @@ public class ActiExelogEntity extends BaseEntity {
     public Long actEndTime;//活动结束时间
     public Long actStartTime;//活动开始时间
     public SystemCodeEntity activeType;//活动类型
-    public Long actlongTime;//活动时长
+    public BigDecimal actlongTime;//执行时长(分)
     public Long actualNum;//实际数量
     public String beforeNum;//前重
     public String afterNum;//后重
@@ -81,11 +83,11 @@ public class ActiExelogEntity extends BaseEntity {
         this.actStartTime = actStartTime;
     }
 
-    public Long getActlongTime() {
+    public BigDecimal getActlongTime() {
         return actlongTime;
     }
 
-    public void setActlongTime(Long actlongTime) {
+    public void setActlongTime(BigDecimal actlongTime) {
         this.actlongTime = actlongTime;
     }
 

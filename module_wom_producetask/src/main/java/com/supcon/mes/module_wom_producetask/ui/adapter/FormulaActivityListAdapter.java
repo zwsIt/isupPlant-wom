@@ -3,6 +3,7 @@ package com.supcon.mes.module_wom_producetask.ui.adapter;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -507,10 +508,14 @@ public class FormulaActivityListAdapter extends BaseListDataRecyclerViewAdapter<
         CustomTextView factoryModelUnitCustomTv;
         @BindByTag("timeCustomTv")
         CustomTextView timeCustomTv;
-        @BindByTag("routineStartTv")
-        TextView routineStartTv;
+        @BindByTag("qualityStartTv")
+        TextView qualityStartTv;
         @BindByTag("itemStateTv")
         TextView itemStateTv;
+        @BindByTag("adjustLl")
+        LinearLayout adjustLl;
+        @BindByTag("qualityTimes")
+        CustomTextView qualityTimes;
 
         public QualityItemViewHolder(Context context) {
             super(context);
@@ -518,7 +523,7 @@ public class FormulaActivityListAdapter extends BaseListDataRecyclerViewAdapter<
 
         @Override
         protected int layoutId() {
-            return R.layout.wom_item_routine;
+            return R.layout.wom_item_quality;
         }
 
         @SuppressLint("CheckResult")
@@ -526,16 +531,17 @@ public class FormulaActivityListAdapter extends BaseListDataRecyclerViewAdapter<
         protected void initListener() {
             super.initListener();
             RxView.clicks(itemView).throttleFirst(200, TimeUnit.MILLISECONDS)
-                    .filter(o -> WomConstant.SystemCode.RM_TYPE_SIMPLE.equals(getItem(getAdapterPosition()).getFormulaId().getSetProcess().id))
+                    .filter(o -> WomConstant.SystemCode.BASE_DEAL_ADJUST.equals(getItem(getAdapterPosition()).getTaskActiveId().getActiveBatchState().getDealType().id))
                     .subscribe(o -> {
-//                        Bundle bundle = new Bundle();
-//                        bundle.putSerializable(Constant.IntentKey.WAIT_PUT_RECORD, getItem(getAdapterPosition()));
-//                        IntentRouter.go(context, Constant.Router.WOM_ACTIVITY_LIST, bundle);
+                        // 调整
+                        Bundle bundle = new Bundle();
+                        bundle.putSerializable(Constant.IntentKey.WAIT_PUT_RECORD, getItem(getAdapterPosition()));
+                        IntentRouter.go(context, Constant.Router.WOM_ADJUST_ACTIVITY_LIST, bundle);
                     });
-            RxView.clicks(routineStartTv).throttleFirst(100, TimeUnit.MILLISECONDS)
+            RxView.clicks(qualityStartTv).throttleFirst(100, TimeUnit.MILLISECONDS)
                     .subscribe(o -> {
                         WaitPutinRecordEntity entity = getItem(getAdapterPosition());
-                        onItemChildViewClick(routineStartTv, getAdapterPosition(), entity);
+                        onItemChildViewClick(qualityStartTv, getAdapterPosition(), entity);
                     });
         }
 
@@ -546,25 +552,36 @@ public class FormulaActivityListAdapter extends BaseListDataRecyclerViewAdapter<
             sequenceCustomTv.setContent(data.getTaskActiveId().getExecSort());
             factoryModelUnitCustomTv.setContent(data.getTaskProcessId().getEquipmentId().getName());
             timeCustomTv.setContent(data.getActualStartTime() == null ? "" : DateUtil.dateTimeFormat(data.getActualStartTime()));
+            qualityTimes.setContent(String.valueOf(data.getTaskActiveId().getCheckTimes()));
 //            routineStartTv.setEnabled(true);
-            routineStartTv.setVisibility(View.GONE);
+            qualityStartTv.setVisibility(View.GONE);
+            adjustLl.setVisibility(View.GONE);
             if (WomConstant.SystemCode.EXE_STATE_WAIT.equals(data.getExeState().id)) {
                 itemStateTv.setVisibility(View.GONE);
-                if (data.getTaskId().getBatchContral() != null && data.getTaskId().getBatchContral()) {
+                if (data.getTaskId().getBatchContral() != null && data.getTaskId().getBatchContral()) { // 批控
 //                    routineStartTv.setBackgroundResource(R.drawable.wom_sh_disable_bg);
 //                    routineStartTv.setText(context.getResources().getString(R.string.wom_end));
 //                    routineStartTv.setEnabled(false);
                 } else {
-                    routineStartTv.setVisibility(View.VISIBLE);
-                    routineStartTv.setText(context.getResources().getString(R.string.wom_start));
-                    routineStartTv.setBackgroundResource(R.drawable.wom_sh_start_bg);
+                    qualityStartTv.setVisibility(View.VISIBLE);
+                    qualityStartTv.setText(context.getResources().getString(R.string.wom_start));
+                    qualityStartTv.setBackgroundResource(R.drawable.wom_sh_start_bg);
                 }
             } else {
                 itemStateTv.setVisibility(View.VISIBLE);
+                itemStateTv.setText(TextUtils.isEmpty(data.getCheckState()) ? data.getTaskActiveId().getCheckState() : data.getCheckState()); // 检验状态
 
-                itemStateTv.setText(context.getResources().getString(R.string.wom_checking));
-                routineStartTv.setText(context.getResources().getString(R.string.wom_end));
-                routineStartTv.setBackgroundResource(R.drawable.wom_sh_end_bg);
+                // 是否完工检验且允许提前放行
+                if (data.getTaskActiveId().getFinalInspection() && data.getTaskActiveId().isRelease()){
+                    qualityStartTv.setVisibility(View.VISIBLE);
+                    qualityStartTv.setBackgroundResource(R.drawable.wom_sh_end_bg);
+                    qualityStartTv.setText(context.getResources().getString(R.string.wom_advance_release));
+                }
+                // 调整
+                if (WomConstant.SystemCode.BASE_DEAL_ADJUST.equals(data.getTaskActiveId().getActiveBatchState().getDealType().id)){
+                    adjustLl.setVisibility(View.VISIBLE);
+                }
+
             }
         }
 

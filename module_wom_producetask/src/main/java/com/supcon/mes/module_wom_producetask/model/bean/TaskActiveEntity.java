@@ -59,7 +59,7 @@ public class TaskActiveEntity extends BaseEntity {
 
     private Long actEndTime;                    // 活动结束时间
     private Long actStartTime;                  // 活动开始时间
-    private Object activeBatchState;            // 活动与批状态
+    private ActBatStateEntity activeBatchState;            // 活动与批状态
     private SystemCodeEntity activeType;        // 活动类型
     private DepartmentEntity applyCheckDepId;   // 申检部门
     private StaffEntity applyCheckStaffId;      // 申检人
@@ -71,7 +71,7 @@ public class TaskActiveEntity extends BaseEntity {
     private String container;                   // 容器
     private SystemCodeEntity exeSystem;         // 执行系统
     private String execSort;                    // 报工顺序
-    private Boolean finalInspection;            // 完工检验
+    private boolean finalInspection;            // 完工检验
     private FormulaActiveIdEntity formulaActiveId;  // 配方活动
     private FormulaEntity formulaId;                // 配方
     private FormulaProcessEntity formulaProcessId;  // 配方工序
@@ -97,6 +97,61 @@ public class TaskActiveEntity extends BaseEntity {
     private TaskProcessEntity taskProcessId;        // 工单工序
     private int version;
 
+    private String checkState; // 检验状态
+    private String checkResult; // 检验结论
+    private boolean isPassCheck; // 是否放行检验
+    private boolean isRelease; // 允许提前放行
+    private String releaseConditions; // 放行条件
+    private int checkTimes; // 检验次数
+
+    public int getCheckTimes() {
+        return checkTimes;
+    }
+
+    public void setCheckTimes(int checkTimes) {
+        this.checkTimes = checkTimes;
+    }
+
+    public String getCheckState() {
+        return checkState;
+    }
+
+    public void setCheckState(String checkState) {
+        this.checkState = checkState;
+    }
+
+    public String getCheckResult() {
+        return checkResult;
+    }
+
+    public void setCheckResult(String checkResult) {
+        this.checkResult = checkResult;
+    }
+
+    public boolean isPassCheck() {
+        return isPassCheck;
+    }
+
+    public void setPassCheck(boolean passCheck) {
+        isPassCheck = passCheck;
+    }
+
+    public boolean isRelease() {
+        return isRelease;
+    }
+
+    public void setRelease(boolean release) {
+        isRelease = release;
+    }
+
+    public String getReleaseConditions() {
+        return releaseConditions;
+    }
+
+    public void setReleaseConditions(String releaseConditions) {
+        this.releaseConditions = releaseConditions;
+    }
+
     public String getMaterialBatchNum() {
         return materialBatchNum;
     }
@@ -121,11 +176,14 @@ public class TaskActiveEntity extends BaseEntity {
         this.actStartTime = actStartTime;
     }
 
-    public Object getActiveBatchState() {
+    public ActBatStateEntity getActiveBatchState() {
+        if (activeBatchState == null){
+            activeBatchState = new ActBatStateEntity();
+        }
         return activeBatchState;
     }
 
-    public void setActiveBatchState(Object activeBatchState) {
+    public void setActiveBatchState(ActBatStateEntity activeBatchState) {
         this.activeBatchState = activeBatchState;
     }
 
@@ -212,11 +270,11 @@ public class TaskActiveEntity extends BaseEntity {
         this.execSort = execSort;
     }
 
-    public Boolean getFinalInspection() {
+    public boolean getFinalInspection() {
         return finalInspection;
     }
 
-    public void setFinalInspection(Boolean finalInspection) {
+    public void setFinalInspection(boolean finalInspection) {
         this.finalInspection = finalInspection;
     }
 
@@ -410,6 +468,9 @@ public class TaskActiveEntity extends BaseEntity {
         this.version = version;
     }
 
+    /**
+     * 配方活动
+     */
     private class FormulaActiveIdEntity extends BaseEntity{
         private Long id;
 
@@ -421,4 +482,86 @@ public class TaskActiveEntity extends BaseEntity {
             this.id = id;
         }
     }
+
+    /**
+     * 活动与批状态
+     */
+    public class ActBatStateEntity extends BaseEntity{
+        private Long id;
+        private String code;
+        private String name;
+        private SystemCodeEntity batchUse; // 批用途
+        private SystemCodeEntity dealType; // 处理方式
+        private String isQcsDealWay; // 是否不良品处理意见
+        private SystemCodeEntity passState; // 放行状态
+        private boolean isConclusion; // 是否批结论
+
+        public String getCode() {
+            return code;
+        }
+
+        public void setCode(String code) {
+            this.code = code;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+
+        public SystemCodeEntity getBatchUse() {
+            return batchUse;
+        }
+
+        public void setBatchUse(SystemCodeEntity batchUse) {
+            this.batchUse = batchUse;
+        }
+
+        public SystemCodeEntity getDealType() {
+            if (dealType == null){
+                dealType = new SystemCodeEntity();
+            }
+            return dealType;
+        }
+
+        public void setDealType(SystemCodeEntity dealType) {
+            this.dealType = dealType;
+        }
+
+        public String getIsQcsDealWay() {
+            return isQcsDealWay;
+        }
+
+        public void setIsQcsDealWay(String isQcsDealWay) {
+            this.isQcsDealWay = isQcsDealWay;
+        }
+
+        public SystemCodeEntity getPassState() {
+            return passState;
+        }
+
+        public void setPassState(SystemCodeEntity passState) {
+            this.passState = passState;
+        }
+
+        public boolean isConclusion() {
+            return isConclusion;
+        }
+
+        public void setConclusion(boolean conclusion) {
+            isConclusion = conclusion;
+        }
+
+        public Long getId() {
+            return id;
+        }
+
+        public void setId(Long id) {
+            this.id = id;
+        }
+    }
+
 }

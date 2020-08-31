@@ -3,6 +3,7 @@ package com.supcon.mes.module_wom_producetask.presenter;
 import com.supcon.mes.middleware.constant.Constant;
 import com.supcon.mes.middleware.model.bean.FastQueryCondEntity;
 import com.supcon.mes.middleware.util.BAPQueryParamsHelper;
+import com.supcon.mes.middleware.util.HttpErrorReturnUtil;
 import com.supcon.mes.module_wom_producetask.model.bean.ActiExelogListEntity;
 import com.supcon.mes.module_wom_producetask.model.contract.ActivityExeLogListContract;
 import com.supcon.mes.module_wom_producetask.model.network.WomHttpClient;
@@ -30,7 +31,7 @@ public class ActiExeLogListPresenter extends ActivityExeLogListContract.Presente
         pageQueryParams.put("paging",true);
 
         Map<String, Object> condQueryParams = new HashMap<>();
-        BAPQueryParamsHelper.setLike(true);
+        BAPQueryParamsHelper.setLike(false);
         condQueryParams.put(Constant.BAPQuery.PRODUCE_BATCH_NUM,produceBatchNum);
         FastQueryCondEntity fastQueryCondEntity = BAPQueryParamsHelper.createSingleFastQueryCond(condQueryParams);
         fastQueryCondEntity.modelAlias = "actiExelog";
@@ -44,7 +45,7 @@ public class ActiExeLogListPresenter extends ActivityExeLogListContract.Presente
                     @Override
                     public ActiExelogListEntity apply(Throwable throwable) throws Exception {
                         ActiExelogListEntity actiExelogListEntity = new ActiExelogListEntity();
-                        actiExelogListEntity.msg = throwable.toString();
+                        actiExelogListEntity.msg = HttpErrorReturnUtil.getErrorInfo(throwable);
                         return actiExelogListEntity;
                     }
                 })
