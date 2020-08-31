@@ -2,6 +2,7 @@ package com.supcon.mes.module_wom_producetask.model.bean;
 
 import com.supcon.common.com_http.BaseEntity;
 import com.supcon.mes.middleware.model.bean.BaseIdValueEntity;
+import com.supcon.mes.middleware.model.bean.SystemCodeEntity;
 import com.supcon.mes.middleware.model.bean.wom.MaterialEntity;
 
 /**
@@ -35,6 +36,7 @@ public class ActiExelogEntity extends BaseEntity {
     public int version;
     public boolean isFinish;
     public TaskActiveEntity taskActiveId;
+    private SystemCodeEntity runState;              // 活动执行状态
     public Long getId() {
         return id;
     }
@@ -249,5 +251,15 @@ public class ActiExelogEntity extends BaseEntity {
 
     public void setFinish(Boolean finish) {
         isFinish = finish;
+    }
+
+    public SystemCodeEntity getRunState() {
+        if (runState==null)
+            runState=new SystemCodeEntity();
+        return runState;
+    }
+
+    public void setRunState(SystemCodeEntity runState) {
+        this.runState = runState;
     }
 }

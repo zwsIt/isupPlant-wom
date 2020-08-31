@@ -36,7 +36,6 @@ import com.supcon.mes.module_wom_producetask.model.contract.ActivityOperateContr
 import com.supcon.mes.module_wom_producetask.model.contract.WaitPutinRecordsListContract;
 import com.supcon.mes.module_wom_producetask.presenter.ActivityOperatePresenter;
 import com.supcon.mes.module_wom_producetask.presenter.WaitPutinRecordPresenter;
-import com.supcon.mes.module_wom_producetask.ui.adapter.FormulaActivityListAdapter;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;

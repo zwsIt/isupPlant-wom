@@ -153,7 +153,14 @@ public class TemporaryActivityListFragment extends BaseRefreshRecyclerFragment<W
                     }, true)
                     .show();
         } else {
-            customDialog.bindView(R.id.tipContentTv,"确认结束活动操作？")
+            double planNum=mWaitPutinRecordEntity.getTaskActiveId().getPlanQuantity()!=null?mWaitPutinRecordEntity.getTaskActiveId().getPlanQuantity().doubleValue():0;
+            double sumNum=mWaitPutinRecordEntity.getTaskActiveId().getSumNum()!=null?mWaitPutinRecordEntity.getTaskActiveId().getSumNum().doubleValue():0;
+            String checkTip="确认结束活动操作？";
+            if (sumNum<planNum)
+                checkTip="当前用料量小于计划投料量，是否需要结束此活动？";
+            else if (sumNum>planNum)
+                checkTip="当前用料量多于计划投料量，是否需要结束此活动？";
+            customDialog.bindView(R.id.tipContentTv,checkTip)
                     .bindClickListener(R.id.cancelTv, null, true)
                     .bindClickListener(R.id.confirmTv, v -> {
                         onLoading(context.getResources().getString(R.string.wom_dealing));

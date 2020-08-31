@@ -11,6 +11,7 @@ import com.supcon.common.view.base.adapter.viewholder.BaseRecyclerViewHolder;
 import com.supcon.mes.mbap.utils.DateUtil;
 import com.supcon.mes.mbap.view.CustomTextView;
 import com.supcon.mes.module_wom_producetask.R;
+import com.supcon.mes.module_wom_producetask.constant.WomConstant;
 import com.supcon.mes.module_wom_producetask.model.bean.ActiExelogEntity;
 
 
@@ -82,19 +83,19 @@ public class ActiExeLogAdapter extends BaseListDataRecyclerViewAdapter<ActiExelo
             activeType.setBackgroundResource(R.drawable.sh_actilog_mes_bg);
             dataSourceTv.setBackgroundResource(R.drawable.sh_datasource_mes_bg);
             dataSourceTv.setTextColor(context.getResources().getColor(R.color.active_log_mes_start));
-            activityName.setContent(data.getActiveName());
-            if (data.getTaskActiveId().isFinish){
-                taskState.setText("已结束");
-                taskState.setTextColor(context.getResources().getColor(R.color.listview_divider));
-                taskState.setBackgroundResource(R.drawable.sh_co_product_bg);
-                time.setKey("结束时间");
-                time.setContent(DateUtil.dateTimeFormat(data.getActlongTime()));
-            }else {
+            activityName.setContent(data.getName());
+            if (WomConstant.SystemCode.EXE_STATE_ING.equals(data.getRunState().id)){
                 taskState.setText("执行中");
                 taskState.setTextColor(context.getResources().getColor(R.color.lubricateBg));
                 taskState.setBackgroundResource(R.drawable.sh_actilog_state_bg);
                 time.setKey("开始时间");
                 time.setContent(DateUtil.dateTimeFormat(data.getActStartTime()));
+            }else {
+                taskState.setText("已结束");
+                taskState.setTextColor(context.getResources().getColor(R.color.listview_divider));
+                taskState.setBackgroundResource(R.drawable.sh_co_product_bg);
+                time.setKey("结束时间");
+                time.setContent(DateUtil.dateTimeFormat(data.getActlongTime()));
             }
 //            if (TLConstant.ActiveType.activeType_3.equals(data.getActiveType().getId()) && data.getMaterialBatchNum() != null){
 //                materialRl.setVisibility(View.VISIBLE);

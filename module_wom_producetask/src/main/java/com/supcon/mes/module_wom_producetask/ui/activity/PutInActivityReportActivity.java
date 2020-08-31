@@ -33,6 +33,7 @@ import com.supcon.common.view.util.ToastUtils;
 import com.supcon.common.view.view.CustomSwipeLayout;
 import com.supcon.mes.mbap.beans.WorkFlowVar;
 import com.supcon.mes.mbap.utils.GsonUtil;
+import com.supcon.mes.mbap.view.CustomDialog;
 import com.supcon.mes.mbap.view.CustomImageButton;
 import com.supcon.mes.mbap.view.CustomTextView;
 import com.supcon.mes.middleware.constant.Constant;
@@ -45,6 +46,7 @@ import com.supcon.mes.middleware.model.event.RefreshEvent;
 import com.supcon.mes.middleware.model.event.SelectDataEvent;
 import com.supcon.mes.middleware.model.inter.PowerCode;
 import com.supcon.mes.middleware.util.ErrorMsgHelper;
+import com.supcon.mes.middleware.util.StringUtil;
 import com.supcon.mes.module_scan.controller.CommonScanController;
 import com.supcon.mes.module_scan.model.event.CodeResultEvent;
 import com.supcon.mes.module_wom_producetask.IntentRouter;
@@ -77,6 +79,8 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import io.reactivex.functions.Consumer;
+
+import static android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
 
 /**
  * ClassName
@@ -277,13 +281,16 @@ public class PutInActivityReportActivity extends BaseRefreshRecyclerActivity<Put
      * @param codeResultEvent
      */
     long lastTime;
+    boolean isPutMaterialFull=false;
+    PutInDetailEntity scanPutInDetailEntity;
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onCodeReceiver(CodeResultEvent codeResultEvent) {
+        if (isDialogShowing())
+            return;
         long currentTime = System.currentTimeMillis();
         if (currentTime - lastTime >= 100) {
             String[] arr = MaterQRUtil.materialQRCode(codeResultEvent.scanResult);
-
-            if (arr != null && arr.length == 8) {
+            if (arr != null && arr.length == 7) {
                 String incode = arr[0].replace("incode=", "");
                 String batchno = arr[1].replace("batchno=", "");
                 String batchno2 = arr[2].replace("batchno2=", "");
@@ -291,24 +298,40 @@ public class PutInActivityReportActivity extends BaseRefreshRecyclerActivity<Put
                 String packs = arr[4].replace("packs=", "");
                 String purcode = arr[5].replace("purcode=", "");
                 String orderno = arr[6].replace("orderno=", "");
-                String specs = arr[7].replace("specs=", "");
+
                 if (incode.equals(mWaitPutinRecordEntity.getTaskActiveId().getMaterialId().getCode())) {
-                    if (!TextUtils.isEmpty(mWaitPutinRecordEntity.getTaskActiveId().getBatchCode()) && !(mWaitPutinRecordEntity.getTaskActiveId().getBatchCode().equals(batchno))) {
-                        ToastUtils.show(context, "非当前物料批号，请重新扫描");
+                    String batchCode=mWaitPutinRecordEntity.getTaskActiveId().getBatchCode();
+                    if (!StringUtil.isEmpty(batchCode) && !batchCode.trim().equals(batchno)) {
+                        showTipDialog("非当前物料批号，请重新扫描");
                         return;
                     }
-                    PutInDetailEntity putInDetailEntity = new PutInDetailEntity();
-                    putInDetailEntity.setMaterialId(mWaitPutinRecordEntity.getTaskActiveId().getMaterialId()); // 物料
-                    putInDetailEntity.setMaterialBatchNum(batchno);
-                    putInDetailEntity.setWareId(mWaitPutinRecordEntity.getWare());
-                    putInDetailEntity.setPutinNum(!TextUtils.isEmpty(specs) ? new BigDecimal(specs) : null);
-                    putInDetailEntity.setPutinTime(new Date().getTime());  // 投料时间
-                    mPutInReportDetailAdapter.addData(putInDetailEntity);
+
+                    double planQuality=mWaitPutinRecordEntity.getTaskActiveId().getPlanQuantity()!=null?mWaitPutinRecordEntity.getTaskActiveId().getPlanQuantity().doubleValue():0;
+                    int size=mPutInReportDetailAdapter.getItemCount();
+                    double packqtyQuality=Double.parseDouble(packqty);
+                    double totalInNum=0;
+                    scanPutInDetailEntity = new PutInDetailEntity();
+                    scanPutInDetailEntity.setMaterialId(mWaitPutinRecordEntity.getTaskActiveId().getMaterialId()); // 物料
+                    scanPutInDetailEntity.setMaterialBatchNum(batchno);
+                    scanPutInDetailEntity.setWareId(mWaitPutinRecordEntity.getWare());
+                    scanPutInDetailEntity.setPutinNum(!TextUtils.isEmpty(packqty) ? new BigDecimal(packqty) : null);
+                    scanPutInDetailEntity.setPutinTime(new Date().getTime());  // 投料时间
+                    for (int i = 0; i <size ; i++) {
+                        PutInDetailEntity inDetailEntity=mPutInReportDetailAdapter.getItem(i);
+                        double inNum=inDetailEntity.getPutinNum()!=null?inDetailEntity.getPutinNum().doubleValue():0;
+                        totalInNum+=inNum;
+                        if (totalInNum+packqtyQuality>planQuality){
+                            isPutMaterialFull=true;
+                            showTipDialog("请确认当前投料量与计划投料量是否相符");
+                            return;
+                        }
+                    }
+                    mPutInReportDetailAdapter.addData(scanPutInDetailEntity);
                     mPutInReportDetailAdapter.notifyItemRangeInserted(mPutInReportDetailAdapter.getItemCount() - 1, 1);
                     mPutInReportDetailAdapter.notifyItemRangeChanged(mPutInReportDetailAdapter.getItemCount() - 1, 1);
                     contentView.smoothScrollToPosition(mPutInReportDetailAdapter.getItemCount() - 1);
                 } else {
-                    ToastUtils.show(context, "非当前物料，请重新扫描");
+                    showTipDialog("非当前物料，请重新扫描");
                 }
             } else {
                 ToastUtils.show(context, "二维码信息解析异常！");
@@ -317,6 +340,41 @@ public class PutInActivityReportActivity extends BaseRefreshRecyclerActivity<Put
         }
 
 
+    }
+    CustomDialog customDialog;
+    private void showTipDialog(String content){
+        customDialog = new CustomDialog(context);
+        customDialog.getDialog().getWindow().setBackgroundDrawableResource(R.color.transparent); // 除去dialog设置四个圆角出现的黑色背景
+        customDialog.layout(R.layout.tlzy_dialog_confirm, DisplayUtil.dip2px(300,context), WRAP_CONTENT)
+                .title(content)
+                .bindClickListener(R.id.cancelTv, new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        if (isPutMaterialFull){
+                            isPutMaterialFull=false;
+                        }
+                    }
+                }, true)
+                .bindClickListener(R.id.confirmTv, new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        if (isPutMaterialFull){
+                            mPutInReportDetailAdapter.addData(scanPutInDetailEntity);
+                            mPutInReportDetailAdapter.notifyItemRangeInserted(mPutInReportDetailAdapter.getItemCount() - 1, 1);
+                            mPutInReportDetailAdapter.notifyItemRangeChanged(mPutInReportDetailAdapter.getItemCount() - 1, 1);
+                            contentView.smoothScrollToPosition(mPutInReportDetailAdapter.getItemCount() - 1);
+                            isPutMaterialFull=false;
+                        }
+                    }
+                }, true)
+                .show();
+        if (isDialogShowing() && !isPutMaterialFull) {
+            customDialog.getDialog().findViewById(R.id.cancelTv).setVisibility(View.GONE);
+            customDialog.getDialog().findViewById(R.id.ly_separator_line).setVisibility(View.GONE);
+        }
+    }
+    private boolean isDialogShowing(){
+        return customDialog != null && customDialog.getDialog().isShowing();
     }
     /**
      * @author zhangwenshuai1 2020/4/2

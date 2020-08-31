@@ -44,6 +44,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
+import static android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
+
 /**
  * ClassName
  * Created by zhangwenshuai1 on 2020/3/23
@@ -150,6 +152,12 @@ public class FormulaActivityListFragment extends BaseRefreshRecyclerFragment<Wai
                     }, true)
                     .show();
         } else {
+            double planNum=mWaitPutinRecordEntity.getTaskActiveId().getPlanQuantity()!=null?mWaitPutinRecordEntity.getTaskActiveId().getPlanQuantity().doubleValue():0;
+            double sumNum=mWaitPutinRecordEntity.getTaskActiveId().getSumNum()!=null?mWaitPutinRecordEntity.getTaskActiveId().getSumNum().doubleValue():0;
+            if (sumNum<planNum)
+                checkTip="当前用料量小于计划投料量，是否需要结束此活动？";
+            else if (sumNum>planNum)
+                checkTip="当前用料量多于计划投料量，是否需要结束此活动？";
             customDialog.bindView(R.id.tipContentTv, TextUtils.isEmpty(checkTip) ? "确认结束活动操作？" : checkTip)
                     .bindClickListener(R.id.cancelTv, null, true)
                     .bindClickListener(R.id.confirmTv, v -> {
@@ -158,9 +166,7 @@ public class FormulaActivityListFragment extends BaseRefreshRecyclerFragment<Wai
                     }, true)
                     .show();
         }
-
     }
-
     @Override
     public void onDestroy() {
         super.onDestroy();

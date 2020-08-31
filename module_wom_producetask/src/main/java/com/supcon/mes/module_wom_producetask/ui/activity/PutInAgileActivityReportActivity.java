@@ -259,7 +259,7 @@ public class PutInAgileActivityReportActivity extends BaseRefreshRecyclerActivit
         long currentTime = System.currentTimeMillis();
         if (currentTime - lastTime >= 100) {
             String[] arr = MaterQRUtil.materialQRCode(codeResultEvent.scanResult);
-            if (arr != null && arr.length == 8) {
+            if (arr != null && arr.length == 7) {
                 String incode = arr[0].replace("incode=", "");
                 String batchno = arr[1].replace("batchno=", "");
                 String batchno2 = arr[2].replace("batchno2=", "");
@@ -267,7 +267,7 @@ public class PutInAgileActivityReportActivity extends BaseRefreshRecyclerActivit
                 String packs = arr[4].replace("packs=", "");
                 String purcode = arr[5].replace("purcode=", "");
                 String orderno = arr[6].replace("orderno=", "");
-                String specs = arr[7].replace("specs=", "");
+
                 goodMap.put(Constant.BAPQuery.CODE, incode);
                 getController(ProductController.class)
                         .getProduct(goodMap)
@@ -284,7 +284,7 @@ public class PutInAgileActivityReportActivity extends BaseRefreshRecyclerActivit
                                     putInDetailEntity.setMaterialId(materialEntity);
                                     putInDetailEntity.setWareId(mWaitPutinRecordEntity.getWare());
                                     putInDetailEntity.setMaterialBatchNum(batchno);
-                                    putInDetailEntity.setPutinNum(!TextUtils.isEmpty(specs) ? new BigDecimal(specs) : null);
+                                    putInDetailEntity.setPutinNum(!TextUtils.isEmpty(packqty) ? new BigDecimal(packqty) : null);
                                     putInDetailEntity.setPutinTime(new Date().getTime());  // 投料时间
                                     mPutInAgileReportDetailAdapter.addData(putInDetailEntity);
                                     mPutInAgileReportDetailAdapter.notifyItemRangeInserted(mPutInAgileReportDetailAdapter.getItemCount() - 1, 1);

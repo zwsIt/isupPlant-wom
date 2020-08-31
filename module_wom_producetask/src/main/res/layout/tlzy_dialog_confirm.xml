@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="@dimen/dp_10"
+    android:background="@drawable/sh_dialog_bg">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/dp_5"
+        android:gravity="center">
+        <ImageView
+            android:layout_width="@dimen/dp_30"
+            android:layout_height="@dimen/dp_30"
+            android:src="@drawable/ic_exception"/>
+        <com.supcon.mes.mbap.view.CustomTextView
+            android:layout_width="80dp"
+            android:layout_height="@dimen/dp_30"
+            android:layout_marginStart="@dimen/dp_10"
+            app:key="提   示"
+            app:key_size="18"/>
+    </LinearLayout>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/dp_80"
+        android:id="@+id/titleText"
+        android:gravity="center"
+        android:paddingLeft="@dimen/dp_10"
+        android:paddingRight="@dimen/dp_10"
+        />
+    <include layout="@layout/ly_line_light"/>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingTop="@dimen/dp_5">
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="@dimen/dp_30"
+            android:layout_weight="1"
+            android:background="@drawable/sl_press_no_stroke"
+            android:id="@+id/cancelTv"
+            android:tag="cancelTv"
+            android:text="@string/wom_cancel"
+            android:textColor="@color/black"
+            android:gravity="center"/>
+        <View
+            android:id="@+id/ly_separator_line"
+            android:layout_width="1dp"
+            android:layout_height="match_parent"
+            android:background="@color/line_gray"
+            />
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="@dimen/dp_30"
+            android:layout_weight="1"
+            android:background="@drawable/sl_press_no_stroke"
+            android:id="@+id/confirmTv"
+            android:tag="confirmTv"
+            android:text="@string/wom_confirm"
+            android:textColor="@color/themeColor"
+            android:gravity="center"/>
+    </LinearLayout>
+
+
+</LinearLayout>
