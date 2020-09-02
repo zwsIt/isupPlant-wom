@@ -224,16 +224,6 @@ public class WOMWidgetProduceTaskListController extends BaseViewController imple
         ToastUtils.show(context, ErrorMsgHelper.msgParse(errorMsg));
     }
 
-    @Override
-    public void operateDischargeSuccess(BAP5CommonEntity bap5CommonEntity) {
-
-    }
-
-    @Override
-    public void operateDischargeFailed(String errorMsg) {
-
-    }
-
     public void refresh(){
         presenterRouter.create(WaitPutinRecordsListAPI.class).listWaitPutinRecords(1, 2, queryParams,true);
     }

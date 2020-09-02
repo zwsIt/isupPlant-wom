@@ -231,16 +231,6 @@ public class SimpleProduceTaskListFragment extends BaseRefreshRecyclerFragment<W
         onLoadFailed(ErrorMsgHelper.msgParse(errorMsg));
     }
 
-    @Override
-    public void operateDischargeSuccess(BAP5CommonEntity bap5CommonEntity) {
-
-    }
-
-    @Override
-    public void operateDischargeFailed(String errorMsg) {
-
-    }
-
     public void search(String searchContent){
         queryParams.put(Constant.BAPQuery.PRODUCE_BATCH_NUM, searchContent);
         if(refreshListController!=null){

@@ -12,7 +12,7 @@ import java.util.List;
  * Email zhangwenshuai1@supcon.com
  * Desc 指令单操作API
  */
-@ContractFactory(entites = {BAP5CommonEntity.class,BAP5CommonEntity.class})
+@ContractFactory(entites = {BAP5CommonEntity.class})
 public interface ProduceTaskOperateAPI {
     /**
      * @author zhangwenshuai1 2020/3/25
@@ -27,8 +27,9 @@ public interface ProduceTaskOperateAPI {
 
     /**
      * @author zhangwenshuai1 2020/3/27
-     * @param taskId 指令单ID
-     * @description 标准指令单提前放料
+     * @param waitPutRecordId 待办记录ID
+     * @param isFinish 结束标示
+     * @description 指令单工序操作
      */
-    void operateDischarge(Long taskId);
+//    void operateProcess(Long waitPutRecordId, boolean isFinish);
 }
