@@ -96,8 +96,8 @@ public class WarehouseListActivity extends BaseRefreshRecyclerActivity<Warehouse
     protected void initView() {
         super.initView();
         StatusBarUtils.setWindowStatusBarColor(this, R.color.themeColor);
-        searchTitleBar.setTitleText("仓库选择");
-        searchTitleBar.searchView().setHint("请输入仓库名称");
+        searchTitleBar.setTitleText(context.getResources().getString(R.string.wom_ware_select));
+        searchTitleBar.searchView().setHint(context.getResources().getString(R.string.wom_input_ware_name));
         searchTitleBar.disableRightBtn();
     }
 

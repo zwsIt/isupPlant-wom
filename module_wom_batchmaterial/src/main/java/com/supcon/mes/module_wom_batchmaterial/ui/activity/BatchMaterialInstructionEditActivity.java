@@ -199,7 +199,7 @@ public class BatchMaterialInstructionEditActivity extends BaseRefreshRecyclerAct
     protected void initListener() {
         super.initListener();
         leftBtn.setOnClickListener(v -> finish());
-        rightBtn.setOnClickListener(v -> ToastUtils.show(context, "待实现"));
+        rightBtn.setOnClickListener(v -> ToastUtils.show(context, context.getResources().getString(R.string.middleware_stay_realization)));
         refreshListController.setOnRefreshListener(new OnRefreshListener() {
             @Override
             public void onRefresh() {
@@ -238,7 +238,7 @@ public class BatchMaterialInstructionEditActivity extends BaseRefreshRecyclerAct
                         break;
                     case "storeSetTv":
                         if (mBatchMaterialPartEntity.getWareId() == null) {
-                            ToastUtils.show(context, "请先选择仓库");
+                            ToastUtils.show(context, context.getResources().getString(R.string.wom_select_ware));
                             break;
                         }
                         Bundle bundle = new Bundle();
@@ -318,15 +318,15 @@ public class BatchMaterialInstructionEditActivity extends BaseRefreshRecyclerAct
         }
         for (BatchMaterialPartEntity batchMaterialPartEntity : mBatchMaterialRecordsEditAdapter.getList()) {
             if (TextUtils.isEmpty(batchMaterialPartEntity.getMaterialBatchNum())) {
-                ToastUtils.show(context, "第【" + (mBatchMaterialRecordsEditAdapter.getList().indexOf(batchMaterialPartEntity) + 1) + "】项请填写物料批号");
+                ToastUtils.show(context, context.getResources().getString(R.string.wom_di) + (mBatchMaterialRecordsEditAdapter.getList().indexOf(batchMaterialPartEntity) + 1) + context.getResources().getString(R.string.wom_please_write_material_batch));
                 return true;
             }
             if (batchMaterialPartEntity.getWareId() == null) {
-                ToastUtils.show(context, "第【" + (mBatchMaterialRecordsEditAdapter.getList().indexOf(batchMaterialPartEntity) + 1) + "】项请填写仓库");
+                ToastUtils.show(context, context.getResources().getString(R.string.wom_di) + (mBatchMaterialRecordsEditAdapter.getList().indexOf(batchMaterialPartEntity) + 1) + context.getResources().getString(R.string.wom_please_write_ware));
                 return true;
             }
             if (batchMaterialPartEntity.getOfferNum() == null) {
-                ToastUtils.show(context, "第【" + (mBatchMaterialRecordsEditAdapter.getList().indexOf(batchMaterialPartEntity) + 1) + "】项请填写配料数量");
+                ToastUtils.show(context, context.getResources().getString(R.string.wom_di) + (mBatchMaterialRecordsEditAdapter.getList().indexOf(batchMaterialPartEntity) + 1) + context.getResources().getString(R.string.wom_please_write_batchmaterial_num));
                 return true;
             }
         }

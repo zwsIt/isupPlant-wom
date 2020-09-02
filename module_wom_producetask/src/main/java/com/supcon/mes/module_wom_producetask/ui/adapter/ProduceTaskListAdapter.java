@@ -141,7 +141,7 @@ public class ProduceTaskListAdapter extends BaseListDataRecyclerViewAdapter<Wait
 
                         if (WomConstant.SystemCode.EXE_STATE_PAUSED.equals(entity.getExeState().id) || WomConstant.SystemCode.EXE_STATE_STOPPED.equals(entity.getExeState().id)
                          || WomConstant.SystemCode.EXE_STATE_ABANDONED.equals(entity.getExeState().id)){
-                            ToastUtils.show(context,"当前工单状态下，无工序查看");
+                            ToastUtils.show(context, context.getResources().getString(R.string.wom_no_process_view));
                             return;
                         }
 

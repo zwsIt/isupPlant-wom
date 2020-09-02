@@ -222,7 +222,7 @@ public class PutInActivityReportActivity extends BaseRefreshRecyclerActivity<Put
                         break;
                     case "storeSetTv":
                         if (mPutInDetailEntity.getWareId() == null) {
-                            ToastUtils.show(context, "请先选择仓库");
+                            ToastUtils.show(context, context.getResources().getString(R.string.wom_please_select_ware));
                             break;
                         }
                         Bundle bundle = new Bundle();
@@ -317,15 +317,15 @@ public class PutInActivityReportActivity extends BaseRefreshRecyclerActivity<Put
         }
         for (PutInDetailEntity putInDetailEntity : mPutInReportDetailAdapter.getList()){
             if (TextUtils.isEmpty(putInDetailEntity.getMaterialBatchNum())){
-                ToastUtils.show(context, "第【" + (mPutInReportDetailAdapter.getList().indexOf(putInDetailEntity) + 1) + "】项请填写物料批号");
+                ToastUtils.show(context, context.getResources().getString(R.string.wom_di) + (mPutInReportDetailAdapter.getList().indexOf(putInDetailEntity) + 1) + context.getResources().getString(R.string.wom_please_write_material_batch));
                 return true;
             }
             if (putInDetailEntity.getWareId() == null){
-                ToastUtils.show(context, "第【" + (mPutInReportDetailAdapter.getList().indexOf(putInDetailEntity) + 1) + "】项请填写仓库");
+                ToastUtils.show(context, context.getResources().getString(R.string.wom_di) + (mPutInReportDetailAdapter.getList().indexOf(putInDetailEntity) + 1) + context.getResources().getString(R.string.wom_please_write_ware));
                 return true;
             }
             if (putInDetailEntity.getPutinNum() == null){
-                ToastUtils.show(context, "第【" + (mPutInReportDetailAdapter.getList().indexOf(putInDetailEntity) + 1) + "】项请填写用料量");
+                ToastUtils.show(context, context.getResources().getString(R.string.wom_di) + (mPutInReportDetailAdapter.getList().indexOf(putInDetailEntity) + 1) + context.getResources().getString(R.string.wom_please_write_material_num));
                 return true;
             }
         }

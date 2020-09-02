@@ -203,7 +203,7 @@ public class OutputAgileActivityReportActivity extends BaseRefreshRecyclerActivi
                         break;
                     case "storeSetTv":
                         if (mOutputDetailEntity.getWareId() == null) {
-                            ToastUtils.show(context, "请先选择仓库");
+                            ToastUtils.show(context, context.getResources().getString(R.string.wom_please_select_ware));
                             break;
                         }
                         Bundle bundle1 = new Bundle();
@@ -293,15 +293,15 @@ public class OutputAgileActivityReportActivity extends BaseRefreshRecyclerActivi
         }
         for (OutputDetailEntity outputDetailEntity : mOutputAgileReportDetailAdapter.getList()) {
             if (TextUtils.isEmpty(outputDetailEntity.getMaterialBatchNum())) {
-                ToastUtils.show(context, "第【" + (mOutputAgileReportDetailAdapter.getList().indexOf(outputDetailEntity) + 1) + "】项请填写物料批号");
+                ToastUtils.show(context, context.getResources().getString(R.string.wom_di) + (mOutputAgileReportDetailAdapter.getList().indexOf(outputDetailEntity) + 1) + context.getResources().getString(R.string.wom_please_write_material_batch));
                 return true;
             }
             if (outputDetailEntity.getWareId() == null) {
-                ToastUtils.show(context, "第【" + (mOutputAgileReportDetailAdapter.getList().indexOf(outputDetailEntity) + 1) + "】项请填写仓库");
+                ToastUtils.show(context, context.getResources().getString(R.string.wom_di) + (mOutputAgileReportDetailAdapter.getList().indexOf(outputDetailEntity) + 1) + context.getResources().getString(R.string.wom_please_write_ware));
                 return true;
             }
             if (outputDetailEntity.getOutputNum() == null) {
-                ToastUtils.show(context, "第【" + (mOutputAgileReportDetailAdapter.getList().indexOf(outputDetailEntity) + 1) + "】项请填写产出量");
+                ToastUtils.show(context, context.getResources().getString(R.string.wom_di) + (mOutputAgileReportDetailAdapter.getList().indexOf(outputDetailEntity) + 1) + context.getResources().getString(R.string.wom_please_write_output));
                 return true;
             }
         }

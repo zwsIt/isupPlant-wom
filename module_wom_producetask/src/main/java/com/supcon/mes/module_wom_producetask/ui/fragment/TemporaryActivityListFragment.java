@@ -144,7 +144,7 @@ public class TemporaryActivityListFragment extends BaseRefreshRecyclerFragment<W
                 .layout(R.layout.wom_dialog_confirm, DisplayUtil.getScreenWidth(context) * 4 / 5, ViewGroup.LayoutParams.WRAP_CONTENT);
         Objects.requireNonNull(customDialog.getDialog().getWindow()).setBackgroundDrawableResource(R.color.transparent);
         if (WomConstant.SystemCode.EXE_STATE_WAIT.equals(mWaitPutinRecordEntity.getExeState().id)) {
-            customDialog.bindView(R.id.tipContentTv, "确认开始活动操作？")
+            customDialog.bindView(R.id.tipContentTv, context.getResources().getString(R.string.wom_start_activity_operate))
                     .bindClickListener(R.id.cancelTv, null, true)
                     .bindClickListener(R.id.confirmTv, v -> {
                         onLoading(context.getResources().getString(R.string.wom_dealing));
@@ -152,7 +152,7 @@ public class TemporaryActivityListFragment extends BaseRefreshRecyclerFragment<W
                     }, true)
                     .show();
         } else {
-            customDialog.bindView(R.id.tipContentTv,"确认结束活动操作？")
+            customDialog.bindView(R.id.tipContentTv,context.getResources().getString(R.string.wom_end_activity_operate))
                     .bindClickListener(R.id.cancelTv, null, true)
                     .bindClickListener(R.id.confirmTv, v -> {
                         onLoading(context.getResources().getString(R.string.wom_dealing));

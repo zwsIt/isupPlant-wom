@@ -192,7 +192,7 @@ public class RejectMaterialEditActivity extends BaseRefreshRecyclerActivity<Reje
     protected void initListener() {
         super.initListener();
         leftBtn.setOnClickListener(v -> finish());
-        rightBtn.setOnClickListener(v -> ToastUtils.show(context, "待实现"));
+        rightBtn.setOnClickListener(v -> ToastUtils.show(context, context.getResources().getString(R.string.middleware_stay_realization)));
         refreshListController.setOnRefreshListener(new OnRefreshListener() {
             @Override
             public void onRefresh() {
@@ -222,7 +222,7 @@ public class RejectMaterialEditActivity extends BaseRefreshRecyclerActivity<Reje
                         break;
                     case "storeSetTv":
                         if (mRejectMaterialPartEntity.getWareId() == null) {
-                            ToastUtils.show(context, "请先选择仓库");
+                            ToastUtils.show(context, context.getResources().getString(R.string.wom_select_ware));
                             break;
                         }
                         Bundle bundle = new Bundle();
@@ -360,15 +360,15 @@ public class RejectMaterialEditActivity extends BaseRefreshRecyclerActivity<Reje
         }
         for (RejectMaterialPartEntity rejectMaterialPartEntity : mRejectMaterialRecordsEditAdapter.getList()) {
             if (rejectMaterialPartEntity.getWareId() == null) {
-                ToastUtils.show(context, "第【" + (mRejectMaterialRecordsEditAdapter.getList().indexOf(rejectMaterialPartEntity) + 1) + "】项请填写仓库");
+                ToastUtils.show(context, context.getResources().getString(R.string.wom_di) + (mRejectMaterialRecordsEditAdapter.getList().indexOf(rejectMaterialPartEntity) + 1) + context.getResources().getString(R.string.wom_please_write_ware));
                 return true;
             }
             if (rejectMaterialPartEntity.getRejectNum() == null) {
-                ToastUtils.show(context, "第【" + (mRejectMaterialRecordsEditAdapter.getList().indexOf(rejectMaterialPartEntity) + 1) + "】项请填写退料数量");
+                ToastUtils.show(context, context.getResources().getString(R.string.wom_di) + (mRejectMaterialRecordsEditAdapter.getList().indexOf(rejectMaterialPartEntity) + 1) + context.getResources().getString(R.string.wom_please_write_reject_num));
                 return true;
             }
             if (rejectMaterialPartEntity.getRejectReason() == null) {
-                ToastUtils.show(context, "第【" + (mRejectMaterialRecordsEditAdapter.getList().indexOf(rejectMaterialPartEntity) + 1) + "】项请填写退料原因");
+                ToastUtils.show(context, context.getResources().getString(R.string.wom_di) + (mRejectMaterialRecordsEditAdapter.getList().indexOf(rejectMaterialPartEntity) + 1) + context.getResources().getString(R.string.wom_please_write_reject_reason));
                 return true;
             }
         }

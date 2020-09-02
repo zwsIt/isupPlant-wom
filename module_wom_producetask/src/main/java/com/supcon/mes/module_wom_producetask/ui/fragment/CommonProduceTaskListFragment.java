@@ -106,7 +106,7 @@ public class CommonProduceTaskListFragment extends BaseRefreshRecyclerFragment<W
         EventBus.getDefault().register(this);
         refreshListController.setAutoPullDownRefresh(true);
         refreshListController.setPullDownRefreshEnabled(true);
-        refreshListController.setEmpterAdapter(EmptyAdapterHelper.getRecyclerEmptyAdapter(context, "无数据"));
+        refreshListController.setEmpterAdapter(EmptyAdapterHelper.getRecyclerEmptyAdapter(context, context.getResources().getString(R.string.middleware_no_data)));
         contentView.setLayoutManager(new LinearLayoutManager(context));
 //        contentView.addItemDecoration(new SpaceItemDecoration(DisplayUtil.dip2px(10,context)));
         contentView.addItemDecoration(new RecyclerView.ItemDecoration() {
@@ -167,17 +167,17 @@ public class CommonProduceTaskListFragment extends BaseRefreshRecyclerFragment<W
             List<Object> paramsList = new ArrayList<>(2);
             switch (tag) {
                 case "startTv":
-                    paramsList.add("开启");
+                    paramsList.add(context.getResources().getString(R.string.wom_start));
                     paramsList.add("start");
                     showOperateConfirmDialog(paramsList, mWaitPutinRecordEntity, true);
                     break;
                 case "pauseTv":
-                    paramsList.add("暂停");
+                    paramsList.add(context.getResources().getString(R.string.wom_pause));
                     paramsList.add("pause");
                     showOperateConfirmDialog(paramsList, mWaitPutinRecordEntity, true);
                     break;
                 case "resumeTv":
-                    paramsList.add("恢复");
+                    paramsList.add(context.getResources().getString(R.string.wom_resume));
                     paramsList.add("resume");
                     showOperateConfirmDialog(paramsList, mWaitPutinRecordEntity, true);
                     break;
@@ -187,7 +187,7 @@ public class CommonProduceTaskListFragment extends BaseRefreshRecyclerFragment<W
                     if(mWaitPutinRecordEntity!=null && mWaitPutinRecordEntity.getTaskId()!=null
                             && mWaitPutinRecordEntity.getTaskId().getBatchContral()!=null
                             &&mWaitPutinRecordEntity.getTaskId().getBatchContral()){
-                        paramsList.add("结束");
+                        paramsList.add(context.getResources().getString(R.string.wom_end));
                         paramsList.add("stop");
                         showOperateConfirmDialog(paramsList, mWaitPutinRecordEntity, true);
                     }
@@ -208,10 +208,10 @@ public class CommonProduceTaskListFragment extends BaseRefreshRecyclerFragment<W
                     break;
                 case "processStartTv":
                     if (WomConstant.SystemCode.EXE_STATE_WAIT.equals(mWaitPutinRecordEntity.getExeState().id)) {
-                        paramsList.add("开启");
+                        paramsList.add(context.getResources().getString(R.string.wom_start));
                         paramsList.add(false);
                     } else {
-                        paramsList.add("结束");
+                        paramsList.add(context.getResources().getString(R.string.wom_end));
                         paramsList.add(true);
                     }
                     showOperateConfirmDialog(paramsList, mWaitPutinRecordEntity, false);
@@ -262,7 +262,7 @@ public class CommonProduceTaskListFragment extends BaseRefreshRecyclerFragment<W
         }).bindClickListener(R.id.cancelTv, null, true)
                 .bindClickListener(R.id.confirmTv, v -> {
                     if (TextUtils.isEmpty(mFactoryCustomTv.getContent())) {
-                        ToastUtils.show(context, "请先设置工作单元");
+                        ToastUtils.show(context, R.string.wom_setting_factory);
                         return;
                     }
                     customDialog.getDialog().dismiss();
@@ -289,9 +289,9 @@ public class CommonProduceTaskListFragment extends BaseRefreshRecyclerFragment<W
         Objects.requireNonNull(customDialog.getDialog().getWindow()).setBackgroundDrawableResource(R.color.transparent);
         if (isTask) {
             if ("discharge".equals(paramsList.get(1))){
-                customDialog.bindView(R.id.tipContentTv, paramsList.get(0) + " ，是否开启提前放料操作？"); // "提前放料"
+                customDialog.bindView(R.id.tipContentTv, paramsList.get(0) + context.getResources().getString(R.string.wom_start_predischarge)); // "提前放料"
             }else {
-                customDialog.bindView(R.id.tipContentTv, "确认 " + paramsList.get(0) + " 该工单操作？");
+                customDialog.bindView(R.id.tipContentTv, context.getResources().getString(R.string.wom_confirm_tip) + paramsList.get(0) + context.getResources().getString(R.string.wom_task_operate));
             }
             customDialog.bindClickListener(R.id.cancelTv, null, true)
                     .bindClickListener(R.id.confirmTv, v -> {
@@ -301,7 +301,7 @@ public class CommonProduceTaskListFragment extends BaseRefreshRecyclerFragment<W
                     .show();
 
         } else {
-            customDialog.bindView(R.id.tipContentTv, "确认 " + paramsList.get(0) + " 该工序操作？")
+            customDialog.bindView(R.id.tipContentTv, context.getResources().getString(R.string.wom_confirm_tip) + paramsList.get(0) + context.getResources().getString(R.string.wom_process_operate))
                     .bindClickListener(R.id.cancelTv, null, true)
                     .bindClickListener(R.id.confirmTv, v -> {
                         onLoading(getString(R.string.wom_dealing));
@@ -346,7 +346,7 @@ public class CommonProduceTaskListFragment extends BaseRefreshRecyclerFragment<W
             // 工序加载
             mIsTaskLoad = true; // 恢复工单加载
             if (entity.result.size() <= 0) {
-                ToastUtils.show(context, "无执行工序");
+                ToastUtils.show(context, context.getResources().getString(R.string.wom_no_processing));
             } else {
                 for (Object waitPutinRecordEntity : entity.result){
                     ((WaitPutinRecordEntity)waitPutinRecordEntity).setFatherPosition(mCurrentItemPos); // 记录父位置

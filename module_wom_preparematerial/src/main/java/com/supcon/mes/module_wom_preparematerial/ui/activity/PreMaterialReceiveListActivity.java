@@ -138,7 +138,7 @@ public class PreMaterialReceiveListActivity extends BaseRefreshRecyclerActivity<
         StatusBarUtils.setWindowStatusBarColor(this, R.color.themeColor);
 //        ViewUtil.setPaddingRight(customSearchTitleBar.searchView(), ViewUtil.dpToPx(context, 80));
         titleText.setText(R.string.wom_prepare_material_receive_list);
-        getController(SearchViewController.class).setExpandValue("请输入派送单号", "搜索");
+        getController(SearchViewController.class).setExpandValue(context.getResources().getString(R.string.wom_input_delivery_no), context.getResources().getString(R.string.search));
         contentView.setLayoutManager(new LinearLayoutManager(context));
         contentView.addItemDecoration(new SpaceItemDecoration(DisplayUtil.dip2px(8, context)));
 
@@ -240,29 +240,29 @@ public class PreMaterialReceiveListActivity extends BaseRefreshRecyclerActivity<
         for(PreMaterialEntity preMaterialEntity : list){
             if(preMaterialEntity.isChecked){
                 if(preMaterialEntity.receiveStaff==null || preMaterialEntity.receiveStaff.name==null){
-                    ToastUtils.show(context, "“接收人”不允许为空");
+                    ToastUtils.show(context, context.getResources().getString(R.string.wom_receiver_forbidden_null));
                     return;
                 }
 
 
                 if(preMaterialEntity.receiveState==null){
-                    ToastUtils.show(context, "“接收类型”不允许为空");
+                    ToastUtils.show(context, context.getResources().getString(R.string.wom_receivetype_forbidden_null));
                     return;
                 }
 
                 if(preMaterialEntity.receiveNum==null){
-                    ToastUtils.show(context, "“接收数量”不允许为空");
+                    ToastUtils.show(context, context.getResources().getString(R.string.wom_receivenum_forbidden_null));
                     return;
                 }
 
 
                 if("WOM_receiveState/reject".equals(preMaterialEntity.receiveState.id) && preMaterialEntity.rejectReason==null){
-                    ToastUtils.show(context, "“拒收”时，“拒收原因”不允许为空");
+                    ToastUtils.show(context, context.getResources().getString(R.string.wom_receivereason_forbidden_null));
                     return;
                 }
 
                 if("WOM_receiveState/partReceive".equals(preMaterialEntity.receiveState.id) && TextUtils.isEmpty(preMaterialEntity.remark)){
-                    ToastUtils.show(context, "“部分接收”时，“部分接收原因”不允许为空");
+                    ToastUtils.show(context, context.getResources().getString(R.string.wom_part_receivereason_forbidden_null));
                     return;
                 }
 
@@ -275,10 +275,10 @@ public class PreMaterialReceiveListActivity extends BaseRefreshRecyclerActivity<
         }
 
         if(preMaterialEntities.size() == 0){
-            ToastUtils.show(context, "请至少选择一条记录进行操作");
+            ToastUtils.show(context, context.getResources().getString(R.string.wom_please_select_one));
             return;
         }
-        onLoading("正在提交备料记录");
+        onLoading(context.getResources().getString(R.string.wom_dealing));
         presenterRouter.create(PreMaterialReceiveSubmitAPI.class).doSubmitPreMaterial(preMaterialEntities);
     }
 
@@ -286,7 +286,7 @@ public class PreMaterialReceiveListActivity extends BaseRefreshRecyclerActivity<
     public void onDataSelect(SelectDataEvent event) {
 
         if (event.getSelectTag().equals("itemPreMaterialReceiveStaff")) {
-            LogUtil.d("人员单选："+ GsonUtil.gsonString(event.getEntity()));
+//            LogUtil.d("人员单选："+ GsonUtil.gsonString(event.getEntity()));
             ContactEntity selectContactEntity = (ContactEntity) event.getEntity();
             ObjectEntity objectEntity = new ObjectEntity(selectContactEntity.staffId);
             objectEntity.name = selectContactEntity.name;

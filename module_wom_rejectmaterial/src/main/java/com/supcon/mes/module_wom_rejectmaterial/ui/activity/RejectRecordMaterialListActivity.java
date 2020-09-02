@@ -62,8 +62,8 @@ public class RejectRecordMaterialListActivity extends BaseFragmentActivity {
     }
 
     private void initTab() {
-        customTab.addTab("备料退料记录");
-        customTab.addTab("配料退料记录");
+        customTab.addTab(context.getResources().getString(R.string.wom_prepare_reject_records));
+        customTab.addTab(context.getResources().getString(R.string.wom_batch_reject_records));
         customTab.setCurrentTab(0);
     }
 

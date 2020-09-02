@@ -206,7 +206,7 @@ public class PutInAgileActivityReportActivity extends BaseRefreshRecyclerActivit
                         break;
                     case "storeSetTv":
                         if (mPutInDetailEntity.getWareId() == null) {
-                            ToastUtils.show(context, "请先选择仓库");
+                            ToastUtils.show(context, context.getResources().getString(R.string.wom_please_select_ware));
                             break;
                         }
                         bundle.putLong(Constant.IntentKey.WARE_ID, mPutInDetailEntity.getWareId().getId());
@@ -296,19 +296,19 @@ public class PutInAgileActivityReportActivity extends BaseRefreshRecyclerActivit
         }
         for (PutInDetailEntity putInDetailEntity : mPutInAgileReportDetailAdapter.getList()) {
             if (putInDetailEntity.getMaterialId() == null) {
-                ToastUtils.show(context, "第【" + (mPutInAgileReportDetailAdapter.getList().indexOf(putInDetailEntity) + 1) + "】项请填写物料");
+                ToastUtils.show(context, context.getResources().getString(R.string.wom_di) + (mPutInAgileReportDetailAdapter.getList().indexOf(putInDetailEntity) + 1) + context.getResources().getString(R.string.wom_please_write_material));
                 return true;
             }
             if (TextUtils.isEmpty(putInDetailEntity.getMaterialBatchNum())) {
-                ToastUtils.show(context, "第【" + (mPutInAgileReportDetailAdapter.getList().indexOf(putInDetailEntity) + 1) + "】项请填写物料批号");
+                ToastUtils.show(context, context.getResources().getString(R.string.wom_di) + (mPutInAgileReportDetailAdapter.getList().indexOf(putInDetailEntity) + 1) + context.getResources().getString(R.string.wom_please_write_material_batch));
                 return true;
             }
             if (putInDetailEntity.getWareId() == null) {
-                ToastUtils.show(context, "第【" + (mPutInAgileReportDetailAdapter.getList().indexOf(putInDetailEntity) + 1) + "】项请填写仓库");
+                ToastUtils.show(context, context.getResources().getString(R.string.wom_di) + (mPutInAgileReportDetailAdapter.getList().indexOf(putInDetailEntity) + 1) + context.getResources().getString(R.string.wom_please_write_ware));
                 return true;
             }
             if (putInDetailEntity.getPutinNum() == null) {
-                ToastUtils.show(context, "第【" + (mPutInAgileReportDetailAdapter.getList().indexOf(putInDetailEntity) + 1) + "】项请填写用料量");
+                ToastUtils.show(context, context.getResources().getString(R.string.wom_di) + (mPutInAgileReportDetailAdapter.getList().indexOf(putInDetailEntity) + 1) + context.getResources().getString(R.string.wom_please_write_material_num));
                 return true;
             }
         }

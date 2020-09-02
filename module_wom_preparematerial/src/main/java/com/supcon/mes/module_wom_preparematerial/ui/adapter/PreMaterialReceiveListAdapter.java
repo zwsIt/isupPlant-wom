@@ -294,12 +294,12 @@ public class PreMaterialReceiveListAdapter extends BaseListDataRecyclerViewAdapt
                             float receiveNumF = new BigDecimal(charSequence.toString()).floatValue();
 
                             if(materialEntity.receiveState == null){
-                                ToastUtils.show(context, "请先选择接收类型");
+                                ToastUtils.show(context, context.getResources().getString(R.string.wom_please_select_receive_type));
                                 return;
                             }
                             if("WOM_receiveState/partReceive".equals(materialEntity.receiveState.id)){
                                 if(materialEntity.preNum!=null && receiveNumF >= materialEntity.preNum){
-                                    ToastUtils.show(context, "部分接收时，“接收数量”应小于“备料数量”");
+                                    ToastUtils.show(context, context.getResources().getString(R.string.wom_part_receive_num_smaller_preparenum));
                                     return;
                                 }
                                 else{
@@ -308,7 +308,7 @@ public class PreMaterialReceiveListAdapter extends BaseListDataRecyclerViewAdapt
                             }
                             else if("WOM_receiveState/receive".equals(materialEntity.receiveState.id)){
                                 if(materialEntity.preNum!=null && receiveNumF > materialEntity.preNum){
-                                    ToastUtils.show(context, "接收时，“接收数量”应小于“备料数量”");
+                                    ToastUtils.show(context, context.getResources().getString(R.string.wom_receive_num_smaller_preparenum));
                                     return;
                                 }
                                 else{

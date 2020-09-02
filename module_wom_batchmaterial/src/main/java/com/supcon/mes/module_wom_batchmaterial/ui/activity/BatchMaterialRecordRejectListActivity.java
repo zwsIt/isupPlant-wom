@@ -132,7 +132,7 @@ public class BatchMaterialRecordRejectListActivity extends BaseRefreshRecyclerAc
                     public void accept(Object o) throws Exception {
                         for (BatchMaterialPartEntity entity : mBatchMaterialRecordsRejectListAdapter.getList()){
                             if (entity.getRejectReason() == null){
-                                ToastUtils.show(context, "第【" + (mBatchMaterialRecordsRejectListAdapter.getList().indexOf(entity) + 1) + "】项请填写" + getString(R.string.wom_reject_reason));
+                                ToastUtils.show(context, context.getResources().getString(R.string.wom_di) + (mBatchMaterialRecordsRejectListAdapter.getList().indexOf(entity) + 1) + context.getResources().getString(R.string.wom_please_write) + getString(R.string.wom_reject_reason));
                                 return;
                             }
                             SystemCodeEntity systemCodeEntity = new SystemCodeEntity();

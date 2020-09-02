@@ -79,7 +79,7 @@ public class SimpleProduceTaskListFragment extends BaseRefreshRecyclerFragment<W
         EventBus.getDefault().register(this);
         refreshListController.setAutoPullDownRefresh(true);
         refreshListController.setPullDownRefreshEnabled(true);
-        refreshListController.setEmpterAdapter(EmptyAdapterHelper.getRecyclerEmptyAdapter(context, "无数据"));
+        refreshListController.setEmpterAdapter(EmptyAdapterHelper.getRecyclerEmptyAdapter(context, context.getResources().getString(R.string.middleware_no_data)));
         contentView.setLayoutManager(new LinearLayoutManager(context));
 //        contentView.addItemDecoration(new SpaceItemDecoration(DisplayUtil.dip2px(10,context)));
         contentView.addItemDecoration(new RecyclerView.ItemDecoration() {
@@ -134,17 +134,17 @@ public class SimpleProduceTaskListFragment extends BaseRefreshRecyclerFragment<W
             List<Object> paramsList = new ArrayList<>(2);
             switch (tag) {
                 case "startTv":
-                    paramsList.add("开启");
+                    paramsList.add(context.getResources().getString(R.string.wom_start));
                     paramsList.add("start");
                     showOperateConfirmDialog(paramsList, mWaitPutinRecordEntity, true);
                     break;
                 case "pauseTv":
-                    paramsList.add("暂停");
+                    paramsList.add(context.getResources().getString(R.string.wom_pause));
                     paramsList.add("pause");
                     showOperateConfirmDialog(paramsList, mWaitPutinRecordEntity, true);
                     break;
                 case "resumeTv":
-                    paramsList.add("恢复");
+                    paramsList.add(context.getResources().getString(R.string.wom_resume));
                     paramsList.add("resume");
                     showOperateConfirmDialog(paramsList, mWaitPutinRecordEntity, true);
                     break;
@@ -184,7 +184,7 @@ public class SimpleProduceTaskListFragment extends BaseRefreshRecyclerFragment<W
         CustomDialog customDialog = new CustomDialog(context)
                 .layout(R.layout.wom_dialog_confirm, DisplayUtil.getScreenWidth(context) * 4 / 5, ViewGroup.LayoutParams.WRAP_CONTENT);
         Objects.requireNonNull(customDialog.getDialog().getWindow()).setBackgroundDrawableResource(R.color.transparent);
-        customDialog.bindView(R.id.tipContentTv, "确认 " + paramsList.get(0) + " 该工单操作？")
+        customDialog.bindView(R.id.tipContentTv, context.getResources().getString(R.string.wom_confirm_tip) + paramsList.get(0) + context.getResources().getString(R.string.wom_task_operate))
                 .bindClickListener(R.id.cancelTv, null, true)
                 .bindClickListener(R.id.confirmTv, v -> {
                     onLoading(getString(R.string.wom_dealing));

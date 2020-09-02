@@ -95,8 +95,8 @@ public class StoreSetListActivity extends BaseRefreshRecyclerActivity<StoreSetEn
     protected void initView() {
         super.initView();
         StatusBarUtils.setWindowStatusBarColor(this, R.color.themeColor);
-        searchTitleBar.setTitleText("货位选择");
-        searchTitleBar.searchView().setHint("请输入货位名称");
+        searchTitleBar.setTitleText(context.getResources().getString(R.string.wom_select_store));
+        searchTitleBar.searchView().setHint(context.getResources().getString(R.string.wom_input_store_set));
         searchTitleBar.disableRightBtn();
     }
 

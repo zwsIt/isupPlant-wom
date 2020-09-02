@@ -70,7 +70,7 @@ import io.reactivex.functions.Consumer;
  * Desc 调整活动list
  */
 @Router(value = Constant.Router.WOM_ADJUST_ACTIVITY_LIST)
-@Presenter(value = {StartQualityPresenter.class, WaitPutinRecordPresenter.class})
+@Presenter(value = {StartQualityPresenter.class, WaitPutinRecordPresenter.class, ActivityOperatePresenter.class})
 public class AdjustActivityListActivity extends BaseRefreshRecyclerActivity<WaitPutinRecordEntity> implements WaitPutinRecordsListContract.View, StartQualityContract.View{
 
     @BindByTag("contentView")
@@ -193,7 +193,7 @@ public class AdjustActivityListActivity extends BaseRefreshRecyclerActivity<Wait
     private void doStartQuality() {
         CustomDialog customDialog = new CustomDialog(context).layout(R.layout.wom_dialog_confirm,DisplayUtil.getScreenWidth(context) * 4/5, ViewGroup.LayoutParams.WRAP_CONTENT);
         Objects.requireNonNull(customDialog.getDialog().getWindow()).setBackgroundDrawableResource(R.color.transparent);
-        customDialog.bindView(R.id.tipContentTv, "确认发起请检操作？")
+        customDialog.bindView(R.id.tipContentTv, context.getResources().getString(R.string.wom_start_quality_operate))
                 .bindClickListener(R.id.cancelTv, null, true)
                 .bindClickListener(R.id.confirmTv, v -> {
                     onLoading(context.getResources().getString(R.string.wom_dealing));
@@ -214,7 +214,7 @@ public class AdjustActivityListActivity extends BaseRefreshRecyclerActivity<Wait
                 .layout(R.layout.wom_dialog_confirm, DisplayUtil.getScreenWidth(context) * 4 / 5, ViewGroup.LayoutParams.WRAP_CONTENT);
         Objects.requireNonNull(customDialog.getDialog().getWindow()).setBackgroundDrawableResource(R.color.transparent);
         if (WomConstant.SystemCode.EXE_STATE_WAIT.equals(mWaitPutinRecordEntity.getExeState().id)) {
-            customDialog.bindView(R.id.tipContentTv, "确认开始活动操作？")
+            customDialog.bindView(R.id.tipContentTv, context.getResources().getString(R.string.wom_start_activity_operate))
                     .bindClickListener(R.id.cancelTv, null, true)
                     .bindClickListener(R.id.confirmTv, v -> {
                         onLoading(context.getResources().getString(R.string.wom_dealing));
@@ -222,7 +222,7 @@ public class AdjustActivityListActivity extends BaseRefreshRecyclerActivity<Wait
                     }, true)
                     .show();
         } else {
-            customDialog.bindView(R.id.tipContentTv, TextUtils.isEmpty(checkTip) ? "确认结束活动操作？" : checkTip)
+            customDialog.bindView(R.id.tipContentTv, TextUtils.isEmpty(checkTip) ? context.getResources().getString(R.string.wom_end_activity_operate) : checkTip)
                     .bindClickListener(R.id.cancelTv, null, true)
                     .bindClickListener(R.id.confirmTv, v -> {
                         onLoading(context.getResources().getString(R.string.wom_dealing));

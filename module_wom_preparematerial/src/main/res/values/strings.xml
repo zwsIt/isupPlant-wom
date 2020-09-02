@@ -4,4 +4,14 @@
     <string name="wom_prepare_material_records_ref">备料参照</string>
     <string name="wom_prepare_material_number">备料数量</string>
     <string name="wom_status_reason">备料记录状态+拒签原因</string>
+    <string name="wom_input_delivery_no">请输入派送单号</string>
+    <string name="wom_receiver_forbidden_null">“接收人”不允许为空</string>
+    <string name="wom_receivetype_forbidden_null">“接收类型”不允许为空</string>
+    <string name="wom_receivenum_forbidden_null">“接收数量”不允许为空</string>
+    <string name="wom_receivereason_forbidden_null">“拒收”时，“拒收原因”不允许为空</string>
+    <string name="wom_part_receivereason_forbidden_null">“部分接收”时，“部分接收原因”不允许为空</string>
+    <string name="wom_please_select_one">请至少选择一条记录进行操作</string>
+    <string name="wom_please_select_receive_type">请先选择接收类型</string>
+    <string name="wom_part_receive_num_smaller_preparenum">部分接收时，“接收数量”应小于“备料数量”</string>
+    <string name="wom_receive_num_smaller_preparenum">接收时，“接收数量”应小于“备料数量”</string>
 </resources>

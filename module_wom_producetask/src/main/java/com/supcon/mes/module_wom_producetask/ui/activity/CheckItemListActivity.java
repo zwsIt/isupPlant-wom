@@ -114,7 +114,7 @@ public class CheckItemListActivity extends BaseRefreshRecyclerActivity<ProCheckD
     protected void initView() {
         super.initView();
         StatusBarUtils.setWindowStatusBarColor(this, R.color.themeColor);
-        titleText.setText("检查活动项目");
+        titleText.setText(context.getResources().getString(R.string.wom_check_item_list));
         submitBtn.setVisibility(View.VISIBLE);
     }
 
@@ -182,7 +182,7 @@ public class CheckItemListActivity extends BaseRefreshRecyclerActivity<ProCheckD
         }
         for (ProCheckDetailEntity proCheckDetailEntity : mCheckItemListAdapter.getList()){
             if (!TextUtils.isEmpty(proCheckDetailEntity.getStandard()) && TextUtils.isEmpty(proCheckDetailEntity.getReportValue())){
-                ToastUtils.show(context, "第【" + (mCheckItemListAdapter.getList().indexOf(proCheckDetailEntity) + 1) + "】项请填写入报出值");
+                ToastUtils.show(context, context.getResources().getString(R.string.wom_di) + (mCheckItemListAdapter.getList().indexOf(proCheckDetailEntity) + 1) + context.getResources().getString(R.string.wom_please_write_value));
                 return true;
             }
         }

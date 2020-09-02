@@ -82,7 +82,7 @@ public class ActiExeLogActivity extends BaseRefreshRecyclerActivity<ActiExelogEn
     @Override
     protected void initView() {
         super.initView();
-        titleText.setText("活动执行记录");
+        titleText.setText(context.getResources().getString(R.string.wom_activity_exe_records));
         initEmpty();
     }
 

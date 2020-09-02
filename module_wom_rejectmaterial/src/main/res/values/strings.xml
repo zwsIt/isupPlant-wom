@@ -13,4 +13,8 @@
     <string name="wom_into_storeset">入库货位</string>
     <string name="wom_reject_num">退料数量</string>
     <string name="wom_back_reason">退料原因</string>
+    <string name="wom_please_write_reject_num">】项请填写退料数量</string>
+    <string name="wom_please_write_reject_reason">】项请填写退料原因</string>
+    <string name="wom_prepare_reject_records">备料退料记录</string>
+    <string name="wom_batch_reject_records">配料退料记录</string>
 </resources>

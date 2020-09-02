@@ -182,7 +182,7 @@ public class ProduceTaskEndReportActivity extends BaseRefreshRecyclerActivity<Ou
                     break;
                 case "storeSetTv":
                     if (mOutputDetailEntity.getWareId() == null) {
-                        ToastUtils.show(context, "请先选择仓库");
+                        ToastUtils.show(context, context.getResources().getString(R.string.wom_please_select_ware));
                         break;
                     }
                     Bundle bundle = new Bundle();
@@ -252,15 +252,15 @@ public class ProduceTaskEndReportActivity extends BaseRefreshRecyclerActivity<Ou
         List<OutputDetailEntity> list = mProduceTaskEndReportDetailAdapter.getList();
         for (OutputDetailEntity entity : list) {
             if (TextUtils.isEmpty(entity.getMaterialBatchNum())) {
-                ToastUtils.show(context, "第【" + (list.indexOf(entity) + 1) + "】项请填写入库批号");
+                ToastUtils.show(context, context.getResources().getString(R.string.wom_di) + (list.indexOf(entity) + 1) + context.getResources().getString(R.string.wom_please_write_into_ware_batch));
                 return true;
             }
             if (entity.getWareId() == null) {
-                ToastUtils.show(context, "第【" + (list.indexOf(entity) + 1) + "】项请选择仓库");
+                ToastUtils.show(context, context.getResources().getString(R.string.wom_di) + (list.indexOf(entity) + 1) + context.getResources().getString(R.string.wom_select_ware));
                 return true;
             }
             if (entity.getOutputNum() == null) {
-                ToastUtils.show(context, "第【" + (list.indexOf(entity) + 1) + "】项请填写数量");
+                ToastUtils.show(context, context.getResources().getString(R.string.wom_di) + (list.indexOf(entity) + 1) + context.getResources().getString(R.string.wom_pleasr_write_num));
                 return true;
             }
         }

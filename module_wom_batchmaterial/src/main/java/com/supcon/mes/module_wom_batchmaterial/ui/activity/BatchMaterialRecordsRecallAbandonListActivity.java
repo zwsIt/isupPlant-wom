@@ -288,7 +288,7 @@ public class BatchMaterialRecordsRecallAbandonListActivity extends BaseRefreshRe
         for (BatchMaterialPartEntity entity : list){
             if (entity.isChecked()){
                 if (entity.getRetirementState() == null){
-                    ToastUtils.show(context, "第【" + (mBatchMaterialRecordsAbandonListAdapter.getList().indexOf(entity) + 1) + "】项请填写" + getString(R.string.wom_abandon_status));
+                    ToastUtils.show(context, context.getResources().getString(R.string.wom_di) + (mBatchMaterialRecordsAbandonListAdapter.getList().indexOf(entity) + 1) + context.getResources().getString(R.string.wom_please_write) + getString(R.string.wom_abandon_status));
                     return true;
                 }
                 chooseList.add(entity);

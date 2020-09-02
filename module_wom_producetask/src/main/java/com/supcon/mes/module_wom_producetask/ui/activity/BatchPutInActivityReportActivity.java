@@ -192,7 +192,7 @@ public class BatchPutInActivityReportActivity extends BaseRefreshRecyclerActivit
                         break;
                     case "storeSetTv":
                         if (mPutInDetailEntity.getWareId() == null) {
-                            ToastUtils.show(context, "请先选择仓库");
+                            ToastUtils.show(context, context.getResources().getString(R.string.wom_please_select_ware));
                             break;
                         }
                         Bundle bundle = new Bundle();
@@ -262,15 +262,15 @@ public class BatchPutInActivityReportActivity extends BaseRefreshRecyclerActivit
         }
         for (PutInDetailEntity putInDetailEntity : mPutInReportDetailAdapter.getList()) {
             if (TextUtils.isEmpty(putInDetailEntity.getMaterialBatchNum())) {
-                ToastUtils.show(context, "第【" + (mPutInReportDetailAdapter.getList().indexOf(putInDetailEntity) + 1) + "】项请填写物料批号");
+                ToastUtils.show(context, context.getResources().getString(R.string.wom_di) + (mPutInReportDetailAdapter.getList().indexOf(putInDetailEntity) + 1) + context.getResources().getString(R.string.wom_please_write_material_batch));
                 return true;
             }
             if (putInDetailEntity.getWareId() == null) {
-                ToastUtils.show(context, "第【" + (mPutInReportDetailAdapter.getList().indexOf(putInDetailEntity) + 1) + "】项请填写仓库");
+                ToastUtils.show(context, context.getResources().getString(R.string.wom_di) + (mPutInReportDetailAdapter.getList().indexOf(putInDetailEntity) + 1) + context.getResources().getString(R.string.wom_please_write_ware));
                 return true;
             }
             if (putInDetailEntity.getPutinNum() == null) {
-                ToastUtils.show(context, "第【" + (mPutInReportDetailAdapter.getList().indexOf(putInDetailEntity) + 1) + "】项请填写用料量");
+                ToastUtils.show(context, context.getResources().getString(R.string.wom_di) + (mPutInReportDetailAdapter.getList().indexOf(putInDetailEntity) + 1) + context.getResources().getString(R.string.wom_please_write_material_num));
                 return true;
             }
         }
@@ -299,11 +299,11 @@ public class BatchPutInActivityReportActivity extends BaseRefreshRecyclerActivit
                 for (BatchMaterialPartEntity batchMaterialPartEntity : list){
                     // 防止重复添加
                     if (currentListId.contains(batchMaterialPartEntity.getId())){
-                        ToastUtils.show(context,"【"+batchMaterialPartEntity.getMaterialId().getName()+"】物料已存在，请重新扫描");
+                        ToastUtils.show(context,"【"+batchMaterialPartEntity.getMaterialId().getName()+context.getResources().getString(R.string.wom_material_exist));
                         return;
                     }
                     if (!TextUtils.isEmpty(batchno) && !batchno.equals(batchMaterialPartEntity.getMaterialBatchNum())){
-                        ToastUtils.show(context,"非当前【"+batchMaterialPartEntity.getMaterialId().getName()+"】物料批号，请重新扫描");
+                        ToastUtils.show(context,context.getResources().getString(R.string.wom_no_current_material)+batchMaterialPartEntity.getMaterialId().getName()+context.getResources().getString(R.string.wom_material_error));
                         return;
                     }
                     putInDetailEntity = new PutInDetailEntity();
