@@ -285,6 +285,16 @@ public class ProduceTaskEndReportActivity extends BaseRefreshRecyclerActivity<Ou
         onLoadFailed(ErrorMsgHelper.msgParse(errorMsg));
     }
 
+    @Override
+    public void operateDischargeSuccess(BAP5CommonEntity bap5CommonEntity) {
+
+    }
+
+    @Override
+    public void operateDischargeFailed(String errorMsg) {
+
+    }
+
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void getEventPost(SelectDataEvent selectDataEvent) {
         if (selectDataEvent.getEntity() instanceof WarehouseEntity) {

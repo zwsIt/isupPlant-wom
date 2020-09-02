@@ -42,4 +42,26 @@ public class ProduceTaskOperatePresenter extends ProduceTaskOperateContract.Pres
         );
     }
 
+    @Override
+    public void operateDischarge(Long taskId) {
+        mCompositeSubscription.add(
+                WomHttpClient.operateDischarge(taskId)
+                .onErrorReturn(throwable -> {
+                    BAP5CommonEntity bap5CommonEntity = new BAP5CommonEntity();
+                    bap5CommonEntity.msg = HttpErrorReturnUtil.getErrorInfo(throwable);
+                    return null;
+                })
+                .subscribe(new Consumer<BAP5CommonEntity>() {
+                    @Override
+                    public void accept(BAP5CommonEntity bap5CommonEntity) throws Exception {
+                        if (bap5CommonEntity.success){
+                            getView().operateDischargeSuccess(bap5CommonEntity);
+                        }else {
+                            getView().operateDischargeFailed(bap5CommonEntity.msg);
+                        }
+                    }
+                })
+        );
+    }
+
 }
