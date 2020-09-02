@@ -288,17 +288,23 @@ public class CommonProduceTaskListFragment extends BaseRefreshRecyclerFragment<W
                 .layout(R.layout.wom_dialog_confirm, DisplayUtil.getScreenWidth(context) * 4 / 5, ViewGroup.LayoutParams.WRAP_CONTENT);
         Objects.requireNonNull(customDialog.getDialog().getWindow()).setBackgroundDrawableResource(R.color.transparent);
         if (isTask) {
-            if ("discharge".equals(paramsList.get(1))){
-                customDialog.bindView(R.id.tipContentTv, paramsList.get(0) + context.getResources().getString(R.string.wom_start_predischarge)); // "提前放料"
+            if ("discharge".equals(paramsList.get(1))){ // "提前放料"
+                customDialog.bindView(R.id.tipContentTv, paramsList.get(0) + context.getResources().getString(R.string.wom_start_predischarge))
+                        .bindClickListener(R.id.cancelTv, null, true)
+                        .bindClickListener(R.id.confirmTv, v -> {
+                            onLoading(getString(R.string.wom_dealing));
+                            presenterRouter.create(ProduceTaskOperateAPI.class).operateDischarge(waitPutinRecordEntity.getTaskId().getId());
+                        }, true)
+                        .show();
             }else {
-                customDialog.bindView(R.id.tipContentTv, context.getResources().getString(R.string.wom_confirm_tip) + paramsList.get(0) + context.getResources().getString(R.string.wom_task_operate));
+                customDialog.bindView(R.id.tipContentTv, context.getResources().getString(R.string.wom_confirm_tip) + paramsList.get(0) + context.getResources().getString(R.string.wom_task_operate))
+                        .bindClickListener(R.id.cancelTv, null, true)
+                        .bindClickListener(R.id.confirmTv, v -> {
+                            onLoading(getString(R.string.wom_dealing));
+                            presenterRouter.create(ProduceTaskOperateAPI.class).operateProduceTask(waitPutinRecordEntity.getId(), String.valueOf(paramsList.get(1)),null);
+                        }, true)
+                        .show();
             }
-            customDialog.bindClickListener(R.id.cancelTv, null, true)
-                    .bindClickListener(R.id.confirmTv, v -> {
-                        onLoading(getString(R.string.wom_dealing));
-                        presenterRouter.create(ProduceTaskOperateAPI.class).operateProduceTask(waitPutinRecordEntity.getId(), String.valueOf(paramsList.get(1)),null);
-                    }, true)
-                    .show();
 
         } else {
             customDialog.bindView(R.id.tipContentTv, context.getResources().getString(R.string.wom_confirm_tip) + paramsList.get(0) + context.getResources().getString(R.string.wom_process_operate))
@@ -387,6 +393,17 @@ public class CommonProduceTaskListFragment extends BaseRefreshRecyclerFragment<W
 
     @Override
     public void operateProduceTaskFailed(String errorMsg) {
+        onLoadFailed(ErrorMsgHelper.msgParse(errorMsg));
+    }
+
+    @Override
+    public void operateDischargeSuccess(BAP5CommonEntity entity) {
+        onLoadSuccess(context.getResources().getString(R.string.wom_dealt_success));
+        refreshListController.refreshBegin();
+    }
+
+    @Override
+    public void operateDischargeFailed(String errorMsg) {
         onLoadFailed(ErrorMsgHelper.msgParse(errorMsg));
     }
 

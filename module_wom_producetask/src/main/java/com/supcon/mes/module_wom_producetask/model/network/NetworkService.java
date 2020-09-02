@@ -153,4 +153,13 @@ public interface NetworkService {
     @GET("/msService/WOM/produceTask/produceTask/adjustFinish")
     Flowable<BAP5CommonEntity> adjustFinish(@Query("ajustActiveId") Long activeId);
 
+    /**
+     * @param
+     * @return
+     * @author zhangwenshuai1 2020/3/25
+     * @description 指令单提前放料操作
+     */
+    @GET("/msService/WOM/produceTask/produceTask/setAdvanceTrue/{taskId}")
+    Flowable<BAP5CommonEntity> operateDischarge(@Path(value = "taskId") Long taskId);
+
 }
