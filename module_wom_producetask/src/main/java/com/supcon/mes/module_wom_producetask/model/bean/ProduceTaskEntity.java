@@ -3,6 +3,7 @@ package com.supcon.mes.module_wom_producetask.model.bean;
 import com.supcon.common.com_http.BaseEntity;
 import com.supcon.mes.middleware.model.bean.wom.FactoryModelEntity;
 import com.supcon.mes.middleware.model.bean.wom.FormulaEntity;
+import com.supcon.mes.module_wom_producetask.constant.WomConstant;
 
 import java.math.BigDecimal;
 
@@ -71,7 +72,7 @@ public class ProduceTaskEntity extends BaseEntity {
     }
 
     public BigDecimal getPlanNum() {
-        return planNum;
+        return planNum!=null?planNum.setScale(WomConstant.scale):null;
     }
 
     public void setPlanNum(BigDecimal planNum) {

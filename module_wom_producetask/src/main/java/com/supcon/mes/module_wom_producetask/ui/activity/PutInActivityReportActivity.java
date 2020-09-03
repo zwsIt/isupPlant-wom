@@ -78,6 +78,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
+import io.reactivex.Flowable;
+import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.functions.Consumer;
 
 import static android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
@@ -148,6 +150,7 @@ public class PutInActivityReportActivity extends BaseRefreshRecyclerActivity<Put
         EventBus.getDefault().register(this);
         refreshListController.setPullDownRefreshEnabled(false);
         refreshListController.setAutoPullDownRefresh(true);
+
         mWaitPutinRecordEntity = (WaitPutinRecordEntity) getIntent().getSerializableExtra(Constant.IntentKey.WAIT_PUT_RECORD);
         contentView.setLayoutManager(new SmoothScrollLayoutManager(context));
         contentView.addItemDecoration(new RecyclerView.ItemDecoration() {
@@ -285,8 +288,12 @@ public class PutInActivityReportActivity extends BaseRefreshRecyclerActivity<Put
     PutInDetailEntity scanPutInDetailEntity;
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onCodeReceiver(CodeResultEvent codeResultEvent) {
-        if (isDialogShowing())
+
+        if (isDialogShowing()){
+
             return;
+        }
+
         long currentTime = System.currentTimeMillis();
         if (currentTime - lastTime >= 100) {
             String[] arr = MaterQRUtil.materialQRCode(codeResultEvent.scanResult);
@@ -302,6 +309,7 @@ public class PutInActivityReportActivity extends BaseRefreshRecyclerActivity<Put
                 if (incode.equals(mWaitPutinRecordEntity.getTaskActiveId().getMaterialId().getCode())) {
                     String batchCode=mWaitPutinRecordEntity.getTaskActiveId().getBatchCode();
                     if (!StringUtil.isEmpty(batchCode) && !batchCode.trim().equals(batchno)) {
+
                         showTipDialog("非当前物料批号，请重新扫描");
                         return;
                     }
@@ -326,14 +334,17 @@ public class PutInActivityReportActivity extends BaseRefreshRecyclerActivity<Put
                             return;
                         }
                     }
+
                     mPutInReportDetailAdapter.addData(scanPutInDetailEntity);
                     mPutInReportDetailAdapter.notifyItemRangeInserted(mPutInReportDetailAdapter.getItemCount() - 1, 1);
                     mPutInReportDetailAdapter.notifyItemRangeChanged(mPutInReportDetailAdapter.getItemCount() - 1, 1);
                     contentView.smoothScrollToPosition(mPutInReportDetailAdapter.getItemCount() - 1);
                 } else {
+
                     showTipDialog("非当前物料，请重新扫描");
                 }
             } else {
+
                 ToastUtils.show(context, "二维码信息解析异常！");
             }
             lastTime = currentTime;

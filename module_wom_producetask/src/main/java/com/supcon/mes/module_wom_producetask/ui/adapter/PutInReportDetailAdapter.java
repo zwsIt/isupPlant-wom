@@ -171,16 +171,20 @@ public class PutInReportDetailAdapter extends BaseListDataRecyclerViewAdapter<Pu
                         .map(CharSequence::toString)
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe(charSequence -> {
-                            PutInDetailEntity putInDetailEntity = getItem(getAdapterPosition());
-                            putInDetailEntity.setBeforeNum(!TextUtils.isEmpty(charSequence)?new BigDecimal(charSequence):null);
-                            if (TextUtils.isEmpty(charSequence)) {
-                                return;
+                            try {
+                                PutInDetailEntity putInDetailEntity = getItem(getAdapterPosition());
+                                putInDetailEntity.setBeforeNum(!TextUtils.isEmpty(charSequence)?new BigDecimal(charSequence):null);
+                                if (TextUtils.isEmpty(charSequence)) {
+                                    return;
+                                }
+                                float beforeWeight = !TextUtils.isEmpty(beforeWeightTv.getInput()) ? Float.valueOf(beforeWeightTv.getInput()) : 0;
+                                float afterWeight = !TextUtils.isEmpty(afterWeightTv.getInput()) ? Float.valueOf(afterWeightTv.getInput()) : 0;
+                                float diff=beforeWeight-afterWeight;
+                                putInDetailEntity.setPutinNum(diff==0?null:new BigDecimal(diff));
+                                numEt.setContent(putInDetailEntity.getPutinNum() == null ? "" : String.valueOf(putInDetailEntity.getPutinNum()));
+                            } catch (Exception e) {
+                                e.printStackTrace();
                             }
-                            float beforeWeight = !TextUtils.isEmpty(beforeWeightTv.getInput()) ? Float.valueOf(beforeWeightTv.getInput()) : 0;
-                            float afterWeight = !TextUtils.isEmpty(afterWeightTv.getInput()) ? Float.valueOf(afterWeightTv.getInput()) : 0;
-                            float diff=beforeWeight-afterWeight;
-                            putInDetailEntity.setPutinNum(diff==0?null:new BigDecimal(diff));
-                            numEt.setContent(putInDetailEntity.getPutinNum() == null ? "" : String.valueOf(putInDetailEntity.getPutinNum()));
                         });
 
                 RxTextView.textChanges(afterWeightTv.editText())
@@ -189,17 +193,21 @@ public class PutInReportDetailAdapter extends BaseListDataRecyclerViewAdapter<Pu
                         .map(CharSequence::toString)
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe(charSequence -> {
-                            PutInDetailEntity putInDetailEntity = getItem(getAdapterPosition());
-                            putInDetailEntity.setAfterWeight(charSequence);
-                            putInDetailEntity.setAfterNum(!TextUtils.isEmpty(charSequence)?new BigDecimal(charSequence):null);
-                            if (TextUtils.isEmpty(charSequence)) {
-                                return;
+                            try {
+                                PutInDetailEntity putInDetailEntity = getItem(getAdapterPosition());
+                                putInDetailEntity.setAfterWeight(charSequence);
+                                putInDetailEntity.setAfterNum(!TextUtils.isEmpty(charSequence)?new BigDecimal(charSequence):null);
+                                if (TextUtils.isEmpty(charSequence)) {
+                                    return;
+                                }
+                                float beforeWeight = !TextUtils.isEmpty(beforeWeightTv.getInput()) ? Float.valueOf(beforeWeightTv.getInput()) : 0;
+                                float afterWeight = !TextUtils.isEmpty(afterWeightTv.getInput()) ? Float.valueOf(afterWeightTv.getInput()) : 0;
+                                float diff=beforeWeight-afterWeight;
+                                putInDetailEntity.setPutinNum(diff==0?null:new BigDecimal(diff));
+                                numEt.setContent(putInDetailEntity.getPutinNum() == null ? "" : String.valueOf(putInDetailEntity.getPutinNum()));
+                            } catch (Exception e) {
+                                e.printStackTrace();
                             }
-                            float beforeWeight = !TextUtils.isEmpty(beforeWeightTv.getInput()) ? Float.valueOf(beforeWeightTv.getInput()) : 0;
-                            float afterWeight = !TextUtils.isEmpty(afterWeightTv.getInput()) ? Float.valueOf(afterWeightTv.getInput()) : 0;
-                            float diff=beforeWeight-afterWeight;
-                            putInDetailEntity.setPutinNum(diff==0?null:new BigDecimal(diff));
-                            numEt.setContent(putInDetailEntity.getPutinNum() == null ? "" : String.valueOf(putInDetailEntity.getPutinNum()));
                         });
                 radioGroup.setOnCheckedChangeListener((group, checkedId) -> {
                     PutInDetailEntity putInDetailEntity = getItem(getAdapterPosition());

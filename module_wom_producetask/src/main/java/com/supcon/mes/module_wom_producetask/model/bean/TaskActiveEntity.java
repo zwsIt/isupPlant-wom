@@ -7,6 +7,7 @@ import com.supcon.mes.middleware.model.bean.StaffEntity;
 import com.supcon.mes.middleware.model.bean.SystemCodeEntity;
 import com.supcon.mes.middleware.model.bean.wom.FormulaEntity;
 import com.supcon.mes.middleware.model.bean.wom.MaterialEntity;
+import com.supcon.mes.module_wom_producetask.constant.WomConstant;
 
 import java.math.BigDecimal;
 
@@ -331,7 +332,7 @@ public class TaskActiveEntity extends BaseEntity {
     }
 
     public BigDecimal getPlanQuantity() {
-        return planQuantity;
+        return planQuantity!=null?planQuantity.setScale(WomConstant.scale):null;
     }
 
     public void setPlanQuantity(BigDecimal planQuantity) {
@@ -379,7 +380,7 @@ public class TaskActiveEntity extends BaseEntity {
     }
 
     public BigDecimal getStandardQuantity() {
-        return standardQuantity;
+        return standardQuantity!=null?standardQuantity.setScale(WomConstant.scale):null;
     }
 
     public void setStandardQuantity(BigDecimal standardQuantity) {
@@ -390,7 +391,7 @@ public class TaskActiveEntity extends BaseEntity {
         if (sumNum == null){
             sumNum = new BigDecimal(0);
         }
-        return sumNum;
+        return sumNum.setScale(WomConstant.scale);
     }
 
     public void setSumNum(BigDecimal sumNum) {

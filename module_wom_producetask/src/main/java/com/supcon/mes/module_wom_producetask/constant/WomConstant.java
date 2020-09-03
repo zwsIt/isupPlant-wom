@@ -49,6 +49,7 @@ public interface WomConstant {
 
         String WOM_receiveState = "WOM_receiveState";
         String WOM_rejectReason = "WOM_rejectReason";
+
     }
 
     /**
@@ -83,5 +84,6 @@ public interface WomConstant {
         String DG_BATCH_PUT_IN_ACTIVITY_REPORT = "dg1576142566684"; // 投配料活动报工dg
         String DG_OUTPUT_ACTIVITY_REPORT = "dg1576221919090"; // 产出活动报工dg
     }
+    int scale=2;
 
 }
