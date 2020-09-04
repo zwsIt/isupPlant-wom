@@ -5,6 +5,7 @@ import com.supcon.mes.middleware.model.bean.SystemCodeEntity;
 import com.supcon.mes.middleware.model.bean.wom.MaterialEntity;
 import com.supcon.mes.middleware.model.bean.wom.StoreSetEntity;
 import com.supcon.mes.middleware.model.bean.wom.WarehouseEntity;
+import com.supcon.mes.module_wom_producetask.constant.WomConstant;
 
 import java.math.BigDecimal;
 
@@ -63,7 +64,7 @@ public class PutInDetailEntity extends BaseEntity {
     }
 
     public BigDecimal getAvailableNum() {
-        return availableNum;
+        return availableNum!=null?availableNum.setScale(WomConstant.scale):null;
     }
 
     public void setAvailableNum(BigDecimal availableNum) {
@@ -79,7 +80,7 @@ public class PutInDetailEntity extends BaseEntity {
     }
 
     public BigDecimal getBeforeNum() {
-        return beforeNum;
+        return beforeNum!=null?beforeNum.setScale(WomConstant.scale):null;
     }
 
     public void setBeforeNum(BigDecimal beforeNum) {
@@ -95,7 +96,7 @@ public class PutInDetailEntity extends BaseEntity {
     }
 
     public BigDecimal getReveiveNum() {
-        return reveiveNum;
+        return reveiveNum!=null?reveiveNum.setScale(WomConstant.scale):null;
     }
 
     public void setReveiveNum(BigDecimal reveiveNum) {
@@ -146,7 +147,7 @@ public class PutInDetailEntity extends BaseEntity {
     }
 
     public BigDecimal getPutinNum() {
-        return putinNum;
+        return putinNum!=null?putinNum.setScale(WomConstant.scale):null;
     }
 
     public void setPutinNum(BigDecimal putinNum) {

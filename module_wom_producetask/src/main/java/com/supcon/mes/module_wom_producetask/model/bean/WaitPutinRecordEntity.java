@@ -8,6 +8,7 @@ import com.supcon.mes.middleware.model.bean.wom.FactoryModelEntity;
 import com.supcon.mes.middleware.model.bean.wom.FormulaEntity;
 import com.supcon.mes.middleware.model.bean.wom.MaterialEntity;
 import com.supcon.mes.middleware.model.bean.wom.WarehouseEntity;
+import com.supcon.mes.module_wom_producetask.constant.WomConstant;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -277,7 +278,7 @@ public class WaitPutinRecordEntity extends BaseEntity {
     }
 
     public BigDecimal getPlanNum() {
-        return planNum;
+        return planNum!=null?planNum.setScale(WomConstant.scale):null;
     }
 
     public void setPlanNum(BigDecimal planNum) {
