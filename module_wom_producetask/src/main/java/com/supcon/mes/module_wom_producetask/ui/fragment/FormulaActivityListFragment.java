@@ -124,6 +124,7 @@ public class FormulaActivityListFragment extends BaseRefreshRecyclerFragment<Wai
                 case "routineStartTv":
                 case "checkStartTv":
                 case "putInStartTv":
+                case "qualityStartTv":
                     showOperateConfirmDialog(mWaitPutinRecordEntity.getTaskActiveId().getCheckTip());
                     break;
             }

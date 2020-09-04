@@ -96,6 +96,25 @@ public class WaitPutinRecordEntity extends BaseEntity {
     private WarehouseEntity ware;
     private String batchCode;//物料批号
 
+    private String checkState; // 检验状态
+    private String checkResult; // 检验结论
+
+    public String getCheckState() {
+        return checkState;
+    }
+
+    public void setCheckState(String checkState) {
+        this.checkState = checkState;
+    }
+
+    public String getCheckResult() {
+        return checkResult;
+    }
+
+    public void setCheckResult(String checkResult) {
+        this.checkResult = checkResult;
+    }
+
     public FactoryModelEntity getEuqId() {
         if (euqId == null){
             euqId = new FactoryModelEntity();

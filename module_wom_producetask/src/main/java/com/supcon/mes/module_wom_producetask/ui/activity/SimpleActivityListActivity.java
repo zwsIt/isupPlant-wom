@@ -71,6 +71,10 @@ public class SimpleActivityListActivity extends BaseRefreshRecyclerActivity<Wait
     private SimpleActivityListAdapter mSimpleActivityListAdapter;
     Map<String, Object> queryParams = new HashMap<>();          // 活动查询
     private WaitPutinRecordEntity mWaitPutinRecordEntity;   // 当前操作项
+<<<<<<< HEAD
+=======
+    private WaitPutinRecordEntity mWaitPutinRecordParam; // 工单待办参数
+>>>>>>> 50920f7... 检验放行、调整
 
     @Override
     protected IListAdapter<WaitPutinRecordEntity> createAdapter() {
@@ -101,8 +105,13 @@ public class SimpleActivityListActivity extends BaseRefreshRecyclerActivity<Wait
 
         queryParams.put(Constant.BAPQuery.RECORD_TYPE, WomConstant.SystemCode.RECORD_TYPE_ACTIVE); // 默认活动查询
         queryParams.put(Constant.BAPQuery.IS_MORE_OTHER, false); // 非其他活动
+<<<<<<< HEAD
         WaitPutinRecordEntity waitPutinRecordEntity = (WaitPutinRecordEntity)getIntent().getSerializableExtra(Constant.IntentKey.WAIT_PUT_RECORD);
         queryParams.put(Constant.BAPQuery.PRODUCE_BATCH_NUM,waitPutinRecordEntity.getProduceBatchNum()); // 当前生产批
+=======
+        mWaitPutinRecordParam = (WaitPutinRecordEntity)getIntent().getSerializableExtra(Constant.IntentKey.WAIT_PUT_RECORD);
+        queryParams.put(Constant.BAPQuery.PRODUCE_BATCH_NUM, mWaitPutinRecordParam.getProduceBatchNum()); // 当前生产批
+>>>>>>> 50920f7... 检验放行、调整
 
     }
 
@@ -122,6 +131,16 @@ public class SimpleActivityListActivity extends BaseRefreshRecyclerActivity<Wait
     protected void initListener() {
         super.initListener();
         leftBtn.setOnClickListener(v -> finish());
+<<<<<<< HEAD
+=======
+        RxView.clicks(rightBtn)
+                .throttleFirst(2000, TimeUnit.MILLISECONDS)
+                .subscribe(o->{
+                    Bundle bundle=new Bundle();
+                    bundle.putSerializable(Constant.IntentKey.WAIT_PUT_RECORD,mWaitPutinRecordParam);
+                    IntentRouter.go(context,Constant.Router.ACTIVITY_EXEREDS_LIST,bundle);
+                });
+>>>>>>> 50920f7... 检验放行、调整
         refreshListController.setOnRefreshPageListener(pageIndex -> {
             presenterRouter.create(WaitPutinRecordsListAPI.class).listWaitPutinRecords(pageIndex, 20, queryParams,false);
         });
