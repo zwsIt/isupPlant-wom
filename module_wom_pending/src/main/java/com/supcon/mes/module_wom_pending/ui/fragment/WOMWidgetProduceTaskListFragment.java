@@ -191,7 +191,7 @@ public class WOMWidgetProduceTaskListFragment extends BaseRefreshRecyclerFragmen
         CustomDialog customDialog = new CustomDialog(context)
                 .layout(R.layout.wom_dialog_confirm, DisplayUtil.getScreenWidth(context) * 4 / 5, ViewGroup.LayoutParams.WRAP_CONTENT);
         Objects.requireNonNull(customDialog.getDialog().getWindow()).setBackgroundDrawableResource(R.color.transparent);
-        if (isTask) {
+//        if (isTask) {
             customDialog.bindView(R.id.tipContentTv, "确认 " + paramsList.get(0) + " 该工单操作？")
                     .bindClickListener(R.id.cancelTv, null, true)
                     .bindClickListener(R.id.confirmTv, v -> {
@@ -199,7 +199,7 @@ public class WOMWidgetProduceTaskListFragment extends BaseRefreshRecyclerFragmen
                         presenterRouter.create(ProduceTaskOperateAPI.class).operateProduceTask(waitPutinRecordEntity.getId(), String.valueOf(paramsList.get(1)),null);
                     }, true)
                     .show();
-        }
+//        }
     }
 
     @Override

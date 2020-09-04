@@ -569,7 +569,7 @@ public class FormulaActivityListAdapter extends BaseListDataRecyclerViewAdapter<
                 }
             } else {
                 itemStateTv.setVisibility(View.VISIBLE);
-                itemStateTv.setText(TextUtils.isEmpty(data.getCheckState()) ? data.getTaskActiveId().getCheckState() : data.getCheckState()); // 检验状态
+                itemStateTv.setText(TextUtils.isEmpty(data.getCheckState()) ? data./*getTaskActiveId().*/getCheckState() : data.getCheckState()); // 检验状态
 
                 // 是否完工检验且允许提前放行
                 if (data.getTaskActiveId().getFinalInspection() && data.getTaskActiveId().isRelease()){
