@@ -85,13 +85,13 @@ public class ActiExeLogAdapter extends BaseListDataRecyclerViewAdapter<ActiExelo
             dataSourceTv.setTextColor(context.getResources().getColor(R.color.active_log_mes_start));
             activityName.setContent(data.getName());
             if (WomConstant.SystemCode.EXE_STATE_ING.equals(data.getRunState().id)){
-                taskState.setText("执行中");
+                taskState.setText(data.getRunState().value);
                 taskState.setTextColor(context.getResources().getColor(R.color.lubricateBg));
                 taskState.setBackgroundResource(R.drawable.sh_actilog_state_bg);
                 time.setKey("开始时间");
                 time.setContent(DateUtil.dateTimeFormat(data.getActStartTime()));
             }else {
-                taskState.setText("已结束");
+                taskState.setText(data.getRunState().value);
                 taskState.setTextColor(context.getResources().getColor(R.color.listview_divider));
                 taskState.setBackgroundResource(R.drawable.sh_co_product_bg);
                 time.setKey("结束时间");
