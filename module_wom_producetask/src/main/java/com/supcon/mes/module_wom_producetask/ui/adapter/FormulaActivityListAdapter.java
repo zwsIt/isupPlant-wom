@@ -591,7 +591,7 @@ public class FormulaActivityListAdapter extends BaseListDataRecyclerViewAdapter<
                     qualityStartTv.setText(context.getResources().getString(R.string.wom_advance_release));
                 }
                 // 调整
-                if (WomConstant.SystemCode.BASE_DEAL_ADJUST.equals(data.getTaskActiveId().getActiveBatchState().getDealType().id)){
+                if (WomConstant.SystemCode.BASE_DEAL_ADJUST.equals(data.getActiveBatchState().getDealType().id)){
                     adjustLl.setVisibility(View.VISIBLE);
                 }
 
