@@ -96,6 +96,15 @@ public class WaitPutinRecordEntity extends BaseEntity {
 
     private String checkState; // 检验状态
     private String checkResult; // 检验结论
+    private TaskActiveEntity.ActBatStateEntity activeBatchState;
+
+    public TaskActiveEntity.ActBatStateEntity getActiveBatchState() {
+        return activeBatchState;
+    }
+
+    public void setActiveBatchState(TaskActiveEntity.ActBatStateEntity activeBatchState) {
+        this.activeBatchState = activeBatchState;
+    }
 
     public String getCheckState() {
         return checkState;
