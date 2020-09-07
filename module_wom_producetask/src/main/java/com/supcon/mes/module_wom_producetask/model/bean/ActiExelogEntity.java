@@ -16,13 +16,11 @@ public class ActiExelogEntity extends BaseEntity {
     public String activeName;//活动名称
     public Long actEndTime;//活动结束时间
     public Long actStartTime;//活动开始时间
-<<<<<<< HEAD
-    public BaseIdValueEntity activeType;//活动类型
-    public Long actlongTime;//活动时长
-=======
+
+
     public SystemCodeEntity activeType;//活动类型
     public BigDecimal actlongTime;//执行时长(分)
->>>>>>> 50920f7... 检验放行、调整
+
     public Long actualNum;//实际数量
     public String beforeNum;//前重
     public String afterNum;//后重
@@ -44,16 +42,9 @@ public class ActiExelogEntity extends BaseEntity {
     public boolean isFinish;
     public TaskActiveEntity taskActiveId;
     private SystemCodeEntity runState;              // 活动执行状态
+
     public Long getId() {
         return id;
-    }
-
-    public TaskActiveEntity getTaskActiveId() {
-        return taskActiveId;
-    }
-
-    public void setTaskActiveId(TaskActiveEntity taskActiveId) {
-        this.taskActiveId = taskActiveId;
     }
 
     public void setId(Long id) {
@@ -84,19 +75,15 @@ public class ActiExelogEntity extends BaseEntity {
         this.actStartTime = actStartTime;
     }
 
-<<<<<<< HEAD
-    public BaseIdValueEntity getActiveType() {
+    public SystemCodeEntity getActiveType() {
         return activeType;
     }
 
-    public void setActiveType(BaseIdValueEntity activeType) {
+    public void setActiveType(SystemCodeEntity activeType) {
         this.activeType = activeType;
     }
 
-    public Long getActlongTime() {
-=======
     public BigDecimal getActlongTime() {
->>>>>>> 50920f7... 检验放行、调整
         return actlongTime;
     }
 
@@ -256,17 +243,15 @@ public class ActiExelogEntity extends BaseEntity {
         isFinish = finish;
     }
 
-    public Boolean getFinish() {
-        return isFinish;
+    public TaskActiveEntity getTaskActiveId() {
+        return taskActiveId;
     }
 
-    public void setFinish(Boolean finish) {
-        isFinish = finish;
+    public void setTaskActiveId(TaskActiveEntity taskActiveId) {
+        this.taskActiveId = taskActiveId;
     }
 
     public SystemCodeEntity getRunState() {
-        if (runState==null)
-            runState=new SystemCodeEntity();
         return runState;
     }
 

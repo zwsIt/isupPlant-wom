@@ -139,8 +139,7 @@ public interface NetworkService {
 
     @POST("/msService/WOM/produceTask/actiExelog/activeExeLogList-query")
     Flowable<ActiExelogListEntity> listActivityExeLog(@Body Map<String,Object> params);
-<<<<<<< HEAD
-=======
+
 
     /**
      * 调整活动：发起请检
@@ -150,5 +149,4 @@ public interface NetworkService {
     @GET("/msService/WOM/produceTask/produceTask/adjustFinish")
     Flowable<BAP5CommonEntity> adjustFinish(@Query("ajustActiveId") Long activeId);
 
->>>>>>> 50920f7... 检验放行、调整
 }

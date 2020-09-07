@@ -16,7 +16,6 @@ import com.supcon.common.view.listener.OnChildViewClickListener;
 import com.supcon.mes.mbap.view.CustomEditText;
 import com.supcon.mes.mbap.view.CustomTextView;
 import com.supcon.mes.middleware.constant.Constant;
-import com.supcon.mes.module_wom_producetask.IntentRouter;
 import com.supcon.mes.module_wom_producetask.R;
 import com.supcon.mes.module_wom_producetask.model.bean.PutInDetailEntity;
 

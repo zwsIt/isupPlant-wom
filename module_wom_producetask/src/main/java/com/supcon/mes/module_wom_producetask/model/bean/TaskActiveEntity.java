@@ -495,7 +495,7 @@ public class TaskActiveEntity extends BaseEntity {
         }
     }
 
-<<<<<<< HEAD
+
     public String getBatchCode() {
         return batchCode;
     }
@@ -503,7 +503,7 @@ public class TaskActiveEntity extends BaseEntity {
     public void setBatchCode(String batchCode) {
         this.batchCode = batchCode;
     }
-=======
+
     /**
      * 活动与批状态
      */
@@ -585,5 +585,5 @@ public class TaskActiveEntity extends BaseEntity {
         }
     }
 
->>>>>>> 50920f7... 检验放行、调整
+
 }

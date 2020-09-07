@@ -22,7 +22,6 @@ import com.supcon.mes.middleware.model.bean.CommonBAPListEntity;
 import com.supcon.mes.middleware.model.event.RefreshEvent;
 import com.supcon.mes.middleware.util.EmptyAdapterHelper;
 import com.supcon.mes.middleware.util.ErrorMsgHelper;
-import com.supcon.mes.module_wom_producetask.IntentRouter;
 import com.supcon.mes.module_wom_producetask.R;
 import com.supcon.mes.module_wom_producetask.constant.WomConstant;
 import com.supcon.mes.module_wom_producetask.model.api.ActivityOperateAPI;
