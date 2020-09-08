@@ -71,7 +71,7 @@ import io.reactivex.functions.Consumer;
  */
 @Router(value = Constant.Router.WOM_ADJUST_ACTIVITY_LIST)
 @Presenter(value = {StartQualityPresenter.class, WaitPutinRecordPresenter.class, ActivityOperatePresenter.class})
-public class AdjustActivityListActivity extends BaseRefreshRecyclerActivity<WaitPutinRecordEntity> implements WaitPutinRecordsListContract.View, StartQualityContract.View{
+public class AdjustActivityListActivity extends BaseRefreshRecyclerActivity<WaitPutinRecordEntity> implements WaitPutinRecordsListContract.View, StartQualityContract.View,ActivityOperateContract.View{
 
     @BindByTag("contentView")
     RecyclerView contentView;
@@ -277,6 +277,17 @@ public class AdjustActivityListActivity extends BaseRefreshRecyclerActivity<Wait
 
     @Override
     public void startQualityFailed(String errorMsg) {
+        onLoadFailed(ErrorMsgHelper.msgParse(errorMsg));
+    }
+
+    @Override
+    public void operateActivitySuccess(BAP5CommonEntity entity) {
+        onLoadSuccess(context.getResources().getString(R.string.wom_dealt_success));
+        refreshListController.refreshBegin();
+    }
+
+    @Override
+    public void operateActivityFailed(String errorMsg) {
         onLoadFailed(ErrorMsgHelper.msgParse(errorMsg));
     }
 }

@@ -34,43 +34,20 @@
             android:tag="activityTypeTv"
             android:textStyle="bold"
             android:textColor="@color/dark_text"
-            android:text="@string/wom_check" />
+            android:text="@string/wom_routine" />
     </LinearLayout>
     <include layout="@layout/ly_line_light"/>
-    <RelativeLayout
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:gravity="center_vertical"
         android:padding="@dimen/dp_10">
         <LinearLayout
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_toStartOf="@+id/checkStartTv"
+            android:layout_weight="1"
             android:orientation="vertical">
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center_vertical"
-                android:orientation="horizontal">
-                <TextView
-                    android:layout_width="80dp"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:gravity="center_vertical"
-                    android:text="@string/wom_sequence"
-                    android:textColor="@color/titleTextColor"
-                    android:drawableStart="@drawable/wom_ic_num"
-                    android:drawablePadding="@dimen/dp_5"/>
-                <com.supcon.mes.mbap.view.CustomTextView
-                    android:layout_width="match_parent"
-                    android:layout_height="@dimen/dp_36"
-                    android:id="@+id/sequenceCustomTv"
-                    android:tag="sequenceCustomTv"
-                    app:key_width="0dp"
-                    app:content_size="15"
-                    app:content_color="@color/dark_text"/>
-            </LinearLayout>
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -106,6 +83,29 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
                     android:gravity="center_vertical"
+                    android:text="@string/wom_quality_sum"
+                    android:textColor="@color/titleTextColor"
+                    android:drawableStart="@drawable/ic_amount"
+                    android:drawablePadding="@dimen/dp_5"/>
+                <com.supcon.mes.mbap.view.CustomTextView
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/dp_36"
+                    android:id="@+id/qualityTimes"
+                    android:tag="qualityTimes"
+                    app:key_width="0dp"
+                    app:content_size="15"
+                    app:content_color="@color/dark_text"/>
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+                <TextView
+                    android:layout_width="80dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:gravity="center_vertical"
                     android:text="@string/wom_time"
                     android:textColor="@color/titleTextColor"
                     android:drawableStart="@drawable/ic_time"
@@ -120,29 +120,12 @@
                     app:content_color="@color/dark_text"/>
             </LinearLayout>
         </LinearLayout>
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
-            android:id="@+id/intoIv"
-            android:tag="intoIv"
-            android:src="@drawable/ic_into"
-            android:layout_marginStart="@dimen/dp_10"
-            android:visibility="gone"/>
         <TextView
-            android:id="@+id/checkStartTv"
+            android:id="@+id/routineStartTv"
             style="@style/operateBtnStyle"
             android:background="@drawable/wom_sh_start_bg"
             android:layout_height="@dimen/dp_25"
-            android:layout_alignParentEnd="true"
-            android:layout_centerVertical="true"
-            android:tag="checkStartTv"
+            android:tag="routineStartTv"
             android:text="@string/wom_start" />
-<!--        <ImageView-->
-<!--            android:id="@+id/intoIv"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:tag="intoIv"-->
-<!--            android:layout_width="wrap_content"-->
-<!--            android:src="@drawable/ic_into"/>-->
-    </RelativeLayout>
+    </LinearLayout>
 </LinearLayout>

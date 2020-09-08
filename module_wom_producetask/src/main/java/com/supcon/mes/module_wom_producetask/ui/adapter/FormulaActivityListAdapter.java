@@ -179,6 +179,8 @@ public class FormulaActivityListAdapter extends BaseListDataRecyclerViewAdapter<
         CustomTextView timeCustomTv;
         @BindByTag("checkStartTv")
         TextView checkStartTv;
+        @BindByTag("intoIv")
+        ImageView intoIv;
 
         public CheckItemViewHolder(Context context) {
             super(context);
@@ -239,6 +241,9 @@ public class FormulaActivityListAdapter extends BaseListDataRecyclerViewAdapter<
             } else {
                 checkStartTv.setText(context.getResources().getString(R.string.wom_end));
                 checkStartTv.setBackgroundResource(R.drawable.wom_sh_end_bg);
+                if (!data.getProcReportId().getDetailsIsNull()) {
+                    intoIv.setVisibility(View.VISIBLE);
+                }
             }
         }
     }
@@ -531,7 +536,7 @@ public class FormulaActivityListAdapter extends BaseListDataRecyclerViewAdapter<
         protected void initListener() {
             super.initListener();
             RxView.clicks(itemView).throttleFirst(200, TimeUnit.MILLISECONDS)
-                    .filter(o -> WomConstant.SystemCode.BASE_DEAL_ADJUST.equals(getItem(getAdapterPosition()).getTaskActiveId().getActiveBatchState().getDealType().id))
+                    .filter(o -> WomConstant.SystemCode.BASE_DEAL_ADJUST.equals(getItem(getAdapterPosition()).getActiveBatchState().getDealType().id))
                     .subscribe(o -> {
                         // 调整
                         Bundle bundle = new Bundle();
@@ -547,7 +552,7 @@ public class FormulaActivityListAdapter extends BaseListDataRecyclerViewAdapter<
 
         @Override
         protected void update(WaitPutinRecordEntity data) {
-            activityNameTv.setText(data.getActiveName());
+            activityNameTv.setText(TextUtils.isEmpty(data.getTaskActiveId().getMaterialId().getName()) ? data.getActiveName() : data.getTaskActiveId().getMaterialId().getName());
             activityTypeTv.setText(data.getTaskActiveId().getActiveType().value);
             sequenceCustomTv.setContent(data.getTaskActiveId().getExecSort());
             factoryModelUnitCustomTv.setContent(data.getTaskProcessId().getEquipmentId().getName());

@@ -382,6 +382,8 @@ public class TemporaryActivityListAdapter extends BaseListDataRecyclerViewAdapte
         TextView activityTypeTv;
         @BindByTag("factoryModelUnitCustomTv")
         CustomTextView factoryModelUnitCustomTv;
+        @BindByTag("qualityTimes")
+        CustomTextView qualityTimes;
         @BindByTag("timeCustomTv")
         CustomTextView timeCustomTv;
         @BindByTag("routineStartTv")
@@ -393,7 +395,7 @@ public class TemporaryActivityListAdapter extends BaseListDataRecyclerViewAdapte
 
         @Override
         protected int layoutId() {
-            return R.layout.wom_item_temporary_routine;
+            return R.layout.wom_item_temporary_quality;
         }
 
         @SuppressLint("CheckResult")
@@ -419,6 +421,7 @@ public class TemporaryActivityListAdapter extends BaseListDataRecyclerViewAdapte
             activityNameTv.setText(data.getActiveName());
             activityTypeTv.setText(data.getTaskActiveId().getActiveType().value);
             factoryModelUnitCustomTv.setContent(data.getTaskProcessId().getEquipmentId().getName());
+            qualityTimes.setContent(String.valueOf(data.getTaskActiveId().getCheckTimes()));
             timeCustomTv.setContent(data.getActualStartTime() == null ? "" : DateUtil.dateTimeFormat(data.getActualStartTime()));
             if (WomConstant.SystemCode.EXE_STATE_WAIT.equals(data.getExeState().id)){
                 routineStartTv.setVisibility(View.VISIBLE);
