@@ -69,6 +69,7 @@ public class WaitPutinRecordEntity extends BaseEntity {
     private Long createTime;
     private SystemCodeEntity exeState;  // 执行状态
     private SystemCodeEntity exeSystem; // 执行系统
+    private ActiExelogEntity actiExelog;
     private Long id;
     @SerializedName(value = "isAlige")
     private boolean agile;            // 灵活活动
@@ -99,6 +100,14 @@ public class WaitPutinRecordEntity extends BaseEntity {
     private String checkState; // 检验状态
     private String checkResult; // 检验结论
     private TaskActiveEntity.ActBatStateEntity activeBatchState;
+
+    public ActiExelogEntity getActiExelog() {
+        return actiExelog;
+    }
+
+    public void setActiExelog(ActiExelogEntity actiExelog) {
+        this.actiExelog = actiExelog;
+    }
 
     public TaskActiveEntity.ActBatStateEntity getActiveBatchState() {
         return activeBatchState;

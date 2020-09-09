@@ -106,13 +106,13 @@ public class TaskActiveEntity extends BaseEntity {
     private boolean isPassCheck; // 是否放行检验
     private boolean isRelease; // 允许提前放行
     private String releaseConditions; // 放行条件
-    private int checkTimes; // 检验次数
+    private Integer checkTimes; // 检验次数
 
-    public int getCheckTimes() {
+    public Integer getCheckTimes() {
         return checkTimes;
     }
 
-    public void setCheckTimes(int checkTimes) {
+    public void setCheckTimes(Integer checkTimes) {
         this.checkTimes = checkTimes;
     }
 
