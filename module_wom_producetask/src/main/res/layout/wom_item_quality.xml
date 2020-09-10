@@ -34,7 +34,7 @@
             android:tag="activityTypeTv"
             android:textStyle="bold"
             android:textColor="@color/dark_text"
-            android:text="@string/wom_routine" />
+            android:text="@string/wom_quality" />
     </LinearLayout>
     <include layout="@layout/ly_line_light"/>
     <RelativeLayout

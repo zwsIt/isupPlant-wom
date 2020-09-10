@@ -220,7 +220,7 @@ public class CommonProduceTaskListFragment extends BaseRefreshRecyclerFragment<W
                     updateCurrentFactory();
                     break;
                 case "dischargeTv":
-                    paramsList.add(mWaitPutinRecordEntity.getTaskId().getFeedCondition() == null? "" : mWaitPutinRecordEntity.getTaskId().getFeedCondition());
+                    paramsList.add(mWaitPutinRecordEntity.getTaskId().getFeedCondition() == null? context.getResources().getString(R.string.wom_start_predischarge) : mWaitPutinRecordEntity.getTaskId().getFeedCondition());
                     paramsList.add("discharge");
                     showOperateConfirmDialog(paramsList, mWaitPutinRecordEntity, true);
                     break;
@@ -289,7 +289,7 @@ public class CommonProduceTaskListFragment extends BaseRefreshRecyclerFragment<W
         Objects.requireNonNull(customDialog.getDialog().getWindow()).setBackgroundDrawableResource(R.color.transparent);
         if (isTask) {
             if ("discharge".equals(paramsList.get(1))){ // "提前放料"
-                customDialog.bindView(R.id.tipContentTv, paramsList.get(0) + context.getResources().getString(R.string.wom_start_predischarge))
+                customDialog.bindView(R.id.tipContentTv, String.valueOf(paramsList.get(0)))
                         .bindClickListener(R.id.cancelTv, null, true)
                         .bindClickListener(R.id.confirmTv, v -> {
                             onLoading(getString(R.string.wom_dealing));

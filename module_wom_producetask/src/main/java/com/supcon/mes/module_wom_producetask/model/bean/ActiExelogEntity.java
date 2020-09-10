@@ -14,13 +14,13 @@ import java.math.BigDecimal;
 public class ActiExelogEntity extends BaseEntity {
     public Long id;
     public String name;//活动名称
-    public Long actEndTime;//活动结束时间
-    public Long actStartTime;//活动开始时间
+    private Long actEndTime;//活动结束时间
+    private Long actStartTime;//活动开始时间
     public SystemCodeEntity activeType;//活动类型
-    public BigDecimal actlongTime;//执行时长(分)
-    public Long actualNum;//实际数量
-    public String beforeNum;//前重
-    public String afterNum;//后重
+    private BigDecimal actlongTime;//执行时长(分)
+    private BigDecimal actualNum;//实际数量
+    private BigDecimal beforeNum;//前重
+    private BigDecimal afterNum;//后重
     public String checkResult;//检验结果
     public String checkState;//检验状态
     public SystemCodeEntity exeSystem;//执行系统
@@ -91,27 +91,27 @@ public class ActiExelogEntity extends BaseEntity {
         this.actlongTime = actlongTime;
     }
 
-    public Long getActualNum() {
+    public BigDecimal getActualNum() {
         return actualNum;
     }
 
-    public void setActualNum(Long actualNum) {
+    public void setActualNum(BigDecimal actualNum) {
         this.actualNum = actualNum;
     }
 
-    public String getBeforeNum() {
+    public BigDecimal getBeforeNum() {
         return beforeNum;
     }
 
-    public void setBeforeNum(String beforeNum) {
+    public void setBeforeNum(BigDecimal beforeNum) {
         this.beforeNum = beforeNum;
     }
 
-    public String getAfterNum() {
+    public BigDecimal getAfterNum() {
         return afterNum;
     }
 
-    public void setAfterNum(String afterNum) {
+    public void setAfterNum(BigDecimal afterNum) {
         this.afterNum = afterNum;
     }
 

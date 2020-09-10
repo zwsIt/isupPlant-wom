@@ -26,6 +26,7 @@ import com.supcon.mes.module_wom_producetask.model.bean.WaitPutinRecordEntity;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import io.reactivex.functions.Consumer;
 import io.reactivex.functions.Predicate;
 
 /**
@@ -537,13 +538,27 @@ public class FormulaActivityListAdapter extends BaseListDataRecyclerViewAdapter<
             super.initListener();
             RxView.clicks(itemView).throttleFirst(200, TimeUnit.MILLISECONDS)
                     .filter(o -> WomConstant.SystemCode.BASE_DEAL_ADJUST.equals(getItem(getAdapterPosition()).getActiveBatchState().getDealType().id))
-                    .subscribe(o -> {
-                        // 调整
-                        Bundle bundle = new Bundle();
-                        bundle.putSerializable(Constant.IntentKey.WAIT_PUT_RECORD, getItem(getAdapterPosition()));
-                        IntentRouter.go(context, Constant.Router.WOM_ADJUST_ACTIVITY_LIST, bundle);
+                    .subscribe(new Consumer<Object>() {
+                        @Override
+                        public void accept(Object o) throws Exception {
+                            // 调整
+                            Bundle bundle = new Bundle();
+                            bundle.putSerializable(Constant.IntentKey.WAIT_PUT_RECORD, getItem(getAdapterPosition()));
+                            IntentRouter.go(context, Constant.Router.WOM_ADJUST_ACTIVITY_LIST, bundle);
+                        }
                     });
             RxView.clicks(qualityStartTv).throttleFirst(100, TimeUnit.MILLISECONDS)
+                    .filter(new Predicate<Object>() {
+                        @Override
+                        public boolean test(Object o) throws Exception {
+                            // 调整
+                            if (WomConstant.SystemCode.BASE_DEAL_ADJUST.equals(getItem(getAdapterPosition()).getActiveBatchState().getDealType().id)){
+                                ToastUtils.show(context, context.getResources().getString(R.string.wom_forbidden_pass_if_adjust));
+                                return false;
+                            }
+                            return true;
+                        }
+                    })
                     .subscribe(o -> {
                         WaitPutinRecordEntity entity = getItem(getAdapterPosition());
                         onItemChildViewClick(qualityStartTv, getAdapterPosition(), entity);
@@ -557,7 +572,8 @@ public class FormulaActivityListAdapter extends BaseListDataRecyclerViewAdapter<
             sequenceCustomTv.setContent(data.getTaskActiveId().getExecSort());
             factoryModelUnitCustomTv.setContent(data.getTaskProcessId().getEquipmentId().getName());
             timeCustomTv.setContent(data.getActualStartTime() == null ? "" : DateUtil.dateTimeFormat(data.getActualStartTime()));
-            qualityTimes.setContent(String.valueOf(data.getTaskActiveId().getCheckTimes()));
+            // 检验次数 + 检验状态
+            qualityTimes.setContent(data.getTaskActiveId().getCheckTimes() + "          " + (TextUtils.isEmpty(data.getCheckState()) ? data.getTaskActiveId().getCheckState() : data.getCheckState()));
 //            routineStartTv.setEnabled(true);
             qualityStartTv.setVisibility(View.GONE);
             adjustLl.setVisibility(View.GONE);
@@ -574,7 +590,7 @@ public class FormulaActivityListAdapter extends BaseListDataRecyclerViewAdapter<
                 }
             } else {
                 itemStateTv.setVisibility(View.VISIBLE);
-                itemStateTv.setText(TextUtils.isEmpty(data.getCheckState()) ? data./*getTaskActiveId().*/getCheckState() : data.getCheckState()); // 检验状态
+                itemStateTv.setText(TextUtils.isEmpty(data.getCheckResult()) ? data.getTaskActiveId().getCheckResult() : data.getCheckResult()); // 检验结论
 
                 // 是否完工检验且允许提前放行
                 if (data.getTaskActiveId().getFinalInspection() && data.getTaskActiveId().isRelease()){

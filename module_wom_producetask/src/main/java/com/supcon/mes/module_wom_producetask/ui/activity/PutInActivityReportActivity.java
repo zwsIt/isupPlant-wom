@@ -316,7 +316,7 @@ public class PutInActivityReportActivity extends BaseRefreshRecyclerActivity<Put
             return true;
         }
         for (PutInDetailEntity putInDetailEntity : mPutInReportDetailAdapter.getList()){
-            if (TextUtils.isEmpty(putInDetailEntity.getMaterialBatchNum())){
+            if (WomConstant.SystemCode.MATERIAL_BATCH_02.equals(mWaitPutinRecordEntity.getTaskActiveId().getMaterialId().getIsBatch()) && TextUtils.isEmpty(putInDetailEntity.getMaterialBatchNum())){
                 ToastUtils.show(context, context.getResources().getString(R.string.wom_di) + (mPutInReportDetailAdapter.getList().indexOf(putInDetailEntity) + 1) + context.getResources().getString(R.string.wom_please_write_material_batch));
                 return true;
             }

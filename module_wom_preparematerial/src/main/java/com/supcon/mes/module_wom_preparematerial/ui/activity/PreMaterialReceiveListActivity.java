@@ -224,8 +224,11 @@ public class PreMaterialReceiveListActivity extends BaseRefreshRecyclerActivity<
                         IntentRouter.go(context, Constant.Router.CONTACT_SELECT, bundle);
                         break;
                     case "itemPreMaterialReceiveStoreLocation":
+                        if (action == 0){
+                            mPreMaterialEntity.toStoreId=null;
+                        }
                         bundle.putLong(Constant.IntentKey.WARE_ID, mPreMaterialEntity.toWareId.getId());
-                        com.supcon.mes.module_wom_preparematerial.IntentRouter.go(context, Constant.Router.STORE_SET_LIST_REF, bundle);
+                        IntentRouter.go(context, Constant.Router.STORE_SET_LIST_REF, bundle);
                         break;
                         default:
 
@@ -239,11 +242,14 @@ public class PreMaterialReceiveListActivity extends BaseRefreshRecyclerActivity<
         List<PreMaterialSubmitEntity> preMaterialEntities = new ArrayList<>();
         for(PreMaterialEntity preMaterialEntity : list){
             if(preMaterialEntity.isChecked){
+                if(preMaterialEntity.toStoreId==null || preMaterialEntity.toStoreId.getId()==null){
+                    ToastUtils.show(context, context.getResources().getString(R.string.wom_store_forbidden_null));
+                    return;
+                }
                 if(preMaterialEntity.receiveStaff==null || preMaterialEntity.receiveStaff.name==null){
                     ToastUtils.show(context, context.getResources().getString(R.string.wom_receiver_forbidden_null));
                     return;
                 }
-
 
                 if(preMaterialEntity.receiveState==null){
                     ToastUtils.show(context, context.getResources().getString(R.string.wom_receivetype_forbidden_null));

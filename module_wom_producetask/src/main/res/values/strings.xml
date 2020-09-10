@@ -119,7 +119,10 @@
     <string name="wom_confirm_tip">确认</string>
     <string name="wom_process_operate">该工序操作？</string>
     <string name="wom_task_operate">该工单操作？</string>
-    <string name="wom_start_predischarge">，是否开启提前放料操作？</string>
+    <string name="wom_start_predischarge">是否开启提前放料操作？</string>
     <string name="wom_setting_factory">请先设置工作单元</string>
     <string name="wom_no_process_view">当前工单状态下，无工序查看</string>
+    <string name="wom_forbidden_pass_if_adjust">调整阶段，不允许提前放行</string>
+    <string name="wom_advance_release_sure">确认提前放行操作？</string>
+    <string name="wom_quality">检验</string>
 </resources>

@@ -146,15 +146,19 @@ public class FormulaActivityListFragment extends BaseRefreshRecyclerFragment<Wai
                     .bindClickListener(R.id.cancelTv, null, true)
                     .bindClickListener(R.id.confirmTv, v -> {
                         onLoading(context.getResources().getString(R.string.wom_dealing));
-                        presenterRouter.create(ActivityOperateAPI.class).operateActivity(mWaitPutinRecordEntity.getId(), false);
+                        presenterRouter.create(ActivityOperateAPI.class).operateActivity(mWaitPutinRecordEntity.getId(),null,  false);
                     }, true)
                     .show();
         } else {
-            customDialog.bindView(R.id.tipContentTv, TextUtils.isEmpty(checkTip) ? context.getResources().getString(R.string.wom_end_activity_operate) : checkTip)
-                    .bindClickListener(R.id.cancelTv, null, true)
+            if (WomConstant.SystemCode.RM_activeType_QUALITY.equals(mWaitPutinRecordEntity.getTaskActiveId().getActiveType().id)){
+                customDialog.bindView(R.id.tipContentTv, TextUtils.isEmpty(checkTip) ? context.getResources().getString(R.string.wom_advance_release_sure) : checkTip);
+            }else {
+                customDialog.bindView(R.id.tipContentTv, TextUtils.isEmpty(checkTip) ? context.getResources().getString(R.string.wom_end_activity_operate) : checkTip);
+            }
+            customDialog.bindClickListener(R.id.cancelTv, null, true)
                     .bindClickListener(R.id.confirmTv, v -> {
                         onLoading(context.getResources().getString(R.string.wom_dealing));
-                        presenterRouter.create(ActivityOperateAPI.class).operateActivity(mWaitPutinRecordEntity.getId(), true);
+                        presenterRouter.create(ActivityOperateAPI.class).operateActivity(mWaitPutinRecordEntity.getId(), null, true);
                     }, true)
                     .show();
         }

@@ -327,7 +327,7 @@ public class OutputActivityReportActivity extends BaseRefreshRecyclerActivity<Ou
             return true;
         }
         for (OutputDetailEntity outputDetailEntity : mOutputReportDetailAdapter.getList()) {
-            if (TextUtils.isEmpty(outputDetailEntity.getMaterialBatchNum())) {
+            if (WomConstant.SystemCode.MATERIAL_BATCH_02.equals(mWaitPutinRecordEntity.getTaskActiveId().getMaterialId().getIsBatch()) && TextUtils.isEmpty(outputDetailEntity.getMaterialBatchNum())) {
                 ToastUtils.show(context, context.getResources().getString(R.string.wom_di) + (mOutputReportDetailAdapter.getList().indexOf(outputDetailEntity) + 1) + context.getResources().getString(R.string.wom_please_write_material_batch));
                 return true;
             }

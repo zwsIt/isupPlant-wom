@@ -170,7 +170,7 @@ public class SimpleActivityListActivity extends BaseRefreshRecyclerActivity<Wait
                     .bindClickListener(R.id.cancelTv, null, true)
                     .bindClickListener(R.id.confirmTv, v -> {
                         onLoading(context.getResources().getString(R.string.wom_dealing));
-                        presenterRouter.create(ActivityOperateAPI.class).operateActivity(mWaitPutinRecordEntity.getId(), false);
+                        presenterRouter.create(ActivityOperateAPI.class).operateActivity(mWaitPutinRecordEntity.getId(), null, false);
                     }, true)
                     .show();
         } else {
@@ -178,7 +178,7 @@ public class SimpleActivityListActivity extends BaseRefreshRecyclerActivity<Wait
                     .bindClickListener(R.id.cancelTv, null, true)
                     .bindClickListener(R.id.confirmTv, v -> {
                         onLoading(context.getResources().getString(R.string.wom_dealing));
-                        presenterRouter.create(ActivityOperateAPI.class).operateActivity(mWaitPutinRecordEntity.getId(), true);
+                        presenterRouter.create(ActivityOperateAPI.class).operateActivity(mWaitPutinRecordEntity.getId(),null, true);
                     }, true)
                     .show();
         }

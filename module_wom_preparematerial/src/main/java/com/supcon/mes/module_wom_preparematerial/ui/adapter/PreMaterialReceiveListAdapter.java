@@ -27,6 +27,7 @@ import com.supcon.common.view.util.DisplayUtil;
 import com.supcon.common.view.util.ToastUtils;
 import com.supcon.mes.mbap.constant.ViewAction;
 import com.supcon.mes.mbap.utils.GridSpaceItemDecoration;
+import com.supcon.mes.mbap.utils.GsonUtil;
 import com.supcon.mes.mbap.utils.TextHelper;
 import com.supcon.mes.mbap.view.CustomEditText;
 import com.supcon.mes.mbap.view.CustomRoundTextImageView;
@@ -34,6 +35,7 @@ import com.supcon.mes.mbap.view.CustomTextView;
 import com.supcon.mes.middleware.SupPlantApplication;
 import com.supcon.mes.middleware.constant.Constant;
 import com.supcon.mes.middleware.model.bean.ObjectEntity;
+import com.supcon.mes.middleware.model.bean.wom.StoreSetEntity;
 import com.supcon.mes.middleware.util.SystemCodeManager;
 import com.supcon.mes.module_wom_preparematerial.IntentRouter;
 import com.supcon.mes.module_wom_preparematerial.R;
@@ -203,8 +205,25 @@ public class PreMaterialReceiveListAdapter extends BaseListDataRecyclerViewAdapt
                     for(String key: receiveStates.keySet()){
                         if(value.equals(receiveStates.get(key))){
                             entity.receiveState = SystemCodeManager.getInstance().getSystemCodeEntity(key);
+
+                            // 还原
+//                            if(entity.toWareId!=null && entity.toWareId.getName()!=null){
+//                                StringBuilder fromStr = new StringBuilder(entity.toWareId.getName());
+//                                fromStr.append("/");
+//                                if(entity.toStoreId!=null && entity.toStoreId.getName()!=null){
+//                                    fromStr.append(entity.toStoreId.getName());
+//                                }
+//                                else{
+//                                    fromStr.append("--");
+//                                }
+//                                itemPreMaterialReceiveStoreLocation.setContent(fromStr.toString());
+//                            } else{
+//                                itemPreMaterialReceiveStoreLocation.setContent("--/--");
+//                            }
+
+
                             itemPreMaterialReceiveStoreLocation.setEditable(true);
-                            itemPreMaterialReceiveStoreLocation.findViewById(R.id.customDeleteIcon).setVisibility(View.GONE);
+                            itemPreMaterialReceiveStoreLocation.findViewById(R.id.customDeleteIcon).setVisibility(View.VISIBLE);
                             if("WOM_receiveState/partReceive".equals(key)){
                                 itemPreMaterialReceiveLine.setVisibility(View.VISIBLE);
                                 itemPreMaterialReceiveReason.setVisibility(View.VISIBLE);
@@ -216,7 +235,6 @@ public class PreMaterialReceiveListAdapter extends BaseListDataRecyclerViewAdapt
                             else if("WOM_receiveState/reject".equals(key)){
                                 itemPreMaterialReceiveStoreLocation.setEditable(false);
                                 itemPreMaterialReceiveStoreLocation.findViewById(R.id.customDeleteIcon).setVisibility(View.GONE);
-
 
                                 itemPreMaterialReceiveLine.setVisibility(View.VISIBLE);
                                 itemPreMaterialReceiveReason.setVisibility(View.GONE);
@@ -377,6 +395,10 @@ public class PreMaterialReceiveListAdapter extends BaseListDataRecyclerViewAdapt
                 itemPreMaterialReceiveStoreLocation.setContent(fromStr.toString());
             } else{
                 itemPreMaterialReceiveStoreLocation.setContent("--/--");
+            }
+
+            if (data.toStoreIdInit == null && data.toStoreId != null){
+                data.toStoreIdInit = GsonUtil.gsonToBean(data.toStoreId.toString(), StoreSetEntity.class);
             }
 
             itemPreMaterialReceiveBatchNum.setText(data.materialBatchNum!=null? data.materialBatchNum :"--");

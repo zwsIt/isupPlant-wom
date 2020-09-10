@@ -53,6 +53,12 @@ public interface WomConstant {
 
         // 批次处理方式（基础模型-活动与批状态）
         String BASE_DEAL_ADJUST = "BaseSet_dealType/adjust"; // 调整
+
+        // 物料批启用
+        String MATERIAL_BATCH_01 = "BaseSet_isBatch/nobatch"; // 不启用
+        String MATERIAL_BATCH_02 = "BaseSet_isBatch/batch"; // 按批次
+        String MATERIAL_BATCH_03 = "BaseSet_isBatch/piece"; // 按件
+
     }
 
     /**

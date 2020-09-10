@@ -14,4 +14,5 @@
     <string name="wom_please_select_receive_type">请先选择接收类型</string>
     <string name="wom_part_receive_num_smaller_preparenum">部分接收时，“接收数量”应小于“备料数量”</string>
     <string name="wom_receive_num_smaller_preparenum">接收时，“接收数量”应小于“备料数量”</string>
+    <string name="wom_store_forbidden_null">货位不允许为空</string>
 </resources>

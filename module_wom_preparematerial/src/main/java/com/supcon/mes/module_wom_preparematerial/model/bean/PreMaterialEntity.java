@@ -1,5 +1,6 @@
 package com.supcon.mes.module_wom_preparematerial.model.bean;
 
+import com.google.gson.annotations.Expose;
 import com.supcon.common.com_http.BaseEntity;
 import com.supcon.mes.middleware.model.bean.ObjectEntity;
 import com.supcon.mes.middleware.model.bean.PendingEntity;
@@ -86,4 +87,7 @@ public class PreMaterialEntity extends BaseEntity {
     public ObjectEntity receiveStaff;
 
     public boolean isChecked;
+
+    @Expose
+    public StoreSetEntity toStoreIdInit; // 原始货位
 }
