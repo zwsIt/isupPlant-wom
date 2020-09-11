@@ -16,6 +16,7 @@ import com.supcon.common.view.util.ToastUtils;
 import com.supcon.mes.mbap.view.CustomEditText;
 import com.supcon.mes.mbap.view.CustomTextView;
 import com.supcon.mes.module_wom_producetask.R;
+import com.supcon.mes.module_wom_producetask.constant.WomConstant;
 import com.supcon.mes.module_wom_producetask.model.bean.PutInDetailEntity;
 
 import java.math.BigDecimal;
@@ -31,6 +32,7 @@ import io.reactivex.functions.Predicate;
 public class PutInReportDetailAdapter extends BaseListDataRecyclerViewAdapter<PutInDetailEntity> {
 
     private boolean batchPutInActivity; // 是否投配料活动
+    private boolean materialBatchNo; // 物料是否未启用批次
     public PutInReportDetailAdapter(Context context) {
         super(context);
     }
@@ -42,6 +44,10 @@ public class PutInReportDetailAdapter extends BaseListDataRecyclerViewAdapter<Pu
 
     public void setBatchPutInActivity(boolean b) {
         batchPutInActivity = b;
+    }
+
+    public void setMaterialBatchNo(boolean b) {
+        materialBatchNo = b;
     }
 
     /**
@@ -65,6 +71,8 @@ public class PutInReportDetailAdapter extends BaseListDataRecyclerViewAdapter<Pu
         CustomEditText numEt;
         @BindByTag("itemViewDelBtn")
         TextView itemViewDelBtn;
+        @BindByTag("materialBatchNumTv")
+        TextView materialBatchNumTv;
 
         public ReportViewHolder(Context context) {
             super(context,parent);
@@ -150,6 +158,18 @@ public class PutInReportDetailAdapter extends BaseListDataRecyclerViewAdapter<Pu
             numEt.setContent(data.getPutinNum() == null ? "" : String.valueOf(data.getPutinNum()));
             warehouseTv.setContent(data.getWareId() == null ? "" : data.getWareId().getName());
             storeSetTv.setContent(data.getStoreId() == null ? "" : data.getStoreId().getName());
+
+            if (batchPutInActivity){
+                if (WomConstant.SystemCode.MATERIAL_BATCH_02.equals(data.getMaterialId().getIsBatch().id)){
+                    materialBatchNumTv.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_batch_number,0,R.drawable.ic_necessary,0);
+                }else {
+                    materialBatchNumTv.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_batch_number,0,0,0);
+                }
+            }else {
+                if (materialBatchNo){
+                    materialBatchNumTv.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_batch_number,0,0,0);
+                }
+            }
         }
     }
 

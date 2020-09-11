@@ -96,7 +96,16 @@ public class WaitPutinRecordEntity extends BaseEntity {
 
     private String checkState; // 检验状态
     private String checkResult; // 检验结论
+    private int checkTimes; // 检验次数
     private TaskActiveEntity.ActBatStateEntity activeBatchState;
+
+    public int getCheckTimes() {
+        return checkTimes;
+    }
+
+    public void setCheckTimes(int checkTimes) {
+        this.checkTimes = checkTimes;
+    }
 
     public TaskActiveEntity.ActBatStateEntity getActiveBatchState() {
         return activeBatchState;

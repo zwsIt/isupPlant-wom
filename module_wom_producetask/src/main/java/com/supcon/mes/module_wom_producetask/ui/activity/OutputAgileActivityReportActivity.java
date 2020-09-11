@@ -154,7 +154,7 @@ public class OutputAgileActivityReportActivity extends BaseRefreshRecyclerActivi
         super.initView();
         StatusBarUtils.setWindowStatusBarColor(this, R.color.themeColor);
         titleText.setText(context.getResources().getString(R.string.wom_manual_agile_output_report));
-        rightBtn.setVisibility(View.VISIBLE);
+        rightBtn.setVisibility(View.GONE);
         rightBtn.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_top_scan));
         customListWidgetName.setText(context.getResources().getString(R.string.wom_produce_task_report_detail));
         customListWidgetEdit.setVisibility(View.GONE);

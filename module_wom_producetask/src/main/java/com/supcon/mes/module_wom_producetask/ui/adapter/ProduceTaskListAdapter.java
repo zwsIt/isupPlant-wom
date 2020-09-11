@@ -185,6 +185,7 @@ public class ProduceTaskListAdapter extends BaseListDataRecyclerViewAdapter<Wait
             }
 
             tvOperateLl.setVisibility(View.VISIBLE);
+            dischargeTv.setVisibility(View.GONE);
             if (WomConstant.SystemCode.EXE_STATE_WAIT.equals(data.getExeState().id)) { // 待执行
                 statusTv.setTextColor(context.getResources().getColor(R.color.status_orange));
 //                workNum.setVisibility(View.GONE);

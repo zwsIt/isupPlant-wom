@@ -140,7 +140,7 @@ public class ProduceTaskEndReportActivity extends BaseRefreshRecyclerActivity<Ou
         super.initView();
         StatusBarUtils.setWindowStatusBarColor(this,R.color.themeColor);
         titleText.setText(context.getResources().getString(R.string.wom_produce_task_end_report));
-        rightBtn.setVisibility(View.VISIBLE);
+        rightBtn.setVisibility(View.GONE);
         rightBtn.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_top_scan));
 
         productName.setContent(mWaitPutinRecordEntity.getProductId().getName());

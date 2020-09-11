@@ -159,6 +159,9 @@ public class OutputActivityReportActivity extends BaseRefreshRecyclerActivity<Ou
         });
         contentView.addOnItemTouchListener(new CustomSwipeLayout.OnSwipeItemTouchListener(context));
 
+        if (!WomConstant.SystemCode.MATERIAL_BATCH_02.equals(mWaitPutinRecordEntity.getTaskActiveId().getMaterialId().getIsBatch().id)){
+            mOutputReportDetailAdapter.setMaterialBatchNo(true);
+        }
 
     }
 
@@ -167,7 +170,7 @@ public class OutputActivityReportActivity extends BaseRefreshRecyclerActivity<Ou
         super.initView();
         StatusBarUtils.setWindowStatusBarColor(this, R.color.themeColor);
         titleText.setText(String.format("%s%s", mWaitPutinRecordEntity.getTaskActiveId().getActiveType().value, getString(R.string.wom_report)));
-        rightBtn.setVisibility(View.VISIBLE);
+        rightBtn.setVisibility(View.GONE);
         rightBtn.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_top_scan));
         customListWidgetName.setText(context.getResources().getString(R.string.wom_produce_task_report_detail));
         customListWidgetEdit.setVisibility(View.GONE);
@@ -327,7 +330,7 @@ public class OutputActivityReportActivity extends BaseRefreshRecyclerActivity<Ou
             return true;
         }
         for (OutputDetailEntity outputDetailEntity : mOutputReportDetailAdapter.getList()) {
-            if (WomConstant.SystemCode.MATERIAL_BATCH_02.equals(mWaitPutinRecordEntity.getTaskActiveId().getMaterialId().getIsBatch()) && TextUtils.isEmpty(outputDetailEntity.getMaterialBatchNum())) {
+            if (WomConstant.SystemCode.MATERIAL_BATCH_02.equals(mWaitPutinRecordEntity.getTaskActiveId().getMaterialId().getIsBatch().id) && TextUtils.isEmpty(outputDetailEntity.getMaterialBatchNum())) {
                 ToastUtils.show(context, context.getResources().getString(R.string.wom_di) + (mOutputReportDetailAdapter.getList().indexOf(outputDetailEntity) + 1) + context.getResources().getString(R.string.wom_please_write_material_batch));
                 return true;
             }

@@ -272,7 +272,9 @@ public class AdjustActivityListActivity extends BaseRefreshRecyclerActivity<Wait
     @Override
     public void startQualitySuccess(BAP5CommonEntity entity) {
         onLoadSuccess(context.getResources().getString(R.string.wom_dealt_success));
-        refreshListController.refreshBegin();
+//        refreshListController.refreshBegin();
+        EventBus.getDefault().post(new RefreshEvent());
+        finish();
     }
 
     @Override

@@ -573,12 +573,13 @@ public class FormulaActivityListAdapter extends BaseListDataRecyclerViewAdapter<
             factoryModelUnitCustomTv.setContent(data.getTaskProcessId().getEquipmentId().getName());
             timeCustomTv.setContent(data.getActualStartTime() == null ? "" : DateUtil.dateTimeFormat(data.getActualStartTime()));
             // 检验次数 + 检验状态
-            qualityTimes.setContent(data.getTaskActiveId().getCheckTimes() + "          " + (TextUtils.isEmpty(data.getCheckState()) ? data.getTaskActiveId().getCheckState() : data.getCheckState()));
+            qualityTimes.setContent(data.getCheckTimes() + "          "
+                    + (TextUtils.isEmpty(data.getCheckState()) ? (data.getTaskActiveId().getCheckState() == null ? "" : data.getTaskActiveId().getCheckState() ) : data.getCheckState()));
 //            routineStartTv.setEnabled(true);
             qualityStartTv.setVisibility(View.GONE);
             adjustLl.setVisibility(View.GONE);
+            itemStateTv.setVisibility(View.GONE);
             if (WomConstant.SystemCode.EXE_STATE_WAIT.equals(data.getExeState().id)) {
-                itemStateTv.setVisibility(View.GONE);
                 if (data.getTaskId().getBatchContral() != null && data.getTaskId().getBatchContral()) { // 批控
 //                    routineStartTv.setBackgroundResource(R.drawable.wom_sh_disable_bg);
 //                    routineStartTv.setText(context.getResources().getString(R.string.wom_end));
@@ -589,8 +590,10 @@ public class FormulaActivityListAdapter extends BaseListDataRecyclerViewAdapter<
                     qualityStartTv.setBackgroundResource(R.drawable.wom_sh_start_bg);
                 }
             } else {
-                itemStateTv.setVisibility(View.VISIBLE);
-                itemStateTv.setText(TextUtils.isEmpty(data.getCheckResult()) ? data.getTaskActiveId().getCheckResult() : data.getCheckResult()); // 检验结论
+                if (!TextUtils.isEmpty(data.getCheckResult()) || !TextUtils.isEmpty(data.getTaskActiveId().getCheckResult())){
+                    itemStateTv.setVisibility(View.VISIBLE);
+                    itemStateTv.setText(TextUtils.isEmpty(data.getCheckResult()) ? data.getTaskActiveId().getCheckResult() : data.getCheckResult()); // 检验结论
+                }
 
                 // 是否完工检验且允许提前放行
                 if (data.getTaskActiveId().getFinalInspection() && data.getTaskActiveId().isRelease()){

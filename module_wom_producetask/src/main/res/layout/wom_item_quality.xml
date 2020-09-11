@@ -185,6 +185,6 @@
             android:background="@drawable/wom_ic_seal"
             android:id="@+id/itemStateTv"
             android:tag="itemStateTv"
-            android:visibility="visible"/>
+            android:visibility="gone"/>
     </RelativeLayout>
 </LinearLayout>

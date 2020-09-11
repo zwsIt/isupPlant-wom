@@ -52,6 +52,8 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
                 android:gravity="center_vertical"
+                android:id="@+id/materialBatchNumTv"
+                android:tag="materialBatchNumTv"
                 android:paddingStart="@dimen/dp_10"
                 android:text="@string/wom_material_batch_num"
                 android:textColor="@color/titleTextColor"

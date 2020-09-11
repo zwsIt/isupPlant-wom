@@ -29,6 +29,7 @@ import io.reactivex.functions.Predicate;
  */
 public class OutputReportDetailAdapter extends BaseListDataRecyclerViewAdapter<OutputDetailEntity> {
 
+    private boolean materialBatchNo; // 物料是否未启用批次
     public OutputReportDetailAdapter(Context context) {
         super(context);
     }
@@ -36,6 +37,10 @@ public class OutputReportDetailAdapter extends BaseListDataRecyclerViewAdapter<O
     @Override
     protected BaseRecyclerViewHolder<OutputDetailEntity> getViewHolder(int viewType) {
         return new ReportViewHolder(context);
+    }
+
+    public void setMaterialBatchNo(boolean b) {
+        materialBatchNo = b;
     }
 
     /**
@@ -75,6 +80,9 @@ public class OutputReportDetailAdapter extends BaseListDataRecyclerViewAdapter<O
             preBatchNumTv.setText(context.getResources().getString(R.string.wom_material_batch_num));
             preNumTv.setText(context.getResources().getString(R.string.wom_output_num));
             numEt.setInputType(InputType.TYPE_CLASS_NUMBER|InputType.TYPE_NUMBER_FLAG_DECIMAL);
+            if (materialBatchNo){
+                preBatchNumTv.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_batch_number,0,0,0);
+            }
         }
 
         @SuppressLint("CheckResult")
