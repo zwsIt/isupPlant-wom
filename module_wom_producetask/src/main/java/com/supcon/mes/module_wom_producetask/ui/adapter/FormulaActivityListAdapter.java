@@ -298,7 +298,7 @@ public class FormulaActivityListAdapter extends BaseListDataRecyclerViewAdapter<
                     })
                     .subscribe(o -> {
                         Bundle bundle = new Bundle();
-                        WaitPutinRecordEntity entity=getItem(getAdapterPosition());
+                        WaitPutinRecordEntity entity = getItem(getAdapterPosition());
                         entity.setWare(warehouseEntity);
                         bundle.putSerializable(Constant.IntentKey.WAIT_PUT_RECORD, entity);
                         IntentRouter.go(context, Constant.Router.WOM_PUT_IN_REPORT, bundle);
@@ -383,7 +383,7 @@ public class FormulaActivityListAdapter extends BaseListDataRecyclerViewAdapter<
                     })
                     .subscribe(o -> {
                         Bundle bundle = new Bundle();
-                        WaitPutinRecordEntity entity=getItem(getAdapterPosition());
+                        WaitPutinRecordEntity entity = getItem(getAdapterPosition());
                         entity.setWare(warehouseEntity);
                         bundle.putSerializable(Constant.IntentKey.WAIT_PUT_RECORD, entity);
                         IntentRouter.go(context, Constant.Router.WOM_BATCH_PUT_IN_REPORT, bundle);
@@ -467,7 +467,7 @@ public class FormulaActivityListAdapter extends BaseListDataRecyclerViewAdapter<
                     })
                     .subscribe(o -> {
                         Bundle bundle = new Bundle();
-                        WaitPutinRecordEntity entity=getItem(getAdapterPosition());
+                        WaitPutinRecordEntity entity = getItem(getAdapterPosition());
                         entity.setWare(warehouseEntity);
                         bundle.putSerializable(Constant.IntentKey.WAIT_PUT_RECORD, entity);
                         IntentRouter.go(context, Constant.Router.WOM_OUTPUT_REPORT, bundle);
@@ -529,27 +529,51 @@ public class FormulaActivityListAdapter extends BaseListDataRecyclerViewAdapter<
         LinearLayout adjustLl;
         @BindByTag("qualityTimes")
         CustomTextView qualityTimes;
+        @BindByTag("ll_adjustPlan")
+        LinearLayout ll_adjustPlan;
+        @BindByTag("adjustPlanTv")
+        CustomTextView adjustPlanTv;
+        @BindByTag("ll_qualityTimes")
+        LinearLayout ll_qualityTimes;
 
         public QualityItemViewHolder(Context context) {
             super(context);
         }
+
 
         @Override
         protected int layoutId() {
             return R.layout.wom_item_quality;
         }
 
+
+        @Override
+        protected void initView() {
+            super.initView();
+            ll_qualityTimes.setVisibility(View.GONE);
+        }
+
         @SuppressLint("CheckResult")
         @Override
         protected void initListener() {
             super.initListener();
-            RxView.clicks(itemView).throttleFirst(200, TimeUnit.MILLISECONDS)
-                    .filter(o -> WomConstant.SystemCode.BASE_DEAL_ADJUST.equals(getItem(getAdapterPosition()).getTaskActiveId().getActiveBatchState().getDealType().id))
+//            RxView.clicks(itemView).throttleFirst(200, TimeUnit.MILLISECONDS)
+//                    .filter(o ->getItem(getAdapterPosition()).getActiveBatchState()!=null && WomConstant.SystemCode.BASE_DEAL_ADJUST.equals(getItem(getAdapterPosition()).getActiveBatchState().getDealType().id))
+//                    .subscribe(o -> {
+//                        // 调整
+//                        Bundle bundle = new Bundle();
+//                        bundle.putSerializable(Constant.IntentKey.WAIT_PUT_RECORD, getItem(getAdapterPosition()));
+//                        IntentRouter.go(context, Constant.Router.WOM_ADJUST_ACTIVITY_LIST, bundle);
+//                    });
+            RxView.clicks(itemView)
+                    .throttleFirst(200, TimeUnit.MILLISECONDS)
                     .subscribe(o -> {
-                        // 调整
-                        Bundle bundle = new Bundle();
-                        bundle.putSerializable(Constant.IntentKey.WAIT_PUT_RECORD, getItem(getAdapterPosition()));
-                        IntentRouter.go(context, Constant.Router.WOM_ADJUST_ACTIVITY_LIST, bundle);
+                        WaitPutinRecordEntity data = getItem(getAdapterPosition());
+                        if (data.getActiExelog() != null && !TextUtils.isEmpty(data.getActiExelog().adjustPlan)) {
+                            Bundle bundle = new Bundle();
+                            bundle.putSerializable(Constant.IntentKey.WAIT_PUT_RECORD, getItem(getAdapterPosition()));
+                            IntentRouter.go(context, Constant.Router.WOM_ADJUST_ACTIVITY_LIST, bundle);
+                        }
                     });
             RxView.clicks(qualityStartTv).throttleFirst(100, TimeUnit.MILLISECONDS)
                     .subscribe(o -> {
@@ -565,7 +589,7 @@ public class FormulaActivityListAdapter extends BaseListDataRecyclerViewAdapter<
             sequenceCustomTv.setContent(data.getTaskActiveId().getExecSort());
             factoryModelUnitCustomTv.setContent(data.getTaskProcessId().getEquipmentId().getName());
             timeCustomTv.setContent(data.getActualStartTime() == null ? "" : DateUtil.dateTimeFormat(data.getActualStartTime()));
-            qualityTimes.setContent(String.valueOf(data.getTaskActiveId().getCheckTimes()));
+//            qualityTimes.setContent(data.getTaskActiveId().getCheckTimes()!=null?String.valueOf(data.getTaskActiveId().getCheckTimes()):"--");
 //            routineStartTv.setEnabled(true);
             qualityStartTv.setVisibility(View.GONE);
             adjustLl.setVisibility(View.GONE);
@@ -585,18 +609,23 @@ public class FormulaActivityListAdapter extends BaseListDataRecyclerViewAdapter<
                 itemStateTv.setText(TextUtils.isEmpty(data.getCheckState()) ? data.getTaskActiveId().getCheckState() : data.getCheckState()); // 检验状态
 
                 // 是否完工检验且允许提前放行
-                if (data.getTaskActiveId().getFinalInspection() && data.getTaskActiveId().isRelease()){
+                if (data.getTaskActiveId().getFinalInspection() && data.getTaskActiveId().isRelease()) {
                     qualityStartTv.setVisibility(View.VISIBLE);
                     qualityStartTv.setBackgroundResource(R.drawable.wom_sh_end_bg);
                     qualityStartTv.setText(context.getResources().getString(R.string.wom_advance_release));
                 }
                 // 调整
-                if (WomConstant.SystemCode.BASE_DEAL_ADJUST.equals(data.getActiveBatchState().getDealType().id)){
-                    adjustLl.setVisibility(View.VISIBLE);
+                if (WomConstant.SystemCode.BASE_DEAL_ADJUST.equals(data.getActiveBatchState().getDealType().id)) {
+//                if (data.getActiveBatchState()!=null && WomConstant.SystemCode.BASE_DEAL_ADJUST.equals(data.getActiveBatchState().getDealType().id)){
+//                    adjustLl.setVisibility(View.VISIBLE);
+//                }
+                    if (data.getActiExelog() != null && !TextUtils.isEmpty(data.getActiExelog().adjustPlan)) {
+                        adjustLl.setVisibility(View.VISIBLE);
+                        ll_adjustPlan.setVisibility(View.VISIBLE);
+                        adjustPlanTv.setValue(data.getActiExelog().adjustPlan);
+                    }
                 }
-
             }
         }
-
     }
 }

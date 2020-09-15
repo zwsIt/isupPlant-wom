@@ -18,6 +18,7 @@ public class ActiExelogEntity extends BaseEntity {
     public Long actStartTime;//活动开始时间
 
 
+    public String adjustPlan;
     public SystemCodeEntity activeType;//活动类型
     public BigDecimal actlongTime;//执行时长(分)
 

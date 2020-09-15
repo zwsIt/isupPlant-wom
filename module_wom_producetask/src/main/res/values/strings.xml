@@ -95,4 +95,5 @@
     <string name="wom_adjust_activity">调整活动</string>
     <string name="wom_quality_sum">检验次数</string>
     <string name="wom_start_quality">发起请检</string>
+    <string name="wom_adjust_plan">调整方案</string>
 </resources>
