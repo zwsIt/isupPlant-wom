@@ -57,6 +57,7 @@ import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
@@ -136,7 +137,7 @@ public class AdjustActivityListActivity extends BaseRefreshRecyclerActivity<Wait
         rightBtn.setVisibility(View.VISIBLE);
         rightBtn.setImageResource(R.drawable.ic_wts_reference_white);
         submitBtn.setText(getResources().getString(R.string.wom_start_quality));
-        submitBtn.setVisibility(View.VISIBLE);
+//        submitBtn.setVisibility(View.VISIBLE);
     }
     @Override
     protected void initData() {
@@ -191,6 +192,15 @@ public class AdjustActivityListActivity extends BaseRefreshRecyclerActivity<Wait
      *
      */
     private void doStartQuality() {
+        // 是否存在执行中活动
+        List<WaitPutinRecordEntity> waitPutinRecordEntityList = mTemporaryActivityListAdapter.getList();
+        for (WaitPutinRecordEntity entity : waitPutinRecordEntityList){
+            if (WomConstant.SystemCode.EXE_STATE_ING.equals(entity.getExeState().id)){
+                ToastUtils.show(context, context.getResources().getString(R.string.wom_exist_running_activity));
+                return;
+            }
+        }
+
         CustomDialog customDialog = new CustomDialog(context).layout(R.layout.wom_dialog_confirm,DisplayUtil.getScreenWidth(context) * 4/5, ViewGroup.LayoutParams.WRAP_CONTENT);
         Objects.requireNonNull(customDialog.getDialog().getWindow()).setBackgroundDrawableResource(R.color.transparent);
         customDialog.bindView(R.id.tipContentTv, context.getResources().getString(R.string.wom_start_quality_operate))
@@ -259,6 +269,11 @@ public class AdjustActivityListActivity extends BaseRefreshRecyclerActivity<Wait
 
     @Override
     public void listWaitPutinRecordsSuccess(CommonBAPListEntity entity) {
+        if (entity.result.size() == 0){
+            submitBtn.setVisibility(View.GONE);
+        }else {
+            submitBtn.setVisibility(View.VISIBLE);
+        }
         refreshListController.refreshComplete(entity.result);
     }
 
