@@ -126,4 +126,7 @@
     <string name="wom_advance_release_sure">确认提前放行操作？</string>
     <string name="wom_quality">检验</string>
     <string name="wom_exist_running_activity">存在执行中活动，请确保结束！</string>
+	<string name="wom_pending">Produce Pending</string>
+	<string name="wom_task">Task</string>
+	<string name="wom_activity">Activity</string>
 </resources>

@@ -63,7 +63,7 @@ public class WOMPendingWidget2 extends BaseWidgetLayout {
     @Override
     protected void initView() {
         super.initView();
-        widgetTitle.setText("生产待办");
+        widgetTitle.setText(context.getString(R.string.wom_pending));
         if (context != null && context.toString().contains("com.supcon.mes.home.ui.MainActivity")) {
             widgetMore.setImageResource(R.drawable.sl_refresh);
         }
@@ -77,8 +77,8 @@ public class WOMPendingWidget2 extends BaseWidgetLayout {
     }
 
     private void initTabs() {
-        womPendingTab.addTab("指令单");
-        womPendingTab.addTab("活动");
+        womPendingTab.addTab(context.getString(R.string.wom_task));
+        womPendingTab.addTab(context.getString(R.string.wom_activity));
         womPendingTab.setCurrentTab(0);
     }
 
