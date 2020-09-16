@@ -125,4 +125,7 @@
     <string name="wom_forbidden_pass_if_adjust">调整阶段，不允许提前放行</string>
     <string name="wom_advance_release_sure">确认提前放行操作？</string>
     <string name="wom_quality">检验</string>
+    <string name="wom_pending">生产待办</string>
+    <string name="wom_task">指令单</string>
+    <string name="wom_activity">活动</string>
 </resources>

@@ -122,7 +122,10 @@
 	<string name="wom_start_predischarge">Whether to open the discharge operation in advance?</string>
 	<string name="wom_setting_factory">Please set the unit of work</string>
 	<string name="wom_no_process_view">Current work order status, see step without</string>
-    <string name="wom_forbidden_pass_if_adjust">调整阶段，不允许提前放行</string>
-    <string name="wom_advance_release_sure">确认提前放行操作？</string>
-    <string name="wom_quality">检验</string>
+    <string name="wom_forbidden_pass_if_adjust">It is adjusting, it cannot be pass earlier</string>
+    <string name="wom_advance_release_sure">Are you sure to let it pass earlier？</string>
+    <string name="wom_quality">Check</string>
+	<string name="wom_pending">Produce pending</string>
+	<string name="wom_task">Task</string>
+	<string name="wom_activity">Activity</string>
 </resources>
