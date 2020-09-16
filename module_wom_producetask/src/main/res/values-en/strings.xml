@@ -125,7 +125,7 @@
     <string name="wom_forbidden_pass_if_adjust">It is adjusting, it cannot be pass earlier</string>
     <string name="wom_advance_release_sure">Are you sure to let it pass earlier？</string>
     <string name="wom_quality">Check</string>
-	<string name="wom_pending">Produce pending</string>
+	<string name="wom_pending">Produce Pending</string>
 	<string name="wom_task">Task</string>
 	<string name="wom_activity">Activity</string>
 </resources>
