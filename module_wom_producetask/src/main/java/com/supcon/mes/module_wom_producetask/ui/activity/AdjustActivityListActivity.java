@@ -269,7 +269,7 @@ public class AdjustActivityListActivity extends BaseRefreshRecyclerActivity<Wait
 
     @Override
     public void listWaitPutinRecordsSuccess(CommonBAPListEntity entity) {
-        if (entity.result.size() == 0){
+        if (entity.pageNo == 1 && entity.result.size() == 0){
             submitBtn.setVisibility(View.GONE);
         }else {
             submitBtn.setVisibility(View.VISIBLE);
