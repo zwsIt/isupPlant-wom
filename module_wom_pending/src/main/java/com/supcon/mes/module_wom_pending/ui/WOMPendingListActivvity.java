@@ -39,7 +39,7 @@ public class WOMPendingListActivvity extends BaseMultiFragmentActivity {
     @Override
     protected void initView() {
         super.initView();
-        textTitle.setText("生产待办");
+        textTitle.setText(R.string.wom_pending);
     }
 
 
