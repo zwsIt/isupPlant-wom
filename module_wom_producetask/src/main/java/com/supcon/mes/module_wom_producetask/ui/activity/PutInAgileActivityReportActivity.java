@@ -238,7 +238,7 @@ public class PutInAgileActivityReportActivity extends BaseRefreshRecyclerActivit
      * 扫描功能：红外、摄像头扫描监听事件
      * @param codeResultEvent
      */
-    Map<String, Object> goodMap = new HashMap<>();
+//    Map<String, Object> goodMap = new HashMap<>();
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onCodeReceiver(CodeResultEvent codeResultEvent) {
         MaterialQRCodeEntity materialQRCodeEntity = MaterQRUtil.materialQRCode(context,codeResultEvent.scanResult);
