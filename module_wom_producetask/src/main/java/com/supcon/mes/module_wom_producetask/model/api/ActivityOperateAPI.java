@@ -13,13 +13,14 @@ import com.supcon.mes.middleware.model.bean.BAP5CommonEntity;
 public interface ActivityOperateAPI {
     /**
      * @author zhangwenshuai1 2020/3/25
-     * @param waitPutRecordId：待办记录ID
+     * @param waitPutRecordId：待办记录ID  qualityActiveId  检验活动id
      * @param isFinish：
      * @return
      * @description 活动操作：开始、停止
      *
      */
-    void operateActivity(Long waitPutRecordId, boolean isFinish);
+    void operateActivity(Long waitPutRecordId, Long qualityActiveId, boolean isFinish);
+
 
     /**
      * @author zhangwenshuai1 2020/3/27

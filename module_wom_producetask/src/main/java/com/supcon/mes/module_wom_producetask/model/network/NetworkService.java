@@ -110,7 +110,7 @@ public interface NetworkService {
      *
      */
     @POST("/msService/WOMmobile/produceTask/mobile/commonActiveReport")
-    Flowable<BAP5CommonEntity<Object>> activityOperate(@Query(value = "waitPutRecordId") Long waitPutRecordId, @Query(value = "isFinish") boolean isFinish);
+    Flowable<BAP5CommonEntity<Object>> activityOperate(@Query(value = "waitPutRecordId") Long waitPutRecordId,@Query(value = "qualityActiveId") Long qualityActiveId, @Query(value = "isFinish") boolean isFinish);
 
     /**
      * 检查活动报工提交

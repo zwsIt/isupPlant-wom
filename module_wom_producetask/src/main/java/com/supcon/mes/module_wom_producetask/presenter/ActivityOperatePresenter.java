@@ -14,9 +14,9 @@ import com.supcon.mes.module_wom_producetask.model.network.WomHttpClient;
 public class ActivityOperatePresenter extends ActivityOperateContract.Presenter {
 
     @Override
-    public void operateActivity(Long waitPutRecordId, boolean isFinish) {
+    public void operateActivity(Long waitPutRecordId, Long qualityActiveId,boolean isFinish) {
         mCompositeSubscription.add(
-                WomHttpClient.activityOperate(waitPutRecordId,isFinish)
+                WomHttpClient.activityOperate(waitPutRecordId,qualityActiveId,isFinish)
                         .onErrorReturn(throwable -> {
                             BAP5CommonEntity<Object> bap5CommonEntity = new BAP5CommonEntity<>();
                             bap5CommonEntity.msg = HttpErrorReturnUtil.getErrorInfo(throwable);

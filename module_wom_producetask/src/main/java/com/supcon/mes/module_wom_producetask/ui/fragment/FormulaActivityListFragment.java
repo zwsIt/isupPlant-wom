@@ -149,7 +149,7 @@ public class FormulaActivityListFragment extends BaseRefreshRecyclerFragment<Wai
                     .bindClickListener(R.id.cancelTv, null, true)
                     .bindClickListener(R.id.confirmTv, v -> {
                         onLoading(context.getResources().getString(R.string.wom_dealing));
-                        presenterRouter.create(ActivityOperateAPI.class).operateActivity(mWaitPutinRecordEntity.getId(), false);
+                        presenterRouter.create(ActivityOperateAPI.class).operateActivity(mWaitPutinRecordEntity.getId(), null,false);
                     }, true)
                     .show();
         } else {
@@ -163,7 +163,7 @@ public class FormulaActivityListFragment extends BaseRefreshRecyclerFragment<Wai
                     .bindClickListener(R.id.cancelTv, null, true)
                     .bindClickListener(R.id.confirmTv, v -> {
                         onLoading(context.getResources().getString(R.string.wom_dealing));
-                        presenterRouter.create(ActivityOperateAPI.class).operateActivity(mWaitPutinRecordEntity.getId(), true);
+                        presenterRouter.create(ActivityOperateAPI.class).operateActivity(mWaitPutinRecordEntity.getId(), null,true);
                     }, true)
                     .show();
         }

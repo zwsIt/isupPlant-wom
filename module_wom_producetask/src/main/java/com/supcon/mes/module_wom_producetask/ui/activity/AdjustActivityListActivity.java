@@ -218,7 +218,7 @@ public class AdjustActivityListActivity extends BaseRefreshRecyclerActivity<Wait
                     .bindClickListener(R.id.cancelTv, null, true)
                     .bindClickListener(R.id.confirmTv, v -> {
                         onLoading(context.getResources().getString(R.string.wom_dealing));
-                        presenterRouter.create(ActivityOperateAPI.class).operateActivity(mWaitPutinRecordEntity.getId(), false);
+                        presenterRouter.create(ActivityOperateAPI.class).operateActivity(mWaitPutinRecordEntity.getId(),mWaitPutinRecordParam.getTaskActiveId().getId(),  false);
                     }, true)
                     .show();
         } else {
@@ -226,7 +226,7 @@ public class AdjustActivityListActivity extends BaseRefreshRecyclerActivity<Wait
                     .bindClickListener(R.id.cancelTv, null, true)
                     .bindClickListener(R.id.confirmTv, v -> {
                         onLoading(context.getResources().getString(R.string.wom_dealing));
-                        presenterRouter.create(ActivityOperateAPI.class).operateActivity(mWaitPutinRecordEntity.getId(), true);
+                        presenterRouter.create(ActivityOperateAPI.class).operateActivity(mWaitPutinRecordEntity.getId(), mWaitPutinRecordParam.getTaskActiveId().getId(), true);
                     }, true)
                     .show();
         }
