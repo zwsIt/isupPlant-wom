@@ -61,5 +61,6 @@ dependencies {
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
     implementation project(':isupplant-shell:middleware')
     implementation project(':isupplant-shell:module_scan')
+    implementation project(':isupplant-shell:module_ble')
     annotationProcessor "com.supcon.mes.common:apt:$rootProject.ext.aptVersion@jar"
 }

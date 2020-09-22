@@ -1,8 +1,11 @@
 package com.supcon.mes.module_wom_producetask.ui.activity;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.Rect;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.LinearLayoutManager;
@@ -43,11 +46,13 @@ import com.supcon.mes.middleware.model.bean.BAP5CommonEntity;
 import com.supcon.mes.middleware.model.bean.CommonBAPListEntity;
 import com.supcon.mes.middleware.model.bean.wom.StoreSetEntity;
 import com.supcon.mes.middleware.model.bean.wom.WarehouseEntity;
+import com.supcon.mes.middleware.model.event.EventInfo;
 import com.supcon.mes.middleware.model.event.RefreshEvent;
 import com.supcon.mes.middleware.model.event.SelectDataEvent;
 import com.supcon.mes.middleware.model.inter.PowerCode;
 import com.supcon.mes.middleware.util.ErrorMsgHelper;
 import com.supcon.mes.middleware.util.StringUtil;
+import com.supcon.mes.module_ble.controller.BleController;
 import com.supcon.mes.module_scan.controller.CommonScanController;
 import com.supcon.mes.module_scan.model.event.CodeResultEvent;
 import com.supcon.mes.module_wom_producetask.R;
@@ -91,9 +96,9 @@ import static android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
  * Desc 人工投料活动报工
  */
 @Router(Constant.Router.WOM_PUT_IN_REPORT)
-@Presenter(value = {CommonListPresenter.class ,PutInReportPresenter.class})
+@Presenter(value = {CommonListPresenter.class, PutInReportPresenter.class})
 @PowerCode(entityCode = WomConstant.PowerCode.PRODUCE_TASK_LIST)
-@Controller(value = {GetPowerCodeController.class, CommonScanController.class})
+@Controller(value = {GetPowerCodeController.class, CommonScanController.class, BleController.class})
 public class PutInActivityReportActivity extends BaseRefreshRecyclerActivity<PutInDetailEntity> implements CommonListContract.View, PutInReportContract.View {
     @BindByTag("leftBtn")
     CustomImageButton leftBtn;
@@ -109,7 +114,7 @@ public class PutInActivityReportActivity extends BaseRefreshRecyclerActivity<Put
     ImageView customListWidgetAdd;
     @BindByTag("materialName")
     CustomTextView materialName;
-//    @BindByTag("materialCode")
+    //    @BindByTag("materialCode")
 //    CustomTextView materialCode;
 //    @BindByTag("planNum")
 //    CustomTextView planNum;
@@ -128,17 +133,18 @@ public class PutInActivityReportActivity extends BaseRefreshRecyclerActivity<Put
     Map<String, Object> queryParams = new HashMap<>();
     Map<String, Object> customCondition = new HashMap<>();
     private PutInReportDetailAdapter mPutInReportDetailAdapter;
-    private int mCurrentPosition;
+    private int mCurrentPosition = -1;
     private PutInDetailEntity mPutInDetailEntity;
     private String dgDeletedIds = "";
 
-    private List<PutInDetailEntity> inDetailEntities=new ArrayList<>();
+    private List<PutInDetailEntity> inDetailEntities = new ArrayList<>();
 
     @Override
     protected IListAdapter<PutInDetailEntity> createAdapter() {
         mPutInReportDetailAdapter = new PutInReportDetailAdapter(context);
         return mPutInReportDetailAdapter;
     }
+
     @Override
     protected int getLayoutID() {
         return R.layout.wom_ac_put_in_report;
@@ -157,10 +163,11 @@ public class PutInActivityReportActivity extends BaseRefreshRecyclerActivity<Put
             @Override
             public void getItemOffsets(@NonNull Rect outRect, @NonNull View view, @NonNull RecyclerView parent, @NonNull RecyclerView.State state) {
                 super.getItemOffsets(outRect, view, parent, state);
-                outRect.set(DisplayUtil.dip2px(10,context),DisplayUtil.dip2px(10,context),DisplayUtil.dip2px(10,context),0);
+                outRect.set(DisplayUtil.dip2px(10, context), DisplayUtil.dip2px(10, context), DisplayUtil.dip2px(10, context), 0);
             }
         });
         contentView.addOnItemTouchListener(new CustomSwipeLayout.OnSwipeItemTouchListener(context));
+        contentView.setItemAnimator(null);//设置动画为null来解决闪烁问题
 
 
     }
@@ -168,10 +175,11 @@ public class PutInActivityReportActivity extends BaseRefreshRecyclerActivity<Put
     @Override
     protected void initView() {
         super.initView();
-        StatusBarUtils.setWindowStatusBarColor(this,R.color.themeColor);
+        StatusBarUtils.setWindowStatusBarColor(this, R.color.themeColor);
         titleText.setText(String.format("%s%s", mWaitPutinRecordEntity.getTaskActiveId().getActiveType().value, getString(R.string.wom_report)));
         rightBtn.setVisibility(View.VISIBLE);
-        rightBtn.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_top_scan));
+        mPutInReportDetailAdapter.isUseBle = true;
+        rightBtn.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_ble_disconnect));
         customListWidgetName.setText(context.getResources().getString(R.string.wom_produce_task_report_detail));
 //        customListWidgetEdit.setVisibility(View.GONE);
         customListWidgetEdit.setImageResource(R.drawable.ic_search_view);
@@ -180,26 +188,25 @@ public class PutInActivityReportActivity extends BaseRefreshRecyclerActivity<Put
 //        materialCode.setContent(mWaitPutinRecordEntity.getTaskActiveId().getMaterialId().getCode());
 //        planNum.setContent(String.valueOf(mWaitPutinRecordEntity.getTaskActiveId().getPlanQuantity()));
 
-        SpannableString planNumSpan = new SpannableString(getString(R.string.wom_plan) +"\n\n" + (mWaitPutinRecordEntity.getTaskActiveId().getPlanQuantity() == null ? "--" : mWaitPutinRecordEntity.getTaskActiveId().getPlanQuantity()));
-        planNumSpan.setSpan(new ForegroundColorSpan(context.getResources().getColor(R.color.dark_blue)),4,planNumSpan.length(), Spanned.SPAN_INCLUSIVE_INCLUSIVE);
-        planNumSpan.setSpan(new AbsoluteSizeSpan(DisplayUtil.dip2px(18,context)),4,planNumSpan.length(), Spanned.SPAN_INCLUSIVE_INCLUSIVE);
+        SpannableString planNumSpan = new SpannableString(getString(R.string.wom_plan) + "\n\n" + (mWaitPutinRecordEntity.getTaskActiveId().getPlanQuantity() == null ? "--" : mWaitPutinRecordEntity.getTaskActiveId().getPlanQuantity()));
+        planNumSpan.setSpan(new ForegroundColorSpan(context.getResources().getColor(R.color.dark_blue)), 4, planNumSpan.length(), Spanned.SPAN_INCLUSIVE_INCLUSIVE);
+        planNumSpan.setSpan(new AbsoluteSizeSpan(DisplayUtil.dip2px(18, context)), 4, planNumSpan.length(), Spanned.SPAN_INCLUSIVE_INCLUSIVE);
         planNumTv.setText(planNumSpan);
 
-        SpannableString sumNumSpan = new SpannableString(getString(R.string.wom_sum) +"\n\n" + mWaitPutinRecordEntity.getTaskActiveId().getSumNum());
-        sumNumSpan.setSpan(new ForegroundColorSpan(context.getResources().getColor(R.color.dark_green)),4,sumNumSpan.length(), Spanned.SPAN_INCLUSIVE_INCLUSIVE);
-        sumNumSpan.setSpan(new AbsoluteSizeSpan(DisplayUtil.dip2px(18,context)),4,sumNumSpan.length(), Spanned.SPAN_INCLUSIVE_INCLUSIVE);
+        SpannableString sumNumSpan = new SpannableString(getString(R.string.wom_sum) + "\n\n" + mWaitPutinRecordEntity.getTaskActiveId().getSumNum());
+        sumNumSpan.setSpan(new ForegroundColorSpan(context.getResources().getColor(R.color.dark_green)), 4, sumNumSpan.length(), Spanned.SPAN_INCLUSIVE_INCLUSIVE);
+        sumNumSpan.setSpan(new AbsoluteSizeSpan(DisplayUtil.dip2px(18, context)), 4, sumNumSpan.length(), Spanned.SPAN_INCLUSIVE_INCLUSIVE);
         sumNumTv.setText(sumNumSpan);
 
         SpannableString remainderNumSpan;
-        if (mWaitPutinRecordEntity.getTaskActiveId().getPlanQuantity() == null){
-            remainderNumSpan = new SpannableString(getString(R.string.wom_remainder) +"\n\n" + 0);
-        }else {
-            remainderNumSpan = new SpannableString(getString(R.string.wom_remainder) +"\n\n" + mWaitPutinRecordEntity.getTaskActiveId().getPlanQuantity().subtract(mWaitPutinRecordEntity.getTaskActiveId().getSumNum()));
+        if (mWaitPutinRecordEntity.getTaskActiveId().getPlanQuantity() == null) {
+            remainderNumSpan = new SpannableString(getString(R.string.wom_remainder) + "\n\n" + 0);
+        } else {
+            remainderNumSpan = new SpannableString(getString(R.string.wom_remainder) + "\n\n" + mWaitPutinRecordEntity.getTaskActiveId().getPlanQuantity().subtract(mWaitPutinRecordEntity.getTaskActiveId().getSumNum()));
         }
-        remainderNumSpan.setSpan(new ForegroundColorSpan(context.getResources().getColor(R.color.dark_yellow)),4,remainderNumSpan.length(), Spanned.SPAN_INCLUSIVE_INCLUSIVE);
-        remainderNumSpan.setSpan(new AbsoluteSizeSpan(DisplayUtil.dip2px(18,context)),4,remainderNumSpan.length(), Spanned.SPAN_INCLUSIVE_INCLUSIVE);
+        remainderNumSpan.setSpan(new ForegroundColorSpan(context.getResources().getColor(R.color.dark_yellow)), 4, remainderNumSpan.length(), Spanned.SPAN_INCLUSIVE_INCLUSIVE);
+        remainderNumSpan.setSpan(new AbsoluteSizeSpan(DisplayUtil.dip2px(18, context)), 4, remainderNumSpan.length(), Spanned.SPAN_INCLUSIVE_INCLUSIVE);
         remainderNumTv.setText(remainderNumSpan);
-
     }
 
     @SuppressLint("CheckResult")
@@ -207,20 +214,29 @@ public class PutInActivityReportActivity extends BaseRefreshRecyclerActivity<Put
     protected void initListener() {
         super.initListener();
         leftBtn.setOnClickListener(v -> finish());
-        rightBtn.setOnClickListener(v -> {
-            getController(CommonScanController.class).openCameraScan();
-        });
+        getController(BleController.class).initBle(this);
+        getPermission();
+        RxView.clicks(rightBtn)
+                .throttleFirst(2000, TimeUnit.MILLISECONDS)
+                .subscribe(o -> {
+                    if (!bluePermission) {
+                        getPermission();
+                    } else {
+                        getController(BleController.class).showPop();
+                    }
+                });
         refreshListController.setOnRefreshListener(new OnRefreshListener() {
             @Override
             public void onRefresh() {
-                presenterRouter.create(CommonListAPI.class).list(1,customCondition,queryParams,
-                        WomConstant.URL.PUT_IN_REPORT_LIST_URL + "&id=" + (mWaitPutinRecordEntity.getProcReportId().getId() == null ? -1 : mWaitPutinRecordEntity.getProcReportId().getId()),"");
+                presenterRouter.create(CommonListAPI.class).list(1, customCondition, queryParams,
+                        WomConstant.URL.PUT_IN_REPORT_LIST_URL + "&id=" + (mWaitPutinRecordEntity.getProcReportId().getId() == null ? -1 : mWaitPutinRecordEntity.getProcReportId().getId()), "");
             }
         });
         customListWidgetAdd.setOnClickListener(v -> {
             PutInDetailEntity putInDetailEntity = new PutInDetailEntity();
             putInDetailEntity.setMaterialId(mWaitPutinRecordEntity.getTaskActiveId().getMaterialId()); // 物料
             putInDetailEntity.setWareId(mWaitPutinRecordEntity.getWare());
+            putInDetailEntity.setPutinNum(null);
             putInDetailEntity.setMaterialBatchNum(mWaitPutinRecordEntity.getTaskActiveId().getBatchCode());
             putInDetailEntity.setPutinTime(new Date().getTime());  // 投料时间
             mPutInReportDetailAdapter.addData(putInDetailEntity);
@@ -229,21 +245,22 @@ public class PutInActivityReportActivity extends BaseRefreshRecyclerActivity<Put
             contentView.smoothScrollToPosition(mPutInReportDetailAdapter.getItemCount() - 1);
         });
         RxView.clicks(customListWidgetEdit)
-                .throttleFirst(2,TimeUnit.SECONDS)
+                .throttleFirst(2, TimeUnit.SECONDS)
                 .subscribe(o -> {
-                   if (inDetailEntities.isEmpty()){
-                       ToastUtils.show(context,"已投料为空");
-                       return;
-                   }
-                   Bundle bundle=new Bundle();
-                   bundle.putSerializable("list", (Serializable) inDetailEntities);
-                   IntentRouter.go(this,Constant.Router.WOM_PUT_IN_HISTORY,bundle);
+                    if (inDetailEntities.isEmpty()) {
+                        ToastUtils.show(context, "已投料为空");
+                        return;
+                    }
+                    Bundle bundle = new Bundle();
+                    bundle.putSerializable("list", (Serializable) inDetailEntities);
+                    IntentRouter.go(this, Constant.Router.WOM_PUT_IN_HISTORY, bundle);
                 });
         mPutInReportDetailAdapter.setOnItemChildViewClickListener(new OnItemChildViewClickListener() {
             @Override
             public void onItemChildViewClick(View childView, int position, int action, Object obj) {
                 mCurrentPosition = position;
                 mPutInDetailEntity = (PutInDetailEntity) obj;
+
                 switch (childView.getTag().toString()) {
                     case "warehouseTv":
                         IntentRouter.go(context, Constant.Router.WAREHOUSE_LIST_REF);
@@ -259,13 +276,14 @@ public class PutInActivityReportActivity extends BaseRefreshRecyclerActivity<Put
                         break;
                     case "itemViewDelBtn":
                         mPutInReportDetailAdapter.getList().remove(obj);
-                        mPutInReportDetailAdapter.notifyItemRangeRemoved(position,1);
-                        mPutInReportDetailAdapter.notifyItemRangeChanged(position,mPutInReportDetailAdapter.getItemCount()-position);
-                        if (mPutInDetailEntity.getId() != null){
+                        mPutInReportDetailAdapter.notifyItemRangeRemoved(position, 1);
+                        mPutInReportDetailAdapter.notifyItemRangeChanged(position, mPutInReportDetailAdapter.getItemCount() - position);
+                        if (mPutInDetailEntity.getId() != null) {
                             dgDeletedIds += mPutInDetailEntity.getId() + ",";
                         }
                         break;
                     default:
+
                 }
             }
         });
@@ -273,108 +291,129 @@ public class PutInActivityReportActivity extends BaseRefreshRecyclerActivity<Put
                 .throttleFirst(200, TimeUnit.MILLISECONDS)
                 .subscribe(new Consumer<Object>() {
                     @Override
-                     public void accept(Object o) throws Exception {
+                    public void accept(Object o) throws Exception {
                         submitReport();
                     }
                 });
     }
 
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onBleEvent(EventInfo eventInfo) {
+        if (eventInfo.getEventId() == 200) {
+            if (mPutInReportDetailAdapter.selectPosition != -2) {
+                mPutInDetailEntity = mPutInReportDetailAdapter.getItem(mPutInReportDetailAdapter.selectPosition);
+                String dataMsg = eventInfo.getMsg();
+                if (mPutInReportDetailAdapter.isBeforeWeight) {
+                    mPutInDetailEntity.setBeforeNum(new BigDecimal(dataMsg));
+                } else {
+                    mPutInDetailEntity.setAfterNum(new BigDecimal(dataMsg));
+                }
+                mPutInReportDetailAdapter.notifyItemChanged(mPutInReportDetailAdapter.selectPosition);
+            }
+        } else if (eventInfo.getEventId() == -200) {
+            mPutInReportDetailAdapter.isBleConnected = false;
+            rightBtn.setImageResource(R.drawable.ic_ble_disconnect);
+        } else if (eventInfo.getEventId() == 2000) {
+            rightBtn.setImageResource(R.drawable.ic_ble_connect);
+            mPutInReportDetailAdapter.isBleConnected = true;
+        }
+    }
+
     /**
      * 扫描功能：红外、摄像头扫描监听事件
+     *
      * @param codeResultEvent
      */
-    long lastTime;
-    boolean isPutMaterialFull=false;
+    boolean isPutMaterialFull = false;
     PutInDetailEntity scanPutInDetailEntity;
+
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onCodeReceiver(CodeResultEvent codeResultEvent) {
 
-        if (isDialogShowing()){
-
+        if (isDialogShowing()) {
             return;
         }
 
-        long currentTime = System.currentTimeMillis();
-        if (currentTime - lastTime >= 100) {
-            String[] arr = MaterQRUtil.materialQRCode(codeResultEvent.scanResult);
-            if (arr != null && arr.length == 7) {
-                String incode = arr[0].replace("incode=", "");
-                String batchno = arr[1].replace("batchno=", "");
-                String batchno2 = arr[2].replace("batchno2=", "");
-                String packqty = arr[3].replace("packqty=", "");
-                String packs = arr[4].replace("packs=", "");
-                String purcode = arr[5].replace("purcode=", "");
-                String orderno = arr[6].replace("orderno=", "");
+        String[] arr = MaterQRUtil.materialQRCode(codeResultEvent.scanResult);
+        if (arr != null && arr.length == 7) {
+            String incode = arr[0].replace("incode=", "");
+            String batchno = arr[1].replace("batchno=", "");
+            String batchno2 = arr[2].replace("batchno2=", "");
+            String packqty = arr[3].replace("packqty=", "");
+            String packs = arr[4].replace("packs=", "");
+            String purcode = arr[5].replace("purcode=", "");
+            String orderno = arr[6].replace("orderno=", "");
 
-                if (incode.equals(mWaitPutinRecordEntity.getTaskActiveId().getMaterialId().getCode())) {
-                    String batchCode=mWaitPutinRecordEntity.getTaskActiveId().getBatchCode();
-                    if (!StringUtil.isEmpty(batchCode) && !batchCode.trim().equals(batchno)) {
+            if (incode.equals(mWaitPutinRecordEntity.getTaskActiveId().getMaterialId().getCode())) {
+                String batchCode = mWaitPutinRecordEntity.getTaskActiveId().getBatchCode();
+                if (!StringUtil.isEmpty(batchCode) && !batchCode.trim().equals(batchno)) {
 
-                        showTipDialog("非当前物料批号，请重新扫描");
+                    showTipDialog("非当前物料批号，请重新扫描");
+                    return;
+                }
+
+                double planQuality = mWaitPutinRecordEntity.getTaskActiveId().getPlanQuantity() != null ? mWaitPutinRecordEntity.getTaskActiveId().getPlanQuantity().doubleValue() : 0;
+                int size = mPutInReportDetailAdapter.getItemCount();
+                double packqtyQuality = Double.parseDouble(packqty);
+                double totalInNum = 0;
+                scanPutInDetailEntity = new PutInDetailEntity();
+                scanPutInDetailEntity.setMaterialId(mWaitPutinRecordEntity.getTaskActiveId().getMaterialId()); // 物料
+                scanPutInDetailEntity.setMaterialBatchNum(batchno);
+                scanPutInDetailEntity.setWareId(mWaitPutinRecordEntity.getWare());
+                scanPutInDetailEntity.setPutinNum(!TextUtils.isEmpty(packqty) ? new BigDecimal(packqty) : null);
+                scanPutInDetailEntity.setPutinTime(new Date().getTime());  // 投料时间
+                for (int i = 0; i < size; i++) {
+                    PutInDetailEntity inDetailEntity = mPutInReportDetailAdapter.getItem(i);
+                    double inNum = inDetailEntity.getPutinNum() != null ? inDetailEntity.getPutinNum().doubleValue() : 0;
+                    totalInNum += inNum;
+                    if (totalInNum + packqtyQuality > planQuality) {
+                        isPutMaterialFull = true;
+                        showTipDialog("请确认当前投料量与计划投料量是否相符");
                         return;
                     }
-
-                    double planQuality=mWaitPutinRecordEntity.getTaskActiveId().getPlanQuantity()!=null?mWaitPutinRecordEntity.getTaskActiveId().getPlanQuantity().doubleValue():0;
-                    int size=mPutInReportDetailAdapter.getItemCount();
-                    double packqtyQuality=Double.parseDouble(packqty);
-                    double totalInNum=0;
-                    scanPutInDetailEntity = new PutInDetailEntity();
-                    scanPutInDetailEntity.setMaterialId(mWaitPutinRecordEntity.getTaskActiveId().getMaterialId()); // 物料
-                    scanPutInDetailEntity.setMaterialBatchNum(batchno);
-                    scanPutInDetailEntity.setWareId(mWaitPutinRecordEntity.getWare());
-                    scanPutInDetailEntity.setPutinNum(!TextUtils.isEmpty(packqty) ? new BigDecimal(packqty) : null);
-                    scanPutInDetailEntity.setPutinTime(new Date().getTime());  // 投料时间
-                    for (int i = 0; i <size ; i++) {
-                        PutInDetailEntity inDetailEntity=mPutInReportDetailAdapter.getItem(i);
-                        double inNum=inDetailEntity.getPutinNum()!=null?inDetailEntity.getPutinNum().doubleValue():0;
-                        totalInNum+=inNum;
-                        if (totalInNum+packqtyQuality>planQuality){
-                            isPutMaterialFull=true;
-                            showTipDialog("请确认当前投料量与计划投料量是否相符");
-                            return;
-                        }
-                    }
-
-                    mPutInReportDetailAdapter.addData(scanPutInDetailEntity);
-                    mPutInReportDetailAdapter.notifyItemRangeInserted(mPutInReportDetailAdapter.getItemCount() - 1, 1);
-                    mPutInReportDetailAdapter.notifyItemRangeChanged(mPutInReportDetailAdapter.getItemCount() - 1, 1);
-                    contentView.smoothScrollToPosition(mPutInReportDetailAdapter.getItemCount() - 1);
-                } else {
-
-                    showTipDialog("非当前物料，请重新扫描");
                 }
+
+                mPutInReportDetailAdapter.addData(scanPutInDetailEntity);
+                mPutInReportDetailAdapter.notifyItemRangeInserted(mPutInReportDetailAdapter.getItemCount() - 1, 1);
+                mPutInReportDetailAdapter.notifyItemRangeChanged(mPutInReportDetailAdapter.getItemCount() - 1, 1);
+                contentView.smoothScrollToPosition(mPutInReportDetailAdapter.getItemCount() - 1);
             } else {
 
-                ToastUtils.show(context, "二维码信息解析异常！");
+                showTipDialog("非当前物料，请重新扫描");
             }
-            lastTime = currentTime;
+        } else {
+
+            ToastUtils.show(context, "二维码信息解析异常！");
         }
 
 
     }
+
     CustomDialog customDialog;
-    private void showTipDialog(String content){
+
+    private void showTipDialog(String content) {
         customDialog = new CustomDialog(context);
         customDialog.getDialog().getWindow().setBackgroundDrawableResource(R.color.transparent); // 除去dialog设置四个圆角出现的黑色背景
-        customDialog.layout(R.layout.tlzy_dialog_confirm, DisplayUtil.dip2px(300,context), WRAP_CONTENT)
+        customDialog.layout(R.layout.tlzy_dialog_confirm, DisplayUtil.dip2px(300, context), WRAP_CONTENT)
                 .title(content)
                 .bindClickListener(R.id.cancelTv, new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        if (isPutMaterialFull){
-                            isPutMaterialFull=false;
+                        if (isPutMaterialFull) {
+                            isPutMaterialFull = false;
                         }
                     }
                 }, true)
                 .bindClickListener(R.id.confirmTv, new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        if (isPutMaterialFull){
+                        if (isPutMaterialFull) {
                             mPutInReportDetailAdapter.addData(scanPutInDetailEntity);
                             mPutInReportDetailAdapter.notifyItemRangeInserted(mPutInReportDetailAdapter.getItemCount() - 1, 1);
                             mPutInReportDetailAdapter.notifyItemRangeChanged(mPutInReportDetailAdapter.getItemCount() - 1, 1);
                             contentView.smoothScrollToPosition(mPutInReportDetailAdapter.getItemCount() - 1);
-                            isPutMaterialFull=false;
+                            isPutMaterialFull = false;
                         }
                     }
                 }, true)
@@ -384,18 +423,19 @@ public class PutInActivityReportActivity extends BaseRefreshRecyclerActivity<Put
             customDialog.getDialog().findViewById(R.id.ly_separator_line).setVisibility(View.GONE);
         }
     }
-    private boolean isDialogShowing(){
+
+    private boolean isDialogShowing() {
         return customDialog != null && customDialog.getDialog().isShowing();
     }
+
     /**
-     * @author zhangwenshuai1 2020/4/2
      * @param
      * @return
+     * @author zhangwenshuai1 2020/4/2
      * @description 报工
-     *
      */
     private void submitReport() {
-        if (checkSubmit()){
+        if (checkSubmit()) {
             return;
         }
         onLoading(context.getResources().getString(R.string.wom_dealing));
@@ -408,32 +448,32 @@ public class PutInActivityReportActivity extends BaseRefreshRecyclerActivity<Put
 
         PutinDetailDTO.DgListEntity dgListEntity = new PutinDetailDTO.DgListEntity();
         dgListEntity.setDg(GsonUtil.gsonString(mPutInReportDetailAdapter.getList()));
-        Log.i("PutinDetailDTO",GsonUtil.gsonString(mPutInReportDetailAdapter.getList()));
+        Log.i("PutinDetailDTO", GsonUtil.gsonString(mPutInReportDetailAdapter.getList()));
         putinDetailDTO.setDgList(dgListEntity);
 
         PutinDetailDTO.DgDeletedIdsEntity dgDeletedIdsEntity = new PutinDetailDTO.DgDeletedIdsEntity();
         dgDeletedIdsEntity.setDg(TextUtils.isEmpty(dgDeletedIds) ? null : dgDeletedIds);
         putinDetailDTO.setDgDeletedIds(dgDeletedIdsEntity);
 
-        presenterRouter.create(PutInReportAPI.class).submit(false,mWaitPutinRecordEntity.getProcReportId().getId(),getController(GetPowerCodeController.class).getPowerCodeResult(),putinDetailDTO,null);
+        presenterRouter.create(PutInReportAPI.class).submit(false, mWaitPutinRecordEntity.getProcReportId().getId(), getController(GetPowerCodeController.class).getPowerCodeResult(), putinDetailDTO, null);
 
     }
 
     private boolean checkSubmit() {
-        if (mPutInReportDetailAdapter.getList() == null || mPutInReportDetailAdapter.getList().size() <= 0){
-            ToastUtils.show(context,context.getResources().getString(R.string.wom_no_data_operate));
+        if (mPutInReportDetailAdapter.getList() == null || mPutInReportDetailAdapter.getList().size() <= 0) {
+            ToastUtils.show(context, context.getResources().getString(R.string.wom_no_data_operate));
             return true;
         }
-        for (PutInDetailEntity putInDetailEntity : mPutInReportDetailAdapter.getList()){
+        for (PutInDetailEntity putInDetailEntity : mPutInReportDetailAdapter.getList()) {
 //            if (TextUtils.isEmpty(putInDetailEntity.getMaterialBatchNum())){
 //                ToastUtils.show(context, "第【" + (mPutInReportDetailAdapter.getList().indexOf(putInDetailEntity) + 1) + "】项请填写物料批号");
 //                return true;
 //            }
-            if (putInDetailEntity.getWareId() == null){
+            if (putInDetailEntity.getWareId() == null) {
                 ToastUtils.show(context, "第【" + (mPutInReportDetailAdapter.getList().indexOf(putInDetailEntity) + 1) + "】项请填写仓库");
                 return true;
             }
-            if (putInDetailEntity.getPutinNum() == null){
+            if (putInDetailEntity.getPutinNum() == null) {
                 ToastUtils.show(context, "第【" + (mPutInReportDetailAdapter.getList().indexOf(putInDetailEntity) + 1) + "】项请填写用料量");
                 return true;
             }
@@ -449,16 +489,16 @@ public class PutInActivityReportActivity extends BaseRefreshRecyclerActivity<Put
 
     @Override
     public void listSuccess(BAP5CommonEntity entity) {
-        CommonBAPListEntity commonBAPListEntity = GsonUtil.gsonToBean(GsonUtil.gsonString(entity.data),CommonBAPListEntity.class);
+        CommonBAPListEntity commonBAPListEntity = GsonUtil.gsonToBean(GsonUtil.gsonString(entity.data), CommonBAPListEntity.class);
 //        refreshListController.refreshComplete(GsonUtil.jsonToList(GsonUtil.gsonString((Object) commonBAPListEntity.result),PutInDetailEntity.class));
         refreshListController.refreshComplete();
-        inDetailEntities.addAll(GsonUtil.jsonToList(GsonUtil.gsonString((Object) commonBAPListEntity.result),PutInDetailEntity.class));
+        inDetailEntities.addAll(GsonUtil.jsonToList(GsonUtil.gsonString((Object) commonBAPListEntity.result), PutInDetailEntity.class));
     }
 
     @Override
     public void listFailed(String errorMsg) {
         refreshListController.refreshComplete();
-        ToastUtils.show(context,ErrorMsgHelper.msgParse(errorMsg));
+        ToastUtils.show(context, ErrorMsgHelper.msgParse(errorMsg));
     }
 
     @Override
@@ -484,6 +524,67 @@ public class PutInActivityReportActivity extends BaseRefreshRecyclerActivity<Put
         mPutInReportDetailAdapter.notifyItemRangeChanged(mCurrentPosition, 1);
     }
 
+    /**
+     * 解决：无法发现蓝牙设备的问题
+     * <p>
+     * 对于发现新设备这个功能, 还需另外两个权限(Android M 以上版本需要显式获取授权,附授权代码):
+     */
+    private final int ACCESS_LOCATION = 1;
 
+    @SuppressLint("WrongConstant")
+    private void getPermission() {
+        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.M) {
+            int permissionCheck = 0;
+            permissionCheck = this.checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION);
+            permissionCheck += this.checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION);
+
+            if (permissionCheck != PackageManager.PERMISSION_GRANTED) {
+                //未获得权限
+                this.requestPermissions( // 请求授权
+                        new String[]{Manifest.permission.ACCESS_FINE_LOCATION,
+                                Manifest.permission.ACCESS_COARSE_LOCATION},
+                        ACCESS_LOCATION);// 自定义常量,任意整型
+            } else {
+                getController(BleController.class).bluePermission = true;
+                bluePermission = true;
+            }
+        } else {
+            getController(BleController.class).bluePermission = true;
+            bluePermission = true;
+        }
+    }
+
+    /**
+     * 请求权限的结果回调。每次调用 requestpermissions（string[]，int）时都会调用此方法。
+     *
+     * @param requestCode  传入的请求代码
+     * @param permissions  传入permissions的要求
+     * @param grantResults 相应权限的授予结果:PERMISSION_GRANTED 或 PERMISSION_DENIED
+     */
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        switch (requestCode) {
+            case ACCESS_LOCATION:
+                if (hasAllPermissionGranted(grantResults)) {
+                    Log.i("Ble", "onRequestPermissionsResult: 用户允许权限");
+                    getController(BleController.class).bluePermission = true;
+                    bluePermission = true;
+                } else {
+                    Log.i("Ble", "onRequestPermissionsResult: 拒绝搜索设备权限");
+                }
+                break;
+        }
+    }
+
+    boolean bluePermission = false;
+
+    private boolean hasAllPermissionGranted(int[] grantResults) {
+        for (int grantResult : grantResults) {
+            if (grantResult == PackageManager.PERMISSION_DENIED) {
+                return false;
+            }
+        }
+        return true;
+    }
 
 }

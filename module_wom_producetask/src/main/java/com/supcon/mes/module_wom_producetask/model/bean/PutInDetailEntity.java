@@ -64,7 +64,7 @@ public class PutInDetailEntity extends BaseEntity {
     }
 
     public BigDecimal getAvailableNum() {
-        return availableNum!=null?availableNum.setScale(WomConstant.scale):null;
+        return availableNum!=null?availableNum.setScale(WomConstant.scale,BigDecimal.ROUND_HALF_UP):null;
     }
 
     public void setAvailableNum(BigDecimal availableNum) {
@@ -80,7 +80,7 @@ public class PutInDetailEntity extends BaseEntity {
     }
 
     public BigDecimal getBeforeNum() {
-        return beforeNum!=null?beforeNum.setScale(WomConstant.scale):null;
+        return beforeNum!=null?beforeNum.setScale(WomConstant.scale,BigDecimal.ROUND_HALF_UP):null;
     }
 
     public void setBeforeNum(BigDecimal beforeNum) {
@@ -96,7 +96,7 @@ public class PutInDetailEntity extends BaseEntity {
     }
 
     public BigDecimal getReveiveNum() {
-        return reveiveNum!=null?reveiveNum.setScale(WomConstant.scale):null;
+        return reveiveNum!=null?reveiveNum.setScale(WomConstant.scale,BigDecimal.ROUND_HALF_UP):null;
     }
 
     public void setReveiveNum(BigDecimal reveiveNum) {
@@ -147,7 +147,7 @@ public class PutInDetailEntity extends BaseEntity {
     }
 
     public BigDecimal getPutinNum() {
-        return putinNum!=null?putinNum.setScale(WomConstant.scale):null;
+        return putinNum!=null?putinNum.setScale(WomConstant.scale,BigDecimal.ROUND_HALF_UP):null;
     }
 
     public void setPutinNum(BigDecimal putinNum) {

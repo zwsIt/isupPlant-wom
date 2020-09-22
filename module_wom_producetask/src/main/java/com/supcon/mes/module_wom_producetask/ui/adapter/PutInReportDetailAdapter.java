@@ -4,7 +4,9 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.text.InputType;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RadioGroup;
 import android.widget.TextView;
@@ -51,7 +53,10 @@ public class PutInReportDetailAdapter extends BaseListDataRecyclerViewAdapter<Pu
     }
 
     public boolean edit = true;
-
+    public int selectPosition = -2;
+    public boolean isBleConnected = false;
+    public boolean isBeforeWeight = true;
+    public boolean isUseBle=false;
     /**
      * ReportViewHolder
      * created by zhangwenshuai1 2020/4/10
@@ -97,7 +102,23 @@ public class PutInReportDetailAdapter extends BaseListDataRecyclerViewAdapter<Pu
             if (batchPutInActivity) {
                 materialNameLl.setVisibility(View.VISIBLE);
             }
+            if (isUseBle) {
+                ImageView beforeWeightImg=beforeWeightTv.findViewById(R.id.customEditIcon);
+                ImageView afterWeightImg=afterWeightTv.findViewById(R.id.customEditIcon);
 
+                if (selectPosition == getAdapterPosition()) {
+                    if (isBeforeWeight) {
+                        beforeWeightImg.setImageResource(R.drawable.ic_weight_use);
+                        afterWeightImg.setImageResource(R.drawable.ic_weight_unuse);
+                    } else {
+                        beforeWeightImg.setImageResource(R.drawable.ic_weight_unuse);
+                        afterWeightImg.setImageResource(R.drawable.ic_weight_use);
+                    }
+                } else {
+                    beforeWeightImg.setImageResource(R.drawable.ic_weight_unuse);
+                    afterWeightImg.setImageResource(R.drawable.ic_weight_unuse);
+                }
+            }
             batchNum.setEditable(edit);
             warehouseTv.setEditable(edit);
             storeSetTv.setEditable(edit);
@@ -111,6 +132,7 @@ public class PutInReportDetailAdapter extends BaseListDataRecyclerViewAdapter<Pu
             for (int i = 0; i < 2; i++) {
                 radioGroup.getChildAt(i).setClickable(edit);
             }
+
         }
 
         @SuppressLint("CheckResult")
@@ -121,6 +143,37 @@ public class PutInReportDetailAdapter extends BaseListDataRecyclerViewAdapter<Pu
                 onItemChildViewClick(itemViewDelBtn, getAdapterPosition(), getItem(getAdapterPosition()));
             });
 
+            if (isUseBle){
+                ImageView beforeWeightImg=beforeWeightTv.findViewById(R.id.customEditIcon);
+                ImageView afterWeightImg=afterWeightTv.findViewById(R.id.customEditIcon);
+                beforeWeightImg.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        if (!isBleConnected) {
+                            ToastUtils.show(context, R.string.ble_tip2);
+                            return;
+                        }
+                        isBeforeWeight=true;
+                        beforeWeightImg.setImageResource(R.drawable.ic_weight_use);
+                        afterWeightImg.setImageResource(R.drawable.ic_weight_unuse);
+                        selectPosition=getAdapterPosition();
+                    }
+                });
+
+                afterWeightImg.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        if (!isBleConnected) {
+                            ToastUtils.show(context, R.string.ble_tip2);
+                            return;
+                        }
+                        isBeforeWeight=false;
+                        beforeWeightImg.setImageResource(R.drawable.ic_weight_unuse);
+                        afterWeightImg.setImageResource(R.drawable.ic_weight_use);
+                        selectPosition=getAdapterPosition();
+                    }
+                });
+            }
             RxTextView.textChanges(batchNum.editText())
                     .skipInitialValue()
                     .subscribe(charSequence -> getItem(getAdapterPosition()).setMaterialBatchNum(!TextUtils.isEmpty(charSequence) ? charSequence.toString().trim() : ""));
@@ -232,6 +285,7 @@ public class PutInReportDetailAdapter extends BaseListDataRecyclerViewAdapter<Pu
         protected void update(PutInDetailEntity data) {
             materialName.setContent(String.format("%s(%s)", data.getMaterialId().getName(), data.getMaterialId().getCode()));
             batchNum.setContent(data.getMaterialBatchNum());
+            Log.i("PutInDetailEntity","---"+data.getPutinNum());
             numEt.setContent(data.getPutinNum() == null ? "" : String.valueOf(data.getPutinNum()));
             warehouseTv.setContent(data.getWareId() == null ? "" : data.getWareId().getName());
             storeSetTv.setContent(data.getStoreId() == null ? "" : data.getStoreId().getName());
