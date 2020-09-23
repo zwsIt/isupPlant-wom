@@ -81,7 +81,7 @@ import io.reactivex.functions.Consumer;
  */
 @Router(Constant.Router.BATCH_MATERIAL_INSTRUCTION_EDIT)
 @Presenter(value = {CommonListPresenter.class, BatchMaterialInstructionEditPresenter.class})
-@PowerCode(entityCode = BmConstant.PowerCode.BM_INSTRUCTION_EDIT)
+//@PowerCode(entityCode = BmConstant.PowerCode.BM_INSTRUCTION_EDIT)
 @Controller(value = {GetPowerCodeController.class, WorkFlowViewController.class})
 public class BatchMaterialInstructionEditActivity extends BaseRefreshRecyclerActivity<BatchMaterialPartEntity> implements CommonListContract.View, BatchMaterialInstructionEditContract.View {
     @BindByTag("leftBtn")
@@ -191,6 +191,8 @@ public class BatchMaterialInstructionEditActivity extends BaseRefreshRecyclerAct
         remainderNumTv.setText(remainderNumSpan);
 
         getController(WorkFlowViewController.class).initPendingWorkFlowView(workFlowView, mBatchMaterialEntity.getPending().id);
+
+        getController(GetPowerCodeController.class).initPowerCode(mBatchMaterialEntity.getPending().activityName);
 
     }
 
