@@ -83,7 +83,7 @@ public class PreMaterialEntity extends BaseEntity {
     public Long receiveDate;
     public SystemCodeEntity receiveState; // 接收状态
     public SystemCodeEntity rejectReason; // 拒收原因
-    public Float receiveNum;
+    public Float receiveNum; // 接收数量
     public ObjectEntity receiveStaff;
 
     public boolean isChecked;

@@ -305,7 +305,7 @@ public class PreMaterialReceiveListAdapter extends BaseListDataRecyclerViewAdapt
 
                             if(TextUtils.isEmpty(charSequence)){
                                 PreMaterialEntity materialEntity = getItem(getAdapterPosition());
-                                materialEntity.receiveNum = 0f;
+                                materialEntity.receiveNum = null;
                                 return;
                             }
                             PreMaterialEntity materialEntity = getItem(getAdapterPosition());

@@ -15,6 +15,7 @@ import com.supcon.common.view.listener.OnChildViewClickListener;
 import com.supcon.mes.mbap.view.CustomEditText;
 import com.supcon.mes.mbap.view.CustomTextView;
 import com.supcon.mes.module_wom_producetask.R;
+import com.supcon.mes.module_wom_producetask.constant.WomConstant;
 import com.supcon.mes.module_wom_producetask.model.bean.OutputDetailEntity;
 
 import java.math.BigDecimal;
@@ -141,6 +142,11 @@ public class OutputAgileReportDetailAdapter extends BaseListDataRecyclerViewAdap
 
         @Override
         protected void update(OutputDetailEntity data) {
+            if (WomConstant.SystemCode.MATERIAL_BATCH_02.equals(data.getProduct().getIsBatch().id)){
+                preBatchNumTv.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_batch_number,0,R.drawable.ic_necessary,0);
+            }else {
+                preBatchNumTv.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_batch_number,0,0,0);
+            }
             materialName.setContent(data.getProduct() == null ? "" : String.format("%s(%s)",data.getProduct().getName(),data.getProduct().getCode()));
             batchNum.setContent(data.getMaterialBatchNum());
             numEt.setContent(data.getOutputNum() == null ? "" : String.valueOf(data.getOutputNum()));

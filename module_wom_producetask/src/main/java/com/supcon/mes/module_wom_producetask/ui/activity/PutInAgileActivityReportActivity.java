@@ -299,7 +299,7 @@ public class PutInAgileActivityReportActivity extends BaseRefreshRecyclerActivit
                 ToastUtils.show(context, context.getResources().getString(R.string.wom_di) + (mPutInAgileReportDetailAdapter.getList().indexOf(putInDetailEntity) + 1) + context.getResources().getString(R.string.wom_please_write_material));
                 return true;
             }
-            if (TextUtils.isEmpty(putInDetailEntity.getMaterialBatchNum())) {
+            if (WomConstant.SystemCode.MATERIAL_BATCH_02.equals(putInDetailEntity.getMaterialId().getIsBatch().id) && TextUtils.isEmpty(putInDetailEntity.getMaterialBatchNum())) {
                 ToastUtils.show(context, context.getResources().getString(R.string.wom_di) + (mPutInAgileReportDetailAdapter.getList().indexOf(putInDetailEntity) + 1) + context.getResources().getString(R.string.wom_please_write_material_batch));
                 return true;
             }
@@ -358,6 +358,7 @@ public class PutInAgileActivityReportActivity extends BaseRefreshRecyclerActivit
             materialEntity.setId(good.id);
             materialEntity.setCode(good.code);
             materialEntity.setName(good.name);
+            materialEntity.setIsBatch(good.isBatch);
             mPutInDetailEntity.setMaterialId(materialEntity);
         }
         mPutInAgileReportDetailAdapter.notifyItemRangeChanged(mCurrentPosition, 1);

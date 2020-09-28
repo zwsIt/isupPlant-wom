@@ -18,6 +18,7 @@ import com.supcon.mes.mbap.view.CustomTextView;
 import com.supcon.mes.middleware.constant.Constant;
 import com.supcon.mes.module_wom_producetask.IntentRouter;
 import com.supcon.mes.module_wom_producetask.R;
+import com.supcon.mes.module_wom_producetask.constant.WomConstant;
 import com.supcon.mes.module_wom_producetask.model.bean.PutInDetailEntity;
 
 import java.math.BigDecimal;
@@ -62,6 +63,8 @@ public class PutInAgileReportDetailAdapter extends BaseListDataRecyclerViewAdapt
         CustomEditText numEt;
         @BindByTag("itemViewDelBtn")
         TextView itemViewDelBtn;
+        @BindByTag("materialBatchNumTv")
+        TextView materialBatchNumTv;
 
         public ReportViewHolder(Context context) {
             super(context,parent);
@@ -140,7 +143,11 @@ public class PutInAgileReportDetailAdapter extends BaseListDataRecyclerViewAdapt
 
         @Override
         protected void update(PutInDetailEntity data) {
-
+            if (WomConstant.SystemCode.MATERIAL_BATCH_02.equals(data.getMaterialId().getIsBatch().id)){
+                materialBatchNumTv.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_batch_number,0,R.drawable.ic_necessary,0);
+            }else {
+                materialBatchNumTv.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_batch_number,0,0,0);
+            }
             materialName.setContent(data.getMaterialId().getId()==null ? "" : String.format("%s(%s)", data.getMaterialId().getName(), data.getMaterialId().getCode()));
             batchNum.setContent(data.getMaterialBatchNum());
             numEt.setContent(data.getPutinNum() == null ? "" : String.valueOf(data.getPutinNum()));

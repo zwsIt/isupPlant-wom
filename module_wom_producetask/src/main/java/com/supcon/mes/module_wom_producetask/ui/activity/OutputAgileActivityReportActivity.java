@@ -292,7 +292,7 @@ public class OutputAgileActivityReportActivity extends BaseRefreshRecyclerActivi
             return true;
         }
         for (OutputDetailEntity outputDetailEntity : mOutputAgileReportDetailAdapter.getList()) {
-            if (TextUtils.isEmpty(outputDetailEntity.getMaterialBatchNum())) {
+            if (WomConstant.SystemCode.MATERIAL_BATCH_02.equals(outputDetailEntity.getProduct().getIsBatch().id) && TextUtils.isEmpty(outputDetailEntity.getMaterialBatchNum())) {
                 ToastUtils.show(context, context.getResources().getString(R.string.wom_di) + (mOutputAgileReportDetailAdapter.getList().indexOf(outputDetailEntity) + 1) + context.getResources().getString(R.string.wom_please_write_material_batch));
                 return true;
             }

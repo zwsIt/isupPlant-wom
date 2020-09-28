@@ -55,6 +55,7 @@ import com.supcon.mes.module_wom_batchmaterial.model.contract.BatchMaterialInstr
 import com.supcon.mes.module_wom_batchmaterial.model.dto.BatchMaterialInstructionDTO;
 import com.supcon.mes.module_wom_batchmaterial.presenter.BatchMaterialInstructionEditPresenter;
 import com.supcon.mes.module_wom_batchmaterial.ui.adapter.BatchMaterialRecordsEditAdapter;
+import com.supcon.mes.module_wom_producetask.constant.WomConstant;
 import com.supcon.mes.module_wom_producetask.model.api.CommonListAPI;
 import com.supcon.mes.module_wom_producetask.model.bean.BatchMaterialPartEntity;
 import com.supcon.mes.module_wom_producetask.model.bean.BatchMaterilEntity;
@@ -154,7 +155,9 @@ public class BatchMaterialInstructionEditActivity extends BaseRefreshRecyclerAct
         });
         contentView.addOnItemTouchListener(new CustomSwipeLayout.OnSwipeItemTouchListener(context));
 
-
+        if (!WomConstant.SystemCode.MATERIAL_BATCH_02.equals(mBatchMaterialEntity.getProductId().getIsBatch().id)){
+            mBatchMaterialRecordsEditAdapter.setMaterialBatchNo(true);
+        }
     }
 
     @Override
@@ -319,7 +322,7 @@ public class BatchMaterialInstructionEditActivity extends BaseRefreshRecyclerAct
             return true;
         }
         for (BatchMaterialPartEntity batchMaterialPartEntity : mBatchMaterialRecordsEditAdapter.getList()) {
-            if (TextUtils.isEmpty(batchMaterialPartEntity.getMaterialBatchNum())) {
+            if (WomConstant.SystemCode.MATERIAL_BATCH_02.equals(mBatchMaterialEntity.getProductId().getIsBatch().id) && TextUtils.isEmpty(batchMaterialPartEntity.getMaterialBatchNum())) {
                 ToastUtils.show(context, context.getResources().getString(R.string.wom_di) + (mBatchMaterialRecordsEditAdapter.getList().indexOf(batchMaterialPartEntity) + 1) + context.getResources().getString(R.string.wom_please_write_material_batch));
                 return true;
             }

@@ -29,7 +29,7 @@ import io.reactivex.functions.Predicate;
  * Desc 配料记录编辑Adapter
  */
 public class BatchMaterialRecordsEditAdapter extends BaseListDataRecyclerViewAdapter<BatchMaterialPartEntity> {
-
+    private boolean materialBatchNo; // 物料是否未启用批次
     public BatchMaterialRecordsEditAdapter(Context context) {
         super(context);
     }
@@ -52,8 +52,12 @@ public class BatchMaterialRecordsEditAdapter extends BaseListDataRecyclerViewAda
         }
     }
 
+    public void setMaterialBatchNo(boolean b) {
+        materialBatchNo = b;
+    }
+
     /**
-     * ReportViewHolder
+     * RecordsEditViewHolder
      * created by zhangwenshuai1 2020/4/10
      * desc 配料编辑Item
      */
@@ -73,6 +77,8 @@ public class BatchMaterialRecordsEditAdapter extends BaseListDataRecyclerViewAda
         CustomEditText numEt;
         @BindByTag("itemViewDelBtn")
         TextView itemViewDelBtn;
+        @BindByTag("materialBatchNumTv")
+        TextView materialBatchNumTv;
 
         public RecordsEditViewHolder(Context context) {
             super(context,parent);
@@ -87,6 +93,9 @@ public class BatchMaterialRecordsEditAdapter extends BaseListDataRecyclerViewAda
         protected void initView() {
             super.initView();
             numEt.setInputType(InputType.TYPE_CLASS_NUMBER|InputType.TYPE_NUMBER_FLAG_DECIMAL);
+            if (materialBatchNo){
+                materialBatchNumTv.setCompoundDrawablesWithIntrinsicBounds(com.supcon.mes.module_wom_producetask.R.drawable.ic_batch_number,0,0,0);
+            }
         }
 
         @SuppressLint("CheckResult")
@@ -168,6 +177,8 @@ public class BatchMaterialRecordsEditAdapter extends BaseListDataRecyclerViewAda
         CustomEditText numEt;
         @BindByTag("itemViewDelBtn")
         TextView itemViewDelBtn;
+        @BindByTag("materialBatchNumTv")
+        TextView materialBatchNumTv;
 
         public RecordsViewHolder(Context context) {
             super(context,parent);
@@ -187,6 +198,9 @@ public class BatchMaterialRecordsEditAdapter extends BaseListDataRecyclerViewAda
             storeSetTv.setEditable(false);
             numEt.setEditable(false);
             itemViewDelBtn.setVisibility(View.GONE);
+            if (materialBatchNo){
+                materialBatchNumTv.setCompoundDrawablesWithIntrinsicBounds(com.supcon.mes.module_wom_producetask.R.drawable.ic_batch_number,0,0,0);
+            }
         }
 
         @SuppressLint("CheckResult")
