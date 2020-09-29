@@ -16,6 +16,8 @@ import com.supcon.common.view.base.fragment.BaseRefreshRecyclerFragment;
 import com.supcon.common.view.listener.OnRefreshListener;
 import com.supcon.common.view.util.DisplayUtil;
 import com.supcon.common.view.util.LogUtil;
+import com.supcon.common.view.util.ToastUtils;
+import com.supcon.mes.mbap.view.CustomTab;
 import com.supcon.mes.middleware.constant.Constant;
 import com.supcon.mes.middleware.model.bean.CommonBAPListEntity;
 import com.supcon.mes.middleware.model.event.RefreshEvent;
@@ -46,12 +48,15 @@ import java.util.Map;
 @Presenter(value = {WaitPutinRecordPresenter.class})
 public class WOMWidgetActivityListController extends BaseViewController implements WaitPutinRecordsListContract.View{
 
+    @BindByTag("womPendingTab")
+    CustomTab womPendingTab;
     @BindByTag("womPendingActivityListView")
     RecyclerView womPendingActivityListView;
     @BindByTag("noDataTv")
     TextView noDataTv;
     private WOMWidgetActivityAdapter mWidgetActivityAdapter;
     Map<String, Object> queryParams = new HashMap<>();          // 活动查询
+    private boolean isFace;
 
     public WOMWidgetActivityListController(View rootView) {
         super(rootView);
@@ -62,14 +67,12 @@ public class WOMWidgetActivityListController extends BaseViewController implemen
     public void onInit() {
         super.onInit();
         EventBus.getDefault().register(this);
-
         queryParams.put(Constant.BAPQuery.RECORD_TYPE, WomConstant.SystemCode.RECORD_TYPE_ACTIVE); // 默认活动查询
     }
 
     @Override
     public void initView() {
         super.initView();
-
 
         womPendingActivityListView.setLayoutManager(new LinearLayoutManager(context));
         womPendingActivityListView.addItemDecoration(new RecyclerView.ItemDecoration() {
@@ -86,7 +89,6 @@ public class WOMWidgetActivityListController extends BaseViewController implemen
     @Override
     public void initData() {
         super.initData();
-
     }
 
     @SuppressLint("CheckResult")
@@ -104,7 +106,7 @@ public class WOMWidgetActivityListController extends BaseViewController implemen
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void refresh(RefreshEvent refreshEvent) {
-        refresh();
+        if (womPendingTab.getCurrentPosition() == 1)refresh();
     }
 
     @Override

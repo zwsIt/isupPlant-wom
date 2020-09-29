@@ -1,5 +1,6 @@
 package com.supcon.mes.module_wom_pending.widget;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
@@ -26,6 +27,12 @@ import com.supcon.mes.module_wom_pending.ui.fragment.WOMWidgetActivityListFragme
 import com.supcon.mes.module_wom_pending.ui.fragment.WOMWidgetProduceTaskListFragment;
 import com.supcon.mes.module_wom_producetask.IntentRouter;
 
+import io.reactivex.Observable;
+import io.reactivex.ObservableEmitter;
+import io.reactivex.ObservableOnSubscribe;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.functions.Consumer;
+
 /**
  * Created by wangshizhan on 2020/6/9
  * Email:wangshizhan@supcom.com
@@ -44,6 +51,14 @@ public class WOMPendingWidget2 extends BaseWidgetLayout {
 
     WOMWidgetProduceTaskListController mWOMWidgetProduceTaskListController;
     WOMWidgetActivityListController mWOMWidgetActivityListController;
+
+    public int getCurrentPage() {
+        return currentPage;
+    }
+
+    public void setCurrentPage(int currentPage) {
+        this.currentPage = currentPage;
+    }
 
     int currentPage = 0;
 
@@ -93,6 +108,7 @@ public class WOMPendingWidget2 extends BaseWidgetLayout {
         super.doRefresh(intervel);
     }
 
+    @SuppressLint("CheckResult")
     @Override
     protected void refresh() {
         super.refresh();
@@ -100,20 +116,21 @@ public class WOMPendingWidget2 extends BaseWidgetLayout {
             mWOMWidgetProduceTaskListController.refresh();
         }else {
             mWOMWidgetActivityListController.refresh();
+//            Observable.create(emitter -> {
+//
+//            }).observeOn(AndroidSchedulers.mainThread())
+//                    .subscribe(o -> {
+//                        mWOMWidgetProduceTaskListController.hide();
+//                        mWOMWidgetActivityListController.refresh();
+//                    });
         }
-
     }
 
     @Override
     protected void initListener() {
         super.initListener();
 
-        widgetMore.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                goProduceTaskList();
-            }
-        });
+        widgetMore.setOnClickListener(v -> goProduceTaskList());
 
         womPendingTab.setOnTabChangeListener(current -> {
             if(current == currentPage){

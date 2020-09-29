@@ -17,6 +17,7 @@ import com.supcon.common.view.util.DisplayUtil;
 import com.supcon.common.view.util.LogUtil;
 import com.supcon.common.view.util.ToastUtils;
 import com.supcon.mes.mbap.view.CustomDialog;
+import com.supcon.mes.mbap.view.CustomTab;
 import com.supcon.mes.middleware.constant.Constant;
 import com.supcon.mes.middleware.model.bean.BAP5CommonEntity;
 import com.supcon.mes.middleware.model.bean.CommonBAPListEntity;
@@ -24,6 +25,7 @@ import com.supcon.mes.middleware.model.event.RefreshEvent;
 import com.supcon.mes.middleware.util.ErrorMsgHelper;
 import com.supcon.mes.module_wom_pending.R;
 import com.supcon.mes.module_wom_pending.ui.adapter.WOMWidgetProduceTaskAdapter;
+import com.supcon.mes.module_wom_pending.widget.WOMPendingWidget2;
 import com.supcon.mes.module_wom_producetask.IntentRouter;
 import com.supcon.mes.module_wom_producetask.constant.WomConstant;
 import com.supcon.mes.module_wom_producetask.model.api.ProduceTaskOperateAPI;
@@ -54,6 +56,8 @@ import java.util.Objects;
 public class WOMWidgetProduceTaskListController extends BaseViewController implements WaitPutinRecordsListContract.View,
         ProduceTaskOperateContract.View{
 
+    @BindByTag("womPendingTab")
+    CustomTab womPendingTab;
     @BindByTag("womPendingProduceTaskListView")
     RecyclerView womPendingProduceTaskListView;
     @BindByTag("noDataTv")
@@ -61,6 +65,7 @@ public class WOMWidgetProduceTaskListController extends BaseViewController imple
     private WOMWidgetProduceTaskAdapter mProduceTaskListAdapter;
     Map<String, Object> queryParams = new HashMap<>();          // 指令单查询
     private WaitPutinRecordEntity mWaitPutinRecordEntity;   // 当前操作项
+    private boolean isFace;
 
     public WOMWidgetProduceTaskListController(View rootView) {
         super(rootView);
@@ -89,10 +94,10 @@ public class WOMWidgetProduceTaskListController extends BaseViewController imple
         });
         womPendingProduceTaskListView.setAdapter(mProduceTaskListAdapter);
     }
+
     @Override
     public void initData() {
         super.initData();
-
     }
 
     @SuppressLint("CheckResult")
@@ -158,8 +163,6 @@ public class WOMWidgetProduceTaskListController extends BaseViewController imple
         IntentRouter.go(context,Constant.Router.WOM_PRODUCE_TASK_END_REPORT,bundle);
     }
 
-
-
     /**
      * @param
      * @return
@@ -189,7 +192,8 @@ public class WOMWidgetProduceTaskListController extends BaseViewController imple
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void refresh(RefreshEvent refreshEvent) {
-        refresh();
+//        ((WOMPendingWidget2)context).getCurrentPage();
+        if (womPendingTab.getCurrentPosition() == 0)refresh();
     }
 
 
@@ -238,7 +242,7 @@ public class WOMWidgetProduceTaskListController extends BaseViewController imple
         presenterRouter.create(WaitPutinRecordsListAPI.class).listWaitPutinRecords(1, 2, queryParams,true);
     }
 
-    public void show(){
+    public void show() {
         refresh();
 //        womPendingProduceTaskListView.setVisibility(View.VISIBLE);
 //        mProduceTaskListAdapter.notifyDataSetChanged();

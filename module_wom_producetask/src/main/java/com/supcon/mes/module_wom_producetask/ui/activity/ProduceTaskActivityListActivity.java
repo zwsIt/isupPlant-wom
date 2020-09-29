@@ -19,11 +19,14 @@ import com.supcon.common.view.util.StatusBarUtils;
 import com.supcon.mes.mbap.view.CustomTab;
 import com.supcon.mes.mbap.view.NoScrollViewPager;
 import com.supcon.mes.middleware.constant.Constant;
+import com.supcon.mes.middleware.model.event.RefreshEvent;
 import com.supcon.mes.module_wom_producetask.IntentRouter;
 import com.supcon.mes.module_wom_producetask.R;
 import com.supcon.mes.module_wom_producetask.model.bean.WaitPutinRecordEntity;
 import com.supcon.mes.module_wom_producetask.ui.fragment.FormulaActivityListFragment;
 import com.supcon.mes.module_wom_producetask.ui.fragment.TemporaryActivityListFragment;
+
+import org.greenrobot.eventbus.EventBus;
 
 import java.util.concurrent.TimeUnit;
 
@@ -113,6 +116,7 @@ public class ProduceTaskActivityListActivity extends BaseMultiFragmentActivity {
         leftBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                EventBus.getDefault().post(new RefreshEvent());
                 finish();
             }
         });
