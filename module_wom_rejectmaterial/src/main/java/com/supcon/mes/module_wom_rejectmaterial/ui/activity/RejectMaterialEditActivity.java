@@ -222,7 +222,7 @@ public class RejectMaterialEditActivity extends BaseRefreshRecyclerActivity<Reje
                         break;
                     case "storeSetTv":
                         if (mRejectMaterialPartEntity.getWareId() == null) {
-                            ToastUtils.show(context, context.getResources().getString(R.string.wom_select_ware));
+                            ToastUtils.show(context, context.getResources().getString(R.string.wom_please_select_ware));
                             break;
                         }
                         Bundle bundle = new Bundle();

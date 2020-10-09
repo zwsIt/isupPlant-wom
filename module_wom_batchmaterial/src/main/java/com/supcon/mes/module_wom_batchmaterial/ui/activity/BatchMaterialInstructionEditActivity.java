@@ -243,7 +243,7 @@ public class BatchMaterialInstructionEditActivity extends BaseRefreshRecyclerAct
                         break;
                     case "storeSetTv":
                         if (mBatchMaterialPartEntity.getWareId() == null) {
-                            ToastUtils.show(context, context.getResources().getString(R.string.wom_select_ware));
+                            ToastUtils.show(context, context.getResources().getString(R.string.wom_please_select_ware));
                             break;
                         }
                         Bundle bundle = new Bundle();
