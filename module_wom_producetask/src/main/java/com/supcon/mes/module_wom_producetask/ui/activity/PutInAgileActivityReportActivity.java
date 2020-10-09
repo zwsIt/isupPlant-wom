@@ -4,7 +4,6 @@ import android.annotation.SuppressLint;
 import android.graphics.Rect;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.View;
@@ -39,11 +38,9 @@ import com.supcon.mes.middleware.model.bean.MaterialQRCodeEntity;
 import com.supcon.mes.middleware.model.bean.wom.MaterialEntity;
 import com.supcon.mes.middleware.model.bean.wom.StoreSetEntity;
 import com.supcon.mes.middleware.model.bean.wom.WarehouseEntity;
-import com.supcon.mes.middleware.model.event.EventInfo;
 import com.supcon.mes.middleware.model.event.RefreshEvent;
 import com.supcon.mes.middleware.model.event.SelectDataEvent;
 import com.supcon.mes.middleware.model.inter.PowerCode;
-import com.supcon.mes.middleware.model.listener.OnSuccessListener;
 import com.supcon.mes.middleware.util.ErrorMsgHelper;
 import com.supcon.mes.module_scan.controller.CommonScanController;
 import com.supcon.mes.module_scan.model.event.CodeResultEvent;
@@ -52,7 +49,6 @@ import com.supcon.mes.module_wom_producetask.R;
 import com.supcon.mes.module_wom_producetask.constant.WomConstant;
 import com.supcon.mes.module_wom_producetask.model.api.CommonListAPI;
 import com.supcon.mes.module_wom_producetask.model.api.PutInReportAPI;
-import com.supcon.mes.module_wom_producetask.model.bean.OutputDetailEntity;
 import com.supcon.mes.module_wom_producetask.model.bean.PutInDetailEntity;
 import com.supcon.mes.module_wom_producetask.model.bean.WaitPutinRecordEntity;
 import com.supcon.mes.module_wom_producetask.model.contract.CommonListContract;
@@ -61,7 +57,6 @@ import com.supcon.mes.module_wom_producetask.model.dto.PutinDetailDTO;
 import com.supcon.mes.module_wom_producetask.presenter.CommonListPresenter;
 import com.supcon.mes.module_wom_producetask.presenter.PutInReportPresenter;
 import com.supcon.mes.module_wom_producetask.ui.adapter.PutInAgileReportDetailAdapter;
-import com.supcon.mes.module_wom_producetask.ui.adapter.PutInReportDetailAdapter;
 import com.supcon.mes.module_wom_producetask.util.MaterQRUtil;
 import com.supcon.mes.module_wom_producetask.util.SmoothScrollLayoutManager;
 
@@ -69,7 +64,6 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
-import java.math.BigDecimal;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -112,10 +106,9 @@ public class PutInAgileActivityReportActivity extends BaseRefreshRecyclerActivit
     Button submitBtn;
     @BindByTag("contentView")
     RecyclerView contentView;
-
-    private WaitPutinRecordEntity mWaitPutinRecordEntity;
     Map<String, Object> queryParams = new HashMap<>();
     Map<String, Object> customCondition = new HashMap<>();
+    private WaitPutinRecordEntity mWaitPutinRecordEntity;
     private PutInAgileReportDetailAdapter mPutInAgileReportDetailAdapter;
     private int mCurrentPosition;
     private PutInDetailEntity mPutInDetailEntity;
@@ -162,7 +155,7 @@ public class PutInAgileActivityReportActivity extends BaseRefreshRecyclerActivit
         customListWidgetName.setText(context.getResources().getString(R.string.wom_produce_task_report_detail));
         customListWidgetEdit.setVisibility(View.GONE);
 
-        taskProcess.setContent(TextUtils.isEmpty(mWaitPutinRecordEntity.getTaskProcessId().getName()) ? mWaitPutinRecordEntity.getProcessName(): mWaitPutinRecordEntity.getTaskProcessId().getName());
+        taskProcess.setContent(TextUtils.isEmpty(mWaitPutinRecordEntity.getTaskProcessId().getName()) ? mWaitPutinRecordEntity.getProcessName() : mWaitPutinRecordEntity.getTaskProcessId().getName());
         planNum.setContent(mWaitPutinRecordEntity.getTaskActiveId().getPlanQuantity() == null ? "--" : mWaitPutinRecordEntity.getTaskActiveId().getPlanQuantity().toString());
 
     }
@@ -198,8 +191,8 @@ public class PutInAgileActivityReportActivity extends BaseRefreshRecyclerActivit
                 Bundle bundle = new Bundle();
                 switch (childView.getTag().toString()) {
                     case "materialName":
-                        bundle.putBoolean(Constant.IntentKey.SINGLE_CHOICE,true);
-                        IntentRouter.go(context, Constant.Router.PRODUCT_DETAIL,bundle);
+                        bundle.putBoolean(Constant.IntentKey.SINGLE_CHOICE, true);
+                        IntentRouter.go(context, Constant.Router.PRODUCT_DETAIL, bundle);
                         break;
                     case "warehouseTv":
                         IntentRouter.go(context, Constant.Router.WAREHOUSE_LIST_REF);
@@ -215,7 +208,7 @@ public class PutInAgileActivityReportActivity extends BaseRefreshRecyclerActivit
                     case "itemViewDelBtn":
                         mPutInAgileReportDetailAdapter.getList().remove(obj);
                         mPutInAgileReportDetailAdapter.notifyItemRangeRemoved(position, 1);
-                        mPutInAgileReportDetailAdapter.notifyItemRangeChanged(position, mPutInAgileReportDetailAdapter.getItemCount()-position);
+                        mPutInAgileReportDetailAdapter.notifyItemRangeChanged(position, mPutInAgileReportDetailAdapter.getItemCount() - position);
                         if (mPutInDetailEntity.getId() != null) {
                             dgDeletedIds += mPutInDetailEntity.getId() + ",";
                         }
@@ -236,12 +229,13 @@ public class PutInAgileActivityReportActivity extends BaseRefreshRecyclerActivit
 
     /**
      * 扫描功能：红外、摄像头扫描监听事件
+     *
      * @param codeResultEvent
      */
 //    Map<String, Object> goodMap = new HashMap<>();
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onCodeReceiver(CodeResultEvent codeResultEvent) {
-        MaterialQRCodeEntity materialQRCodeEntity = MaterQRUtil.materialQRCode(context,codeResultEvent.scanResult);
+        MaterialQRCodeEntity materialQRCodeEntity = MaterQRUtil.materialQRCode(context, codeResultEvent.scanResult);
         if (materialQRCodeEntity == null) return;
 
         MaterialEntity materialEntity = new MaterialEntity();
@@ -259,6 +253,7 @@ public class PutInAgileActivityReportActivity extends BaseRefreshRecyclerActivit
         mPutInAgileReportDetailAdapter.notifyItemRangeChanged(mPutInAgileReportDetailAdapter.getItemCount() - 1, 1);
         contentView.smoothScrollToPosition(mPutInAgileReportDetailAdapter.getItemCount() - 1);
     }
+
     /**
      * @param
      * @return
@@ -352,7 +347,7 @@ public class PutInAgileActivityReportActivity extends BaseRefreshRecyclerActivit
             mPutInDetailEntity.setWareId((WarehouseEntity) selectDataEvent.getEntity());
         } else if (object instanceof StoreSetEntity) {
             mPutInDetailEntity.setStoreId((StoreSetEntity) selectDataEvent.getEntity());
-        }else if (object instanceof Good) {
+        } else if (object instanceof Good) {
             Good good = (Good) selectDataEvent.getEntity();
             MaterialEntity materialEntity = new MaterialEntity();
             materialEntity.setId(good.id);
