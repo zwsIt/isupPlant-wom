@@ -57,7 +57,7 @@ import io.reactivex.functions.Consumer;
  */
 public class PreMaterialReceiveListAdapter extends BaseListDataRecyclerViewAdapter<PreMaterialEntity> {
 
-    private List<String> rejectReasons ;
+    private List<String> rejectReasons;
     private Map<String, String> receiveStates;
 
     public PreMaterialReceiveListAdapter(Context context) {
@@ -82,7 +82,7 @@ public class PreMaterialReceiveListAdapter extends BaseListDataRecyclerViewAdapt
         this.receiveStates = receiveStates;
     }
 
-    class PreMaterialReceiveViewHolder extends BaseRecyclerViewHolder<PreMaterialEntity>{
+    class PreMaterialReceiveViewHolder extends BaseRecyclerViewHolder<PreMaterialEntity> {
 
         @BindByTag("itemPreMaterialReceiveTableNo")
         TextView itemPreMaterialReceiveTableNo;
@@ -157,13 +157,13 @@ public class PreMaterialReceiveListAdapter extends BaseListDataRecyclerViewAdapt
             itemPreMaterialRejectReasonView.setLayoutManager(new GridLayoutManager(context, 4));
             itemPreMaterialRejectReasonView.addItemDecoration(new GridSpaceItemDecoration(DisplayUtil.dip2px(3, context), 4));
 
-            if(receiveStates!=null && receiveStates.size()!=0){
-                List<String> receiveStateStr= new ArrayList<>();
-                receiveStateStr.addAll( receiveStates.values());
+            if (receiveStates != null && receiveStates.size() != 0) {
+                List<String> receiveStateStr = new ArrayList<>();
+                receiveStateStr.addAll(receiveStates.values());
                 ArrayAdapter<String> adapter = new ArrayAdapter<>(context, R.layout.ly_spinner_item_dark14, receiveStateStr);
                 adapter.setDropDownViewResource(R.layout.ly_spinner_dropdown_item);
                 itemPreMaterialReceiveReasons.setAdapter(adapter);
-                itemPreMaterialReceiveReasons.setSelection(1);
+                itemPreMaterialReceiveReasons.setSelection(itemPreMaterialReceiveReasons.getSelectedItem() == null ? 1 : receiveStateStr.indexOf(itemPreMaterialReceiveReasons.getSelectedItem().toString()));
             }
             TextHelper.setRequired(true, itemPreMaterialRejectReasonViewText);
 
@@ -171,7 +171,7 @@ public class PreMaterialReceiveListAdapter extends BaseListDataRecyclerViewAdapt
             mRejectReasonAdapter.setList(rejectReasons);
             itemPreMaterialRejectReasonView.setAdapter(mRejectReasonAdapter);
 
-            itemPreMaterialReceiveRealNum.setInputType(InputType.TYPE_CLASS_NUMBER|InputType.TYPE_NUMBER_FLAG_DECIMAL);
+            itemPreMaterialReceiveRealNum.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
         }
 
         @SuppressLint("CheckResult")
@@ -183,10 +183,9 @@ public class PreMaterialReceiveListAdapter extends BaseListDataRecyclerViewAdapt
                 @Override
                 public void onChildViewClick(View childView, int action, Object obj) {
 
-                    if(action == ViewAction.CONTENT_CLEAN.value()){
+                    if (action == ViewAction.CONTENT_CLEAN.value()) {
                         getItem(getAdapterPosition()).receiveStaff = null;
-                    }
-                    else {
+                    } else {
                         onItemChildViewClick(itemPreMaterialReceiveStaff, 0, getItem(getAdapterPosition()));
                     }
                 }
@@ -195,15 +194,14 @@ public class PreMaterialReceiveListAdapter extends BaseListDataRecyclerViewAdapt
             itemPreMaterialReceiveReasons.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                 @Override
                 public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                    String value = (String) itemPreMaterialReceiveReasons.getSelectedItem();
-                    if(TextUtils.isEmpty(value)){
+                    PreMaterialEntity entity = getItem(getAdapterPosition());
+                    String value = /*entity.receiveState.value*/ (String) itemPreMaterialReceiveReasons.getSelectedItem();
+                    if (TextUtils.isEmpty(value)) {
                         return;
                     }
 
-                    PreMaterialEntity entity = getItem(getAdapterPosition());
-
-                    for(String key: receiveStates.keySet()){
-                        if(value.equals(receiveStates.get(key))){
+                    for (String key : receiveStates.keySet()) {
+                        if (value.equals(receiveStates.get(key))) {
                             entity.receiveState = SystemCodeManager.getInstance().getSystemCodeEntity(key);
 
                             // 还原
@@ -221,28 +219,25 @@ public class PreMaterialReceiveListAdapter extends BaseListDataRecyclerViewAdapt
 //                                itemPreMaterialReceiveStoreLocation.setContent("--/--");
 //                            }
 
-
                             itemPreMaterialReceiveStoreLocation.setEditable(true);
                             itemPreMaterialReceiveStoreLocation.findViewById(R.id.customDeleteIcon).setVisibility(View.VISIBLE);
-                            if("WOM_receiveState/partReceive".equals(key)){
+                            if ("WOM_receiveState/partReceive".equals(key)) {
                                 itemPreMaterialReceiveLine.setVisibility(View.VISIBLE);
                                 itemPreMaterialReceiveReason.setVisibility(View.VISIBLE);
                                 itemPreMaterialRejectReasonLayout.setVisibility(View.GONE);
                                 itemPreMaterialReceiveRealNum.setEditable(true);
                                 itemPreMaterialReceiveRealNum.setContent(null);
                                 entity.receiveNum = null;
-                            }
-                            else if("WOM_receiveState/reject".equals(key)){
+                            } else if ("WOM_receiveState/reject".equals(key)) {
                                 itemPreMaterialReceiveStoreLocation.setEditable(false);
                                 itemPreMaterialReceiveStoreLocation.findViewById(R.id.customDeleteIcon).setVisibility(View.GONE);
 
                                 itemPreMaterialReceiveLine.setVisibility(View.VISIBLE);
                                 itemPreMaterialReceiveReason.setVisibility(View.GONE);
                                 itemPreMaterialRejectReasonLayout.setVisibility(View.VISIBLE);
-                                if(entity.rejectReason!=null && entity.rejectReason.value!=null) {
+                                if (entity.rejectReason != null && entity.rejectReason.value != null) {
                                     mRejectReasonAdapter.setPosition(rejectReasons.indexOf(entity.rejectReason.value));
-                                }
-                                else{
+                                } else {
                                     mRejectReasonAdapter.setPosition(-1);
                                 }
 
@@ -251,10 +246,9 @@ public class PreMaterialReceiveListAdapter extends BaseListDataRecyclerViewAdapt
                                 itemPreMaterialReceiveRealNum.setEnabled(false);
                                 itemPreMaterialReceiveRealNum.setContent(null);
                                 entity.receiveNum = null;
-                            }
-                            else{
+                            } else {
                                 itemPreMaterialReceiveRealNum.setEnabled(false);
-                                if(entity.preNum!=null)
+                                if (entity.preNum != null)
                                     itemPreMaterialReceiveRealNum.setContent(String.valueOf(entity.preNum));
                                 itemPreMaterialReceiveLine.setVisibility(View.GONE);
                                 itemPreMaterialReceiveReason.setVisibility(View.GONE);
@@ -277,10 +271,9 @@ public class PreMaterialReceiveListAdapter extends BaseListDataRecyclerViewAdapt
                         public void accept(Object o) throws Exception {
                             PreMaterialEntity preMaterialEntity = getItem(getAdapterPosition());
                             preMaterialEntity.isChecked = !preMaterialEntity.isChecked;
-                            if(preMaterialEntity.isChecked){
+                            if (preMaterialEntity.isChecked) {
                                 itemPreMaterialReceiveCheck.setImageResource(R.drawable.ic_check_yes);
-                            }
-                            else{
+                            } else {
                                 itemPreMaterialReceiveCheck.setImageResource(R.drawable.ic_check_no);
                             }
                         }
@@ -303,7 +296,7 @@ public class PreMaterialReceiveListAdapter extends BaseListDataRecyclerViewAdapt
                         @Override
                         public void accept(CharSequence charSequence) throws Exception {
 
-                            if(TextUtils.isEmpty(charSequence)){
+                            if (TextUtils.isEmpty(charSequence)) {
                                 PreMaterialEntity materialEntity = getItem(getAdapterPosition());
                                 materialEntity.receiveNum = null;
                                 return;
@@ -311,25 +304,22 @@ public class PreMaterialReceiveListAdapter extends BaseListDataRecyclerViewAdapt
                             PreMaterialEntity materialEntity = getItem(getAdapterPosition());
                             float receiveNumF = new BigDecimal(charSequence.toString()).floatValue();
 
-                            if(materialEntity.receiveState == null){
+                            if (materialEntity.receiveState == null) {
                                 ToastUtils.show(context, context.getResources().getString(R.string.wom_please_select_receive_type));
                                 return;
                             }
-                            if("WOM_receiveState/partReceive".equals(materialEntity.receiveState.id)){
-                                if(materialEntity.preNum!=null && receiveNumF >= materialEntity.preNum){
+                            if ("WOM_receiveState/partReceive".equals(materialEntity.receiveState.id)) {
+                                if (materialEntity.preNum != null && receiveNumF >= materialEntity.preNum) {
                                     ToastUtils.show(context, context.getResources().getString(R.string.wom_part_receive_num_smaller_preparenum));
                                     return;
-                                }
-                                else{
+                                } else {
                                     materialEntity.receiveNum = receiveNumF;
                                 }
-                            }
-                            else if("WOM_receiveState/receive".equals(materialEntity.receiveState.id)){
-                                if(materialEntity.preNum!=null && receiveNumF > materialEntity.preNum){
+                            } else if ("WOM_receiveState/receive".equals(materialEntity.receiveState.id)) {
+                                if (materialEntity.preNum != null && receiveNumF > materialEntity.preNum) {
                                     ToastUtils.show(context, context.getResources().getString(R.string.wom_receive_num_smaller_preparenum));
                                     return;
-                                }
-                                else{
+                                } else {
                                     materialEntity.receiveNum = receiveNumF;
                                 }
                             }
@@ -346,7 +336,7 @@ public class PreMaterialReceiveListAdapter extends BaseListDataRecyclerViewAdapt
                         @Override
                         public void accept(CharSequence charSequence) throws Exception {
                             PreMaterialEntity materialEntity = getItem(getAdapterPosition());
-                            if(TextUtils.isEmpty(charSequence)){
+                            if (TextUtils.isEmpty(charSequence)) {
 
                                 materialEntity.remark = "";
                                 return;
@@ -359,7 +349,7 @@ public class PreMaterialReceiveListAdapter extends BaseListDataRecyclerViewAdapt
             itemPreMaterialReceiveStoreLocation.setOnChildViewClickListener(new OnChildViewClickListener() {
                 @Override
                 public void onChildViewClick(View childView, int action, Object obj) {
-                    onItemChildViewClick(itemPreMaterialReceiveStoreLocation,0,getItem(getAdapterPosition()));
+                    onItemChildViewClick(itemPreMaterialReceiveStoreLocation, 0, getItem(getAdapterPosition()));
                 }
             });
         }
@@ -367,74 +357,70 @@ public class PreMaterialReceiveListAdapter extends BaseListDataRecyclerViewAdapt
         @Override
         protected void update(PreMaterialEntity data) {
             itemPreMaterialReceiveTableNo.setText(data.preOrderId.orderTableNo);
-            itemPreMaterialReceiveDeliverCode.setContent(data.deliverCode!=null?data.deliverCode:"");
-            if(data.materialId!=null && data.materialId.getName()!=null){
+            itemPreMaterialReceiveDeliverCode.setContent(data.deliverCode != null ? data.deliverCode : "");
+            if (data.materialId != null && data.materialId.getName() != null) {
                 StringBuilder stringBuilder = new StringBuilder();
                 stringBuilder.append(data.materialId.getName());
                 stringBuilder.append("(");
                 stringBuilder.append(data.materialId.getCode());
                 stringBuilder.append(")");
 
-                if(data.materialId.getName().length()>2){
-                    itemPreMaterialReceiveIc.setText(data.materialId.getName().substring(0,2));
-                }
-                else{
+                if (data.materialId.getName().length() > 2) {
+                    itemPreMaterialReceiveIc.setText(data.materialId.getName().substring(0, 2));
+                } else {
                     itemPreMaterialReceiveIc.setText(data.materialId.getName());
                 }
                 itemPreMaterialReceiveMaterial.setText(stringBuilder.toString());
             }
-            if(data.toWareId!=null && data.toWareId.getName()!=null){
+            if (data.toWareId != null && data.toWareId.getName() != null) {
                 StringBuilder fromStr = new StringBuilder(data.toWareId.getName());
                 fromStr.append("/");
-                if(data.toStoreId!=null && data.toStoreId.getName()!=null){
+                if (data.toStoreId != null && data.toStoreId.getName() != null) {
                     fromStr.append(data.toStoreId.getName());
-                }
-                else{
+                } else {
                     fromStr.append("--");
                 }
                 itemPreMaterialReceiveStoreLocation.setContent(fromStr.toString());
-            } else{
+            } else {
                 itemPreMaterialReceiveStoreLocation.setContent("--/--");
             }
 
-            if (data.toStoreIdInit == null && data.toStoreId != null){
+            if (data.toStoreIdInit == null && data.toStoreId != null) {
                 data.toStoreIdInit = GsonUtil.gsonToBean(data.toStoreId.toString(), StoreSetEntity.class);
             }
 
-            itemPreMaterialReceiveBatchNum.setText(data.materialBatchNum!=null? data.materialBatchNum :"--");
+            itemPreMaterialReceiveBatchNum.setText(data.materialBatchNum != null ? data.materialBatchNum : "--");
             itemPreMaterialReceiveNum.setText(String.valueOf(data.preNum));
 
-            if(data.receiveStaff != null && data.receiveStaff.name!=null){
+            if (data.receiveStaff != null && data.receiveStaff.name != null) {
                 itemPreMaterialReceiveStaff.setContent(data.receiveStaff.name);
-            } else{
+            } else {
                 itemPreMaterialReceiveStaff.setContent(SupPlantApplication.getAccountInfo().getStaffName());
                 ObjectEntity staff = new ObjectEntity(SupPlantApplication.getAccountInfo().staffId);
                 staff.name = SupPlantApplication.getAccountInfo().getStaffName();
                 data.receiveStaff = staff;
             }
 
-            if(data.receiveState == null ){
+            if (data.receiveState == null) {
                 data.receiveState = SystemCodeManager.getInstance().getSystemCodeEntity("WOM_receiveState/receive");
             }
 //            itemPreMaterialReceiveRealNum.setEnabled(true);
-            if("WOM_receiveState/partReceive".equals(data.receiveState.id)){
+            if ("WOM_receiveState/partReceive".equals(data.receiveState.id)) {
                 itemPreMaterialReceiveReason.setContent(data.remark);
                 itemPreMaterialReceiveLine.setVisibility(View.VISIBLE);
                 itemPreMaterialReceiveReason.setVisibility(View.VISIBLE);
                 itemPreMaterialRejectReasonLayout.setVisibility(View.GONE);
-            }
-            else if("WOM_receiveState/reject".equals(data.receiveState.id)){
+            } else if ("WOM_receiveState/reject".equals(data.receiveState.id)) {
                 itemPreMaterialRejectReasonLayout.setVisibility(View.VISIBLE);
                 itemPreMaterialReceiveLine.setVisibility(View.VISIBLE);
                 itemPreMaterialReceiveReason.setVisibility(View.GONE);
-                if(data.rejectReason!=null && data.rejectReason.value!=null) {
+                if (data.rejectReason != null && data.rejectReason.value != null) {
                     mRejectReasonAdapter.setPosition(rejectReasons.indexOf(data.rejectReason.value));
                 }
                 mRejectReasonAdapter.notifyDataSetChanged();
                 itemPreMaterialReceiveRealNum.setEnabled(false);
                 data.receiveNum = null;
-            }
-            else{
+            } else {
                 itemPreMaterialRejectReasonLayout.setVisibility(View.GONE);
                 itemPreMaterialReceiveLine.setVisibility(View.GONE);
                 itemPreMaterialReceiveReason.setVisibility(View.GONE);
@@ -443,12 +429,11 @@ public class PreMaterialReceiveListAdapter extends BaseListDataRecyclerViewAdapt
                 data.receiveNum = data.preNum;
             }
 
-            itemPreMaterialReceiveRealNum.setContent(data.receiveNum!=null?String.valueOf(data.receiveNum):"");
+            itemPreMaterialReceiveRealNum.setContent(data.receiveNum != null ? String.valueOf(data.receiveNum) : "");
 
-            if(data.isChecked){
+            if (data.isChecked) {
                 itemPreMaterialReceiveCheck.setImageResource(R.drawable.ic_check_yes);
-            }
-            else{
+            } else {
                 itemPreMaterialReceiveCheck.setImageResource(R.drawable.ic_check_no);
             }
         }

@@ -9,23 +9,24 @@ import com.supcon.common.view.base.adapter.BaseListDataRecyclerViewAdapter;
 import com.supcon.common.view.base.adapter.viewholder.BaseRecyclerViewHolder;
 import com.supcon.mes.mbap.view.CustomTextView;
 import com.supcon.mes.module_wom_rejectmaterial.R;
+import com.supcon.mes.module_wom_rejectmaterial.model.bean.RejectMaterialPartEntity;
 import com.supcon.mes.module_wom_rejectmaterial.model.bean.RejectRecordMaterialEntity;
 
 /**
  * Author by fengjun1,
  * Date on 2020/6/4.
  */
-public class RejectRecordMaterialAdapter extends BaseListDataRecyclerViewAdapter<RejectRecordMaterialEntity> {
+public class RejectRecordMaterialAdapter extends BaseListDataRecyclerViewAdapter<RejectMaterialPartEntity> {
     public RejectRecordMaterialAdapter(Context context) {
         super(context);
     }
 
     @Override
-    protected BaseRecyclerViewHolder<RejectRecordMaterialEntity> getViewHolder(int viewType) {
+    protected BaseRecyclerViewHolder<RejectMaterialPartEntity> getViewHolder(int viewType) {
         return new ViewHolder(context);
     }
 
-    class ViewHolder extends BaseRecyclerViewHolder<RejectRecordMaterialEntity> {
+    class ViewHolder extends BaseRecyclerViewHolder<RejectMaterialPartEntity> {
 
         @BindByTag("tableNoTv")
         TextView tableNoTv;
@@ -50,13 +51,13 @@ public class RejectRecordMaterialAdapter extends BaseListDataRecyclerViewAdapter
         }
 
         @Override
-        protected void update(RejectRecordMaterialEntity data) {
-            tableNoTv.setText(data.headId != null ? (TextUtils.isEmpty(data.headId.getTableNo()) ? "--" : data.headId.getTableNo()) : "--");
-            materialNameTv.setText(data.materialId != null ? (!TextUtils.isEmpty(data.materialId.name) ? data.materialId.name : "--") : "--");
-            rejectMaterialCode.setContent(data.materialId != null ? (!TextUtils.isEmpty(data.materialId.code) ? data.materialId.code : "--") : "--");
-            materialBatch.setContent(data.materialBatchNum != null ? data.materialBatchNum : "--");
-            rejectNum.setContent(data.rejectNum != null ? String.valueOf(data.rejectNum) : "--");
-            rejectStaff.setContent(data.headId != null ? (data.headId.getRejectApplyStaff() != null ? data.headId.getRejectApplyStaff().name : "--") : "--");
+        protected void update(RejectMaterialPartEntity data) {
+            tableNoTv.setText(data.getHeadId() != null ? (TextUtils.isEmpty(data.getHeadId().getTableNo()) ? "--" : data.getHeadId().getTableNo()) : "--");
+            materialNameTv.setText(data.getMaterialId() != null ? (!TextUtils.isEmpty(data.getMaterialId().getName()) ? data.getMaterialId().getName() : "--") : "--");
+            rejectMaterialCode.setContent(data.getMaterialId() != null ? (!TextUtils.isEmpty(data.getMaterialId().getCode()) ? data.getMaterialId().getCode() : "--") : "--");
+            materialBatch.setContent(data.getMaterialBatchNum() != null ? data.getMaterialBatchNum() : "--");
+            rejectNum.setContent(data.getRejectNum() != null ? String.valueOf(data.getRejectNum()) : "--");
+            rejectStaff.setContent(data.getHeadId() != null ? (data.getHeadId().getRejectApplyStaff() != null ? data.getHeadId().getRejectApplyStaff().name : "--") : "--");
         }
     }
 }

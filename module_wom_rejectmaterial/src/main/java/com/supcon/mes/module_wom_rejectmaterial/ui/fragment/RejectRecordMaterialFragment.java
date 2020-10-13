@@ -24,6 +24,7 @@ import com.supcon.mes.module_wom_producetask.model.api.CommonListAPI;
 import com.supcon.mes.module_wom_producetask.model.contract.CommonListContract;
 import com.supcon.mes.module_wom_producetask.presenter.CommonListPresenter;
 import com.supcon.mes.module_wom_rejectmaterial.R;
+import com.supcon.mes.module_wom_rejectmaterial.model.bean.RejectMaterialPartEntity;
 import com.supcon.mes.module_wom_rejectmaterial.model.bean.RejectRecordMaterialEntity;
 import com.supcon.mes.module_wom_rejectmaterial.ui.adapter.RejectRecordMaterialAdapter;
 
@@ -33,10 +34,11 @@ import java.util.Map;
 /**
  * Author by fengjun1,
  * Date on 2020/6/4.
+ * 退料记录fragment
  */
 
 @Presenter(value = {CommonListPresenter.class})
-public class RejectRecordMaterialFragment extends BaseRefreshRecyclerFragment<RejectRecordMaterialEntity> implements CommonListContract.View {
+public class RejectRecordMaterialFragment extends BaseRefreshRecyclerFragment<RejectMaterialPartEntity> implements CommonListContract.View {
 
     @BindByTag("contentView")
     RecyclerView contentView;
@@ -45,7 +47,7 @@ public class RejectRecordMaterialFragment extends BaseRefreshRecyclerFragment<Re
     Map<String, Object> queryParams = new HashMap<>(); // 快速查询
 
     @Override
-    protected IListAdapter<RejectRecordMaterialEntity> createAdapter() {
+    protected IListAdapter<RejectMaterialPartEntity> createAdapter() {
         rejectRecordMaterialAdapter = new RejectRecordMaterialAdapter(context);
         return rejectRecordMaterialAdapter;
     }
@@ -98,7 +100,7 @@ public class RejectRecordMaterialFragment extends BaseRefreshRecyclerFragment<Re
     @Override
     public void listSuccess(BAP5CommonEntity entity) {
         CommonBAPListEntity commonBAPListEntity = GsonUtil.gsonToBean(GsonUtil.gsonString(entity.data), CommonBAPListEntity.class);
-        refreshListController.refreshComplete(GsonUtil.jsonToList(GsonUtil.gsonString((Object)commonBAPListEntity.result), RejectRecordMaterialEntity.class));
+        refreshListController.refreshComplete(GsonUtil.jsonToList(GsonUtil.gsonString((Object)commonBAPListEntity.result), RejectMaterialPartEntity.class));
     }
 
     @Override

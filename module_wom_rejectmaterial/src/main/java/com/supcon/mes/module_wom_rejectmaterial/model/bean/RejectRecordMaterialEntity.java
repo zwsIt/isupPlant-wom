@@ -11,6 +11,7 @@ import com.supcon.mes.module_wom_preparematerial.model.bean.PrepareMaterialEntit
  * Date on 2020/6/4.
  * 退料记录实体
  */
+@Deprecated
 public class RejectRecordMaterialEntity extends BaseEntity {
     public Object attrMap;
     public Long cid;

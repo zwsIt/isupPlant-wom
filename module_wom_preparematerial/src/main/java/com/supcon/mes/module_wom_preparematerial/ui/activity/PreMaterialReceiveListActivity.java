@@ -168,7 +168,12 @@ public class PreMaterialReceiveListActivity extends BaseRefreshRecyclerActivity<
                     }
                 });
 
-        refreshListController.setOnRefreshPageListener(pageIndex -> presenterRouter.create(PreMaterialReceiveListAPI.class).getPreMaterialReceiveList(pageIndex, queryParams));
+        refreshListController.setOnRefreshPageListener(new OnRefreshPageListener() {
+            @Override
+            public void onRefresh(int pageIndex) {
+                presenterRouter.create(PreMaterialReceiveListAPI.class).getPreMaterialReceiveList(pageIndex, queryParams);
+            }
+        });
 
         getController(SearchViewController.class).setSearchList(new SearchViewController.SearchResultListener() {
             @Override
@@ -290,9 +295,7 @@ public class PreMaterialReceiveListActivity extends BaseRefreshRecyclerActivity<
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onDataSelect(SelectDataEvent event) {
-
         if (event.getSelectTag().equals("itemPreMaterialReceiveStaff")) {
-//            LogUtil.d("人员单选："+ GsonUtil.gsonString(event.getEntity()));
             ContactEntity selectContactEntity = (ContactEntity) event.getEntity();
             ObjectEntity objectEntity = new ObjectEntity(selectContactEntity.staffId);
             objectEntity.name = selectContactEntity.name;
@@ -322,7 +325,7 @@ public class PreMaterialReceiveListActivity extends BaseRefreshRecyclerActivity<
     public void getPreMaterialReceiveListSuccess(CommonBAPListEntity entity) {
 
         if(entity == null || entity.result == null){
-            refreshListController.refreshComplete(null);
+            refreshListController.refreshComplete();
             return;
         }
 
@@ -356,8 +359,7 @@ public class PreMaterialReceiveListActivity extends BaseRefreshRecyclerActivity<
         if(entity.dealSuccessFlag){
             onLoadSuccess();
             refreshListController.refreshBegin();
-        }
-        else{
+        } else{
             onLoadFailed(""+entity.errMsg);
         }
     }

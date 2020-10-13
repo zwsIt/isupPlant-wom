@@ -27,7 +27,7 @@ import io.reactivex.functions.Consumer;
 /**
  * Author by fengjun1,
  * Date on 2020/6/3.
- * 退料记录
+ * 退料记录list
  */
 @Router(Constant.Router.REJECT_RECORD_METERIAL)
 public class RejectRecordMaterialListActivity extends BaseFragmentActivity {
