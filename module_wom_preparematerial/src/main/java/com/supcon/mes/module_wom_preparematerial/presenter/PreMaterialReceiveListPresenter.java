@@ -6,6 +6,7 @@ import com.supcon.mes.middleware.model.bean.CommonBAPListEntity;
 import com.supcon.mes.middleware.model.bean.FastQueryCondEntity;
 import com.supcon.mes.middleware.util.BAPQueryParamsHelper;
 import com.supcon.mes.middleware.util.HttpErrorReturnUtil;
+import com.supcon.mes.middleware.util.SystemCodeManager;
 import com.supcon.mes.module_wom_preparematerial.model.bean.PreMaterialEntity;
 import com.supcon.mes.module_wom_preparematerial.model.contract.PreMaterialReceiveListContract;
 import com.supcon.mes.module_wom_preparematerial.model.network.WomHttpClient;
@@ -46,6 +47,12 @@ public class PreMaterialReceiveListPresenter extends PreMaterialReceiveListContr
                             @Override
                             public void accept(BAP5CommonEntity<CommonBAPListEntity<PreMaterialEntity>> commonBAPListEntityBAP5CommonEntity) throws Exception {
                                 if (commonBAPListEntityBAP5CommonEntity.success) {
+
+                                    for (PreMaterialEntity preMaterialEntity : commonBAPListEntityBAP5CommonEntity.data.result){
+                                        preMaterialEntity.receiveState = SystemCodeManager.getInstance().getSystemCodeEntity("WOM_receiveState/receive");
+                                    }
+
+
                                     getView().getPreMaterialReceiveListSuccess(commonBAPListEntityBAP5CommonEntity.data);
                                 }
                                 else{

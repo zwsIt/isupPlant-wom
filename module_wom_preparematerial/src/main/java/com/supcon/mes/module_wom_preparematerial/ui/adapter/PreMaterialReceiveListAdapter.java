@@ -24,6 +24,7 @@ import com.supcon.common.view.base.adapter.viewholder.BaseRecyclerViewHolder;
 import com.supcon.common.view.listener.OnChildViewClickListener;
 import com.supcon.common.view.listener.OnItemChildViewClickListener;
 import com.supcon.common.view.util.DisplayUtil;
+import com.supcon.common.view.util.LogUtil;
 import com.supcon.common.view.util.ToastUtils;
 import com.supcon.mes.mbap.constant.ViewAction;
 import com.supcon.mes.mbap.utils.GridSpaceItemDecoration;
@@ -82,6 +83,19 @@ public class PreMaterialReceiveListAdapter extends BaseListDataRecyclerViewAdapt
         this.receiveStates = receiveStates;
     }
 
+    @Override
+    public void onBindViewHolder(BaseRecyclerViewHolder<PreMaterialEntity> holder, int position) {
+        super.onBindViewHolder(holder, position);
+        LogUtil.d("-------onBindViewHolder-----" + (position + 1) + "------------");
+    }
+
+    @Override
+    public BaseRecyclerViewHolder<PreMaterialEntity> onCreateViewHolder(ViewGroup parent, int viewType) {
+        LogUtil.d("-------onCreateViewHolder-----------");
+        return super.onCreateViewHolder(parent, viewType);
+
+    }
+
     class PreMaterialReceiveViewHolder extends BaseRecyclerViewHolder<PreMaterialEntity> {
 
         @BindByTag("itemPreMaterialReceiveTableNo")
@@ -133,6 +147,8 @@ public class PreMaterialReceiveListAdapter extends BaseListDataRecyclerViewAdapt
         View itemPreMaterialReceiveLine;
 
         private RejectReasonAdapter mRejectReasonAdapter;
+        private List<String> mReceiveStateStr;
+        private ArrayAdapter<String> mReceiveStateAdapter;
 
         public PreMaterialReceiveViewHolder(Context context) {
             super(context);
@@ -158,12 +174,12 @@ public class PreMaterialReceiveListAdapter extends BaseListDataRecyclerViewAdapt
             itemPreMaterialRejectReasonView.addItemDecoration(new GridSpaceItemDecoration(DisplayUtil.dip2px(3, context), 4));
 
             if (receiveStates != null && receiveStates.size() != 0) {
-                List<String> receiveStateStr = new ArrayList<>();
-                receiveStateStr.addAll(receiveStates.values());
-                ArrayAdapter<String> adapter = new ArrayAdapter<>(context, R.layout.ly_spinner_item_dark14, receiveStateStr);
-                adapter.setDropDownViewResource(R.layout.ly_spinner_dropdown_item);
-                itemPreMaterialReceiveReasons.setAdapter(adapter);
-                itemPreMaterialReceiveReasons.setSelection(itemPreMaterialReceiveReasons.getSelectedItem() == null ? 1 : receiveStateStr.indexOf(itemPreMaterialReceiveReasons.getSelectedItem().toString()));
+                mReceiveStateStr = new ArrayList<>();
+                mReceiveStateStr.addAll(receiveStates.values());
+                mReceiveStateAdapter = new ArrayAdapter<>(context, R.layout.ly_spinner_item_dark14, mReceiveStateStr);
+                mReceiveStateAdapter.setDropDownViewResource(R.layout.ly_spinner_dropdown_item);
+                itemPreMaterialReceiveReasons.setAdapter(mReceiveStateAdapter);
+                itemPreMaterialReceiveReasons.setSelection(itemPreMaterialReceiveReasons.getSelectedItem() == null ? 1 : mReceiveStateStr.indexOf(itemPreMaterialReceiveReasons.getSelectedItem().toString()));
             }
             TextHelper.setRequired(true, itemPreMaterialRejectReasonViewText);
 
@@ -302,6 +318,7 @@ public class PreMaterialReceiveListAdapter extends BaseListDataRecyclerViewAdapt
                                 return;
                             }
                             PreMaterialEntity materialEntity = getItem(getAdapterPosition());
+                            if (materialEntity == null)return;
                             float receiveNumF = new BigDecimal(charSequence.toString()).floatValue();
 
                             if (materialEntity.receiveState == null) {
@@ -404,12 +421,19 @@ public class PreMaterialReceiveListAdapter extends BaseListDataRecyclerViewAdapt
             if (data.receiveState == null) {
                 data.receiveState = SystemCodeManager.getInstance().getSystemCodeEntity("WOM_receiveState/receive");
             }
+
+
+            LogUtil.d("------------" + (getAdapterPosition() + 1) + "------------" + data.toString());
 //            itemPreMaterialReceiveRealNum.setEnabled(true);
             if ("WOM_receiveState/partReceive".equals(data.receiveState.id)) {
                 itemPreMaterialReceiveReason.setContent(data.remark);
                 itemPreMaterialReceiveLine.setVisibility(View.VISIBLE);
                 itemPreMaterialReceiveReason.setVisibility(View.VISIBLE);
                 itemPreMaterialRejectReasonLayout.setVisibility(View.GONE);
+
+
+                itemPreMaterialReceiveReasons.setSelection(itemPreMaterialReceiveReasons.getSelectedItem() == null ? 1 : mReceiveStateStr.indexOf(receiveStates.get(data.receiveState.id)));
+//                mReceiveStateAdapter.notifyDataSetChanged();
             } else if ("WOM_receiveState/reject".equals(data.receiveState.id)) {
                 itemPreMaterialRejectReasonLayout.setVisibility(View.VISIBLE);
                 itemPreMaterialReceiveLine.setVisibility(View.VISIBLE);
@@ -436,6 +460,7 @@ public class PreMaterialReceiveListAdapter extends BaseListDataRecyclerViewAdapt
             } else {
                 itemPreMaterialReceiveCheck.setImageResource(R.drawable.ic_check_no);
             }
+
         }
     }
 }
