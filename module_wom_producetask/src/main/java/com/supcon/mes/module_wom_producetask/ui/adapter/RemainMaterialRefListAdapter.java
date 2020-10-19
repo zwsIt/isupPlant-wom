@@ -8,34 +8,34 @@ import com.app.annotation.BindByTag;
 import com.jakewharton.rxbinding2.view.RxView;
 import com.supcon.common.view.base.adapter.BaseListDataRecyclerViewAdapter;
 import com.supcon.common.view.base.adapter.viewholder.BaseRecyclerViewHolder;
-import com.supcon.mes.middleware.model.bean.wom.FactoryModelEntity;
 import com.supcon.mes.middleware.model.bean.wom.WarehouseEntity;
 import com.supcon.mes.module_wom_producetask.R;
+import com.supcon.mes.module_wom_producetask.model.bean.RemainMaterialEntity;
 
 import java.util.concurrent.TimeUnit;
 
 /**
  * ClassName
- * Created by zhangwenshuai1 on 2020/3/23
+ * Created by zhangwenshuai1 on 2020/10/19
  * Email zhangwenshuai1@supcon.com
  * Desc
  */
-public class WarehouseListAdapter extends BaseListDataRecyclerViewAdapter<WarehouseEntity> {
-    public WarehouseListAdapter(Context context) {
+public class RemainMaterialRefListAdapter extends BaseListDataRecyclerViewAdapter<RemainMaterialEntity> {
+    public RemainMaterialRefListAdapter(Context context) {
         super(context);
     }
 
     @Override
-    protected BaseRecyclerViewHolder<WarehouseEntity> getViewHolder(int viewType) {
+    protected BaseRecyclerViewHolder<RemainMaterialEntity> getViewHolder(int viewType) {
         return new ViewHolder(context);
     }
 
     /**
      * ViewHolder
-     * created by zhangwenshuai1 2020/3/26
-     * desc 仓库Item
+     * created by zhangwenshuai1 2020/10/19
+     * desc 尾料Item
      */
-    class ViewHolder extends BaseRecyclerViewHolder<WarehouseEntity> {
+    class ViewHolder extends BaseRecyclerViewHolder<RemainMaterialEntity> {
 
         @BindByTag("nameTv")
         TextView nameTv;
@@ -58,9 +58,9 @@ public class WarehouseListAdapter extends BaseListDataRecyclerViewAdapter<Wareho
         }
 
         @Override
-        protected void update(WarehouseEntity data) {
-            nameTv.setCompoundDrawablesWithIntrinsicBounds(R.drawable.wom_ic_stock,0,0,0);
-            nameTv.setText(String.format("%s(%s)", data.getName(), data.getCode()));
+        protected void update(RemainMaterialEntity data) {
+//            nameTv.setCompoundDrawablesWithIntrinsicBounds(R.drawable.wom_ic_stock,0,0,0);
+//            nameTv.setText(String.format("%s(%s)", data.getName(), data.getCode()));
         }
     }
 

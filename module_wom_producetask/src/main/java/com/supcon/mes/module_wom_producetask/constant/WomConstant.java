@@ -59,6 +59,11 @@ public interface WomConstant {
         String MATERIAL_BATCH_02 = "BaseSet_isBatch/batch"; // 按批次
         String MATERIAL_BATCH_03 = "BaseSet_isBatch/piece"; // 按件
 
+        // 尾料处理方式
+        String WOM_remainOperate_01 = "WOM_remainOperate/addRemain"; // 生成
+        String WOM_remainOperate_02 = "WOM_remainOperate/updateRemain"; // 使用
+        String WOM_remainOperate_03 = "WOM_remainOperate/noOperate"; // 无关
+
     }
 
     /**
@@ -84,6 +89,7 @@ public interface WomConstant {
         String BATCH_MATERIAL_RELECT_LIST_REF_URL = "/msService/WOM/batchMaterial/batMaterilPart/recodRefForReject-query"; // 退料配料记录参照list
 
         String ADJUST_LIST_RUL = "/msService/WOM/produceTask/taskProcess/data-dg1576475211202?datagridCode=WOM_1.0.0_produceTask_adjustActiveViewdg1576475211202&id="; // 调整活动list
+        String REMAIN_MATERIAL_LIST_REF_URL = "/msService/WOM/remainMaterial/remainMaterial/remainMaterialRef-query"; // 尾料记录参照list
     }
 
     /**

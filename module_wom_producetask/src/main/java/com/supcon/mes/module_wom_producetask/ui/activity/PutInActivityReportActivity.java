@@ -15,12 +15,15 @@ import android.text.style.ForegroundColorSpan;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.app.annotation.BindByTag;
 import com.app.annotation.Controller;
 import com.app.annotation.Presenter;
 import com.app.annotation.apt.Router;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.jakewharton.rxbinding2.view.RxView;
 import com.supcon.common.view.base.activity.BaseRefreshRecyclerActivity;
 import com.supcon.common.view.base.adapter.IListAdapter;
@@ -39,6 +42,7 @@ import com.supcon.mes.middleware.controller.GetPowerCodeController;
 import com.supcon.mes.middleware.model.bean.BAP5CommonEntity;
 import com.supcon.mes.middleware.model.bean.CommonBAPListEntity;
 import com.supcon.mes.middleware.model.bean.MaterialQRCodeEntity;
+import com.supcon.mes.middleware.model.bean.SystemCodeEntity;
 import com.supcon.mes.middleware.model.bean.wom.StoreSetEntity;
 import com.supcon.mes.middleware.model.bean.wom.WarehouseEntity;
 import com.supcon.mes.middleware.model.event.RefreshEvent;
@@ -94,8 +98,12 @@ public class PutInActivityReportActivity extends BaseRefreshRecyclerActivity<Put
     CustomImageButton rightBtn;
     @BindByTag("customListWidgetName")
     TextView customListWidgetName;
+    @BindByTag("customWidgetEditLl")
+    LinearLayout customWidgetEditLl;
     @BindByTag("customListWidgetEdit")
     ImageView customListWidgetEdit;
+    @BindByTag("customWidgetRightName")
+    TextView customWidgetRightName;
     @BindByTag("customListWidgetAdd")
     ImageView customListWidgetAdd;
     @BindByTag("materialName")
@@ -162,8 +170,10 @@ public class PutInActivityReportActivity extends BaseRefreshRecyclerActivity<Put
         titleText.setText(String.format("%s%s", mWaitPutinRecordEntity.getTaskActiveId().getActiveType().value, getString(R.string.wom_report)));
         rightBtn.setVisibility(View.VISIBLE);
         rightBtn.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_top_scan));
-        customListWidgetName.setText(context.getResources().getString(R.string.wom_produce_task_report_detail));
-        customListWidgetEdit.setVisibility(View.GONE);
+        customListWidgetName.setText(context.getResources().getString(R.string.wom_material_report_detail));
+        customWidgetEditLl.setVisibility(View.VISIBLE);
+        customListWidgetEdit.setImageResource(R.drawable.ic_wxgd_reference);
+        customWidgetRightName.setText(context.getResources().getString(R.string.wom_remain_material_refence));
 
         materialName.setContent(String.format("%s(%s)", mWaitPutinRecordEntity.getTaskActiveId().getMaterialId().getName(), mWaitPutinRecordEntity.getTaskActiveId().getMaterialId().getCode()));
 //        materialCode.setContent(mWaitPutinRecordEntity.getTaskActiveId().getMaterialId().getCode());
@@ -207,42 +217,42 @@ public class PutInActivityReportActivity extends BaseRefreshRecyclerActivity<Put
             }
         });
         customListWidgetAdd.setOnClickListener(v -> {
-            PutInDetailEntity putInDetailEntity = new PutInDetailEntity();
-            putInDetailEntity.setMaterialId(mWaitPutinRecordEntity.getTaskActiveId().getMaterialId()); // 物料
-            putInDetailEntity.setPutinTime(new Date().getTime());  // 投料时间
-            mPutInReportDetailAdapter.addData(putInDetailEntity);
-            mPutInReportDetailAdapter.notifyItemRangeInserted(mPutInReportDetailAdapter.getItemCount() - 1, 1);
-            mPutInReportDetailAdapter.notifyItemRangeChanged(mPutInReportDetailAdapter.getItemCount() - 1, 1);
-            contentView.smoothScrollToPosition(mPutInReportDetailAdapter.getItemCount() - 1);
+            addMaterialReport(null);
         });
-        mPutInReportDetailAdapter.setOnItemChildViewClickListener(new OnItemChildViewClickListener() {
-            @Override
-            public void onItemChildViewClick(View childView, int position, int action, Object obj) {
-                mCurrentPosition = position;
-                mPutInDetailEntity = (PutInDetailEntity) obj;
-                switch (childView.getTag().toString()) {
-                    case "warehouseTv":
-                        IntentRouter.go(context, Constant.Router.WAREHOUSE_LIST_REF);
-                        break;
-                    case "storeSetTv":
-                        if (mPutInDetailEntity.getWareId() == null) {
-                            ToastUtils.show(context, context.getResources().getString(R.string.wom_please_select_ware));
-                            break;
-                        }
+        RxView.clicks(customWidgetEditLl).throttleFirst(300,TimeUnit.MILLISECONDS)
+                .subscribe(new Consumer<Object>() {
+                    @Override
+                    public void accept(Object o) throws Exception {
                         Bundle bundle = new Bundle();
-                        bundle.putLong(Constant.IntentKey.WARE_ID, mPutInDetailEntity.getWareId().getId());
-                        IntentRouter.go(context, Constant.Router.STORE_SET_LIST_REF, bundle);
+                        bundle.putLong(Constant.IntentKey.ID,mWaitPutinRecordEntity.getTaskActiveId().getMaterialId().getId() == null ? -1L : mWaitPutinRecordEntity.getTaskActiveId().getMaterialId().getId());
+                        IntentRouter.go(context, Constant.Router.WOM_REMAIN_MATERIAL_LIST,bundle);
+                    }
+                });
+        mPutInReportDetailAdapter.setOnItemChildViewClickListener((childView, position, action, obj) -> {
+            mCurrentPosition = position;
+            mPutInDetailEntity = (PutInDetailEntity) obj;
+            switch (childView.getTag().toString()) {
+                case "warehouseTv":
+                    IntentRouter.go(context, Constant.Router.WAREHOUSE_LIST_REF);
+                    break;
+                case "storeSetTv":
+                    if (mPutInDetailEntity.getWareId() == null) {
+                        ToastUtils.show(context, context.getResources().getString(R.string.wom_please_select_ware));
                         break;
-                    case "itemViewDelBtn":
-                        mPutInReportDetailAdapter.getList().remove(obj);
-                        mPutInReportDetailAdapter.notifyItemRangeRemoved(position,1);
-                        mPutInReportDetailAdapter.notifyItemRangeChanged(position,mPutInReportDetailAdapter.getItemCount()-position);
-                        if (mPutInDetailEntity.getId() != null){
-                            dgDeletedIds += mPutInDetailEntity.getId() + ",";
-                        }
-                        break;
-                    default:
-                }
+                    }
+                    Bundle bundle = new Bundle();
+                    bundle.putLong(Constant.IntentKey.WARE_ID, mPutInDetailEntity.getWareId().getId());
+                    IntentRouter.go(context, Constant.Router.STORE_SET_LIST_REF, bundle);
+                    break;
+                case "itemViewDelBtn":
+                    mPutInReportDetailAdapter.getList().remove(obj);
+                    mPutInReportDetailAdapter.notifyItemRangeRemoved(position,1);
+                    mPutInReportDetailAdapter.notifyItemRangeChanged(position,mPutInReportDetailAdapter.getItemCount()-position);
+                    if (mPutInDetailEntity.getId() != null){
+                        dgDeletedIds += mPutInDetailEntity.getId() + ",";
+                    }
+                    break;
+                default:
             }
         });
         RxView.clicks(submitBtn)
@@ -272,17 +282,31 @@ public class PutInActivityReportActivity extends BaseRefreshRecyclerActivity<Put
             return;
         }
 
+        addMaterialReport(materialQRCodeEntity);
+
+    }
+
+    /**
+     * 新增明细
+     * @param materialQRCodeEntity
+     */
+    private void addMaterialReport(MaterialQRCodeEntity materialQRCodeEntity) {
         PutInDetailEntity putInDetailEntity = new PutInDetailEntity();
         putInDetailEntity.setMaterialId(mWaitPutinRecordEntity.getTaskActiveId().getMaterialId()); // 物料
-        putInDetailEntity.setMaterialBatchNum(materialQRCodeEntity.getMaterialBatchNo());
-        putInDetailEntity.setPutinNum(materialQRCodeEntity.getNum());
+
+        if (materialQRCodeEntity != null){ // 扫描物料
+            putInDetailEntity.setMaterialBatchNum(materialQRCodeEntity.getMaterialBatchNo());
+            putInDetailEntity.setPutinNum(materialQRCodeEntity.getNum());
+            putInDetailEntity.setSpecificationNum(materialQRCodeEntity.getNum());
+        }
         putInDetailEntity.setPutinTime(new Date().getTime());  // 投料时间
+        putInDetailEntity.setRemainOperate(new SystemCodeEntity(WomConstant.SystemCode.WOM_remainOperate_01)); // 新增使用
         mPutInReportDetailAdapter.addData(putInDetailEntity);
         mPutInReportDetailAdapter.notifyItemRangeInserted(mPutInReportDetailAdapter.getItemCount() - 1, 1);
         mPutInReportDetailAdapter.notifyItemRangeChanged(mPutInReportDetailAdapter.getItemCount() - 1, 1);
         contentView.smoothScrollToPosition(mPutInReportDetailAdapter.getItemCount() - 1);
-
     }
+
     /**
      * @author zhangwenshuai1 2020/4/2
      * @param
@@ -303,7 +327,9 @@ public class PutInActivityReportActivity extends BaseRefreshRecyclerActivity<Put
         putinDetailDTO.setProcReport(mWaitPutinRecordEntity.getProcReportId());
 
         PutinDetailDTO.DgListEntity dgListEntity = new PutinDetailDTO.DgListEntity();
-        dgListEntity.setDg(GsonUtil.gsonString(mPutInReportDetailAdapter.getList()));
+
+        Gson gsonBuilder = new GsonBuilder().serializeNulls().create(); // 保证不会过滤掉null字段
+        dgListEntity.setDg(gsonBuilder.toJson(mPutInReportDetailAdapter.getList()));
         putinDetailDTO.setDgList(dgListEntity);
 
         PutinDetailDTO.DgDeletedIdsEntity dgDeletedIdsEntity = new PutinDetailDTO.DgDeletedIdsEntity();

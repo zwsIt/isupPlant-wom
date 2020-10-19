@@ -129,4 +129,9 @@
 	<string name="wom_pending">Produce Pending</string>
 	<string name="wom_task">Task</string>
 	<string name="wom_activity">Activity</string>
+    <string name="wom_remain_material_refence">尾料参照</string>
+    <string name="wom_remain_num">尾料量</string>
+    <string name="wom_remain_num_compare">尾料量需小于扫描规格量</string>
+    <string name="wom_material_report_detail">用料明细</string>
+    <string name="wom_remain_material_select">尾料选择</string>
 </resources>

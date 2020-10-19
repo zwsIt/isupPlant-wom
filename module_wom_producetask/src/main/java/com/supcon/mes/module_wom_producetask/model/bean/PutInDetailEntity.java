@@ -1,10 +1,14 @@
 package com.supcon.mes.module_wom_producetask.model.bean;
 
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
 import com.supcon.common.com_http.BaseEntity;
 import com.supcon.mes.middleware.model.bean.SystemCodeEntity;
 import com.supcon.mes.middleware.model.bean.wom.MaterialEntity;
 import com.supcon.mes.middleware.model.bean.wom.StoreSetEntity;
 import com.supcon.mes.middleware.model.bean.wom.WarehouseEntity;
+
+import org.greenrobot.greendao.annotation.Transient;
 
 import java.math.BigDecimal;
 
@@ -50,6 +54,54 @@ public class PutInDetailEntity extends BaseEntity {
     private BigDecimal beforeNum;       // 前重
     private BigDecimal afterNum;        // 后重
     private BigDecimal reveiveNum;      // 签收数量
+    @Transient
+    private BigDecimal specificationNum;        // 规格（扫描）量
+
+    private BigDecimal remainNumRac;        // 尾料可用量
+    private BigDecimal remainNum;      // 尾料数量
+    private SystemCodeEntity remainOperate;      // 尾料处理
+    @SerializedName(value = "remianId")
+    private RemainMaterialEntity remainId; // 尾料记录id
+
+    public BigDecimal getSpecificationNum() {
+        return specificationNum;
+    }
+
+    public void setSpecificationNum(BigDecimal specificationNum) {
+        this.specificationNum = specificationNum;
+    }
+
+    public BigDecimal getRemainNumRac() {
+        return remainNumRac;
+    }
+
+    public void setRemainNumRac(BigDecimal remainNumRac) {
+        this.remainNumRac = remainNumRac;
+    }
+
+    public BigDecimal getRemainNum() {
+        return remainNum;
+    }
+
+    public void setRemainNum(BigDecimal remainNum) {
+        this.remainNum = remainNum;
+    }
+
+    public SystemCodeEntity getRemainOperate() {
+        return remainOperate;
+    }
+
+    public void setRemainOperate(SystemCodeEntity remainOperate) {
+        this.remainOperate = remainOperate;
+    }
+
+    public RemainMaterialEntity getRemainId() {
+        return remainId;
+    }
+
+    public void setRemainId(RemainMaterialEntity remainId) {
+        this.remainId = remainId;
+    }
 
     public Long getBatchingRecordId() {
         return batchingRecordId;

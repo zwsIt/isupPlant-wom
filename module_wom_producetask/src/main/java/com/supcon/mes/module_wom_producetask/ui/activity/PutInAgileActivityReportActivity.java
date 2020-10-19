@@ -9,12 +9,15 @@ import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.app.annotation.BindByTag;
 import com.app.annotation.Controller;
 import com.app.annotation.Presenter;
 import com.app.annotation.apt.Router;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.jakewharton.rxbinding2.view.RxView;
 import com.supcon.common.view.base.activity.BaseRefreshRecyclerActivity;
 import com.supcon.common.view.base.adapter.IListAdapter;
@@ -90,14 +93,14 @@ public class PutInAgileActivityReportActivity extends BaseRefreshRecyclerActivit
     CustomImageButton rightBtn;
     @BindByTag("customListWidgetName")
     TextView customListWidgetName;
+    @BindByTag("customWidgetEditLl")
+    LinearLayout customWidgetEditLl;
     @BindByTag("customListWidgetEdit")
     ImageView customListWidgetEdit;
+    @BindByTag("customWidgetRightName")
+    TextView customWidgetRightName;
     @BindByTag("customListWidgetAdd")
     ImageView customListWidgetAdd;
-    //    @BindByTag("materialName")
-//    CustomTextView materialName;
-//    @BindByTag("materialCode")
-//    CustomTextView materialCode;
     @BindByTag("taskProcess")
     CustomTextView taskProcess;
     @BindByTag("planNum")
@@ -152,8 +155,10 @@ public class PutInAgileActivityReportActivity extends BaseRefreshRecyclerActivit
         titleText.setText(context.getResources().getString(R.string.wom_agile_put_in_report));
         rightBtn.setVisibility(View.VISIBLE);
         rightBtn.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_top_scan));
-        customListWidgetName.setText(context.getResources().getString(R.string.wom_produce_task_report_detail));
-        customListWidgetEdit.setVisibility(View.GONE);
+        customListWidgetName.setText(context.getResources().getString(R.string.wom_material_report_detail));
+        customWidgetEditLl.setVisibility(View.VISIBLE);
+        customListWidgetEdit.setImageResource(R.drawable.ic_wxgd_reference);
+        customWidgetRightName.setText(context.getResources().getString(R.string.wom_remain_material_refence));
 
         taskProcess.setContent(TextUtils.isEmpty(mWaitPutinRecordEntity.getTaskProcessId().getName()) ? mWaitPutinRecordEntity.getProcessName() : mWaitPutinRecordEntity.getTaskProcessId().getName());
         planNum.setContent(mWaitPutinRecordEntity.getTaskActiveId().getPlanQuantity() == null ? "--" : mWaitPutinRecordEntity.getTaskActiveId().getPlanQuantity().toString());
@@ -168,53 +173,47 @@ public class PutInAgileActivityReportActivity extends BaseRefreshRecyclerActivit
         rightBtn.setOnClickListener(v -> {
             getController(CommonScanController.class).openCameraScan();
         });
-        refreshListController.setOnRefreshListener(new OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                presenterRouter.create(CommonListAPI.class).list(1, customCondition, queryParams,
-                        WomConstant.URL.PUT_IN_REPORT_LIST_URL + "&id=" + (mWaitPutinRecordEntity.getProcReportId().getId() == null ? -1 : mWaitPutinRecordEntity.getProcReportId().getId()), "");
-            }
-        });
+        refreshListController.setOnRefreshListener(() -> presenterRouter.create(CommonListAPI.class).list(1, customCondition, queryParams,
+                WomConstant.URL.PUT_IN_REPORT_LIST_URL + "&id=" + (mWaitPutinRecordEntity.getProcReportId().getId() == null ? -1 : mWaitPutinRecordEntity.getProcReportId().getId()), ""));
         customListWidgetAdd.setOnClickListener(v -> {
-            PutInDetailEntity putInDetailEntity = new PutInDetailEntity();
-            putInDetailEntity.setPutinTime(new Date().getTime());  // 投料时间
-            mPutInAgileReportDetailAdapter.addData(putInDetailEntity);
-            mPutInAgileReportDetailAdapter.notifyItemRangeInserted(mPutInAgileReportDetailAdapter.getItemCount() - 1, 1);
-            mPutInAgileReportDetailAdapter.notifyItemRangeChanged(mPutInAgileReportDetailAdapter.getItemCount() - 1, 1);
-            contentView.smoothScrollToPosition(mPutInAgileReportDetailAdapter.getItemCount() - 1);
+            addMaterialReport(null);
         });
-        mPutInAgileReportDetailAdapter.setOnItemChildViewClickListener(new OnItemChildViewClickListener() {
-            @Override
-            public void onItemChildViewClick(View childView, int position, int action, Object obj) {
-                mCurrentPosition = position;
-                mPutInDetailEntity = (PutInDetailEntity) obj;
-                Bundle bundle = new Bundle();
-                switch (childView.getTag().toString()) {
-                    case "materialName":
-                        bundle.putBoolean(Constant.IntentKey.SINGLE_CHOICE, true);
-                        IntentRouter.go(context, Constant.Router.PRODUCT_DETAIL, bundle);
+        RxView.clicks(customWidgetEditLl).throttleFirst(300,TimeUnit.MILLISECONDS)
+                .subscribe(new Consumer<Object>() {
+                    @Override
+                    public void accept(Object o) throws Exception {
+                        IntentRouter.go(context,Constant.Router.WOM_REMAIN_MATERIAL_LIST);
+                    }
+                });
+        mPutInAgileReportDetailAdapter.setOnItemChildViewClickListener((childView, position, action, obj) -> {
+            mCurrentPosition = position;
+            mPutInDetailEntity = (PutInDetailEntity) obj;
+            Bundle bundle = new Bundle();
+            switch (childView.getTag().toString()) {
+                case "materialName":
+                    bundle.putBoolean(Constant.IntentKey.SINGLE_CHOICE, true);
+                    IntentRouter.go(context, Constant.Router.PRODUCT_DETAIL, bundle);
+                    break;
+                case "warehouseTv":
+                    IntentRouter.go(context, Constant.Router.WAREHOUSE_LIST_REF);
+                    break;
+                case "storeSetTv":
+                    if (mPutInDetailEntity.getWareId() == null) {
+                        ToastUtils.show(context, context.getResources().getString(R.string.wom_please_select_ware));
                         break;
-                    case "warehouseTv":
-                        IntentRouter.go(context, Constant.Router.WAREHOUSE_LIST_REF);
-                        break;
-                    case "storeSetTv":
-                        if (mPutInDetailEntity.getWareId() == null) {
-                            ToastUtils.show(context, context.getResources().getString(R.string.wom_please_select_ware));
-                            break;
-                        }
-                        bundle.putLong(Constant.IntentKey.WARE_ID, mPutInDetailEntity.getWareId().getId());
-                        IntentRouter.go(context, Constant.Router.STORE_SET_LIST_REF, bundle);
-                        break;
-                    case "itemViewDelBtn":
-                        mPutInAgileReportDetailAdapter.getList().remove(obj);
-                        mPutInAgileReportDetailAdapter.notifyItemRangeRemoved(position, 1);
-                        mPutInAgileReportDetailAdapter.notifyItemRangeChanged(position, mPutInAgileReportDetailAdapter.getItemCount() - position);
-                        if (mPutInDetailEntity.getId() != null) {
-                            dgDeletedIds += mPutInDetailEntity.getId() + ",";
-                        }
-                        break;
-                    default:
-                }
+                    }
+                    bundle.putLong(Constant.IntentKey.WARE_ID, mPutInDetailEntity.getWareId().getId());
+                    IntentRouter.go(context, Constant.Router.STORE_SET_LIST_REF, bundle);
+                    break;
+                case "itemViewDelBtn":
+                    mPutInAgileReportDetailAdapter.getList().remove(obj);
+                    mPutInAgileReportDetailAdapter.notifyItemRangeRemoved(position, 1);
+                    mPutInAgileReportDetailAdapter.notifyItemRangeChanged(position, mPutInAgileReportDetailAdapter.getItemCount() - position);
+                    if (mPutInDetailEntity.getId() != null) {
+                        dgDeletedIds += mPutInDetailEntity.getId() + ",";
+                    }
+                    break;
+                default:
             }
         });
         RxView.clicks(submitBtn)
@@ -238,15 +237,25 @@ public class PutInAgileActivityReportActivity extends BaseRefreshRecyclerActivit
         MaterialQRCodeEntity materialQRCodeEntity = MaterQRUtil.materialQRCode(context, codeResultEvent.scanResult);
         if (materialQRCodeEntity == null) return;
 
-        MaterialEntity materialEntity = new MaterialEntity();
-//        materialEntity.setId(good.id);
-        materialEntity.setCode(materialQRCodeEntity.getMaterialCode());
-        materialEntity.setName(materialQRCodeEntity.getMaterialName());
+        addMaterialReport(materialQRCodeEntity);
+    }
 
+    /**
+     * 新增明细
+     * @param materialQRCodeEntity
+     */
+    private void addMaterialReport(MaterialQRCodeEntity materialQRCodeEntity) {
         PutInDetailEntity putInDetailEntity = new PutInDetailEntity();
-        putInDetailEntity.setMaterialId(materialEntity);
-        putInDetailEntity.setMaterialBatchNum(materialQRCodeEntity.getMaterialBatchNo());
-        putInDetailEntity.setPutinNum(materialQRCodeEntity.getNum());
+        if (materialQRCodeEntity != null){
+            MaterialEntity materialEntity = new MaterialEntity();
+            materialEntity.setCode(materialQRCodeEntity.getMaterialCode());
+            materialEntity.setName(materialQRCodeEntity.getMaterialName());
+            putInDetailEntity.setMaterialId(materialEntity);
+
+            putInDetailEntity.setMaterialBatchNum(materialQRCodeEntity.getMaterialBatchNo());
+            putInDetailEntity.setPutinNum(materialQRCodeEntity.getNum());
+        }
+
         putInDetailEntity.setPutinTime(new Date().getTime());  // 投料时间
         mPutInAgileReportDetailAdapter.addData(putInDetailEntity);
         mPutInAgileReportDetailAdapter.notifyItemRangeInserted(mPutInAgileReportDetailAdapter.getItemCount() - 1, 1);
@@ -273,7 +282,8 @@ public class PutInAgileActivityReportActivity extends BaseRefreshRecyclerActivit
         putinDetailDTO.setProcReport(mWaitPutinRecordEntity.getProcReportId());
 
         PutinDetailDTO.DgListEntity dgListEntity = new PutinDetailDTO.DgListEntity();
-        dgListEntity.setDg(GsonUtil.gsonString(mPutInAgileReportDetailAdapter.getList()));
+        Gson gsonBuilder = new GsonBuilder().serializeNulls().create(); // 保证不会过滤掉null字段
+        dgListEntity.setDg(gsonBuilder.toJson(mPutInAgileReportDetailAdapter.getList()));
         putinDetailDTO.setDgList(dgListEntity);
 
         PutinDetailDTO.DgDeletedIdsEntity dgDeletedIdsEntity = new PutinDetailDTO.DgDeletedIdsEntity();

@@ -28,8 +28,10 @@ import com.supcon.mes.middleware.util.ErrorMsgHelper;
 import com.supcon.mes.module_wom_producetask.R;
 import com.supcon.mes.module_wom_producetask.constant.WomConstant;
 import com.supcon.mes.module_wom_producetask.model.api.CommonListAPI;
+import com.supcon.mes.module_wom_producetask.model.bean.RemainMaterialEntity;
 import com.supcon.mes.module_wom_producetask.model.contract.CommonListContract;
 import com.supcon.mes.module_wom_producetask.presenter.CommonListPresenter;
+import com.supcon.mes.module_wom_producetask.ui.adapter.RemainMaterialRefListAdapter;
 import com.supcon.mes.module_wom_producetask.ui.adapter.WarehouseListAdapter;
 
 import org.greenrobot.eventbus.EventBus;
@@ -44,13 +46,13 @@ import io.reactivex.schedulers.Schedulers;
 
 /**
  * ClassName
- * Created by zhangwenshuai1 on 2020/3/30
+ * Created by zhangwenshuai1 on 2020/10/19
  * Email zhangwenshuai1@supcon.com
- * Desc 仓库参照list
+ * Desc 尾料参照list
  */
-@Router(Constant.Router.WAREHOUSE_LIST_REF)
+@Router(Constant.Router.WOM_REMAIN_MATERIAL_LIST)
 @Presenter(value = {CommonListPresenter.class})
-public class WarehouseListActivity extends BaseRefreshRecyclerActivity<WarehouseEntity> implements CommonListContract.View {
+public class RemainMaterialListActivity extends BaseRefreshRecyclerActivity<RemainMaterialEntity> implements CommonListContract.View {
     @BindByTag("searchTitleBar")
     CustomHorizontalSearchTitleBar searchTitleBar;
     @BindByTag("contentView")
@@ -58,12 +60,12 @@ public class WarehouseListActivity extends BaseRefreshRecyclerActivity<Warehouse
 
     Map<String, Object> queryParams = new HashMap<>();
     Map<String, Object> customCondition = new HashMap<>();
-    private WarehouseListAdapter mWarehouseListAdapter;
+    private RemainMaterialRefListAdapter mRemainMaterialRefListAdapter;
 
     @Override
-    protected IListAdapter<WarehouseEntity> createAdapter() {
-        mWarehouseListAdapter = new WarehouseListAdapter(context);
-        return mWarehouseListAdapter;
+    protected IListAdapter<RemainMaterialEntity> createAdapter() {
+        mRemainMaterialRefListAdapter = new RemainMaterialRefListAdapter(context);
+        return mRemainMaterialRefListAdapter;
     }
 
     @Override
@@ -80,7 +82,7 @@ public class WarehouseListActivity extends BaseRefreshRecyclerActivity<Warehouse
         refreshListController.setEmpterAdapter(EmptyAdapterHelper.getRecyclerEmptyAdapter(context,context.getResources().getString(R.string.middleware_no_data)));
 //        WaitPutinRecordEntity waitPutinRecordEntity = (WaitPutinRecordEntity) getIntent().getSerializableExtra(Constant.IntentKey.WAIT_PUT_RECORD);
 //        customCondition.put("processId", waitPutinRecordEntity.getTaskProcessId().getFormulaProcessId() == null ? -1 : waitPutinRecordEntity.getTaskProcessId().getFormulaProcessId().getId());
-//        customCondition.put("lineId", waitPutinRecordEntity.getLineId() == null ? -1 : waitPutinRecordEntity.getLineId().getId());
+        customCondition.put("materialId", getIntent().getLongExtra(Constant.IntentKey.ID,-1));
 
         contentView.setLayoutManager(new LinearLayoutManager(context));
         contentView.addItemDecoration(new RecyclerView.ItemDecoration() {
@@ -96,7 +98,7 @@ public class WarehouseListActivity extends BaseRefreshRecyclerActivity<Warehouse
     protected void initView() {
         super.initView();
         StatusBarUtils.setWindowStatusBarColor(this, R.color.themeColor);
-        searchTitleBar.setTitleText(context.getResources().getString(R.string.wom_ware_select));
+        searchTitleBar.setTitleText(context.getResources().getString(R.string.wom_remain_material_select));
         searchTitleBar.searchView().setHint(context.getResources().getString(R.string.wom_input_ware_name));
         searchTitleBar.disableRightBtn();
     }
@@ -107,7 +109,7 @@ public class WarehouseListActivity extends BaseRefreshRecyclerActivity<Warehouse
         super.initListener();
         searchTitleBar.leftBtn().setOnClickListener(v -> finish());
         refreshListController.setOnRefreshPageListener(pageIndex -> presenterRouter.create(CommonListAPI.class)
-                .list(pageIndex, customCondition, queryParams, WomConstant.URL.WAREHOUSE_LIST_REF_URL,"warehouse"));
+                .list(pageIndex, customCondition, queryParams, WomConstant.URL.REMAIN_MATERIAL_LIST_REF_URL,"remainMaterial"));
         RxTextView.textChanges(searchTitleBar.editText())
                 .skipInitialValue()
                 .debounce(300, TimeUnit.MILLISECONDS)
@@ -118,8 +120,8 @@ public class WarehouseListActivity extends BaseRefreshRecyclerActivity<Warehouse
                     refreshListController.refreshBegin();
                 });
 
-        mWarehouseListAdapter.setOnItemChildViewClickListener((childView, position, action, obj) -> {
-            SelectDataEvent<WarehouseEntity> dataEvent = new SelectDataEvent<>((WarehouseEntity) obj,"");
+        mRemainMaterialRefListAdapter.setOnItemChildViewClickListener((childView, position, action, obj) -> {
+            SelectDataEvent<RemainMaterialEntity> dataEvent = new SelectDataEvent<>((RemainMaterialEntity) obj,"");
             EventBus.getDefault().post(dataEvent);
             finish();
         });
@@ -133,11 +135,11 @@ public class WarehouseListActivity extends BaseRefreshRecyclerActivity<Warehouse
     @Override
     public void listSuccess(BAP5CommonEntity entity) {
         CommonBAPListEntity commonBAPListEntity = GsonUtil.gsonToBean(GsonUtil.gsonString(entity.data), CommonBAPListEntity.class);
-        List<WarehouseEntity>  warehouseEntityList = GsonUtil.jsonToList(GsonUtil.gsonString((Object) commonBAPListEntity.result),WarehouseEntity.class);
+        List<RemainMaterialEntity>  remainMaterialEntityList = GsonUtil.jsonToList(GsonUtil.gsonString((Object) commonBAPListEntity.result),RemainMaterialEntity.class);
         // 方式二
 //        Gson gson = new Gson();
 //        List<WarehouseEntity>  warehouseEntityList = gson.fromJson(gson.toJson(commonBAPListEntity.result),new TypeToken<List<WarehouseEntity>>(){}.getType());
-        refreshListController.refreshComplete(warehouseEntityList);
+        refreshListController.refreshComplete(remainMaterialEntityList);
     }
 
     @Override
