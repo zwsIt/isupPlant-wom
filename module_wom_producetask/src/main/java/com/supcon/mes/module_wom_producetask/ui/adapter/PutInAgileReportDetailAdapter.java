@@ -13,6 +13,7 @@ import com.jakewharton.rxbinding2.widget.RxTextView;
 import com.supcon.common.view.base.adapter.BaseListDataRecyclerViewAdapter;
 import com.supcon.common.view.base.adapter.viewholder.BaseRecyclerViewHolder;
 import com.supcon.common.view.listener.OnChildViewClickListener;
+import com.supcon.common.view.util.ToastUtils;
 import com.supcon.mes.mbap.view.CustomEditText;
 import com.supcon.mes.mbap.view.CustomTextView;
 import com.supcon.mes.middleware.constant.Constant;
@@ -61,6 +62,8 @@ public class PutInAgileReportDetailAdapter extends BaseListDataRecyclerViewAdapt
         CustomTextView storeSetTv;
         @BindByTag("numEt")
         CustomEditText numEt;
+        @BindByTag("remainderNumEt")
+        CustomEditText remainderNumEt;
         @BindByTag("itemViewDelBtn")
         TextView itemViewDelBtn;
         @BindByTag("materialBatchNumTv")
@@ -79,6 +82,7 @@ public class PutInAgileReportDetailAdapter extends BaseListDataRecyclerViewAdapt
         protected void initView() {
             super.initView();
             numEt.setInputType(InputType.TYPE_CLASS_NUMBER|InputType.TYPE_NUMBER_FLAG_DECIMAL);
+            remainderNumEt.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
         }
 
         @SuppressLint("CheckResult")
@@ -103,25 +107,54 @@ public class PutInAgileReportDetailAdapter extends BaseListDataRecyclerViewAdapt
                     .subscribe(charSequence -> getItem(getAdapterPosition()).setMaterialBatchNum(charSequence.toString().trim()));
             RxTextView.textChanges(numEt.editText())
                     .skipInitialValue()
-                    .filter(new Predicate<CharSequence>() {
-                        @Override
-                        public boolean test(CharSequence charSequence) throws Exception {
-                            if (TextUtils.isEmpty(charSequence.toString())){
-                                getItem(getAdapterPosition()).setPutinNum(null);
-                                getItem(getAdapterPosition()).setUseNum(null);
-                                return false;
-                            }
-                            if(charSequence.toString().startsWith(".")){
-                                numEt.editText().setText("0.");
-                                numEt.editText().setSelection(numEt.getContent().length());
-                                return false;
-                            }
-                            return true;
+                    .skip(1)
+                    .filter(charSequence -> {
+                        PutInDetailEntity data = getItem(getAdapterPosition());
+                        if (TextUtils.isEmpty(charSequence.toString())) {
+                            data.setPutinNum(null);
+                            data.setUseNum(null);
+                            return false;
                         }
+
+                        if (data.getPutinNum() != null && data.getPutinNum().toString().equals(charSequence.toString())) {
+                            return false;
+                        }
+
+                        if (charSequence.toString().startsWith(".")) {
+                            numEt.editText().setText("0.");
+                            numEt.editText().setSelection(numEt.getContent().length());
+                            return false;
+                        }
+                        BigDecimal current = new BigDecimal(charSequence.toString().trim());
+                        // 尾料参照、扫描时 自动计算
+                        if (data.getSpecificationNum() != null) {
+                            if (current.compareTo(data.getSpecificationNum()) > 0) {
+                                ToastUtils.show(context, context.getString(R.string.wom_putin_num_compare_scan) + data.getSpecificationNum());
+                                int index = numEt.editText().getSelectionStart();
+                                numEt.editText().getText().delete(index - 1, index);
+                                return false;
+                            }
+                            data.setRemainNum(data.getSpecificationNum().subtract(current));
+                        }
+                        if (data.getRemainId() != null) {
+                            if (current.compareTo(data.getRemainId().getRemainNum()) > 0) {
+                                ToastUtils.show(context, context.getString(R.string.wom_putin_num_compare_remain) + data.getRemainId().getRemainNum());
+                                int index = numEt.editText().getSelectionStart();
+                                numEt.editText().getText().delete(index - 1, index);
+                                return false;
+                            }
+                            data.setRemainNum(data.getRemainId().getRemainNum().subtract(current));
+                        }
+                        return true;
                     })
                     .subscribe(charSequence -> {
-                        getItem(getAdapterPosition()).setPutinNum(new BigDecimal(charSequence.toString().trim()));
-                        getItem(getAdapterPosition()).setUseNum(getItem(getAdapterPosition()).getPutinNum());
+                        PutInDetailEntity data = getItem(getAdapterPosition());
+                        data.setPutinNum(new BigDecimal(charSequence.toString().trim()));
+                        data.setUseNum(getItem(getAdapterPosition()).getPutinNum());
+                        if (data.getRemainNum() != null){
+                            remainderNumEt.setContent(data.getRemainNum().toString());
+                        }
+
                     });
             warehouseTv.setOnChildViewClickListener((childView, action, obj) -> {
                 if (action == -1){
@@ -139,6 +172,57 @@ public class PutInAgileReportDetailAdapter extends BaseListDataRecyclerViewAdapt
                     onItemChildViewClick(childView, getAdapterPosition(), getItem(getAdapterPosition()));
                 }
             });
+            RxTextView.textChanges(remainderNumEt.editText())
+                    .skipInitialValue()
+                    .skip(1)
+                    .filter(charSequence -> {
+                        PutInDetailEntity data = getItem(getAdapterPosition());
+                        if (TextUtils.isEmpty(charSequence.toString())) {
+                            data.setRemainNum(null);
+                            return false;
+                        }
+
+                        if (data.getRemainNum() != null && data.getRemainNum().toString().equals(charSequence.toString())) {
+                            return false;
+                        }
+
+                        if (charSequence.toString().startsWith(".")) {
+                            remainderNumEt.editText().setText("0.");
+                            remainderNumEt.editText().setSelection(remainderNumEt.getContent().length());
+                            return false;
+                        }
+                        BigDecimal current = new BigDecimal(charSequence.toString().trim());
+
+                        // 尾料参照、扫描时 自动计算
+                        if (data.getSpecificationNum() != null) {
+                            if (current.compareTo(data.getSpecificationNum()) > 0) {
+                                ToastUtils.show(context, context.getString(R.string.wom_remain_num_compare) + data.getSpecificationNum());
+                                int index = remainderNumEt.editText().getSelectionStart();
+                                remainderNumEt.editText().getText().delete(index - 1, index);
+                                return false;
+                            }
+                            data.setPutinNum(data.getSpecificationNum().subtract(current));
+                        }
+                        if (data.getRemainId() != null) {
+                            if (current.compareTo(data.getRemainId().getRemainNum()) > 0) {
+                                ToastUtils.show(context, context.getString(R.string.wom_remain_compare_less) + data.getRemainId().getRemainNum());
+                                int index = remainderNumEt.editText().getSelectionStart();
+                                remainderNumEt.editText().getText().delete(index - 1, index);
+                                return false;
+                            }
+                            data.setPutinNum(data.getRemainId().getRemainNum().subtract(current));
+                        }
+                        return true;
+                    })
+                    .subscribe(charSequence -> {
+                        PutInDetailEntity data = getItem(getAdapterPosition());
+                        data.setRemainNum(new BigDecimal(charSequence.toString().trim()));
+                        if (data.getPutinNum() != null){
+                            numEt.setContent(data.getPutinNum().toString());
+                        }
+                    });
+
+
         }
 
         @Override
@@ -151,6 +235,7 @@ public class PutInAgileReportDetailAdapter extends BaseListDataRecyclerViewAdapt
             materialName.setContent(data.getMaterialId().getId()==null ? "" : String.format("%s(%s)", data.getMaterialId().getName(), data.getMaterialId().getCode()));
             batchNum.setContent(data.getMaterialBatchNum());
             numEt.setContent(data.getPutinNum() == null ? "" : String.valueOf(data.getPutinNum()));
+            remainderNumEt.setContent(data.getRemainNum() == null ? "" : String.valueOf(data.getRemainNum()));
             warehouseTv.setContent(data.getWareId() == null ? "" : data.getWareId().getName());
             storeSetTv.setContent(data.getStoreId() == null ? "" : data.getStoreId().getName());
         }

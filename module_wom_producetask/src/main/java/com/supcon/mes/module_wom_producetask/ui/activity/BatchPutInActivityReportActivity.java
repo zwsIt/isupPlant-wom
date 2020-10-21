@@ -35,6 +35,7 @@ import com.supcon.mes.middleware.controller.GetPowerCodeController;
 import com.supcon.mes.middleware.model.bean.BAP5CommonEntity;
 import com.supcon.mes.middleware.model.bean.CommonBAPListEntity;
 import com.supcon.mes.middleware.model.bean.MaterialQRCodeEntity;
+import com.supcon.mes.middleware.model.bean.SystemCodeEntity;
 import com.supcon.mes.middleware.model.bean.wom.StoreSetEntity;
 import com.supcon.mes.middleware.model.bean.wom.WarehouseEntity;
 import com.supcon.mes.middleware.model.event.RefreshEvent;
@@ -239,11 +240,18 @@ public class BatchPutInActivityReportActivity extends BaseRefreshRecyclerActivit
         batchPutinDetailDTO.setWorkFlowVar(new WorkFlowVar());
         batchPutinDetailDTO.setProcReport(mWaitPutinRecordEntity.getProcReportId());
 
-//        Map<String,Object> dgListEntityMap = new HashMap<>();
-//        dgListEntityMap.put(WomConstant.DG_NAME.DG_BATCH_PUT_IN_ACTIVITY_REPORT,GsonUtil.gsonString(mPutInReportDetailAdapter.getList()));
-//        BatchPutinDetailDTO.DgListEntity dgListEntity = GsonUtil.gsonToBean(GsonUtil.gsonString(dgListEntityMap),BatchPutinDetailDTO.DgListEntity.class);
+        for (PutInDetailEntity putInDetailEntity : mPutInReportDetailAdapter.getList()) {
+            // 尾料处理方式
+            if (putInDetailEntity.getRemainId() == null && putInDetailEntity.getRemainOperate() == null) {
+                if (putInDetailEntity.getRemainNum() == null || putInDetailEntity.getRemainNum().floatValue() == 0) {
+                    putInDetailEntity.setRemainOperate(new SystemCodeEntity(WomConstant.SystemCode.WOM_remainOperate_03));
+                } else {
+                    putInDetailEntity.setRemainOperate(new SystemCodeEntity(WomConstant.SystemCode.WOM_remainOperate_01));
+                }
+            }
+        }
         BatchPutinDetailDTO.DgListEntity dgListEntity = new BatchPutinDetailDTO.DgListEntity();
-        dgListEntity.setDg(GsonUtil.gsonString(mPutInReportDetailAdapter.getList()));
+        dgListEntity.setDg(GsonUtil.gsonStringSerializeNulls(mPutInReportDetailAdapter.getList()));
         batchPutinDetailDTO.setDgList(dgListEntity);
 
 

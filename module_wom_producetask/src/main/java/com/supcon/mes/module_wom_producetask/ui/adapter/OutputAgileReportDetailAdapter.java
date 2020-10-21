@@ -56,6 +56,8 @@ public class OutputAgileReportDetailAdapter extends BaseListDataRecyclerViewAdap
         CustomTextView storeSetTv;
         @BindByTag("numEt")
         CustomEditText numEt;
+        @BindByTag("remainderNumEt")
+        CustomEditText remainderNumEt;
         @BindByTag("itemViewDelBtn")
         TextView itemViewDelBtn;
         @BindByTag("preBatchNumTv")
@@ -78,6 +80,7 @@ public class OutputAgileReportDetailAdapter extends BaseListDataRecyclerViewAdap
             preBatchNumTv.setText(context.getResources().getString(R.string.wom_material_batch_num));
             preNumTv.setText(context.getResources().getString(R.string.wom_output_num));
             numEt.setInputType(InputType.TYPE_CLASS_NUMBER|InputType.TYPE_NUMBER_FLAG_DECIMAL);
+            remainderNumEt.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
         }
 
         @SuppressLint("CheckResult")
@@ -138,11 +141,33 @@ public class OutputAgileReportDetailAdapter extends BaseListDataRecyclerViewAdap
                     onItemChildViewClick(childView, getAdapterPosition(), getItem(getAdapterPosition()));
                 }
             });
+            RxTextView.textChanges(remainderNumEt.editText())
+                    .skipInitialValue()
+                    .skip(1)
+                    .filter(charSequence -> {
+                        OutputDetailEntity data = getItem(getAdapterPosition());
+                        if (TextUtils.isEmpty(charSequence.toString())) {
+                            data.setRemainNum(null);
+                            return false;
+                        }
+
+                        if (charSequence.toString().startsWith(".")) {
+                            remainderNumEt.editText().setText("0.");
+                            remainderNumEt.editText().setSelection(remainderNumEt.getContent().length());
+                            return false;
+                        }
+
+                        return true;
+                    })
+                    .subscribe(charSequence -> {
+                        OutputDetailEntity data = getItem(getAdapterPosition());
+                        data.setRemainNum(new BigDecimal(charSequence.toString().trim()));
+                    });
         }
 
         @Override
         protected void update(OutputDetailEntity data) {
-            if (WomConstant.SystemCode.MATERIAL_BATCH_02.equals(data.getProduct().getIsBatch().id)){
+            if (data.getProduct() != null && WomConstant.SystemCode.MATERIAL_BATCH_02.equals(data.getProduct().getIsBatch().id)){
                 preBatchNumTv.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_batch_number,0,R.drawable.ic_necessary,0);
             }else {
                 preBatchNumTv.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_batch_number,0,0,0);
@@ -150,6 +175,7 @@ public class OutputAgileReportDetailAdapter extends BaseListDataRecyclerViewAdap
             materialName.setContent(data.getProduct() == null ? "" : String.format("%s(%s)",data.getProduct().getName(),data.getProduct().getCode()));
             batchNum.setContent(data.getMaterialBatchNum());
             numEt.setContent(data.getOutputNum() == null ? "" : String.valueOf(data.getOutputNum()));
+            remainderNumEt.setContent(data.getRemainNum() == null ? "" : String.valueOf(data.getRemainNum()));
             warehouseTv.setContent(data.getWareId() == null ? "" : data.getWareId().getName());
             storeSetTv.setContent(data.getStoreId() == null ? "" : data.getStoreId().getName());
         }

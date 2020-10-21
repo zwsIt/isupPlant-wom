@@ -32,6 +32,7 @@ import com.supcon.mes.mbap.view.CustomTextView;
 import com.supcon.mes.middleware.constant.Constant;
 import com.supcon.mes.middleware.model.bean.BAP5CommonEntity;
 import com.supcon.mes.middleware.model.bean.MaterialQRCodeEntity;
+import com.supcon.mes.middleware.model.bean.SystemCodeEntity;
 import com.supcon.mes.middleware.model.bean.wom.StoreSetEntity;
 import com.supcon.mes.middleware.model.bean.wom.WarehouseEntity;
 import com.supcon.mes.middleware.model.event.RefreshEvent;
@@ -41,6 +42,7 @@ import com.supcon.mes.module_scan.controller.CommonScanController;
 import com.supcon.mes.module_scan.model.event.CodeResultEvent;
 import com.supcon.mes.module_wom_producetask.IntentRouter;
 import com.supcon.mes.module_wom_producetask.R;
+import com.supcon.mes.module_wom_producetask.constant.WomConstant;
 import com.supcon.mes.module_wom_producetask.controller.ProduceTaskEndReportDetailController;
 import com.supcon.mes.module_wom_producetask.model.api.ProduceTaskOperateAPI;
 import com.supcon.mes.module_wom_producetask.model.bean.OutputDetailEntity;
@@ -102,8 +104,8 @@ public class ProduceTaskEndReportActivity extends BaseRefreshRecyclerActivity<Ou
     private WaitPutinRecordEntity mWaitPutinRecordEntity;
     private OutputDetailEntity mOutputDetailEntity;
     private int mCurrentPosition;
-    private boolean mShouldScroll;
-    private LinearSmoothScroller mLinearSmoothScroller;
+//    private boolean mShouldScroll;
+//    private LinearSmoothScroller mLinearSmoothScroller;
 
     @Override
     protected IListAdapter<OutputDetailEntity> createAdapter() {
@@ -240,6 +242,17 @@ public class ProduceTaskEndReportActivity extends BaseRefreshRecyclerActivity<Ou
             return;
         }
         onLoading(getString(R.string.wom_dealing));
+
+        for (OutputDetailEntity outputDetailEntity : mProduceTaskEndReportDetailAdapter.getList()) {
+            // 尾料处理方式
+            if (outputDetailEntity.getRemainOperate() == null) {
+                if (outputDetailEntity.getRemainNum() == null || outputDetailEntity.getRemainNum().floatValue() == 0) {
+                    outputDetailEntity.setRemainOperate(new SystemCodeEntity(WomConstant.SystemCode.WOM_remainOperate_03));
+                } else {
+                    outputDetailEntity.setRemainOperate(new SystemCodeEntity(WomConstant.SystemCode.WOM_remainOperate_01));
+                }
+            }
+        }
         presenterRouter.create(ProduceTaskOperateAPI.class).operateProduceTask(mWaitPutinRecordEntity.getId(),"stop",mProduceTaskEndReportDetailAdapter.getList());
 
     }

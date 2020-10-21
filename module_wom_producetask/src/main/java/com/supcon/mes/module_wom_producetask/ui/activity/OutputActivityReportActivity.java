@@ -20,6 +20,8 @@ import com.app.annotation.BindByTag;
 import com.app.annotation.Controller;
 import com.app.annotation.Presenter;
 import com.app.annotation.apt.Router;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.jakewharton.rxbinding2.view.RxView;
 import com.supcon.common.view.base.activity.BaseRefreshRecyclerActivity;
 import com.supcon.common.view.base.adapter.IListAdapter;
@@ -38,6 +40,7 @@ import com.supcon.mes.middleware.controller.GetPowerCodeController;
 import com.supcon.mes.middleware.model.bean.BAP5CommonEntity;
 import com.supcon.mes.middleware.model.bean.CommonBAPListEntity;
 import com.supcon.mes.middleware.model.bean.MaterialQRCodeEntity;
+import com.supcon.mes.middleware.model.bean.SystemCodeEntity;
 import com.supcon.mes.middleware.model.bean.wom.StoreSetEntity;
 import com.supcon.mes.middleware.model.bean.wom.WarehouseEntity;
 import com.supcon.mes.middleware.model.event.RefreshEvent;
@@ -312,8 +315,19 @@ public class OutputActivityReportActivity extends BaseRefreshRecyclerActivity<Ou
         outputDetailDTO.setWorkFlowVar(new WorkFlowVar());
         outputDetailDTO.setProcReport(mWaitPutinRecordEntity.getProcReportId());
 
+        for (OutputDetailEntity outputDetailEntity : mOutputReportDetailAdapter.getList()) {
+            // 尾料处理方式
+            if (outputDetailEntity.getRemainOperate() == null) {
+                if (outputDetailEntity.getRemainNum() == null || outputDetailEntity.getRemainNum().floatValue() == 0) {
+                    outputDetailEntity.setRemainOperate(new SystemCodeEntity(WomConstant.SystemCode.WOM_remainOperate_03));
+                } else {
+                    outputDetailEntity.setRemainOperate(new SystemCodeEntity(WomConstant.SystemCode.WOM_remainOperate_01));
+                }
+            }
+        }
+
         OutputDetailDTO.DgListEntity dgListEntity = new OutputDetailDTO.DgListEntity();
-        dgListEntity.setDg(GsonUtil.gsonString(mOutputReportDetailAdapter.getList()));
+        dgListEntity.setDg(GsonUtil.gsonStringSerializeNulls(mOutputReportDetailAdapter.getList()));
         outputDetailDTO.setDgList(dgListEntity);
 
         OutputDetailDTO.DgDeletedIdsEntity dgDeletedIdsEntity = new OutputDetailDTO.DgDeletedIdsEntity();

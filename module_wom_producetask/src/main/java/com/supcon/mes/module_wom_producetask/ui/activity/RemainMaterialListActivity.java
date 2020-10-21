@@ -82,7 +82,9 @@ public class RemainMaterialListActivity extends BaseRefreshRecyclerActivity<Rema
         refreshListController.setEmpterAdapter(EmptyAdapterHelper.getRecyclerEmptyAdapter(context,context.getResources().getString(R.string.middleware_no_data)));
 //        WaitPutinRecordEntity waitPutinRecordEntity = (WaitPutinRecordEntity) getIntent().getSerializableExtra(Constant.IntentKey.WAIT_PUT_RECORD);
 //        customCondition.put("processId", waitPutinRecordEntity.getTaskProcessId().getFormulaProcessId() == null ? -1 : waitPutinRecordEntity.getTaskProcessId().getFormulaProcessId().getId());
-        customCondition.put("materialId", getIntent().getLongExtra(Constant.IntentKey.ID,-1));
+        if (getIntent().getLongExtra(Constant.IntentKey.ID,-1) != -1){
+            customCondition.put("materialId", getIntent().getLongExtra(Constant.IntentKey.ID,-1));
+        }
 
         contentView.setLayoutManager(new LinearLayoutManager(context));
         contentView.addItemDecoration(new RecyclerView.ItemDecoration() {

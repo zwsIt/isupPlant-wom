@@ -36,6 +36,24 @@ public class OutputDetailEntity extends BaseEntity {
     private BigDecimal beforeNum;       // 前重
     private Long putinEndTime;          // 投料结束时间
     private Long putinTime;             // 报工时间
+    private BigDecimal remainNum;       // 尾料数量
+    private SystemCodeEntity remainOperate; // 尾料处理
+
+    public SystemCodeEntity getRemainOperate() {
+        return remainOperate;
+    }
+
+    public void setRemainOperate(SystemCodeEntity remainOperate) {
+        this.remainOperate = remainOperate;
+    }
+
+    public BigDecimal getRemainNum() {
+        return remainNum;
+    }
+
+    public void setRemainNum(BigDecimal remainNum) {
+        this.remainNum = remainNum;
+    }
 
     public ProcReportEntity getHeadId() {
         return headId;

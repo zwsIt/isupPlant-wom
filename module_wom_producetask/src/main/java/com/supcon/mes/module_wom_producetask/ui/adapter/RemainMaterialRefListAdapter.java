@@ -2,6 +2,7 @@ package com.supcon.mes.module_wom_producetask.ui.adapter;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.text.TextUtils;
 import android.widget.TextView;
 
 import com.app.annotation.BindByTag;
@@ -39,6 +40,12 @@ public class RemainMaterialRefListAdapter extends BaseListDataRecyclerViewAdapte
 
         @BindByTag("nameTv")
         TextView nameTv;
+        @BindByTag("materialBatchNumTv")
+        TextView materialBatchNumTv;
+        @BindByTag("remainderNumTv")
+        TextView remainderNumTv;
+        @BindByTag("warehouseTvTv")
+        TextView warehouseTvTv;
 
         public ViewHolder(Context context) {
             super(context,parent);
@@ -46,7 +53,7 @@ public class RemainMaterialRefListAdapter extends BaseListDataRecyclerViewAdapte
 
         @Override
         protected int layoutId() {
-            return R.layout.wom_item_common;
+            return R.layout.wom_item_remain_material;
         }
 
         @SuppressLint("CheckResult")
@@ -59,8 +66,15 @@ public class RemainMaterialRefListAdapter extends BaseListDataRecyclerViewAdapte
 
         @Override
         protected void update(RemainMaterialEntity data) {
-//            nameTv.setCompoundDrawablesWithIntrinsicBounds(R.drawable.wom_ic_stock,0,0,0);
-//            nameTv.setText(String.format("%s(%s)", data.getName(), data.getCode()));
+            if (data.getMaterial() == null || TextUtils.isEmpty(data.getMaterial().getCode())){
+                nameTv.setText("物料：--");
+            }else {
+                nameTv.setText(String.format("物料：%s(%s)", data.getMaterial().getName(), data.getMaterial().getCode()));
+            }
+
+            materialBatchNumTv.setText(String.format("批号：%s", data.getBatchText()));
+            remainderNumTv.setText(String.format("可用量：%s", data.getRemainNum()));
+            warehouseTvTv.setText(String.format("仓库：%s", (data.getWareId()) == null ? "--" : (TextUtils.isEmpty(data.getWareId().getName()) ? "--" : data.getWareId().getName())));
         }
     }
 

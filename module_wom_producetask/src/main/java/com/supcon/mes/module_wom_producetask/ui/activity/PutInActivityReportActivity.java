@@ -1,11 +1,9 @@
 package com.supcon.mes.module_wom_producetask.ui.activity;
 
 import android.annotation.SuppressLint;
-import android.graphics.Color;
 import android.graphics.Rect;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.SpannableString;
 import android.text.Spanned;
@@ -27,7 +25,6 @@ import com.google.gson.GsonBuilder;
 import com.jakewharton.rxbinding2.view.RxView;
 import com.supcon.common.view.base.activity.BaseRefreshRecyclerActivity;
 import com.supcon.common.view.base.adapter.IListAdapter;
-import com.supcon.common.view.listener.OnItemChildViewClickListener;
 import com.supcon.common.view.listener.OnRefreshListener;
 import com.supcon.common.view.util.DisplayUtil;
 import com.supcon.common.view.util.StatusBarUtils;
@@ -57,6 +54,7 @@ import com.supcon.mes.module_wom_producetask.constant.WomConstant;
 import com.supcon.mes.module_wom_producetask.model.api.CommonListAPI;
 import com.supcon.mes.module_wom_producetask.model.api.PutInReportAPI;
 import com.supcon.mes.module_wom_producetask.model.bean.PutInDetailEntity;
+import com.supcon.mes.module_wom_producetask.model.bean.RemainMaterialEntity;
 import com.supcon.mes.module_wom_producetask.model.bean.WaitPutinRecordEntity;
 import com.supcon.mes.module_wom_producetask.model.contract.CommonListContract;
 import com.supcon.mes.module_wom_producetask.model.contract.PutInReportContract;
@@ -71,7 +69,6 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
-import java.math.BigDecimal;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -86,7 +83,7 @@ import io.reactivex.functions.Consumer;
  * Desc 人工投料活动报工
  */
 @Router(Constant.Router.WOM_PUT_IN_REPORT)
-@Presenter(value = {CommonListPresenter.class ,PutInReportPresenter.class})
+@Presenter(value = {CommonListPresenter.class, PutInReportPresenter.class})
 @PowerCode(entityCode = WomConstant.PowerCode.PRODUCE_TASK_LIST)
 @Controller(value = {GetPowerCodeController.class, CommonScanController.class})
 public class PutInActivityReportActivity extends BaseRefreshRecyclerActivity<PutInDetailEntity> implements CommonListContract.View, PutInReportContract.View {
@@ -108,7 +105,7 @@ public class PutInActivityReportActivity extends BaseRefreshRecyclerActivity<Put
     ImageView customListWidgetAdd;
     @BindByTag("materialName")
     CustomTextView materialName;
-//    @BindByTag("materialCode")
+    //    @BindByTag("materialCode")
 //    CustomTextView materialCode;
 //    @BindByTag("planNum")
 //    CustomTextView planNum;
@@ -136,6 +133,7 @@ public class PutInActivityReportActivity extends BaseRefreshRecyclerActivity<Put
         mPutInReportDetailAdapter = new PutInReportDetailAdapter(context);
         return mPutInReportDetailAdapter;
     }
+
     @Override
     protected int getLayoutID() {
         return R.layout.wom_ac_put_in_report;
@@ -153,12 +151,12 @@ public class PutInActivityReportActivity extends BaseRefreshRecyclerActivity<Put
             @Override
             public void getItemOffsets(@NonNull Rect outRect, @NonNull View view, @NonNull RecyclerView parent, @NonNull RecyclerView.State state) {
                 super.getItemOffsets(outRect, view, parent, state);
-                outRect.set(DisplayUtil.dip2px(10,context),DisplayUtil.dip2px(10,context),DisplayUtil.dip2px(10,context),0);
+                outRect.set(DisplayUtil.dip2px(10, context), DisplayUtil.dip2px(10, context), DisplayUtil.dip2px(10, context), 0);
             }
         });
         contentView.addOnItemTouchListener(new CustomSwipeLayout.OnSwipeItemTouchListener(context));
 
-        if (!WomConstant.SystemCode.MATERIAL_BATCH_02.equals(mWaitPutinRecordEntity.getTaskActiveId().getMaterialId().getIsBatch().id)){
+        if (!WomConstant.SystemCode.MATERIAL_BATCH_02.equals(mWaitPutinRecordEntity.getTaskActiveId().getMaterialId().getIsBatch().id)) {
             mPutInReportDetailAdapter.setMaterialBatchNo(true);
         }
     }
@@ -166,7 +164,7 @@ public class PutInActivityReportActivity extends BaseRefreshRecyclerActivity<Put
     @Override
     protected void initView() {
         super.initView();
-        StatusBarUtils.setWindowStatusBarColor(this,R.color.themeColor);
+        StatusBarUtils.setWindowStatusBarColor(this, R.color.themeColor);
         titleText.setText(String.format("%s%s", mWaitPutinRecordEntity.getTaskActiveId().getActiveType().value, getString(R.string.wom_report)));
         rightBtn.setVisibility(View.VISIBLE);
         rightBtn.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_top_scan));
@@ -179,24 +177,24 @@ public class PutInActivityReportActivity extends BaseRefreshRecyclerActivity<Put
 //        materialCode.setContent(mWaitPutinRecordEntity.getTaskActiveId().getMaterialId().getCode());
 //        planNum.setContent(String.valueOf(mWaitPutinRecordEntity.getTaskActiveId().getPlanQuantity()));
 
-        SpannableString planNumSpan = new SpannableString(getString(R.string.wom_plan) +"\n\n" + (mWaitPutinRecordEntity.getTaskActiveId().getPlanQuantity() == null ? "--" : mWaitPutinRecordEntity.getTaskActiveId().getPlanQuantity()));
-        planNumSpan.setSpan(new ForegroundColorSpan(context.getResources().getColor(R.color.dark_blue)),4,planNumSpan.length(), Spanned.SPAN_INCLUSIVE_INCLUSIVE);
-        planNumSpan.setSpan(new AbsoluteSizeSpan(DisplayUtil.dip2px(18,context)),4,planNumSpan.length(), Spanned.SPAN_INCLUSIVE_INCLUSIVE);
+        SpannableString planNumSpan = new SpannableString(getString(R.string.wom_plan) + "\n\n" + (mWaitPutinRecordEntity.getTaskActiveId().getPlanQuantity() == null ? "--" : mWaitPutinRecordEntity.getTaskActiveId().getPlanQuantity()));
+        planNumSpan.setSpan(new ForegroundColorSpan(context.getResources().getColor(R.color.dark_blue)), 4, planNumSpan.length(), Spanned.SPAN_INCLUSIVE_INCLUSIVE);
+        planNumSpan.setSpan(new AbsoluteSizeSpan(DisplayUtil.dip2px(18, context)), 4, planNumSpan.length(), Spanned.SPAN_INCLUSIVE_INCLUSIVE);
         planNumTv.setText(planNumSpan);
 
-        SpannableString sumNumSpan = new SpannableString(getString(R.string.wom_sum) +"\n\n" + mWaitPutinRecordEntity.getTaskActiveId().getSumNum());
-        sumNumSpan.setSpan(new ForegroundColorSpan(context.getResources().getColor(R.color.dark_green)),4,sumNumSpan.length(), Spanned.SPAN_INCLUSIVE_INCLUSIVE);
-        sumNumSpan.setSpan(new AbsoluteSizeSpan(DisplayUtil.dip2px(18,context)),4,sumNumSpan.length(), Spanned.SPAN_INCLUSIVE_INCLUSIVE);
+        SpannableString sumNumSpan = new SpannableString(getString(R.string.wom_sum) + "\n\n" + mWaitPutinRecordEntity.getTaskActiveId().getSumNum());
+        sumNumSpan.setSpan(new ForegroundColorSpan(context.getResources().getColor(R.color.dark_green)), 4, sumNumSpan.length(), Spanned.SPAN_INCLUSIVE_INCLUSIVE);
+        sumNumSpan.setSpan(new AbsoluteSizeSpan(DisplayUtil.dip2px(18, context)), 4, sumNumSpan.length(), Spanned.SPAN_INCLUSIVE_INCLUSIVE);
         sumNumTv.setText(sumNumSpan);
 
         SpannableString remainderNumSpan;
-        if (mWaitPutinRecordEntity.getTaskActiveId().getPlanQuantity() == null){
-            remainderNumSpan = new SpannableString(getString(R.string.wom_remainder) +"\n\n" + 0);
-        }else {
-            remainderNumSpan = new SpannableString(getString(R.string.wom_remainder) +"\n\n" + mWaitPutinRecordEntity.getTaskActiveId().getPlanQuantity().subtract(mWaitPutinRecordEntity.getTaskActiveId().getSumNum()));
+        if (mWaitPutinRecordEntity.getTaskActiveId().getPlanQuantity() == null) {
+            remainderNumSpan = new SpannableString(getString(R.string.wom_remainder) + "\n\n" + 0);
+        } else {
+            remainderNumSpan = new SpannableString(getString(R.string.wom_remainder) + "\n\n" + mWaitPutinRecordEntity.getTaskActiveId().getPlanQuantity().subtract(mWaitPutinRecordEntity.getTaskActiveId().getSumNum()));
         }
-        remainderNumSpan.setSpan(new ForegroundColorSpan(context.getResources().getColor(R.color.dark_yellow)),4,remainderNumSpan.length(), Spanned.SPAN_INCLUSIVE_INCLUSIVE);
-        remainderNumSpan.setSpan(new AbsoluteSizeSpan(DisplayUtil.dip2px(18,context)),4,remainderNumSpan.length(), Spanned.SPAN_INCLUSIVE_INCLUSIVE);
+        remainderNumSpan.setSpan(new ForegroundColorSpan(context.getResources().getColor(R.color.dark_yellow)), 4, remainderNumSpan.length(), Spanned.SPAN_INCLUSIVE_INCLUSIVE);
+        remainderNumSpan.setSpan(new AbsoluteSizeSpan(DisplayUtil.dip2px(18, context)), 4, remainderNumSpan.length(), Spanned.SPAN_INCLUSIVE_INCLUSIVE);
         remainderNumTv.setText(remainderNumSpan);
 
     }
@@ -212,20 +210,20 @@ public class PutInActivityReportActivity extends BaseRefreshRecyclerActivity<Put
         refreshListController.setOnRefreshListener(new OnRefreshListener() {
             @Override
             public void onRefresh() {
-                presenterRouter.create(CommonListAPI.class).list(1,customCondition,queryParams,
-                        WomConstant.URL.PUT_IN_REPORT_LIST_URL + "&id=" + (mWaitPutinRecordEntity.getProcReportId().getId() == null ? -1 : mWaitPutinRecordEntity.getProcReportId().getId()),"");
+                presenterRouter.create(CommonListAPI.class).list(1, customCondition, queryParams,
+                        WomConstant.URL.PUT_IN_REPORT_LIST_URL + "&id=" + (mWaitPutinRecordEntity.getProcReportId().getId() == null ? -1 : mWaitPutinRecordEntity.getProcReportId().getId()), "");
             }
         });
         customListWidgetAdd.setOnClickListener(v -> {
-            addMaterialReport(null);
+            addMaterialReport(null, null);
         });
-        RxView.clicks(customWidgetEditLl).throttleFirst(300,TimeUnit.MILLISECONDS)
+        RxView.clicks(customWidgetEditLl).throttleFirst(300, TimeUnit.MILLISECONDS)
                 .subscribe(new Consumer<Object>() {
                     @Override
                     public void accept(Object o) throws Exception {
                         Bundle bundle = new Bundle();
-                        bundle.putLong(Constant.IntentKey.ID,mWaitPutinRecordEntity.getTaskActiveId().getMaterialId().getId() == null ? -1L : mWaitPutinRecordEntity.getTaskActiveId().getMaterialId().getId());
-                        IntentRouter.go(context, Constant.Router.WOM_REMAIN_MATERIAL_LIST,bundle);
+                        bundle.putLong(Constant.IntentKey.ID, mWaitPutinRecordEntity.getTaskActiveId().getMaterialId().getId() == null ? -1L : mWaitPutinRecordEntity.getTaskActiveId().getMaterialId().getId());
+                        IntentRouter.go(context, Constant.Router.WOM_REMAIN_MATERIAL_LIST, bundle);
                     }
                 });
         mPutInReportDetailAdapter.setOnItemChildViewClickListener((childView, position, action, obj) -> {
@@ -246,9 +244,9 @@ public class PutInActivityReportActivity extends BaseRefreshRecyclerActivity<Put
                     break;
                 case "itemViewDelBtn":
                     mPutInReportDetailAdapter.getList().remove(obj);
-                    mPutInReportDetailAdapter.notifyItemRangeRemoved(position,1);
-                    mPutInReportDetailAdapter.notifyItemRangeChanged(position,mPutInReportDetailAdapter.getItemCount()-position);
-                    if (mPutInDetailEntity.getId() != null){
+                    mPutInReportDetailAdapter.notifyItemRangeRemoved(position, 1);
+                    mPutInReportDetailAdapter.notifyItemRangeChanged(position, mPutInReportDetailAdapter.getItemCount() - position);
+                    if (mPutInDetailEntity.getId() != null) {
                         dgDeletedIds += mPutInDetailEntity.getId() + ",";
                     }
                     break;
@@ -259,7 +257,7 @@ public class PutInActivityReportActivity extends BaseRefreshRecyclerActivity<Put
                 .throttleFirst(200, TimeUnit.MILLISECONDS)
                 .subscribe(new Consumer<Object>() {
                     @Override
-                     public void accept(Object o) throws Exception {
+                    public void accept(Object o) throws Exception {
                         submitReport();
                     }
                 });
@@ -267,40 +265,53 @@ public class PutInActivityReportActivity extends BaseRefreshRecyclerActivity<Put
 
     /**
      * 扫描功能：红外、摄像头扫描监听事件
+     *
      * @param codeResultEvent
      */
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onCodeReceiver(CodeResultEvent codeResultEvent) {
-        MaterialQRCodeEntity materialQRCodeEntity = MaterQRUtil.materialQRCode(context,codeResultEvent.scanResult);
+        MaterialQRCodeEntity materialQRCodeEntity = MaterQRUtil.materialQRCode(context, codeResultEvent.scanResult);
         if (materialQRCodeEntity == null) return;
-        if (!materialQRCodeEntity.getMaterialCode().equals(mWaitPutinRecordEntity.getTaskActiveId().getMaterialId().getCode())){
+        if (!materialQRCodeEntity.getMaterialCode().equals(mWaitPutinRecordEntity.getTaskActiveId().getMaterialId().getCode())) {
             ToastUtils.show(context, context.getResources().getString(R.string.wom_scan_material_error));
             return;
         }
-        if (!TextUtils.isEmpty(mWaitPutinRecordEntity.getTaskActiveId().getMaterialBatchNum()) && !materialQRCodeEntity.getMaterialBatchNo().equals(mWaitPutinRecordEntity.getTaskActiveId().getMaterialBatchNum())){
+        if (!TextUtils.isEmpty(mWaitPutinRecordEntity.getTaskActiveId().getMaterialBatchNum()) && !materialQRCodeEntity.getMaterialBatchNo().equals(mWaitPutinRecordEntity.getTaskActiveId().getMaterialBatchNum())) {
             ToastUtils.show(context, context.getResources().getString(R.string.wom_scan_batchNo_error));
             return;
         }
 
-        addMaterialReport(materialQRCodeEntity);
+        addMaterialReport(materialQRCodeEntity, null);
 
     }
 
     /**
      * 新增明细
+     *
      * @param materialQRCodeEntity
+     * @param remainMaterialEntity
      */
-    private void addMaterialReport(MaterialQRCodeEntity materialQRCodeEntity) {
+    private void addMaterialReport(MaterialQRCodeEntity materialQRCodeEntity, RemainMaterialEntity remainMaterialEntity) {
         PutInDetailEntity putInDetailEntity = new PutInDetailEntity();
         putInDetailEntity.setMaterialId(mWaitPutinRecordEntity.getTaskActiveId().getMaterialId()); // 物料
-
-        if (materialQRCodeEntity != null){ // 扫描物料
-            putInDetailEntity.setMaterialBatchNum(materialQRCodeEntity.getMaterialBatchNo());
-            putInDetailEntity.setPutinNum(materialQRCodeEntity.getNum());
-            putInDetailEntity.setSpecificationNum(materialQRCodeEntity.getNum());
-        }
         putInDetailEntity.setPutinTime(new Date().getTime());  // 投料时间
-        putInDetailEntity.setRemainOperate(new SystemCodeEntity(WomConstant.SystemCode.WOM_remainOperate_01)); // 新增使用
+
+        if (remainMaterialEntity != null) { // 尾料参照
+            putInDetailEntity.setRemainId(remainMaterialEntity);
+            putInDetailEntity.setRemainOperate(new SystemCodeEntity(WomConstant.SystemCode.WOM_remainOperate_02)); // 使用
+            putInDetailEntity.setMaterialBatchNum(remainMaterialEntity.getBatchText());
+            putInDetailEntity.setPutinNum(remainMaterialEntity.getRemainNum());
+            putInDetailEntity.setWareId(remainMaterialEntity.getWareId());
+
+
+        } else {
+            if (materialQRCodeEntity != null) { // 扫描物料
+                putInDetailEntity.setMaterialBatchNum(materialQRCodeEntity.getMaterialBatchNo());
+                putInDetailEntity.setPutinNum(materialQRCodeEntity.getNum());
+                putInDetailEntity.setSpecificationNum(materialQRCodeEntity.getNum());
+            }
+        }
+
         mPutInReportDetailAdapter.addData(putInDetailEntity);
         mPutInReportDetailAdapter.notifyItemRangeInserted(mPutInReportDetailAdapter.getItemCount() - 1, 1);
         mPutInReportDetailAdapter.notifyItemRangeChanged(mPutInReportDetailAdapter.getItemCount() - 1, 1);
@@ -308,14 +319,13 @@ public class PutInActivityReportActivity extends BaseRefreshRecyclerActivity<Put
     }
 
     /**
-     * @author zhangwenshuai1 2020/4/2
      * @param
      * @return
+     * @author zhangwenshuai1 2020/4/2
      * @description 报工
-     *
      */
     private void submitReport() {
-        if (checkSubmit()){
+        if (checkSubmit()) {
             return;
         }
         onLoading(context.getResources().getString(R.string.wom_dealing));
@@ -328,33 +338,43 @@ public class PutInActivityReportActivity extends BaseRefreshRecyclerActivity<Put
 
         PutinDetailDTO.DgListEntity dgListEntity = new PutinDetailDTO.DgListEntity();
 
-        Gson gsonBuilder = new GsonBuilder().serializeNulls().create(); // 保证不会过滤掉null字段
-        dgListEntity.setDg(gsonBuilder.toJson(mPutInReportDetailAdapter.getList()));
+        for (PutInDetailEntity putInDetailEntity : mPutInReportDetailAdapter.getList()) {
+            // 尾料处理方式
+            if (putInDetailEntity.getRemainId() == null && putInDetailEntity.getRemainOperate() == null) {
+                if (putInDetailEntity.getRemainNum() == null || putInDetailEntity.getRemainNum().floatValue() == 0) {
+                    putInDetailEntity.setRemainOperate(new SystemCodeEntity(WomConstant.SystemCode.WOM_remainOperate_03));
+                } else {
+                    putInDetailEntity.setRemainOperate(new SystemCodeEntity(WomConstant.SystemCode.WOM_remainOperate_01));
+                }
+            }
+        }
+
+        dgListEntity.setDg(GsonUtil.gsonStringSerializeNulls(mPutInReportDetailAdapter.getList()));
         putinDetailDTO.setDgList(dgListEntity);
 
         PutinDetailDTO.DgDeletedIdsEntity dgDeletedIdsEntity = new PutinDetailDTO.DgDeletedIdsEntity();
         dgDeletedIdsEntity.setDg(TextUtils.isEmpty(dgDeletedIds) ? null : dgDeletedIds);
         putinDetailDTO.setDgDeletedIds(dgDeletedIdsEntity);
 
-        presenterRouter.create(PutInReportAPI.class).submit(false,mWaitPutinRecordEntity.getProcReportId().getId(),getController(GetPowerCodeController.class).getPowerCodeResult(),putinDetailDTO,null);
+        presenterRouter.create(PutInReportAPI.class).submit(false, mWaitPutinRecordEntity.getProcReportId().getId(), getController(GetPowerCodeController.class).getPowerCodeResult(), putinDetailDTO, null);
 
     }
 
     private boolean checkSubmit() {
-        if (mPutInReportDetailAdapter.getList() == null || mPutInReportDetailAdapter.getList().size() <= 0){
-            ToastUtils.show(context,context.getResources().getString(R.string.wom_no_data_operate));
+        if (mPutInReportDetailAdapter.getList() == null || mPutInReportDetailAdapter.getList().size() <= 0) {
+            ToastUtils.show(context, context.getResources().getString(R.string.wom_no_data_operate));
             return true;
         }
-        for (PutInDetailEntity putInDetailEntity : mPutInReportDetailAdapter.getList()){
-            if (WomConstant.SystemCode.MATERIAL_BATCH_02.equals(mWaitPutinRecordEntity.getTaskActiveId().getMaterialId().getIsBatch().id) && TextUtils.isEmpty(putInDetailEntity.getMaterialBatchNum())){
+        for (PutInDetailEntity putInDetailEntity : mPutInReportDetailAdapter.getList()) {
+            if (WomConstant.SystemCode.MATERIAL_BATCH_02.equals(mWaitPutinRecordEntity.getTaskActiveId().getMaterialId().getIsBatch().id) && TextUtils.isEmpty(putInDetailEntity.getMaterialBatchNum())) {
                 ToastUtils.show(context, context.getResources().getString(R.string.wom_di) + (mPutInReportDetailAdapter.getList().indexOf(putInDetailEntity) + 1) + context.getResources().getString(R.string.wom_please_write_material_batch));
                 return true;
             }
-            if (putInDetailEntity.getWareId() == null){
+            if (putInDetailEntity.getWareId() == null) {
                 ToastUtils.show(context, context.getResources().getString(R.string.wom_di) + (mPutInReportDetailAdapter.getList().indexOf(putInDetailEntity) + 1) + context.getResources().getString(R.string.wom_please_write_ware));
                 return true;
             }
-            if (putInDetailEntity.getPutinNum() == null){
+            if (putInDetailEntity.getPutinNum() == null) {
                 ToastUtils.show(context, context.getResources().getString(R.string.wom_di) + (mPutInReportDetailAdapter.getList().indexOf(putInDetailEntity) + 1) + context.getResources().getString(R.string.wom_please_write_material_num));
                 return true;
             }
@@ -370,14 +390,14 @@ public class PutInActivityReportActivity extends BaseRefreshRecyclerActivity<Put
 
     @Override
     public void listSuccess(BAP5CommonEntity entity) {
-        CommonBAPListEntity commonBAPListEntity = GsonUtil.gsonToBean(GsonUtil.gsonString(entity.data),CommonBAPListEntity.class);
-        refreshListController.refreshComplete(GsonUtil.jsonToList(GsonUtil.gsonString((Object) commonBAPListEntity.result),PutInDetailEntity.class));
+        CommonBAPListEntity commonBAPListEntity = GsonUtil.gsonToBean(GsonUtil.gsonString(entity.data), CommonBAPListEntity.class);
+        refreshListController.refreshComplete(GsonUtil.jsonToList(GsonUtil.gsonString((Object) commonBAPListEntity.result), PutInDetailEntity.class));
     }
 
     @Override
     public void listFailed(String errorMsg) {
         refreshListController.refreshComplete();
-        ToastUtils.show(context,ErrorMsgHelper.msgParse(errorMsg));
+        ToastUtils.show(context, ErrorMsgHelper.msgParse(errorMsg));
     }
 
     @Override
@@ -397,12 +417,14 @@ public class PutInActivityReportActivity extends BaseRefreshRecyclerActivity<Put
         Object object = selectDataEvent.getEntity();
         if (object instanceof WarehouseEntity) {
             mPutInDetailEntity.setWareId((WarehouseEntity) selectDataEvent.getEntity());
+            mPutInReportDetailAdapter.notifyItemRangeChanged(mCurrentPosition, 1);
         } else if (object instanceof StoreSetEntity) {
             mPutInDetailEntity.setStoreId((StoreSetEntity) selectDataEvent.getEntity());
+            mPutInReportDetailAdapter.notifyItemRangeChanged(mCurrentPosition, 1);
+        } else if (object instanceof RemainMaterialEntity) {
+            addMaterialReport(null, (RemainMaterialEntity) selectDataEvent.getEntity());
         }
-        mPutInReportDetailAdapter.notifyItemRangeChanged(mCurrentPosition, 1);
     }
-
 
 
 }

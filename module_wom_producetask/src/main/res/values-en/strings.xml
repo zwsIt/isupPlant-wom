@@ -131,7 +131,15 @@
 	<string name="wom_activity">Activity</string>
     <string name="wom_remain_material_refence">尾料参照</string>
     <string name="wom_remain_num">尾料量</string>
-    <string name="wom_remain_num_compare">尾料量需小于扫描规格量</string>
+    <string name="wom_remain_num_compare">尾料量须小于扫描规格量:</string>
+    <string name="wom_remain_num_compare_sum">尾料量与用料量之和须小于扫描规格量:</string>
     <string name="wom_material_report_detail">用料明细</string>
     <string name="wom_remain_material_select">尾料选择</string>
+    <string name="wom_putin_num_compare_remain">尾料参照数据，用料量不能大于尾料可用量:</string>
+    <string name="wom_putin_num_compare_remain_sum">尾料参照数据，用料量与尾料量之和不能大于尾料可用量:</string>
+    <string name="wom_remain_compare_less">尾料参照数据，尾料量须小于尾料可用量:</string>
+    <string name="wom_remain_compare_less_sum">尾料参照数据，尾料量与用料量之和须小于尾料可用量:</string>
+    <string name="wom_putin_num_compare_scan">用料量不能大于扫描规格量:</string>
+    <string name="wom_putin_num_compare_sum">用料量与尾料量之和须小于扫描规格量:</string>
+    <string name="wom_putin_batch_num_compare">尾料量须小于可用量:</string>
 </resources>

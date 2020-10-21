@@ -21,6 +21,7 @@ import com.supcon.mes.module_wom_producetask.model.bean.PutInDetailEntity;
 
 import java.math.BigDecimal;
 
+import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Predicate;
 
 /**
@@ -33,6 +34,7 @@ public class PutInReportDetailAdapter extends BaseListDataRecyclerViewAdapter<Pu
 
     private boolean batchPutInActivity; // 是否投配料活动
     private boolean materialBatchNo; // 物料是否未启用批次
+
     public PutInReportDetailAdapter(Context context) {
         super(context);
     }
@@ -77,7 +79,7 @@ public class PutInReportDetailAdapter extends BaseListDataRecyclerViewAdapter<Pu
         TextView materialBatchNumTv;
 
         public ReportViewHolder(Context context) {
-            super(context,parent);
+            super(context, parent);
         }
 
         @Override
@@ -88,11 +90,11 @@ public class PutInReportDetailAdapter extends BaseListDataRecyclerViewAdapter<Pu
         @Override
         protected void initView() {
             super.initView();
-            if (batchPutInActivity){
+            if (batchPutInActivity) {
                 materialNameLl.setVisibility(View.VISIBLE);
             }
-            numEt.setInputType(InputType.TYPE_CLASS_NUMBER|InputType.TYPE_NUMBER_FLAG_DECIMAL);
-            remainderNumEt.setInputType(InputType.TYPE_CLASS_NUMBER|InputType.TYPE_NUMBER_FLAG_DECIMAL);
+            numEt.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
+            remainderNumEt.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
         }
 
         @SuppressLint("CheckResult")
@@ -105,80 +107,192 @@ public class PutInReportDetailAdapter extends BaseListDataRecyclerViewAdapter<Pu
             RxTextView.textChanges(batchNum.editText())
                     .skipInitialValue()
                     .subscribe(charSequence -> getItem(getAdapterPosition()).setMaterialBatchNum(charSequence.toString().trim()));
+
             RxTextView.textChanges(numEt.editText())
                     .skipInitialValue()
                     .skip(1)
-                    .filter(new Predicate<CharSequence>() {
-                        @Override
-                        public boolean test(CharSequence charSequence) throws Exception {
-                            PutInDetailEntity data = getItem(getAdapterPosition());
-                            if (TextUtils.isEmpty(charSequence.toString())){
-                                data.setPutinNum(null);
-                                data.setUseNum(null);
-                                return false;
-                            }
-                            if(charSequence.toString().startsWith(".")){
-                                numEt.editText().setText("0.");
-                                numEt.editText().setSelection(numEt.getContent().length());
-                                return false;
-                            }
-                            // 用料量大于可用量判断
-                            if (data.getAvailableNum() != null && new BigDecimal(charSequence.toString().trim()).compareTo(data.getAvailableNum()) > 0){
-                                ToastUtils.show(context,context.getString(R.string.wom_putin_num_compare) + data.getAvailableNum());
-                                int index = numEt.editText().getSelectionStart();
-                                numEt.editText().getText().delete(index -1 ,index);
-                                return false;
-                            }
-
-                            return true;
+                    .filter(charSequence -> {
+                        PutInDetailEntity data = getItem(getAdapterPosition());
+                        if (TextUtils.isEmpty(charSequence.toString())) {
+                            data.setPutinNum(null);
+                            data.setUseNum(null);
+                            return false;
                         }
+
+                        if (data.getPutinNum() != null && data.getPutinNum().toString().equals(charSequence.toString())) {
+                            return false;
+                        }
+
+                        if (charSequence.toString().startsWith(".")) {
+                            numEt.editText().setText("0.");
+                            numEt.editText().setSelection(numEt.getContent().length());
+                            return false;
+                        }
+                        BigDecimal current = new BigDecimal(charSequence.toString().trim());
+                        // 投配料：用料量大于可用量判断
+                        if (data.getAvailableNum() != null) {
+                            if (current.compareTo(data.getAvailableNum()) > 0){
+                                ToastUtils.show(context, context.getString(R.string.wom_putin_num_compare) + data.getAvailableNum());
+                                int index = numEt.editText().getSelectionStart();
+                                numEt.editText().getText().delete(index - 1, index);
+                                return false;
+                            }
+                            data.setRemainNum(data.getAvailableNum().subtract(current));
+                        }
+                        // 尾料参照、扫描时 自动计算
+                        if (data.getSpecificationNum() != null) {
+                            if (current.compareTo(data.getSpecificationNum()) > 0) {
+                                ToastUtils.show(context, context.getString(R.string.wom_putin_num_compare_scan) + data.getSpecificationNum());
+                                int index = numEt.editText().getSelectionStart();
+                                numEt.editText().getText().delete(index - 1, index);
+                                return false;
+                            }
+                            data.setRemainNum(data.getSpecificationNum().subtract(current));
+                        }
+                        if (data.getRemainId() != null) {
+                            if (current.compareTo(data.getRemainId().getRemainNum()) > 0) {
+                                ToastUtils.show(context, context.getString(R.string.wom_putin_num_compare_remain) + data.getRemainId().getRemainNum());
+                                int index = numEt.editText().getSelectionStart();
+                                numEt.editText().getText().delete(index - 1, index);
+                                return false;
+                            }
+                            data.setRemainNum(data.getRemainId().getRemainNum().subtract(current));
+                        }
+                        // 扫描：尾料量+用料量 > 扫描规格量 ？
+//                                    if (data.getSpecificationNum() != null && current.add(data.getRemainNum() == null ? new BigDecimal(0): data.getRemainNum()).compareTo(data.getSpecificationNum()) > 0){
+//                                        if (data.getRemainNum() == null){
+//                                            ToastUtils.show(context,context.getString(R.string.wom_putin_num_compare_scan) + data.getSpecificationNum());
+//                                        }else {
+//                                            ToastUtils.show(context,context.getString(R.string.wom_putin_num_compare_sum) + data.getSpecificationNum());
+//                                        }
+//                                        int index = numEt.editText().getSelectionStart();
+//                                        numEt.editText().getText().delete(index -1 ,index);
+//                                        return false;
+//                                    }
+
+                        // 尾料参照：用料量 > 尾料可用量-尾料量
+//                                    if (data.getRemainId() != null && current.add(data.getRemainNum() == null ? new BigDecimal(0): data.getRemainNum()).compareTo(data.getRemainId().getRemainNum()) > 0){
+//                                        if (data.getRemainNum() == null){
+//                                            ToastUtils.show(context,context.getString(R.string.wom_putin_num_compare_remain) + data.getRemainId().getRemainNum());
+//                                        }else {
+//                                            ToastUtils.show(context,context.getString(R.string.wom_putin_num_compare_remain_sum) + data.getRemainId().getRemainNum());
+//                                        }
+//                                        int index = numEt.editText().getSelectionStart();
+//                                        numEt.editText().getText().delete(index -1 ,index);
+//                                        return false;
+//                                    }
+                        return true;
                     })
                     .subscribe(charSequence -> {
-                        getItem(getAdapterPosition()).setPutinNum(new BigDecimal(charSequence.toString().trim()));
-                        getItem(getAdapterPosition()).setUseNum(getItem(getAdapterPosition()).getPutinNum());
+                        PutInDetailEntity data = getItem(getAdapterPosition());
+                        data.setPutinNum(new BigDecimal(charSequence.toString().trim()));
+                        data.setUseNum(getItem(getAdapterPosition()).getPutinNum());
+                        if (data.getRemainNum() != null){
+                            remainderNumEt.setContent(data.getRemainNum().toString());
+                        }
+
                     });
+
+
             warehouseTv.setOnChildViewClickListener((childView, action, obj) -> {
-                if (action == -1){
+                if (action == -1) {
                     getItem(getAdapterPosition()).setWareId(null);
                     getItem(getAdapterPosition()).setStoreId(null);
-                    notifyItemRangeChanged(getAdapterPosition(),1);
-                }else {
+                    notifyItemRangeChanged(getAdapterPosition(), 1);
+                } else {
                     onItemChildViewClick(childView, getAdapterPosition(), getItem(getAdapterPosition()));
                 }
             });
             storeSetTv.setOnChildViewClickListener((childView, action, obj) -> {
-                if (action == -1){
+                if (action == -1) {
                     getItem(getAdapterPosition()).setStoreId(null);
-                }else {
+                } else {
                     onItemChildViewClick(childView, getAdapterPosition(), getItem(getAdapterPosition()));
                 }
             });
+
             RxTextView.textChanges(remainderNumEt.editText())
                     .skipInitialValue()
                     .skip(1)
                     .filter(charSequence -> {
                         PutInDetailEntity data = getItem(getAdapterPosition());
-                        if (TextUtils.isEmpty(charSequence.toString())){
+                        if (TextUtils.isEmpty(charSequence.toString())) {
                             data.setRemainNum(null);
                             return false;
                         }
-                        if(charSequence.toString().startsWith(".")){
+
+                        if (data.getRemainNum() != null && data.getRemainNum().toString().equals(charSequence.toString())) {
+                            return false;
+                        }
+
+                        if (charSequence.toString().startsWith(".")) {
                             remainderNumEt.editText().setText("0.");
                             remainderNumEt.editText().setSelection(remainderNumEt.getContent().length());
                             return false;
                         }
-                        // 尾料量 > 扫描规格量 ？
-                        if (data.getSpecificationNum() != null && new BigDecimal(charSequence.toString().trim()).compareTo(data.getSpecificationNum()) > 0){
-                            ToastUtils.show(context,context.getString(R.string.wom_remain_num_compare) + data.getSpecificationNum());
-                            int index = remainderNumEt.editText().getSelectionStart();
-                            remainderNumEt.editText().getText().delete(index -1 ,index);
-                            return false;
+                        BigDecimal current = new BigDecimal(charSequence.toString().trim());
+                        // 投配料：尾料量大于可用量判断
+                        if (data.getAvailableNum() != null) {
+                            if (current.compareTo(data.getAvailableNum()) > 0){
+                                ToastUtils.show(context, context.getString(R.string.wom_putin_batch_num_compare) + data.getAvailableNum());
+                                int index = remainderNumEt.editText().getSelectionStart();
+                                remainderNumEt.editText().getText().delete(index - 1, index);
+                                return false;
+                            }
+                            data.setPutinNum(data.getAvailableNum().subtract(current));
                         }
+
+                        // 尾料参照、扫描时 自动计算
+                        if (data.getSpecificationNum() != null) {
+                            if (current.compareTo(data.getSpecificationNum()) > 0) {
+                                ToastUtils.show(context, context.getString(R.string.wom_remain_num_compare) + data.getSpecificationNum());
+                                int index = remainderNumEt.editText().getSelectionStart();
+                                remainderNumEt.editText().getText().delete(index - 1, index);
+                                return false;
+                            }
+                            data.setPutinNum(data.getSpecificationNum().subtract(current));
+                        }
+                        if (data.getRemainId() != null) {
+                            if (current.compareTo(data.getRemainId().getRemainNum()) > 0) {
+                                ToastUtils.show(context, context.getString(R.string.wom_remain_compare_less) + data.getRemainId().getRemainNum());
+                                int index = remainderNumEt.editText().getSelectionStart();
+                                remainderNumEt.editText().getText().delete(index - 1, index);
+                                return false;
+                            }
+                            data.setPutinNum(data.getRemainId().getRemainNum().subtract(current));
+                        }
+
+                        // 扫描：尾料量+用料量 > 扫描规格量 ？
+//                                    if (data.getSpecificationNum() != null && current.add(data.getPutinNum() == null ? new BigDecimal(0): data.getPutinNum()).compareTo(data.getSpecificationNum()) > 0){
+//                                        if (data.getPutinNum() == null){
+//                                            ToastUtils.show(context,context.getString(R.string.wom_remain_num_compare) + data.getSpecificationNum());
+//                                        }else {
+//                                            ToastUtils.show(context,context.getString(R.string.wom_remain_num_compare_sum) + data.getSpecificationNum());
+//                                        }
+//                                        int index = remainderNumEt.editText().getSelectionStart();
+//                                        remainderNumEt.editText().getText().delete(index -1 ,index);
+//                                        return false;
+//                                    }
+                        // 尾料参照：尾料量+用料量 > 尾料可用量?
+//                                    if (data.getRemainId() != null && current.add(data.getPutinNum() == null ? new BigDecimal(0): data.getPutinNum()).compareTo(data.getRemainId().getRemainNum()) > 0){
+//                                        if (data.getPutinNum() == null){
+//                                            ToastUtils.show(context,context.getString(R.string.wom_remain_compare_less) + data.getRemainId().getRemainNum());
+//                                        }else {
+//                                            ToastUtils.show(context,context.getString(R.string.wom_remain_compare_less_sum) + data.getRemainId().getRemainNum());
+//                                        }
+//                                        int index = remainderNumEt.editText().getSelectionStart();
+//                                        remainderNumEt.editText().getText().delete(index -1 ,index);
+//                                        return false;
+//                                    }
 
                         return true;
                     })
                     .subscribe(charSequence -> {
-                        getItem(getAdapterPosition()).setRemainNum(new BigDecimal(charSequence.toString().trim()));
+                        PutInDetailEntity data = getItem(getAdapterPosition());
+                        data.setRemainNum(new BigDecimal(charSequence.toString().trim()));
+                        if (data.getPutinNum() != null){
+                            numEt.setContent(data.getPutinNum().toString());
+                        }
                     });
 
         }
@@ -192,15 +306,15 @@ public class PutInReportDetailAdapter extends BaseListDataRecyclerViewAdapter<Pu
             warehouseTv.setContent(data.getWareId() == null ? "" : data.getWareId().getName());
             storeSetTv.setContent(data.getStoreId() == null ? "" : data.getStoreId().getName());
 
-            if (batchPutInActivity){
-                if (WomConstant.SystemCode.MATERIAL_BATCH_02.equals(data.getMaterialId().getIsBatch().id)){
-                    materialBatchNumTv.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_batch_number,0,R.drawable.ic_necessary,0);
-                }else {
-                    materialBatchNumTv.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_batch_number,0,0,0);
+            if (batchPutInActivity) {
+                if (WomConstant.SystemCode.MATERIAL_BATCH_02.equals(data.getMaterialId().getIsBatch().id)) {
+                    materialBatchNumTv.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_batch_number, 0, R.drawable.ic_necessary, 0);
+                } else {
+                    materialBatchNumTv.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_batch_number, 0, 0, 0);
                 }
-            }else {
-                if (materialBatchNo){
-                    materialBatchNumTv.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_batch_number,0,0,0);
+            } else {
+                if (materialBatchNo) {
+                    materialBatchNumTv.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_batch_number, 0, 0, 0);
                 }
             }
         }

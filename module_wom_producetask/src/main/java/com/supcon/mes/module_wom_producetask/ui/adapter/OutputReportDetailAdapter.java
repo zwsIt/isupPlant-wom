@@ -11,6 +11,7 @@ import com.app.annotation.BindByTag;
 import com.jakewharton.rxbinding2.widget.RxTextView;
 import com.supcon.common.view.base.adapter.BaseListDataRecyclerViewAdapter;
 import com.supcon.common.view.base.adapter.viewholder.BaseRecyclerViewHolder;
+import com.supcon.common.view.util.ToastUtils;
 import com.supcon.mes.mbap.view.CustomEditText;
 import com.supcon.mes.mbap.view.CustomTextView;
 import com.supcon.mes.module_wom_producetask.R;
@@ -58,6 +59,8 @@ public class OutputReportDetailAdapter extends BaseListDataRecyclerViewAdapter<O
         CustomTextView storeSetTv;
         @BindByTag("numEt")
         CustomEditText numEt;
+        @BindByTag("remainderNumEt")
+        CustomEditText remainderNumEt;
         @BindByTag("itemViewDelBtn")
         TextView itemViewDelBtn;
         @BindByTag("preBatchNumTv")
@@ -83,6 +86,7 @@ public class OutputReportDetailAdapter extends BaseListDataRecyclerViewAdapter<O
             if (materialBatchNo){
                 preBatchNumTv.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_batch_number,0,0,0);
             }
+            remainderNumEt.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
         }
 
         @SuppressLint("CheckResult")
@@ -97,22 +101,19 @@ public class OutputReportDetailAdapter extends BaseListDataRecyclerViewAdapter<O
                     .subscribe(charSequence -> getItem(getAdapterPosition()).setMaterialBatchNum(charSequence.toString().trim()));
             RxTextView.textChanges(numEt.editText())
                     .skipInitialValue()
-                    .filter(new Predicate<CharSequence>() {
-                        @Override
-                        public boolean test(CharSequence charSequence) throws Exception {
-                            if (TextUtils.isEmpty(charSequence.toString())){
-                                getItem(getAdapterPosition()).setOutputNum(null);
-                                getItem(getAdapterPosition()).setReportNum(getItem(getAdapterPosition()).getOutputNum());
-                                return false;
-                            }
-
-                            if(charSequence.toString().startsWith(".")){
-                                numEt.editText().setText("0.");
-                                numEt.editText().setSelection(numEt.getContent().length());
-                                return false;
-                            }
-                            return true;
+                    .filter(charSequence -> {
+                        if (TextUtils.isEmpty(charSequence.toString())){
+                            getItem(getAdapterPosition()).setOutputNum(null);
+                            getItem(getAdapterPosition()).setReportNum(getItem(getAdapterPosition()).getOutputNum());
+                            return false;
                         }
+
+                        if(charSequence.toString().startsWith(".")){
+                            numEt.editText().setText("0.");
+                            numEt.editText().setSelection(numEt.getContent().length());
+                            return false;
+                        }
+                        return true;
                     })
                     .subscribe(charSequence -> {
                         getItem(getAdapterPosition()).setOutputNum(new BigDecimal(charSequence.toString().trim()));
@@ -134,12 +135,36 @@ public class OutputReportDetailAdapter extends BaseListDataRecyclerViewAdapter<O
                     onItemChildViewClick(childView, getAdapterPosition(), getItem(getAdapterPosition()));
                 }
             });
+
+            RxTextView.textChanges(remainderNumEt.editText())
+                    .skipInitialValue()
+                    .skip(1)
+                    .filter(charSequence -> {
+                        OutputDetailEntity data = getItem(getAdapterPosition());
+                        if (TextUtils.isEmpty(charSequence.toString())) {
+                            data.setRemainNum(null);
+                            return false;
+                        }
+
+                        if (charSequence.toString().startsWith(".")) {
+                            remainderNumEt.editText().setText("0.");
+                            remainderNumEt.editText().setSelection(remainderNumEt.getContent().length());
+                            return false;
+                        }
+
+                        return true;
+                    })
+                    .subscribe(charSequence -> {
+                        OutputDetailEntity data = getItem(getAdapterPosition());
+                        data.setRemainNum(new BigDecimal(charSequence.toString().trim()));
+                    });
         }
 
         @Override
         protected void update(OutputDetailEntity data) {
             batchNum.setContent(data.getMaterialBatchNum());
             numEt.setContent(data.getOutputNum() == null ? "" : String.valueOf(data.getOutputNum()));
+            remainderNumEt.setContent(data.getRemainNum() == null ? "" : String.valueOf(data.getRemainNum()));
             warehouseTv.setContent(data.getWareId() == null ? "" : data.getWareId().getName());
             storeSetTv.setContent(data.getStoreId() == null ? "" : data.getStoreId().getName());
         }
