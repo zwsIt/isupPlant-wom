@@ -282,93 +282,76 @@ public class PreMaterialReceiveListAdapter extends BaseListDataRecyclerViewAdapt
 
             RxView.clicks(itemPreMaterialReceiveCheck)
                     .throttleFirst(200, TimeUnit.MILLISECONDS)
-                    .subscribe(new Consumer<Object>() {
-                        @Override
-                        public void accept(Object o) throws Exception {
-                            PreMaterialEntity preMaterialEntity = getItem(getAdapterPosition());
-                            preMaterialEntity.isChecked = !preMaterialEntity.isChecked;
-                            if (preMaterialEntity.isChecked) {
-                                itemPreMaterialReceiveCheck.setImageResource(R.drawable.ic_check_yes);
-                            } else {
-                                itemPreMaterialReceiveCheck.setImageResource(R.drawable.ic_check_no);
-                            }
+                    .subscribe(o -> {
+                        PreMaterialEntity preMaterialEntity = getItem(getAdapterPosition());
+                        preMaterialEntity.isChecked = !preMaterialEntity.isChecked;
+                        if (preMaterialEntity.isChecked) {
+                            itemPreMaterialReceiveCheck.setImageResource(R.drawable.ic_check_yes);
+                        } else {
+                            itemPreMaterialReceiveCheck.setImageResource(R.drawable.ic_check_no);
                         }
                     });
 
-            mRejectReasonAdapter.setOnItemChildViewClickListener(new OnItemChildViewClickListener() {
-                @Override
-                public void onItemChildViewClick(View childView, int position, int action, Object obj) {
-                    String reason = (String) obj;
-                    PreMaterialEntity materialEntity = getItem(getAdapterPosition());
-                    materialEntity.rejectReason = SystemCodeManager.getInstance().getSystemCodeEntity(WomConstant.SystemCode.WOM_rejectReason, reason);
-                }
+            mRejectReasonAdapter.setOnItemChildViewClickListener((childView, position, action, obj) -> {
+                String reason = (String) obj;
+                PreMaterialEntity materialEntity = getItem(getAdapterPosition());
+                materialEntity.rejectReason = SystemCodeManager.getInstance().getSystemCodeEntity(WomConstant.SystemCode.WOM_rejectReason, reason);
             });
 
             RxTextView.textChanges(itemPreMaterialReceiveRealNum.editText())
                     .skipInitialValue()
                     .debounce(500, TimeUnit.MILLISECONDS)
                     .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(new Consumer<CharSequence>() {
-                        @Override
-                        public void accept(CharSequence charSequence) throws Exception {
+                    .subscribe(charSequence -> {
 
-                            if (TextUtils.isEmpty(charSequence)) {
-                                PreMaterialEntity materialEntity = getItem(getAdapterPosition());
-                                materialEntity.receiveNum = null;
-                                return;
-                            }
+                        if (TextUtils.isEmpty(charSequence)) {
                             PreMaterialEntity materialEntity = getItem(getAdapterPosition());
-                            if (materialEntity == null)return;
-                            float receiveNumF = new BigDecimal(charSequence.toString()).floatValue();
-
-                            if (materialEntity.receiveState == null) {
-                                ToastUtils.show(context, context.getResources().getString(R.string.wom_please_select_receive_type));
-                                return;
-                            }
-                            if ("WOM_receiveState/partReceive".equals(materialEntity.receiveState.id)) {
-                                if (materialEntity.preNum != null && receiveNumF >= materialEntity.preNum) {
-                                    ToastUtils.show(context, context.getResources().getString(R.string.wom_part_receive_num_smaller_preparenum));
-                                    return;
-                                } else {
-                                    materialEntity.receiveNum = receiveNumF;
-                                }
-                            } else if ("WOM_receiveState/receive".equals(materialEntity.receiveState.id)) {
-                                if (materialEntity.preNum != null && receiveNumF > materialEntity.preNum) {
-                                    ToastUtils.show(context, context.getResources().getString(R.string.wom_receive_num_smaller_preparenum));
-                                    return;
-                                } else {
-                                    materialEntity.receiveNum = receiveNumF;
-                                }
-                            }
-
-                            materialEntity.receiveNum = receiveNumF;
-
+                            materialEntity.receiveNum = null;
+                            return;
                         }
+                        PreMaterialEntity materialEntity = getItem(getAdapterPosition());
+                        if (materialEntity == null)return;
+                        float receiveNumF = new BigDecimal(charSequence.toString()).floatValue();
+
+                        if (materialEntity.receiveState == null) {
+                            ToastUtils.show(context, context.getResources().getString(R.string.wom_please_select_receive_type));
+                            return;
+                        }
+                        if ("WOM_receiveState/partReceive".equals(materialEntity.receiveState.id)) {
+                            if (materialEntity.preNum != null && receiveNumF >= materialEntity.preNum) {
+                                ToastUtils.show(context, context.getResources().getString(R.string.wom_part_receive_num_smaller_preparenum));
+                                return;
+                            } else {
+                                materialEntity.receiveNum = receiveNumF;
+                            }
+                        } else if ("WOM_receiveState/receive".equals(materialEntity.receiveState.id)) {
+                            if (materialEntity.preNum != null && receiveNumF > materialEntity.preNum) {
+                                ToastUtils.show(context, context.getResources().getString(R.string.wom_receive_num_smaller_preparenum));
+                                return;
+                            } else {
+                                materialEntity.receiveNum = receiveNumF;
+                            }
+                        }
+
+                        materialEntity.receiveNum = receiveNumF;
+
                     });
 
             RxTextView.textChanges(itemPreMaterialReceiveReason.editText())
                     .skipInitialValue()
                     .debounce(500, TimeUnit.MILLISECONDS)
-                    .subscribe(new Consumer<CharSequence>() {
-                        @Override
-                        public void accept(CharSequence charSequence) throws Exception {
-                            PreMaterialEntity materialEntity = getItem(getAdapterPosition());
-                            if (TextUtils.isEmpty(charSequence)) {
+                    .subscribe(charSequence -> {
+                        PreMaterialEntity materialEntity = getItem(getAdapterPosition());
+                        if (TextUtils.isEmpty(charSequence)) {
 
-                                materialEntity.remark = "";
-                                return;
-                            }
-
-                            materialEntity.remark = charSequence.toString();
-
+                            materialEntity.remark = "";
+                            return;
                         }
+
+                        materialEntity.remark = charSequence.toString();
+
                     });
-            itemPreMaterialReceiveStoreLocation.setOnChildViewClickListener(new OnChildViewClickListener() {
-                @Override
-                public void onChildViewClick(View childView, int action, Object obj) {
-                    onItemChildViewClick(itemPreMaterialReceiveStoreLocation, 0, getItem(getAdapterPosition()));
-                }
-            });
+            itemPreMaterialReceiveStoreLocation.setOnChildViewClickListener((childView, action, obj) -> onItemChildViewClick(itemPreMaterialReceiveStoreLocation, 0, getItem(getAdapterPosition())));
         }
 
         @Override
@@ -422,9 +405,6 @@ public class PreMaterialReceiveListAdapter extends BaseListDataRecyclerViewAdapt
                 data.receiveState = SystemCodeManager.getInstance().getSystemCodeEntity("WOM_receiveState/receive");
             }
 
-
-            LogUtil.d("------------" + (getAdapterPosition() + 1) + "------------" + data.toString());
-//            itemPreMaterialReceiveRealNum.setEnabled(true);
             if ("WOM_receiveState/partReceive".equals(data.receiveState.id)) {
                 itemPreMaterialReceiveReason.setContent(data.remark);
                 itemPreMaterialReceiveLine.setVisibility(View.VISIBLE);
