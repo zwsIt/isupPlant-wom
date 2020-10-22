@@ -72,7 +72,7 @@ public class ProduceTaskEntity extends BaseEntity {
     }
 
     public BigDecimal getPlanNum() {
-        return planNum!=null?planNum.setScale(WomConstant.scale):null;
+        return planNum!=null?planNum.setScale(WomConstant.scale,BigDecimal.ROUND_HALF_UP):null;
     }
 
     public void setPlanNum(BigDecimal planNum) {

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="ble_tip">Please turn on Bluetooth</string>
+    <string name="ble_connect">Connect</string>
+    <string name="ble_disconnect">Disconnect</string>
+    <string name="ble_tip2">Bluetooth device disconnected</string>
+    <string name="ble_connecting">Connecting</string>
+    <string name="ble_tip3">Please select a Bluetooth device!</string>
+    <string name="ble_tip4">Successfully Connected</string>
+    <string name="ble_tip5">Failed Connected</string>
+</resources>

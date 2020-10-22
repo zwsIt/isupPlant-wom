@@ -615,7 +615,7 @@ public class FormulaActivityListAdapter extends BaseListDataRecyclerViewAdapter<
                     qualityStartTv.setText(context.getResources().getString(R.string.wom_advance_release));
                 }
                 // 调整
-                if (WomConstant.SystemCode.BASE_DEAL_ADJUST.equals(data.getActiveBatchState().getDealType().id)) {
+//                if (data.getActiExelog() != null && !TextUtils.isEmpty(data.getActiExelog().adjustPlan)) {
 //                if (data.getActiveBatchState()!=null && WomConstant.SystemCode.BASE_DEAL_ADJUST.equals(data.getActiveBatchState().getDealType().id)){
 //                    adjustLl.setVisibility(View.VISIBLE);
 //                }
@@ -624,7 +624,7 @@ public class FormulaActivityListAdapter extends BaseListDataRecyclerViewAdapter<
                         ll_adjustPlan.setVisibility(View.VISIBLE);
                         adjustPlanTv.setValue(data.getActiExelog().adjustPlan);
                     }
-                }
+//                }
             }
         }
     }

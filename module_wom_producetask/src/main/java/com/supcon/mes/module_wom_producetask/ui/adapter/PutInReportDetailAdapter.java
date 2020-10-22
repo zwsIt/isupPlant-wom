@@ -84,6 +84,8 @@ public class PutInReportDetailAdapter extends BaseListDataRecyclerViewAdapter<Pu
         CustomEditText beforeWeightTv;
         @BindByTag("afterWeightTv")
         CustomEditText afterWeightTv;
+        @BindByTag("conversionTv")
+        CustomTextView conversionTv;
         @BindByTag("radioGroup")
         RadioGroup radioGroup;
 
@@ -291,6 +293,7 @@ public class PutInReportDetailAdapter extends BaseListDataRecyclerViewAdapter<Pu
             storeSetTv.setContent(data.getStoreId() == null ? "" : data.getStoreId().getName());
             beforeWeightTv.setContent(data.getBeforeNum()==null?"":String.valueOf(data.getBeforeNum()));
             afterWeightTv.setContent(data.getAfterNum()==null?"":String.valueOf(data.getAfterNum()));
+            conversionTv.setValue(data.getConversion());
             if (data.isAllPutInto()) {
                 radioGroup.check(R.id.radioBtn_yes);
             } else {

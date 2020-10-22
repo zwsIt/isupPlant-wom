@@ -340,8 +340,8 @@ public class PutInActivityReportActivity extends BaseRefreshRecyclerActivity<Put
             String incode = arr[0].replace("incode=", "");
             String batchno = arr[1].replace("batchno=", "");
             String batchno2 = arr[2].replace("batchno2=", "");
-            String packqty = arr[3].replace("packqty=", "");
-            String packs = arr[4].replace("packs=", "");
+            String packqty = arr[3].replace("packqty=", "");//换算率
+            String packs = arr[4].replace("packs=", "");//用料量
             String purcode = arr[5].replace("purcode=", "");
             String orderno = arr[6].replace("orderno=", "");
 
@@ -355,14 +355,15 @@ public class PutInActivityReportActivity extends BaseRefreshRecyclerActivity<Put
 
                 double planQuality = mWaitPutinRecordEntity.getTaskActiveId().getPlanQuantity() != null ? mWaitPutinRecordEntity.getTaskActiveId().getPlanQuantity().doubleValue() : 0;
                 int size = mPutInReportDetailAdapter.getItemCount();
-                double packqtyQuality = Double.parseDouble(packqty);
+                double packqtyQuality = Double.parseDouble(packs);
                 double totalInNum = 0;
                 scanPutInDetailEntity = new PutInDetailEntity();
                 scanPutInDetailEntity.setMaterialId(mWaitPutinRecordEntity.getTaskActiveId().getMaterialId()); // 物料
                 scanPutInDetailEntity.setMaterialBatchNum(batchno);
                 scanPutInDetailEntity.setWareId(mWaitPutinRecordEntity.getWare());
-                scanPutInDetailEntity.setPutinNum(!TextUtils.isEmpty(packqty) ? new BigDecimal(packqty) : null);
+                scanPutInDetailEntity.setPutinNum(!TextUtils.isEmpty(packs) ? new BigDecimal(packqty) : null);
                 scanPutInDetailEntity.setPutinTime(new Date().getTime());  // 投料时间
+                scanPutInDetailEntity.setConversion(packqty);
                 for (int i = 0; i < size; i++) {
                     PutInDetailEntity inDetailEntity = mPutInReportDetailAdapter.getItem(i);
                     double inNum = inDetailEntity.getPutinNum() != null ? inDetailEntity.getPutinNum().doubleValue() : 0;

@@ -390,7 +390,7 @@ public class TaskActiveEntity extends BaseEntity {
     }
 
     public BigDecimal getPlanQuantity() {
-        return planQuantity!=null?planQuantity.setScale(WomConstant.scale):null;
+        return planQuantity!=null?planQuantity.setScale(WomConstant.scale,BigDecimal.ROUND_HALF_UP):null;
     }
 
     public void setPlanQuantity(BigDecimal planQuantity) {
@@ -438,7 +438,7 @@ public class TaskActiveEntity extends BaseEntity {
     }
 
     public BigDecimal getStandardQuantity() {
-        return standardQuantity!=null?standardQuantity.setScale(WomConstant.scale):null;
+        return standardQuantity!=null?standardQuantity.setScale(WomConstant.scale,BigDecimal.ROUND_HALF_UP):null;
     }
 
     public void setStandardQuantity(BigDecimal standardQuantity) {
@@ -449,7 +449,7 @@ public class TaskActiveEntity extends BaseEntity {
         if (sumNum == null){
             sumNum = new BigDecimal(0);
         }
-        return sumNum.setScale(WomConstant.scale);
+        return sumNum.setScale(WomConstant.scale,BigDecimal.ROUND_HALF_UP);
     }
 
     public void setSumNum(BigDecimal sumNum) {

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="ble_tip">请打开蓝牙</string>
+    <string name="ble_connect">连接</string>
+    <string name="ble_disconnect">断开</string>
+    <string name="ble_tip2">蓝牙设备已断开</string>
+    <string name="ble_connecting">正在连接...</string>
+    <string name="ble_tip3">请选择一个蓝牙设备！</string>
+    <string name="ble_tip4">"连接成功</string>
+    <string name="ble_tip5">连接失败</string>
+</resources>

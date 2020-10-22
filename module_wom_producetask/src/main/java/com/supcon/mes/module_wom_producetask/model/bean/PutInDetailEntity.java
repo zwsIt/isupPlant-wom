@@ -46,6 +46,7 @@ public class PutInDetailEntity extends BaseEntity {
     private BigDecimal useNum;          // 物料使用量
     private WarehouseEntity wareId;     // 仓库
     private Long batchingRecordId;      // 配料记录Id
+    private String conversion;          //换算率
     private BigDecimal availableNum;    // 可用量
     private SystemCodeEntity taskType;  // 工单类型
     private BigDecimal beforeNum;       // 前重
@@ -77,6 +78,14 @@ public class PutInDetailEntity extends BaseEntity {
 
     public void setTaskType(SystemCodeEntity taskType) {
         this.taskType = taskType;
+    }
+
+    public String getConversion() {
+        return conversion;
+    }
+
+    public void setConversion(String conversion) {
+        this.conversion = conversion;
     }
 
     public BigDecimal getBeforeNum() {
