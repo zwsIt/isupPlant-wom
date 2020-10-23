@@ -361,7 +361,7 @@ public class PutInActivityReportActivity extends BaseRefreshRecyclerActivity<Put
                 scanPutInDetailEntity.setMaterialId(mWaitPutinRecordEntity.getTaskActiveId().getMaterialId()); // 物料
                 scanPutInDetailEntity.setMaterialBatchNum(batchno);
                 scanPutInDetailEntity.setWareId(mWaitPutinRecordEntity.getWare());
-                scanPutInDetailEntity.setPutinNum(!TextUtils.isEmpty(packs) ? new BigDecimal(packqty) : null);
+                scanPutInDetailEntity.setPutinNum(!TextUtils.isEmpty(packs) ? new BigDecimal(packs) : null);
                 scanPutInDetailEntity.setPutinTime(new Date().getTime());  // 投料时间
                 scanPutInDetailEntity.setConversion(packqty);
                 for (int i = 0; i < size; i++) {
