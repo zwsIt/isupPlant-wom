@@ -22,7 +22,7 @@ public class ActiExelogEntity extends BaseEntity {
     public SystemCodeEntity activeType;//活动类型
     public BigDecimal actlongTime;//执行时长(分)
 
-    public Long actualNum;//实际数量
+    public Double actualNum;//实际数量
     public String beforeNum;//前重
     public String afterNum;//后重
     public String checkResult;//检验结果
@@ -92,11 +92,11 @@ public class ActiExelogEntity extends BaseEntity {
         this.actlongTime = actlongTime;
     }
 
-    public Long getActualNum() {
+    public Double getActualNum() {
         return actualNum;
     }
 
-    public void setActualNum(Long actualNum) {
+    public void setActualNum(Double actualNum) {
         this.actualNum = actualNum;
     }
 
