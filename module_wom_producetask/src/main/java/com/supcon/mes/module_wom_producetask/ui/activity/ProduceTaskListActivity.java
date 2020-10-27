@@ -8,7 +8,9 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 
 import com.app.annotation.BindByTag;
+import com.app.annotation.Controller;
 import com.app.annotation.apt.Router;
+import com.jakewharton.rxbinding2.view.RxView;
 import com.jakewharton.rxbinding2.widget.RxTextView;
 import com.supcon.common.view.base.activity.BaseMultiFragmentActivity;
 import com.supcon.common.view.util.StatusBarUtils;
@@ -16,14 +18,21 @@ import com.supcon.mes.mbap.view.CustomHorizontalSearchTitleBar;
 import com.supcon.mes.mbap.view.CustomTab;
 import com.supcon.mes.mbap.view.NoScrollViewPager;
 import com.supcon.mes.middleware.constant.Constant;
+import com.supcon.mes.module_scan.controller.CommonScanController;
+import com.supcon.mes.module_scan.model.event.CodeResultEvent;
 import com.supcon.mes.module_wom_producetask.R;
 import com.supcon.mes.module_wom_producetask.ui.fragment.CommonProduceTaskListFragment;
 import com.supcon.mes.module_wom_producetask.ui.fragment.SimpleProduceTaskListFragment;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.concurrent.TimeUnit;
 
 import io.reactivex.ObservableSource;
 import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.functions.Consumer;
 import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
 
@@ -34,6 +43,7 @@ import io.reactivex.schedulers.Schedulers;
  * Desc 生产工单list
  */
 @Router(Constant.AppCode.WOM_Production)
+@Controller(CommonScanController.class)
 public class ProduceTaskListActivity extends BaseMultiFragmentActivity {
     @BindByTag("searchTitleBar")
     CustomHorizontalSearchTitleBar searchTitleBar;
@@ -64,13 +74,15 @@ public class ProduceTaskListActivity extends BaseMultiFragmentActivity {
     protected void onInit() {
         super.onInit();
         womType = getIntent().getBooleanExtra(Constant.IntentKey.WOM_TYPE, false);
+        EventBus.getDefault().register(this);
     }
 
     @Override
     protected void initView() {
         super.initView();
         StatusBarUtils.setWindowStatusBarColor(this, R.color.themeColor);
-        searchTitleBar.disableRightBtn();
+        searchTitleBar.enableRightBtn();
+        searchTitleBar.rightBtn().setImageResource(R.drawable.ic_top_scan);
         searchTitleBar.editText().setHint(context.getResources().getString(R.string.wom_input_produce_batch_num));
 
         initTab();
@@ -112,6 +124,13 @@ public class ProduceTaskListActivity extends BaseMultiFragmentActivity {
     protected void initListener() {
         super.initListener();
         searchTitleBar.leftBtn().setOnClickListener(v -> finish());
+        RxView.clicks(searchTitleBar.rightBtn()).throttleFirst(300,TimeUnit.MILLISECONDS)
+                .subscribe(new Consumer<Object>() {
+                    @Override
+                    public void accept(Object o) throws Exception {
+                        getController(CommonScanController.class).openCameraScan();
+                    }
+                });
         searchTitleBar.setOnExpandListener(isExpand -> {
             if (isExpand) {
 //                    searchTitleBar.searchView().setInputTextColor(R.color.black);
@@ -156,6 +175,12 @@ public class ProduceTaskListActivity extends BaseMultiFragmentActivity {
         });
     }
 
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        EventBus.getDefault().unregister(this);
+    }
+
 
     private class InnerFragmentPagerAdapter extends FragmentPagerAdapter {
 
@@ -186,4 +211,16 @@ public class ProduceTaskListActivity extends BaseMultiFragmentActivity {
         super.onNewIntent(intent);
         setIntent(intent);
     }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void getScanReceive(CodeResultEvent codeResultEvent) {
+        if (customTab.getCurrentPosition() == 0) {
+            mCommonProduceTaskListFragment.matchTask(codeResultEvent.scanResult);
+        } else {
+            mSimpleProduceTaskListFragment.matchTask(codeResultEvent.scanResult);
+        }
+    }
+
+
+
 }

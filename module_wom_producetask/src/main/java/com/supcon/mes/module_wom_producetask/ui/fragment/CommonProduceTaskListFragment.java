@@ -126,6 +126,7 @@ public class CommonProduceTaskListFragment extends BaseRefreshRecyclerFragment<W
         queryParams.put(Constant.BAPQuery.RECORD_TYPE, WomConstant.SystemCode.RECORD_TYPE_TASK);
         queryParams.put(Constant.BAPQuery.FORMULA_SET_PROCESS, WomConstant.SystemCode.RM_TYPE_COMMON);
     }
+
     @Override
     protected void initData() {
         super.initData();
@@ -137,9 +138,9 @@ public class CommonProduceTaskListFragment extends BaseRefreshRecyclerFragment<W
         super.initListener();
         refreshListController.setOnRefreshPageListener(pageIndex -> {
             if (mIsTaskLoad) {
-                presenterRouter.create(WaitPutinRecordsListAPI.class).listWaitPutinRecords(pageIndex, 20, queryParams,true);
+                presenterRouter.create(WaitPutinRecordsListAPI.class).listWaitPutinRecords(pageIndex, 20, queryParams, true);
             } else {
-                presenterRouter.create(WaitPutinRecordsListAPI.class).listWaitPutinRecords(pageIndex, 20, processQueryParams,false);
+                presenterRouter.create(WaitPutinRecordsListAPI.class).listWaitPutinRecords(pageIndex, 20, processQueryParams, false);
             }
         });
 
@@ -184,14 +185,13 @@ public class CommonProduceTaskListFragment extends BaseRefreshRecyclerFragment<W
                 case "stopTv":
                     // 结束工单报工
 
-                    if(mWaitPutinRecordEntity!=null && mWaitPutinRecordEntity.getTaskId()!=null
-                            && mWaitPutinRecordEntity.getTaskId().getBatchContral()!=null
-                            &&mWaitPutinRecordEntity.getTaskId().getBatchContral()){
+                    if (mWaitPutinRecordEntity != null && mWaitPutinRecordEntity.getTaskId() != null
+                            && mWaitPutinRecordEntity.getTaskId().getBatchContral() != null
+                            && mWaitPutinRecordEntity.getTaskId().getBatchContral()) {
                         paramsList.add(context.getResources().getString(R.string.wom_end));
                         paramsList.add("stop");
                         showOperateConfirmDialog(paramsList, mWaitPutinRecordEntity, true);
-                    }
-                    else{
+                    } else {
                         endProduceTaskReport();
                     }
 
@@ -200,10 +200,7 @@ public class CommonProduceTaskListFragment extends BaseRefreshRecyclerFragment<W
                     if (mWaitPutinRecordEntity.getProcessWaitPutinRecordEntityList().size() > 0) {
                         updateProcessList();
                     } else {
-                        mIsTaskLoad = false;
-                        processQueryParams.put(Constant.BAPQuery.RECORD_TYPE, WomConstant.SystemCode.RECORD_TYPE_PROCESS); // 工序类型
-                        processQueryParams.put(Constant.BAPQuery.PRODUCE_BATCH_NUM, mWaitPutinRecordEntity.getProduceBatchNum());
-                        refreshListController.refreshBegin();
+                        onLoadProcess();
                     }
                     break;
                 case "processStartTv":
@@ -220,7 +217,7 @@ public class CommonProduceTaskListFragment extends BaseRefreshRecyclerFragment<W
                     updateCurrentFactory();
                     break;
                 case "dischargeTv":
-                    paramsList.add(mWaitPutinRecordEntity.getTaskId().getFeedCondition() == null? context.getResources().getString(R.string.wom_start_predischarge) : mWaitPutinRecordEntity.getTaskId().getFeedCondition());
+                    paramsList.add(mWaitPutinRecordEntity.getTaskId().getFeedCondition() == null ? context.getResources().getString(R.string.wom_start_predischarge) : mWaitPutinRecordEntity.getTaskId().getFeedCondition());
                     paramsList.add("discharge");
                     showOperateConfirmDialog(paramsList, mWaitPutinRecordEntity, true);
                     break;
@@ -230,17 +227,23 @@ public class CommonProduceTaskListFragment extends BaseRefreshRecyclerFragment<W
 
     }
 
+    private void onLoadProcess() {
+        mIsTaskLoad = false;
+        processQueryParams.put(Constant.BAPQuery.RECORD_TYPE, WomConstant.SystemCode.RECORD_TYPE_PROCESS); // 工序类型
+        processQueryParams.put(Constant.BAPQuery.PRODUCE_BATCH_NUM, mWaitPutinRecordEntity.getProduceBatchNum());
+        refreshListController.refreshBegin();
+    }
+
     /**
-     * @author zhangwenshuai1 2020/4/1
      * @param
      * @return
+     * @author zhangwenshuai1 2020/4/1
      * @description 工单结束报工
-     *
      */
     private void endProduceTaskReport() {
-       Bundle bundle = new Bundle();
-       bundle.putSerializable(Constant.IntentKey.WAIT_PUT_RECORD,mWaitPutinRecordEntity);
-        IntentRouter.go(context,Constant.Router.WOM_PRODUCE_TASK_END_REPORT,bundle);
+        Bundle bundle = new Bundle();
+        bundle.putSerializable(Constant.IntentKey.WAIT_PUT_RECORD, mWaitPutinRecordEntity);
+        IntentRouter.go(context, Constant.Router.WOM_PRODUCE_TASK_END_REPORT, bundle);
     }
 
     /**
@@ -257,8 +260,8 @@ public class CommonProduceTaskListFragment extends BaseRefreshRecyclerFragment<W
         mFactoryCustomTv.setContent(mWaitPutinRecordEntity.getTaskProcessId().getEquipmentId().getName());
         customDialog.bindChildListener(R.id.factoryCustomTv, (childView, action, obj) -> {
             Bundle bundle = new Bundle();
-            bundle.putSerializable(Constant.IntentKey.WAIT_PUT_RECORD,mWaitPutinRecordEntity);
-            IntentRouter.go(context, Constant.Router.WOM_FACTORY_LIST,bundle);
+            bundle.putSerializable(Constant.IntentKey.WAIT_PUT_RECORD, mWaitPutinRecordEntity);
+            IntentRouter.go(context, Constant.Router.WOM_FACTORY_LIST, bundle);
         }).bindClickListener(R.id.cancelTv, null, true)
                 .bindClickListener(R.id.confirmTv, v -> {
                     if (TextUtils.isEmpty(mFactoryCustomTv.getContent())) {
@@ -267,12 +270,12 @@ public class CommonProduceTaskListFragment extends BaseRefreshRecyclerFragment<W
                     }
                     customDialog.getDialog().dismiss();
                     onLoading(context.getResources().getString(R.string.wom_dealing));
-                    submitMap.put("operateType","save");
-                    submitMap.put("taskProcess",mWaitPutinRecordEntity.getTaskProcessId());
-                    submitMap.put("ids2del","");
-                    submitMap.put("viewCode","WOM_1.0.0_produceTask_processUnitEdit");
+                    submitMap.put("operateType", "save");
+                    submitMap.put("taskProcess", mWaitPutinRecordEntity.getTaskProcessId());
+                    submitMap.put("ids2del", "");
+                    submitMap.put("viewCode", "WOM_1.0.0_produceTask_processUnitEdit");
 //                    submitMap.put("workFlowVar",new WorkFlowVarDTO());
-                    presenterRouter.create(ProcessOperateAPI.class).updateProcessFactoryModelUnit(mWaitPutinRecordEntity.getTaskProcessId().getId(),getController(GetPowerCodeController.class).getPowerCodeResult(),submitMap);
+                    presenterRouter.create(ProcessOperateAPI.class).updateProcessFactoryModelUnit(mWaitPutinRecordEntity.getTaskProcessId().getId(), getController(GetPowerCodeController.class).getPowerCodeResult(), submitMap);
                 }, false);
         customDialog.show();
     }
@@ -288,7 +291,7 @@ public class CommonProduceTaskListFragment extends BaseRefreshRecyclerFragment<W
                 .layout(R.layout.wom_dialog_confirm, DisplayUtil.getScreenWidth(context) * 4 / 5, ViewGroup.LayoutParams.WRAP_CONTENT);
         Objects.requireNonNull(customDialog.getDialog().getWindow()).setBackgroundDrawableResource(R.color.transparent);
         if (isTask) {
-            if ("discharge".equals(paramsList.get(1))){ // "提前放料"
+            if ("discharge".equals(paramsList.get(1))) { // "提前放料"
                 customDialog.bindView(R.id.tipContentTv, String.valueOf(paramsList.get(0)))
                         .bindClickListener(R.id.cancelTv, null, true)
                         .bindClickListener(R.id.confirmTv, v -> {
@@ -296,12 +299,12 @@ public class CommonProduceTaskListFragment extends BaseRefreshRecyclerFragment<W
                             presenterRouter.create(ProduceTaskOperateAPI.class).operateDischarge(waitPutinRecordEntity.getTaskId().getId());
                         }, true)
                         .show();
-            }else {
+            } else {
                 customDialog.bindView(R.id.tipContentTv, context.getResources().getString(R.string.wom_confirm_tip) + paramsList.get(0) + context.getResources().getString(R.string.wom_task_operate))
                         .bindClickListener(R.id.cancelTv, null, true)
                         .bindClickListener(R.id.confirmTv, v -> {
                             onLoading(getString(R.string.wom_dealing));
-                            presenterRouter.create(ProduceTaskOperateAPI.class).operateProduceTask(waitPutinRecordEntity.getId(), String.valueOf(paramsList.get(1)),null);
+                            presenterRouter.create(ProduceTaskOperateAPI.class).operateProduceTask(waitPutinRecordEntity.getId(), String.valueOf(paramsList.get(1)), null);
                         }, true)
                         .show();
             }
@@ -334,9 +337,10 @@ public class CommonProduceTaskListFragment extends BaseRefreshRecyclerFragment<W
     public void refresh(RefreshEvent refreshEvent) {
         refreshListController.refreshBegin();
     }
+
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void getSelectDataEvent(SelectDataEvent selectDataEvent) {
-        if (selectDataEvent.getEntity() instanceof FactoryModelEntity){
+        if (selectDataEvent.getEntity() instanceof FactoryModelEntity) {
             mFactoryCustomTv.setContent(((FactoryModelEntity) selectDataEvent.getEntity()).getName());
             mWaitPutinRecordEntity.setEuqId((FactoryModelEntity) selectDataEvent.getEntity());
             mWaitPutinRecordEntity.getTaskProcessId().setEquipmentId((FactoryModelEntity) selectDataEvent.getEntity());
@@ -354,8 +358,8 @@ public class CommonProduceTaskListFragment extends BaseRefreshRecyclerFragment<W
             if (entity.result.size() <= 0) {
                 ToastUtils.show(context, context.getResources().getString(R.string.wom_no_processing));
             } else {
-                for (Object waitPutinRecordEntity : entity.result){
-                    ((WaitPutinRecordEntity)waitPutinRecordEntity).setFatherPosition(mCurrentItemPos); // 记录父位置
+                for (Object waitPutinRecordEntity : entity.result) {
+                    ((WaitPutinRecordEntity) waitPutinRecordEntity).setFatherPosition(mCurrentItemPos); // 记录父位置
                 }
                 mProduceTaskListAdapter.getItem(mCurrentItemPos).getProcessWaitPutinRecordEntityList().addAll(entity.result); // 当前工单存储工序list
                 updateProcessList();
@@ -411,7 +415,7 @@ public class CommonProduceTaskListFragment extends BaseRefreshRecyclerFragment<W
     public void updateProcessFactoryModelUnitSuccess(BAP5CommonEntity entity) {
         onLoadSuccess(context.getResources().getString(R.string.wom_dealt_success));
         // 只刷新当前项
-        mProduceTaskListAdapter.notifyItemRangeChanged(mCurrentItemPos,1);
+        mProduceTaskListAdapter.notifyItemRangeChanged(mCurrentItemPos, 1);
 
     }
 
@@ -426,31 +430,31 @@ public class CommonProduceTaskListFragment extends BaseRefreshRecyclerFragment<W
         // 更新当前项目
         TaskProcessEntity process;
         try {
-            Map<String,Object> map = (Map<String, Object>) entity.data;
-            process = GsonUtil.gsonToBean(GsonUtil.gsonString(map.get("process")),TaskProcessEntity.class);
+            Map<String, Object> map = (Map<String, Object>) entity.data;
+            process = GsonUtil.gsonToBean(GsonUtil.gsonString(map.get("process")), TaskProcessEntity.class);
         } catch (Exception e) {
             e.printStackTrace();
             refreshListController.refreshBegin();
             return;
         }
-        if (WomConstant.SystemCode.EXE_STATE_END.equals(process.getProcessRunState().id)){ // 已结束工序
+        if (WomConstant.SystemCode.EXE_STATE_END.equals(process.getProcessRunState().id)) { // 已结束工序
             // 清理工序list位置项
             mCurrentItemPos = mFatherPosition;  // 确保加载工序后位置
             List<WaitPutinRecordEntity> processList = mProduceTaskListAdapter.getItem(mFatherPosition).getProcessWaitPutinRecordEntityList();
             mProduceTaskListAdapter.getList().removeAll(processList);
-            mProduceTaskListAdapter.notifyItemRangeRemoved(mFatherPosition+1,processList.size());
-            mProduceTaskListAdapter.notifyItemRangeChanged(mFatherPosition,mProduceTaskListAdapter.getItemCount()-1);
+            mProduceTaskListAdapter.notifyItemRangeRemoved(mFatherPosition + 1, processList.size());
+            mProduceTaskListAdapter.notifyItemRangeChanged(mFatherPosition, mProduceTaskListAdapter.getItemCount() - 1);
             // 清理当前指令单下工序
             processList.clear();
             // 重新加载工序
             mIsTaskLoad = false;
             refreshListController.refreshBegin();
-        }else {
+        } else {
             WaitPutinRecordEntity waitPutinRecordEntity = mProduceTaskListAdapter.getList().get(mCurrentItemPos);
             waitPutinRecordEntity.setExeState(process.getProcessRunState());
             waitPutinRecordEntity.setTaskProcessId(process);
 //            waitPutinRecordEntity.getTaskProcessId().setActStartTime(process.getActStartTime());
-            mProduceTaskListAdapter.notifyItemRangeChanged(mCurrentItemPos,1);
+            mProduceTaskListAdapter.notifyItemRangeChanged(mCurrentItemPos, 1);
         }
 
     }
@@ -460,12 +464,54 @@ public class CommonProduceTaskListFragment extends BaseRefreshRecyclerFragment<W
         onLoadFailed(ErrorMsgHelper.msgParse(errorMsg));
     }
 
-    public void search(String searchContent){
+    public void search(String searchContent) {
         queryParams.put(Constant.BAPQuery.PRODUCE_BATCH_NUM, searchContent);
-        if(refreshListController!=null){
+        if (refreshListController != null) {
             refreshListController.refreshBegin();
         }
 
+    }
+
+    /**
+     * @param
+     * @return
+     * @author zhangwenshuai1 2020/10/26
+     * @description
+     */
+    public void matchTask(String scanResult) {
+        if (mProduceTaskListAdapter.getList() == null || mProduceTaskListAdapter.getList().size() == 0) {
+            ToastUtils.show(context, context.getResources().getString(R.string.middleware_no_data));
+            return;
+        }
+        int index = 0;
+        for (WaitPutinRecordEntity waitPutinRecordEntity : mProduceTaskListAdapter.getList()) {
+            if (scanResult.equals(waitPutinRecordEntity.getProduceBatchNum())) {
+                contentView.scrollToPosition(mProduceTaskListAdapter.getList().indexOf(waitPutinRecordEntity) + 1);
+                if (WomConstant.SystemCode.EXE_STATE_WAIT.equals(waitPutinRecordEntity.getExeState().id) ||
+                        WomConstant.SystemCode.EXE_STATE_ING.equals(waitPutinRecordEntity.getExeState().id)) {
+                    mWaitPutinRecordEntity = waitPutinRecordEntity;
+                    mCurrentItemPos = mProduceTaskListAdapter.getList().indexOf(waitPutinRecordEntity);
+
+                    waitPutinRecordEntity.setExpand(true);
+                    if (mWaitPutinRecordEntity.getProcessWaitPutinRecordEntityList().size() > 0) {
+                        mProduceTaskListAdapter.getList().removeAll(mWaitPutinRecordEntity.getProcessWaitPutinRecordEntityList());
+                        mProduceTaskListAdapter.notifyItemRangeRemoved(mCurrentItemPos + 1, mWaitPutinRecordEntity.getProcessWaitPutinRecordEntityList().size());
+                        mProduceTaskListAdapter.notifyItemRangeChanged(mCurrentItemPos + 1, mWaitPutinRecordEntity.getProcessWaitPutinRecordEntityList().size());
+
+                        mWaitPutinRecordEntity.getProcessWaitPutinRecordEntityList().clear();
+                    }
+                    onLoadProcess();
+                }
+                return;
+            }
+
+            index++;
+
+            if (index == mProduceTaskListAdapter.getList().size()) {
+                ToastUtils.show(context, context.getResources().getString(R.string.wom_scan_no_produce_no));
+            }
+
+        }
     }
 
 

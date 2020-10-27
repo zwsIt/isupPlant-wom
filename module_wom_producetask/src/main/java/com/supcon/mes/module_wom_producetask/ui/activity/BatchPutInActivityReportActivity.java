@@ -159,8 +159,8 @@ public class BatchPutInActivityReportActivity extends BaseRefreshRecyclerActivit
         rightBtn.setVisibility(View.VISIBLE);
         rightBtn.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_top_scan));
         customListWidgetName.setText(context.getResources().getString(R.string.wom_produce_task_report_detail));
-        customListWidgetEdit.setVisibility(View.GONE);
-        customListWidgetAdd.setImageResource(R.drawable.ic_add_new);
+//        customListWidgetEdit.setVisibility(View.GONE);
+        customListWidgetAdd.setImageResource(R.drawable.ic_wxgd_reference);
 
         taskProcess.setContent(TextUtils.isEmpty(mWaitPutinRecordEntity.getTaskProcessId().getName()) ? mWaitPutinRecordEntity.getProcessName(): mWaitPutinRecordEntity.getTaskProcessId().getName());
         planNum.setContent(mWaitPutinRecordEntity.getTaskId().getPlanNum() == null ? "" : mWaitPutinRecordEntity.getTaskId().getPlanNum().toString());
@@ -331,6 +331,7 @@ public class BatchPutInActivityReportActivity extends BaseRefreshRecyclerActivit
     public void onCodeReceiver(CodeResultEvent codeResultEvent) {
         MaterialQRCodeEntity materialQRCodeEntity = MaterQRUtil.materialQRCode(context,codeResultEvent.scanResult);
         if (materialQRCodeEntity == null) return;
+        ToastUtils.show(context, context.getResources().getString(R.string.wom_no_realize));
 //        if (arr != null && arr.length == 8) {
 //            String materCode=mWaitPutinRecordEntity.getTaskActiveId().getMaterialId().getCode();
 //            specs=arr[7].replace("specs=","");

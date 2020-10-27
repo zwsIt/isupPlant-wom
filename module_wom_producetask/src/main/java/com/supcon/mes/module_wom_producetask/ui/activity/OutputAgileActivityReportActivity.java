@@ -160,7 +160,6 @@ public class OutputAgileActivityReportActivity extends BaseRefreshRecyclerActivi
         rightBtn.setVisibility(View.GONE);
         rightBtn.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_top_scan));
         customListWidgetName.setText(context.getResources().getString(R.string.wom_produce_task_report_detail));
-        customListWidgetEdit.setVisibility(View.GONE);
 
         taskProcess.setContent(TextUtils.isEmpty(mWaitPutinRecordEntity.getTaskProcessId().getName()) ? mWaitPutinRecordEntity.getProcessName(): mWaitPutinRecordEntity.getTaskProcessId().getName());
         planNum.setContent(mWaitPutinRecordEntity.getTaskActiveId().getPlanQuantity() == null ? "--" : mWaitPutinRecordEntity.getTaskActiveId().getPlanQuantity().toString());
@@ -238,20 +237,20 @@ public class OutputAgileActivityReportActivity extends BaseRefreshRecyclerActivi
      * 扫描功能：红外、摄像头扫描监听事件
      * @param codeResultEvent
      */
-//    Map<String, Object> goodMap = new HashMap<>();
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onCodeReceiver(CodeResultEvent codeResultEvent) {
         MaterialQRCodeEntity materialQRCodeEntity = MaterQRUtil.materialQRCode(context,codeResultEvent.scanResult);
         if (materialQRCodeEntity == null) return;
 
-        MaterialEntity materialEntity = new MaterialEntity();
-//        materialEntity.setId(good.id);
-        materialEntity.setCode(materialQRCodeEntity.getMaterialCode());
-        materialEntity.setName(materialQRCodeEntity.getMaterialName());
+//        MaterialEntity materialEntity = new MaterialEntity();
+//        materialEntity.setCode(materialQRCodeEntity.getMaterialCode());
+//        materialEntity.setName(materialQRCodeEntity.getMaterialName());
         OutputDetailEntity outputDetailEntity = new OutputDetailEntity();
-        outputDetailEntity.setProduct(materialEntity);
+        outputDetailEntity.setProduct(materialQRCodeEntity.getMaterial());
         outputDetailEntity.setMaterialBatchNum(materialQRCodeEntity.getMaterialBatchNo());
         outputDetailEntity.setOutputNum(materialQRCodeEntity.getNum());
+        outputDetailEntity.setWareId(materialQRCodeEntity.getToWare());
+        outputDetailEntity.setStoreId(materialQRCodeEntity.getToStore());
         outputDetailEntity.setPutinTime(new Date().getTime());  // 产出时间
         mOutputAgileReportDetailAdapter.addData(outputDetailEntity);
         mOutputAgileReportDetailAdapter.notifyItemRangeInserted(mOutputAgileReportDetailAdapter.getItemCount() - 1, 1);

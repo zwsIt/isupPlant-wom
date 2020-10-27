@@ -20,6 +20,7 @@ import com.supcon.mes.mbap.view.CustomTab;
 import com.supcon.mes.mbap.view.NoScrollViewPager;
 import com.supcon.mes.middleware.constant.Constant;
 import com.supcon.mes.middleware.model.event.RefreshEvent;
+import com.supcon.mes.module_scan.model.event.CodeResultEvent;
 import com.supcon.mes.module_wom_producetask.IntentRouter;
 import com.supcon.mes.module_wom_producetask.R;
 import com.supcon.mes.module_wom_producetask.model.bean.WaitPutinRecordEntity;
@@ -27,6 +28,8 @@ import com.supcon.mes.module_wom_producetask.ui.fragment.FormulaActivityListFrag
 import com.supcon.mes.module_wom_producetask.ui.fragment.TemporaryActivityListFragment;
 
 import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.concurrent.TimeUnit;
 
@@ -70,7 +73,7 @@ public class ProduceTaskActivityListActivity extends BaseMultiFragmentActivity {
     @Override
     protected void onInit() {
         super.onInit();
-        waitPutinRecordEntity= (WaitPutinRecordEntity) getIntent().getSerializableExtra(Constant.IntentKey.WAIT_PUT_RECORD);
+        waitPutinRecordEntity = (WaitPutinRecordEntity) getIntent().getSerializableExtra(Constant.IntentKey.WAIT_PUT_RECORD);
     }
 
     @Override
@@ -122,10 +125,10 @@ public class ProduceTaskActivityListActivity extends BaseMultiFragmentActivity {
         });
         RxView.clicks(rightBtn)
                 .throttleFirst(2000, TimeUnit.MILLISECONDS)
-                .subscribe(o->{
-                    Bundle bundle=new Bundle();
-                    bundle.putSerializable(Constant.IntentKey.WAIT_PUT_RECORD,waitPutinRecordEntity);
-                    IntentRouter.go(context,Constant.Router.ACTIVITY_EXEREDS_LIST,bundle);
+                .subscribe(o -> {
+                    Bundle bundle = new Bundle();
+                    bundle.putSerializable(Constant.IntentKey.WAIT_PUT_RECORD, waitPutinRecordEntity);
+                    IntentRouter.go(context, Constant.Router.ACTIVITY_EXEREDS_LIST, bundle);
                 });
         customTab.setOnTabChangeListener(current -> viewPager.setCurrentItem(current));
         viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
@@ -146,7 +149,6 @@ public class ProduceTaskActivityListActivity extends BaseMultiFragmentActivity {
             }
         });
     }
-
 
     private class InnerFragmentPagerAdapter extends FragmentPagerAdapter {
 

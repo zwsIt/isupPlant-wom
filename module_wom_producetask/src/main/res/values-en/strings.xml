@@ -142,4 +142,6 @@
     <string name="wom_putin_num_compare_scan">用料量不能大于扫描规格量:</string>
     <string name="wom_putin_num_compare_sum">用料量与尾料量之和须小于扫描规格量:</string>
     <string name="wom_putin_batch_num_compare">尾料量须小于可用量:</string>
+    <string name="wom_no_realize">暂未实现</string>
+    <string name="wom_scan_no_produce_no">未扫描到当前生产批次</string>
 </resources>

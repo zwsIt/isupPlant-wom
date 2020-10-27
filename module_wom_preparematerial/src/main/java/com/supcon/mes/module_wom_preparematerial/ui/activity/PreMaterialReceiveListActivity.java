@@ -333,28 +333,39 @@ public class PreMaterialReceiveListActivity extends BaseRefreshRecyclerActivity<
         }else {
             int index = 0;
             for (PreMaterialEntity preMaterialEntity : mPreMaterialReceiveListAdapter.getList()){
-                if (preMaterialEntity.deliverCode.equals(materialQRCodeEntity.getDeliverCode())
-                        && preMaterialEntity.materialId.getCode().equals(materialQRCodeEntity.getMaterial().materialCode) && preMaterialEntity.materialBatchNum.equals(materialQRCodeEntity.getMaterialBatchNo())){
-                    new CustomDialog(context).twoButtonAlertDialog(context.getResources().getString(R.string.wom_confirm_prepare_material_scan_receive)
-                            + preMaterialEntity.materialId.getName() + "(" + preMaterialEntity.materialId.getCode() + ")")
-                            .bindClickListener(R.id.grayBtn,null,true)
-                            .bindClickListener(R.id.redBtn, new View.OnClickListener() {
-                                @Override
-                                public void onClick(View view) {
-                                    preMaterialEntity.isChecked = true;
-                                    doSubmit(mPreMaterialReceiveListAdapter.getList());
-                                    preMaterialEntity.isChecked = false;
+                if (TextUtils.isEmpty(preMaterialEntity.materialBatchNum)){
+                    if (preMaterialEntity.materialId.getCode().equals(materialQRCodeEntity.getMaterial().getCode())){
+                        confirmShow(preMaterialEntity);
+                        return;
+                    }
 
-                                }
-                            }, true).show();
-                    return;
+                }else {
+                    if (preMaterialEntity.materialId.getCode().equals(materialQRCodeEntity.getMaterial().getCode())
+                            && preMaterialEntity.materialBatchNum.equals(materialQRCodeEntity.getMaterialBatchNo())){
+                        confirmShow(preMaterialEntity);
+                        return;
+                    }
                 }
+
                 index++;
                 if (index == mPreMaterialReceiveListAdapter.getList().size()){
                     ToastUtils.show(context, context.getResources().getString(R.string.wom_no_scan_prepare_result));
                 }
             }
         }
+    }
+
+    private void confirmShow(PreMaterialEntity preMaterialEntity) {
+        contentView.smoothScrollToPosition(mPreMaterialReceiveListAdapter.getList().indexOf(preMaterialEntity));
+        new CustomDialog(context).twoButtonAlertDialog(context.getResources().getString(R.string.wom_confirm_prepare_material_scan_receive)
+                + preMaterialEntity.materialId.getName() + "(" + preMaterialEntity.materialId.getCode() + ")")
+                .bindClickListener(R.id.grayBtn, null, true)
+                .bindClickListener(R.id.redBtn, view -> {
+                    preMaterialEntity.isChecked = true;
+                    doSubmit(mPreMaterialReceiveListAdapter.getList());
+                    preMaterialEntity.isChecked = false;
+
+                }, true).show();
     }
 
     @Override
@@ -408,12 +419,12 @@ public class PreMaterialReceiveListActivity extends BaseRefreshRecyclerActivity<
             onLoadSuccess();
             refreshListController.refreshBegin();
         } else {
-            onLoadFailed("" + entity.errMsg);
+            onLoadFailed(entity.errMsg);
         }
     }
 
     @Override
     public void doSubmitPreMaterialFailed(String errorMsg) {
-        onLoadFailed("" + errorMsg);
+        onLoadFailed(errorMsg);
     }
 }

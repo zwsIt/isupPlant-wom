@@ -364,14 +364,14 @@ public class BatchMaterialRecordsRecallAbandonListActivity extends BaseRefreshRe
             int count = 0;
             for (BatchMaterialPartEntity batchMaterialPartEntity : mBatchMaterialRecordsAbandonListAdapter.getList()){
                 if (TextUtils.isEmpty(batchMaterialPartEntity.getMaterialBatchNum())){
-                    if (materialQRCodeEntity.getMaterialCode().equals(batchMaterialPartEntity.getMaterialId().getCode())){
+                    if (materialQRCodeEntity.getMaterial().getCode().equals(batchMaterialPartEntity.getMaterialId().getCode())){
                         batchMaterialPartEntity.setChecked(true);
                         mBatchMaterialRecordsAbandonListAdapter.notifyItemChanged(mBatchMaterialRecordsAbandonListAdapter.getList().indexOf(batchMaterialPartEntity));
                         doAllSelect();
                         return;
                     }
                 }else {
-                    if (materialQRCodeEntity.getMaterialCode().equals(batchMaterialPartEntity.getMaterialId().getCode()) &&
+                    if (materialQRCodeEntity.getMaterial().getCode().equals(batchMaterialPartEntity.getMaterialId().getCode()) &&
                             materialQRCodeEntity.getMaterialBatchNo().equals(batchMaterialPartEntity.getMaterialBatchNum())){
                         batchMaterialPartEntity.setChecked(true);
                         mBatchMaterialRecordsAbandonListAdapter.notifyItemChanged(mBatchMaterialRecordsAbandonListAdapter.getList().indexOf(batchMaterialPartEntity));

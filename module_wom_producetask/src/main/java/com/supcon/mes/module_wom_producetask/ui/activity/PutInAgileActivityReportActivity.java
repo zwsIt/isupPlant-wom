@@ -53,14 +53,17 @@ import com.supcon.mes.module_wom_producetask.R;
 import com.supcon.mes.module_wom_producetask.constant.WomConstant;
 import com.supcon.mes.module_wom_producetask.model.api.CommonListAPI;
 import com.supcon.mes.module_wom_producetask.model.api.PutInReportAPI;
+import com.supcon.mes.module_wom_producetask.model.api.RemainQRCodeAPI;
 import com.supcon.mes.module_wom_producetask.model.bean.PutInDetailEntity;
 import com.supcon.mes.module_wom_producetask.model.bean.RemainMaterialEntity;
 import com.supcon.mes.module_wom_producetask.model.bean.WaitPutinRecordEntity;
 import com.supcon.mes.module_wom_producetask.model.contract.CommonListContract;
 import com.supcon.mes.module_wom_producetask.model.contract.PutInReportContract;
+import com.supcon.mes.module_wom_producetask.model.contract.RemainQRCodeContract;
 import com.supcon.mes.module_wom_producetask.model.dto.PutinDetailDTO;
 import com.supcon.mes.module_wom_producetask.presenter.CommonListPresenter;
 import com.supcon.mes.module_wom_producetask.presenter.PutInReportPresenter;
+import com.supcon.mes.module_wom_producetask.presenter.RemainQRCodePresenter;
 import com.supcon.mes.module_wom_producetask.ui.adapter.PutInAgileReportDetailAdapter;
 import com.supcon.mes.module_wom_producetask.util.MaterQRUtil;
 import com.supcon.mes.module_wom_producetask.util.SmoothScrollLayoutManager;
@@ -83,10 +86,10 @@ import io.reactivex.functions.Consumer;
  * Desc 灵活投料活动报工
  */
 @Router(Constant.Router.WOM_PUT_IN_AGILE_REPORT)
-@Presenter(value = {CommonListPresenter.class, PutInReportPresenter.class})
+@Presenter(value = {CommonListPresenter.class, PutInReportPresenter.class, RemainQRCodePresenter.class})
 @PowerCode(entityCode = WomConstant.PowerCode.PRODUCE_TASK_LIST)
 @Controller(value = {GetPowerCodeController.class, CommonScanController.class, ProductController.class})
-public class PutInAgileActivityReportActivity extends BaseRefreshRecyclerActivity<PutInDetailEntity> implements CommonListContract.View, PutInReportContract.View {
+public class PutInAgileActivityReportActivity extends BaseRefreshRecyclerActivity<PutInDetailEntity> implements CommonListContract.View, PutInReportContract.View, RemainQRCodeContract.View {
     @BindByTag("leftBtn")
     CustomImageButton leftBtn;
     @BindByTag("titleText")
@@ -229,7 +232,18 @@ public class PutInAgileActivityReportActivity extends BaseRefreshRecyclerActivit
         MaterialQRCodeEntity materialQRCodeEntity = MaterQRUtil.materialQRCode(context, codeResultEvent.scanResult);
         if (materialQRCodeEntity == null) return;
 
-        addMaterialReport(materialQRCodeEntity, null);
+        if (materialQRCodeEntity.isRequest()) {
+            if ("remain".equals(materialQRCodeEntity.getType())) { // 尾料
+                onLoading(context.getResources().getString(R.string.loading));
+                presenterRouter.create(RemainQRCodeAPI.class).getMaterialByQR(materialQRCodeEntity.getPK());
+            } else {
+                //TODO...
+                ToastUtils.show(context, context.getResources().getString(R.string.wom_no_realize));
+            }
+        } else {
+            addMaterialReport(materialQRCodeEntity, null);
+        }
+
     }
 
     /**
@@ -246,12 +260,12 @@ public class PutInAgileActivityReportActivity extends BaseRefreshRecyclerActivit
             putInDetailEntity.setMaterialBatchNum(remainMaterialEntity.getBatchText());
             putInDetailEntity.setPutinNum(remainMaterialEntity.getRemainNum());
             putInDetailEntity.setWareId(remainMaterialEntity.getWareId());
-        }else {
+        } else {
             if (materialQRCodeEntity != null) { // 扫描物料
-                MaterialEntity materialEntity = new MaterialEntity();
-                materialEntity.setCode(materialQRCodeEntity.getMaterialCode());
-                materialEntity.setName(materialQRCodeEntity.getMaterialName());
-                putInDetailEntity.setMaterialId(materialEntity);
+//                MaterialEntity materialEntity = new MaterialEntity();
+//                materialEntity.setCode(materialQRCodeEntity.getMaterialCode());
+//                materialEntity.setName(materialQRCodeEntity.getMaterialName());
+                putInDetailEntity.setMaterialId(materialQRCodeEntity.getMaterial());
 
                 putInDetailEntity.setMaterialBatchNum(materialQRCodeEntity.getMaterialBatchNo());
                 putInDetailEntity.setPutinNum(materialQRCodeEntity.getNum());
@@ -284,12 +298,12 @@ public class PutInAgileActivityReportActivity extends BaseRefreshRecyclerActivit
         putinDetailDTO.setWorkFlowVar(new WorkFlowVar());
         putinDetailDTO.setProcReport(mWaitPutinRecordEntity.getProcReportId());
 
-        for (PutInDetailEntity putInDetailEntity : mPutInAgileReportDetailAdapter.getList()){
+        for (PutInDetailEntity putInDetailEntity : mPutInAgileReportDetailAdapter.getList()) {
             // 尾料处理方式
-            if (putInDetailEntity.getRemainId() == null && putInDetailEntity.getRemainOperate() == null){
-                if (putInDetailEntity.getRemainNum() == null || putInDetailEntity.getRemainNum().floatValue() == 0){
+            if (putInDetailEntity.getRemainId() == null && putInDetailEntity.getRemainOperate() == null) {
+                if (putInDetailEntity.getRemainNum() == null || putInDetailEntity.getRemainNum().floatValue() == 0) {
                     putInDetailEntity.setRemainOperate(new SystemCodeEntity(WomConstant.SystemCode.WOM_remainOperate_03));
-                }else {
+                } else {
                     putInDetailEntity.setRemainOperate(new SystemCodeEntity(WomConstant.SystemCode.WOM_remainOperate_01));
                 }
             }
@@ -386,6 +400,18 @@ public class PutInAgileActivityReportActivity extends BaseRefreshRecyclerActivit
             addMaterialReport(null, (RemainMaterialEntity) selectDataEvent.getEntity());
         }
 
+    }
+
+    @Override
+    public void getMaterialByQRSuccess(BAP5CommonEntity entity) {
+        onLoadSuccess();
+        MaterialQRCodeEntity materialQRCodeEntity = GsonUtil.gsonToBean((String) entity.data,MaterialQRCodeEntity.class);
+        addMaterialReport(materialQRCodeEntity,null);
+    }
+
+    @Override
+    public void getMaterialByQRFailed(String errorMsg) {
+        onLoadFailed(errorMsg);
     }
 
 //    @Subscribe(threadMode = ThreadMode.MAIN)

@@ -247,4 +247,16 @@ public class SimpleProduceTaskListFragment extends BaseRefreshRecyclerFragment<W
             refreshListController.refreshBegin();
         }
     }
+
+    /**
+     * @author zhangwenshuai1 2020/10/26
+     * @param
+     * @return
+     * @description
+     *
+     */
+    public void matchTask(String scanResult) {
+
+    }
+
 }

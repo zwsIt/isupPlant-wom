@@ -162,4 +162,13 @@ public interface NetworkService {
     @GET("/msService/WOM/produceTask/produceTask/setAdvanceTrue/{taskId}")
     Flowable<BAP5CommonEntity> operateDischarge(@Path(value = "taskId") Long taskId);
 
+    /**
+     * @param
+     * @return
+     * @author zhangwenshuai1 2020/10/26
+     * @description 尾料二维码获取物料信息
+     */
+    @GET("/msService/WOM/remainMaterial/remainMaterial/getRemainMaterialJSON")
+    Flowable<BAP5CommonEntity> getRemainMaterialJSON(@Query(value = "PK") Long id);
+
 }

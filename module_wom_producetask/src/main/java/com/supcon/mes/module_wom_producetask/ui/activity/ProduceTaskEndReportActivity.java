@@ -58,6 +58,7 @@ import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -167,6 +168,7 @@ public class ProduceTaskEndReportActivity extends BaseRefreshRecyclerActivity<Ou
             outputDetailEntity.setProduct(mWaitPutinRecordEntity.getProductId()); // 产品
             outputDetailEntity.setMaterialBatchNum(mWaitPutinRecordEntity.getProduceBatchNum()); // 生产批默认入库批号
             outputDetailEntity.setOutputNum(mWaitPutinRecordEntity.getTaskId().getPlanNum());  // 默认入库数量为计划数量
+            outputDetailEntity.setPutinTime(new Date().getTime());  // 报工时间
             mProduceTaskEndReportDetailAdapter.addData(outputDetailEntity);
             mProduceTaskEndReportDetailAdapter.notifyItemRangeInserted(mProduceTaskEndReportDetailAdapter.getItemCount() - 1, 1);
             mProduceTaskEndReportDetailAdapter.notifyItemRangeChanged(mProduceTaskEndReportDetailAdapter.getItemCount() - 1, 1);
@@ -211,7 +213,7 @@ public class ProduceTaskEndReportActivity extends BaseRefreshRecyclerActivity<Ou
     public void onCodeReceiver(CodeResultEvent codeResultEvent) {
         MaterialQRCodeEntity materialQRCodeEntity = MaterQRUtil.materialQRCode(context,codeResultEvent.scanResult);
         if (materialQRCodeEntity == null) return;
-        if (!mWaitPutinRecordEntity.getProductId().getCode().equals(materialQRCodeEntity.getMaterialCode())){
+        if (!mWaitPutinRecordEntity.getProductId().getCode().equals(materialQRCodeEntity.getMaterial().getCode())){
             ToastUtils.show(context, context.getResources().getString(R.string.wom_scan_material_error));
             return;
         }
@@ -219,15 +221,23 @@ public class ProduceTaskEndReportActivity extends BaseRefreshRecyclerActivity<Ou
             ToastUtils.show(context, context.getResources().getString(R.string.wom_scan_batchNo_error));
             return;
         }
-        OutputDetailEntity outputDetailEntity = new OutputDetailEntity();
-        outputDetailEntity.setProduct(mWaitPutinRecordEntity.getProductId()); // 产品
-        outputDetailEntity.setMaterialBatchNum(materialQRCodeEntity.getMaterialBatchNo()); // 生产批默认入库批号
-        outputDetailEntity.setOutputNum(materialQRCodeEntity.getNum());  // 扫描数量
-        mProduceTaskEndReportDetailAdapter.addData(outputDetailEntity);
-        mProduceTaskEndReportDetailAdapter.notifyItemRangeInserted(mProduceTaskEndReportDetailAdapter.getItemCount() - 1, 1);
-        mProduceTaskEndReportDetailAdapter.notifyItemRangeChanged(mProduceTaskEndReportDetailAdapter.getItemCount() - 1, 1);
 
-        contentView.smoothScrollToPosition(mProduceTaskEndReportDetailAdapter.getItemCount() - 1);
+        if(materialQRCodeEntity.isRequest()){
+
+        }else {
+            OutputDetailEntity outputDetailEntity = new OutputDetailEntity();
+            outputDetailEntity.setProduct(mWaitPutinRecordEntity.getProductId()); // 产品
+            outputDetailEntity.setMaterialBatchNum(materialQRCodeEntity.getMaterialBatchNo()); // 生产批默认入库批号
+            outputDetailEntity.setOutputNum(materialQRCodeEntity.getNum());  // 扫描数量
+            outputDetailEntity.setWareId(materialQRCodeEntity.getToWare());
+            outputDetailEntity.setStoreId(materialQRCodeEntity.getToStore());
+            outputDetailEntity.setPutinTime(new Date().getTime());  // 报工时间
+            mProduceTaskEndReportDetailAdapter.addData(outputDetailEntity);
+            mProduceTaskEndReportDetailAdapter.notifyItemRangeInserted(mProduceTaskEndReportDetailAdapter.getItemCount() - 1, 1);
+            mProduceTaskEndReportDetailAdapter.notifyItemRangeChanged(mProduceTaskEndReportDetailAdapter.getItemCount() - 1, 1);
+
+            contentView.smoothScrollToPosition(mProduceTaskEndReportDetailAdapter.getItemCount() - 1);
+        }
 
     }
     /**
