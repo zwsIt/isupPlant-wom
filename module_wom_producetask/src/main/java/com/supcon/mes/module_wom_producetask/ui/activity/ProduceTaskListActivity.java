@@ -54,6 +54,7 @@ public class ProduceTaskListActivity extends BaseMultiFragmentActivity {
     private CommonProduceTaskListFragment mCommonProduceTaskListFragment;
     private SimpleProduceTaskListFragment mSimpleProduceTaskListFragment;
     private boolean womType = false;
+    private boolean face = false;
 
     @Override
     public int getFragmentContainerId() {
@@ -128,7 +129,7 @@ public class ProduceTaskListActivity extends BaseMultiFragmentActivity {
                 .subscribe(new Consumer<Object>() {
                     @Override
                     public void accept(Object o) throws Exception {
-                        getController(CommonScanController.class).openCameraScan();
+                        getController(CommonScanController.class).openCameraScan(context.getClass().getSimpleName());
                     }
                 });
         searchTitleBar.setOnExpandListener(isExpand -> {
@@ -212,13 +213,29 @@ public class ProduceTaskListActivity extends BaseMultiFragmentActivity {
         setIntent(intent);
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        face = true;
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        face = false;
+    }
+
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void getScanReceive(CodeResultEvent codeResultEvent) {
-        if (customTab.getCurrentPosition() == 0) {
-            mCommonProduceTaskListFragment.matchTask(codeResultEvent.scanResult);
-        } else {
-            mSimpleProduceTaskListFragment.matchTask(codeResultEvent.scanResult);
+//        if (!face)return;
+        if (context.getClass().getSimpleName().equals(codeResultEvent.scanTag)){
+            if (customTab.getCurrentPosition() == 0) {
+                mCommonProduceTaskListFragment.matchTask(codeResultEvent.scanResult);
+            } else {
+                mSimpleProduceTaskListFragment.matchTask(codeResultEvent.scanResult);
+            }
         }
+
     }
 
 

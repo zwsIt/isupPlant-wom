@@ -123,6 +123,12 @@ public class ProduceTaskListAdapter extends BaseListDataRecyclerViewAdapter<Wait
             RxView.clicks(itemView).throttleFirst(200,TimeUnit.MILLISECONDS)
                     .subscribe(o -> {
                         if (WomConstant.SystemCode.RM_TYPE_SIMPLE.equals(getItem(getAdapterPosition()).getFormulaId().getSetProcess().id)){
+
+                            if (WomConstant.SystemCode.EXE_STATE_PAUSED.equals(getItem(getAdapterPosition()).getExeState().id)){
+                                ToastUtils.show(context, context.getResources().getString(R.string.wom_task_paused));
+                                return;
+                            }
+
                             Bundle bundle = new Bundle();
                             bundle.putSerializable(Constant.IntentKey.WAIT_PUT_RECORD,getItem(getAdapterPosition()));
                             IntentRouter.go(context,Constant.Router.WOM_SIMPLE_ACTIVITY_LIST,bundle);

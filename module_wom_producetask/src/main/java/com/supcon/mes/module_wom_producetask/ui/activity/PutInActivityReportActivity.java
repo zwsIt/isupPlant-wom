@@ -208,7 +208,7 @@ public class PutInActivityReportActivity extends BaseRefreshRecyclerActivity<Put
         super.initListener();
         leftBtn.setOnClickListener(v -> finish());
         rightBtn.setOnClickListener(v -> {
-            getController(CommonScanController.class).openCameraScan();
+            getController(CommonScanController.class).openCameraScan(context.getClass().getSimpleName());
         });
         refreshListController.setOnRefreshListener(new OnRefreshListener() {
             @Override
@@ -273,20 +273,22 @@ public class PutInActivityReportActivity extends BaseRefreshRecyclerActivity<Put
      */
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onCodeReceiver(CodeResultEvent codeResultEvent) {
-        MaterialQRCodeEntity materialQRCodeEntity = MaterQRUtil.materialQRCode(context, codeResultEvent.scanResult);
-        if (materialQRCodeEntity == null) return;
-        if (materialQRCodeEntity.isRequest()) {
-            if ("remain".equals(materialQRCodeEntity.getType())){ // 尾料
-                onLoading(context.getResources().getString(R.string.loading));
-                presenterRouter.create(RemainQRCodeAPI.class).getMaterialByQR(materialQRCodeEntity.getPK());
-            }else {
-                //TODO...
-                ToastUtils.show(context,context.getResources().getString(R.string.wom_no_realize));
+        if (context.getClass().getSimpleName().equals(codeResultEvent.scanTag)){
+            MaterialQRCodeEntity materialQRCodeEntity = MaterQRUtil.materialQRCode(context, codeResultEvent.scanResult);
+            if (materialQRCodeEntity == null) return;
+            if (materialQRCodeEntity.isRequest()) {
+                if ("remain".equals(materialQRCodeEntity.getType())){ // 尾料
+                    onLoading(context.getResources().getString(R.string.loading));
+                    presenterRouter.create(RemainQRCodeAPI.class).getMaterialByQR(materialQRCodeEntity.getPK());
+                }else {
+                    //TODO...
+                    ToastUtils.show(context,context.getResources().getString(R.string.wom_no_realize));
+                }
+            } else {
+                if (checkMaterial(materialQRCodeEntity))
+                    return;
+                addMaterialReport(materialQRCodeEntity, null);
             }
-        } else {
-            if (checkMaterial(materialQRCodeEntity))
-                return;
-            addMaterialReport(materialQRCodeEntity, null);
         }
 
     }

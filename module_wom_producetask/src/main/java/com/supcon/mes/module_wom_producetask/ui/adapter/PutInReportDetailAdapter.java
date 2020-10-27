@@ -299,6 +299,15 @@ public class PutInReportDetailAdapter extends BaseListDataRecyclerViewAdapter<Pu
 
         @Override
         protected void update(PutInDetailEntity data) {
+            if (data.getRemainId() != null){
+                batchNum.setEditable(false);
+                warehouseTv.setEditable(false);
+                storeSetTv.setEditable(false);
+            }else {
+                batchNum.setEditable(true);
+                warehouseTv.setEditable(true);
+                storeSetTv.setEditable(true);
+            }
             materialName.setContent(String.format("%s(%s)", data.getMaterialId().getName(), data.getMaterialId().getCode()));
             batchNum.setContent(data.getMaterialBatchNum());
             numEt.setContent(data.getPutinNum() == null ? "" : String.valueOf(data.getPutinNum()));

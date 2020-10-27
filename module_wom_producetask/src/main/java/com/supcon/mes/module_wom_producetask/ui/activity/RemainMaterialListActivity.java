@@ -101,7 +101,7 @@ public class RemainMaterialListActivity extends BaseRefreshRecyclerActivity<Rema
         super.initView();
         StatusBarUtils.setWindowStatusBarColor(this, R.color.themeColor);
         searchTitleBar.setTitleText(context.getResources().getString(R.string.wom_remain_material_select));
-        searchTitleBar.searchView().setHint(context.getResources().getString(R.string.wom_input_ware_name));
+        searchTitleBar.searchView().setHint(context.getResources().getString(R.string.wom_material_batch_num));
         searchTitleBar.disableRightBtn();
     }
 
@@ -118,7 +118,7 @@ public class RemainMaterialListActivity extends BaseRefreshRecyclerActivity<Rema
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(charSequence -> {
-                    queryParams.put(Constant.BAPQuery.NAME, charSequence.toString().trim());
+                    queryParams.put(Constant.BAPQuery.BATCH_TEXT, charSequence.toString().trim());
                     refreshListController.refreshBegin();
                 });
 

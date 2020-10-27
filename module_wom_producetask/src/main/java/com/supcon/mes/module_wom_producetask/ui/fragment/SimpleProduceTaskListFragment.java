@@ -256,7 +256,48 @@ public class SimpleProduceTaskListFragment extends BaseRefreshRecyclerFragment<W
      *
      */
     public void matchTask(String scanResult) {
+        if (mProduceTaskListAdapter.getList() == null || mProduceTaskListAdapter.getList().size() == 0) {
+            ToastUtils.show(context, context.getResources().getString(R.string.middleware_no_data));
+            return;
+        }
+        int index = 0;
+        for (WaitPutinRecordEntity waitPutinRecordEntity : mProduceTaskListAdapter.getList()) {
+            if (scanResult.equals(waitPutinRecordEntity.getProduceBatchNum())) {
 
+                int scrollPosition = mProduceTaskListAdapter.getList().indexOf(waitPutinRecordEntity);
+
+                RecyclerView.LayoutManager layoutManager = contentView.getLayoutManager();
+                int firstVisibleItemPosition = 0;
+                if (layoutManager instanceof LinearLayoutManager){
+                    firstVisibleItemPosition = ((LinearLayoutManager)layoutManager).findFirstVisibleItemPosition(); // 获取第一个可见位置
+                }
+                // 滚动位置
+                if (firstVisibleItemPosition > scrollPosition){ // 上滚动
+                    contentView.scrollToPosition(scrollPosition);
+                }else { // 下滚动
+                    contentView.scrollToPosition(scrollPosition + 1);
+                }
+
+                if (WomConstant.SystemCode.EXE_STATE_PAUSED.equals(waitPutinRecordEntity.getExeState().id)){
+                    ToastUtils.show(context, context.getResources().getString(R.string.wom_task_paused));
+                    return;
+                }
+                if (WomConstant.SystemCode.EXE_STATE_WAIT.equals(waitPutinRecordEntity.getExeState().id) ||
+                        WomConstant.SystemCode.EXE_STATE_ING.equals(waitPutinRecordEntity.getExeState().id)) {
+                    Bundle bundle = new Bundle();
+                    bundle.putSerializable(Constant.IntentKey.WAIT_PUT_RECORD,waitPutinRecordEntity);
+                    IntentRouter.go(context,Constant.Router.WOM_SIMPLE_ACTIVITY_LIST,bundle);
+                }
+                return;
+            }
+
+            index++;
+
+            if (index == mProduceTaskListAdapter.getList().size()) {
+                ToastUtils.show(context, context.getResources().getString(R.string.wom_scan_no_produce_no));
+            }
+
+        }
     }
 
 }

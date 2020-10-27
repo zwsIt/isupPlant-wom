@@ -176,7 +176,7 @@ public class PutInAgileActivityReportActivity extends BaseRefreshRecyclerActivit
         super.initListener();
         leftBtn.setOnClickListener(v -> finish());
         rightBtn.setOnClickListener(v -> {
-            getController(CommonScanController.class).openCameraScan();
+            getController(CommonScanController.class).openCameraScan(context.getClass().getSimpleName());
         });
         refreshListController.setOnRefreshListener(() -> presenterRouter.create(CommonListAPI.class).list(1, customCondition, queryParams,
                 WomConstant.URL.PUT_IN_REPORT_LIST_URL + "&id=" + (mWaitPutinRecordEntity.getProcReportId().getId() == null ? -1 : mWaitPutinRecordEntity.getProcReportId().getId()), ""));
@@ -229,19 +229,21 @@ public class PutInAgileActivityReportActivity extends BaseRefreshRecyclerActivit
 //    Map<String, Object> goodMap = new HashMap<>();
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onCodeReceiver(CodeResultEvent codeResultEvent) {
-        MaterialQRCodeEntity materialQRCodeEntity = MaterQRUtil.materialQRCode(context, codeResultEvent.scanResult);
-        if (materialQRCodeEntity == null) return;
+        if (context.getClass().getSimpleName().equals(codeResultEvent.scanTag)){
+            MaterialQRCodeEntity materialQRCodeEntity = MaterQRUtil.materialQRCode(context, codeResultEvent.scanResult);
+            if (materialQRCodeEntity == null) return;
 
-        if (materialQRCodeEntity.isRequest()) {
-            if ("remain".equals(materialQRCodeEntity.getType())) { // 尾料
-                onLoading(context.getResources().getString(R.string.loading));
-                presenterRouter.create(RemainQRCodeAPI.class).getMaterialByQR(materialQRCodeEntity.getPK());
+            if (materialQRCodeEntity.isRequest()) {
+                if ("remain".equals(materialQRCodeEntity.getType())) { // 尾料
+                    onLoading(context.getResources().getString(R.string.loading));
+                    presenterRouter.create(RemainQRCodeAPI.class).getMaterialByQR(materialQRCodeEntity.getPK());
+                } else {
+                    //TODO...
+                    ToastUtils.show(context, context.getResources().getString(R.string.wom_no_realize));
+                }
             } else {
-                //TODO...
-                ToastUtils.show(context, context.getResources().getString(R.string.wom_no_realize));
+                addMaterialReport(materialQRCodeEntity, null);
             }
-        } else {
-            addMaterialReport(materialQRCodeEntity, null);
         }
 
     }
