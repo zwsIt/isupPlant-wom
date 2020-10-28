@@ -64,7 +64,7 @@
     <string name="wom_input_material_code">请输入物料编码</string>
     <string name="wom_select_material">请选择物料</string>
     <string name="wom_material">物料</string>
-    <string name="wom_output_num">产出数量</string>
+    <string name="wom_output_num">产出量</string>
     <string name="wom_manual_output_report">人工产出报工</string>
     <string name="wom_manual_agile_output_report">灵活人工产出报工</string>
     <string name="wom_first_start_activity">请先开始活动</string>
@@ -145,4 +145,6 @@
     <string name="wom_no_realize">暂未实现</string>
     <string name="wom_scan_no_produce_no">未扫描到当前生产批次</string>
     <string name="wom_task_paused">工单已暂停，请先恢复</string>
+    <string name="wom_output_greater_than_zero">】项产出量须大于0</string>
+    <string name="wom_num_greater_than_zero">】项数量须大于0</string>
 </resources>

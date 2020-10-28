@@ -77,6 +77,8 @@ public class PutInReportDetailAdapter extends BaseListDataRecyclerViewAdapter<Pu
         TextView itemViewDelBtn;
         @BindByTag("materialBatchNumTv")
         TextView materialBatchNumTv;
+        @BindByTag("remainderNumEtLl")
+        LinearLayout remainderNumEtLl;
 
         public ReportViewHolder(Context context) {
             super(context, parent);
@@ -92,6 +94,7 @@ public class PutInReportDetailAdapter extends BaseListDataRecyclerViewAdapter<Pu
             super.initView();
             if (batchPutInActivity) {
                 materialNameLl.setVisibility(View.VISIBLE);
+                remainderNumEtLl.setVisibility(View.GONE);
             }
             numEt.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
             remainderNumEt.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);

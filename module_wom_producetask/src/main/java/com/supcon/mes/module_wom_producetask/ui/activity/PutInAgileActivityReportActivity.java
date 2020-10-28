@@ -262,6 +262,7 @@ public class PutInAgileActivityReportActivity extends BaseRefreshRecyclerActivit
             putInDetailEntity.setMaterialBatchNum(remainMaterialEntity.getBatchText());
             putInDetailEntity.setPutinNum(remainMaterialEntity.getRemainNum());
             putInDetailEntity.setWareId(remainMaterialEntity.getWareId());
+            putInDetailEntity.setStoreId(remainMaterialEntity.getStoreId());
         } else {
             if (materialQRCodeEntity != null) { // 扫描物料
 //                MaterialEntity materialEntity = new MaterialEntity();
@@ -330,7 +331,7 @@ public class PutInAgileActivityReportActivity extends BaseRefreshRecyclerActivit
             return true;
         }
         for (PutInDetailEntity putInDetailEntity : mPutInAgileReportDetailAdapter.getList()) {
-            if (putInDetailEntity.getMaterialId() == null) {
+            if (putInDetailEntity.getMaterialId() == null || TextUtils.isEmpty(putInDetailEntity.getMaterialId().getCode())) {
                 ToastUtils.show(context, context.getResources().getString(R.string.wom_di) + (mPutInAgileReportDetailAdapter.getList().indexOf(putInDetailEntity) + 1) + context.getResources().getString(R.string.wom_please_write_material));
                 return true;
             }

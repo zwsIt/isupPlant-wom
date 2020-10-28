@@ -362,6 +362,10 @@ public class OutputActivityReportActivity extends BaseRefreshRecyclerActivity<Ou
                 ToastUtils.show(context, context.getResources().getString(R.string.wom_di) + (mOutputReportDetailAdapter.getList().indexOf(outputDetailEntity) + 1) + context.getResources().getString(R.string.wom_please_write_output));
                 return true;
             }
+            if (outputDetailEntity.getOutputNum().floatValue() == 0f) {
+                ToastUtils.show(context, context.getResources().getString(R.string.wom_di) + (mOutputReportDetailAdapter.getList().indexOf(outputDetailEntity) + 1) + context.getResources().getString(R.string.wom_output_greater_than_zero));
+                return true;
+            }
         }
         return false;
     }

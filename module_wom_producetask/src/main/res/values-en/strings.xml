@@ -145,4 +145,6 @@
     <string name="wom_no_realize">暂未实现</string>
     <string name="wom_scan_no_produce_no">未扫描到当前生产批次</string>
     <string name="wom_task_paused">工单已暂停，请先恢复</string>
+    <string name="wom_output_greater_than_zero">】项产出量须大于0</string>
+    <string name="wom_num_greater_than_zero">】项数量须大于0</string>
 </resources>

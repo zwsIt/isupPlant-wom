@@ -310,6 +310,7 @@ public class PutInActivityReportActivity extends BaseRefreshRecyclerActivity<Put
             putInDetailEntity.setMaterialBatchNum(remainMaterialEntity.getBatchText());
             putInDetailEntity.setPutinNum(remainMaterialEntity.getRemainNum());
             putInDetailEntity.setWareId(remainMaterialEntity.getWareId());
+            putInDetailEntity.setStoreId(remainMaterialEntity.getStoreId());
 
         } else {
             if (materialQRCodeEntity != null) { // 扫描物料

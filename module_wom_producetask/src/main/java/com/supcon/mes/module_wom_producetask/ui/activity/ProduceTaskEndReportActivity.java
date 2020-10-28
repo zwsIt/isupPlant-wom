@@ -286,6 +286,10 @@ public class ProduceTaskEndReportActivity extends BaseRefreshRecyclerActivity<Ou
                 ToastUtils.show(context, context.getResources().getString(R.string.wom_di) + (list.indexOf(entity) + 1) + context.getResources().getString(R.string.wom_pleasr_write_num));
                 return true;
             }
+            if (entity.getOutputNum().floatValue() == 0f) {
+                ToastUtils.show(context, context.getResources().getString(R.string.wom_di) + (list.indexOf(entity) + 1) + context.getResources().getString(R.string.wom_num_greater_than_zero));
+                return true;
+            }
         }
         return false;
     }
