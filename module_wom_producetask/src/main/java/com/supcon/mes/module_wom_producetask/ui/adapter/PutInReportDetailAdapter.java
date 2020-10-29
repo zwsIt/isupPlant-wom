@@ -33,7 +33,7 @@ import io.reactivex.functions.Predicate;
 public class PutInReportDetailAdapter extends BaseListDataRecyclerViewAdapter<PutInDetailEntity> {
 
     private boolean batchPutInActivity; // 是否投配料活动
-    private boolean materialBatchNo; // 物料是否未启用批次
+    private boolean noMaterialBatchNo; // 物料是否未启用批次
 
     public PutInReportDetailAdapter(Context context) {
         super(context);
@@ -48,8 +48,8 @@ public class PutInReportDetailAdapter extends BaseListDataRecyclerViewAdapter<Pu
         batchPutInActivity = b;
     }
 
-    public void setMaterialBatchNo(boolean b) {
-        materialBatchNo = b;
+    public void setNoMaterialBatchNo(boolean b) {
+        noMaterialBatchNo = b;
     }
 
     /**
@@ -95,6 +95,9 @@ public class PutInReportDetailAdapter extends BaseListDataRecyclerViewAdapter<Pu
             if (batchPutInActivity) {
                 materialNameLl.setVisibility(View.VISIBLE);
                 remainderNumEtLl.setVisibility(View.GONE);
+            }
+            if (noMaterialBatchNo) {
+                materialBatchNumTv.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_batch_number, 0, 0, 0);
             }
             numEt.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
             remainderNumEt.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
@@ -324,11 +327,8 @@ public class PutInReportDetailAdapter extends BaseListDataRecyclerViewAdapter<Pu
                 } else {
                     materialBatchNumTv.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_batch_number, 0, 0, 0);
                 }
-            } else {
-                if (materialBatchNo) {
-                    materialBatchNumTv.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_batch_number, 0, 0, 0);
-                }
             }
+
         }
     }
 

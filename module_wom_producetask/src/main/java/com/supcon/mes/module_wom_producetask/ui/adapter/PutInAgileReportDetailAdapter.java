@@ -227,6 +227,17 @@ public class PutInAgileReportDetailAdapter extends BaseListDataRecyclerViewAdapt
 
         @Override
         protected void update(PutInDetailEntity data) {
+            if (data.getRemainId() != null){
+                materialName.setEditable(false);
+                batchNum.setEditable(false);
+                warehouseTv.setEditable(false);
+                storeSetTv.setEditable(false);
+            }else {
+                materialName.setEditable(true);
+                batchNum.setEditable(true);
+                warehouseTv.setEditable(true);
+                storeSetTv.setEditable(true);
+            }
             if (WomConstant.SystemCode.MATERIAL_BATCH_02.equals(data.getMaterialId().getIsBatch().id)){
                 materialBatchNumTv.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_batch_number,0,R.drawable.ic_necessary,0);
             }else {

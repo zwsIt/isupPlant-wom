@@ -72,7 +72,7 @@ public class RemainMaterialRefListAdapter extends BaseListDataRecyclerViewAdapte
                 nameTv.setText(String.format("物料：%s(%s)", data.getMaterial().getName(), data.getMaterial().getCode()));
             }
 
-            materialBatchNumTv.setText(String.format("批号：%s", data.getBatchText() == null ? "--" : data.getBatchText()));
+            materialBatchNumTv.setText(String.format("批号：%s", TextUtils.isEmpty(data.getBatchText()) ? "--" : data.getBatchText()));
             remainderNumTv.setText(String.format("可用量：%s", data.getRemainNum()));
             warehouseTvTv.setText(String.format("仓库：%s", (data.getWareId()) == null ? "--" : (TextUtils.isEmpty(data.getWareId().getName()) ? "--" : data.getWareId().getName())));
         }

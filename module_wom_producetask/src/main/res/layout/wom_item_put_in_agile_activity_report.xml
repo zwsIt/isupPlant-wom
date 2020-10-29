@@ -39,7 +39,7 @@
                 android:id="@+id/materialName"
                 android:tag="materialName"
                 app:text_width="0dp"
-                app:text_color="@color/dark_text"
+                app:content_color="@color/dark_text"
                 app:editable="true"
                 app:icon_res="@drawable/ic_right"/>
         </LinearLayout>

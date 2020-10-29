@@ -74,6 +74,7 @@ import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
@@ -160,7 +161,7 @@ public class PutInActivityReportActivity extends BaseRefreshRecyclerActivity<Put
         contentView.addOnItemTouchListener(new CustomSwipeLayout.OnSwipeItemTouchListener(context));
 
         if (!WomConstant.SystemCode.MATERIAL_BATCH_02.equals(mWaitPutinRecordEntity.getTaskActiveId().getMaterialId().getIsBatch().id)) {
-            mPutInReportDetailAdapter.setMaterialBatchNo(true);
+            mPutInReportDetailAdapter.setNoMaterialBatchNo(true);
         }
     }
 
@@ -306,6 +307,7 @@ public class PutInActivityReportActivity extends BaseRefreshRecyclerActivity<Put
 
         if (remainMaterialEntity != null) { // 尾料参照
             putInDetailEntity.setRemainId(remainMaterialEntity);
+            putInDetailEntity.setMaterialId(remainMaterialEntity.getMaterial());
             putInDetailEntity.setRemainOperate(new SystemCodeEntity(WomConstant.SystemCode.WOM_remainOperate_02)); // 使用
             putInDetailEntity.setMaterialBatchNum(remainMaterialEntity.getBatchText());
             putInDetailEntity.setPutinNum(remainMaterialEntity.getRemainNum());
@@ -371,21 +373,27 @@ public class PutInActivityReportActivity extends BaseRefreshRecyclerActivity<Put
     }
 
     private boolean checkSubmit() {
-        if (mPutInReportDetailAdapter.getList() == null || mPutInReportDetailAdapter.getList().size() <= 0) {
+        List<PutInDetailEntity> list = mPutInReportDetailAdapter.getList();
+        if (list == null || list.size() <= 0) {
             ToastUtils.show(context, context.getResources().getString(R.string.wom_no_data_operate));
             return true;
         }
-        for (PutInDetailEntity putInDetailEntity : mPutInReportDetailAdapter.getList()) {
+
+        for (PutInDetailEntity putInDetailEntity : list) {
             if (WomConstant.SystemCode.MATERIAL_BATCH_02.equals(mWaitPutinRecordEntity.getTaskActiveId().getMaterialId().getIsBatch().id) && TextUtils.isEmpty(putInDetailEntity.getMaterialBatchNum())) {
-                ToastUtils.show(context, context.getResources().getString(R.string.wom_di) + (mPutInReportDetailAdapter.getList().indexOf(putInDetailEntity) + 1) + context.getResources().getString(R.string.wom_please_write_material_batch));
+                ToastUtils.show(context, context.getResources().getString(R.string.wom_di) + (list.indexOf(putInDetailEntity) + 1) + context.getResources().getString(R.string.wom_please_write_material_batch));
                 return true;
             }
             if (putInDetailEntity.getWareId() == null) {
-                ToastUtils.show(context, context.getResources().getString(R.string.wom_di) + (mPutInReportDetailAdapter.getList().indexOf(putInDetailEntity) + 1) + context.getResources().getString(R.string.wom_please_write_ware));
+                ToastUtils.show(context, context.getResources().getString(R.string.wom_di) + (list.indexOf(putInDetailEntity) + 1) + context.getResources().getString(R.string.wom_please_write_ware));
+                return true;
+            }
+            if (putInDetailEntity.getWareId() != null && putInDetailEntity.getWareId().getStoreSetState() && putInDetailEntity.getStoreId() == null) {
+                ToastUtils.show(context, context.getResources().getString(R.string.wom_di) + (list.indexOf(putInDetailEntity) + 1) + context.getResources().getString(R.string.wom_warehouse_enable_please_write_storage));
                 return true;
             }
             if (putInDetailEntity.getPutinNum() == null) {
-                ToastUtils.show(context, context.getResources().getString(R.string.wom_di) + (mPutInReportDetailAdapter.getList().indexOf(putInDetailEntity) + 1) + context.getResources().getString(R.string.wom_please_write_material_num));
+                ToastUtils.show(context, context.getResources().getString(R.string.wom_di) + (list.indexOf(putInDetailEntity) + 1) + context.getResources().getString(R.string.wom_please_write_material_num));
                 return true;
             }
         }

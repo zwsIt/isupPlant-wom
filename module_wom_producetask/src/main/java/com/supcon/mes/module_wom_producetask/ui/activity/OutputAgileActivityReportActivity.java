@@ -76,6 +76,7 @@ import org.greenrobot.eventbus.ThreadMode;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
@@ -298,29 +299,34 @@ public class OutputAgileActivityReportActivity extends BaseRefreshRecyclerActivi
     }
 
     private boolean checkSubmit() {
-        if (mOutputAgileReportDetailAdapter.getList() == null || mOutputAgileReportDetailAdapter.getList().size() <= 0) {
+        List<OutputDetailEntity> list = mOutputAgileReportDetailAdapter.getList();
+        if (list == null || list.size() <= 0) {
             ToastUtils.show(context, context.getResources().getString(R.string.wom_no_data_operate));
             return true;
         }
-        for (OutputDetailEntity outputDetailEntity : mOutputAgileReportDetailAdapter.getList()) {
+        for (OutputDetailEntity outputDetailEntity : list) {
             if (outputDetailEntity.getProduct() == null) {
-                ToastUtils.show(context, context.getResources().getString(R.string.wom_di) + (mOutputAgileReportDetailAdapter.getList().indexOf(outputDetailEntity) + 1) + context.getResources().getString(R.string.wom_please_write_material));
+                ToastUtils.show(context, context.getResources().getString(R.string.wom_di) + (list.indexOf(outputDetailEntity) + 1) + context.getResources().getString(R.string.wom_please_write_material));
                 return true;
             }
             if (WomConstant.SystemCode.MATERIAL_BATCH_02.equals(outputDetailEntity.getProduct().getIsBatch().id) && TextUtils.isEmpty(outputDetailEntity.getMaterialBatchNum())) {
-                ToastUtils.show(context, context.getResources().getString(R.string.wom_di) + (mOutputAgileReportDetailAdapter.getList().indexOf(outputDetailEntity) + 1) + context.getResources().getString(R.string.wom_please_write_material_batch));
+                ToastUtils.show(context, context.getResources().getString(R.string.wom_di) + (list.indexOf(outputDetailEntity) + 1) + context.getResources().getString(R.string.wom_please_write_material_batch));
                 return true;
             }
             if (outputDetailEntity.getWareId() == null) {
-                ToastUtils.show(context, context.getResources().getString(R.string.wom_di) + (mOutputAgileReportDetailAdapter.getList().indexOf(outputDetailEntity) + 1) + context.getResources().getString(R.string.wom_please_write_ware));
+                ToastUtils.show(context, context.getResources().getString(R.string.wom_di) + (list.indexOf(outputDetailEntity) + 1) + context.getResources().getString(R.string.wom_please_write_ware));
+                return true;
+            }
+            if (outputDetailEntity.getWareId() != null && outputDetailEntity.getWareId().getStoreSetState() && outputDetailEntity.getStoreId() == null) {
+                ToastUtils.show(context, context.getResources().getString(R.string.wom_di) + (list.indexOf(outputDetailEntity) + 1) + context.getResources().getString(R.string.wom_warehouse_enable_please_write_storage));
                 return true;
             }
             if (outputDetailEntity.getOutputNum() == null) {
-                ToastUtils.show(context, context.getResources().getString(R.string.wom_di) + (mOutputAgileReportDetailAdapter.getList().indexOf(outputDetailEntity) + 1) + context.getResources().getString(R.string.wom_please_write_output));
+                ToastUtils.show(context, context.getResources().getString(R.string.wom_di) + (list.indexOf(outputDetailEntity) + 1) + context.getResources().getString(R.string.wom_please_write_output));
                 return true;
             }
             if (outputDetailEntity.getOutputNum().floatValue() == 0f) {
-                ToastUtils.show(context, context.getResources().getString(R.string.wom_di) + (mOutputAgileReportDetailAdapter.getList().indexOf(outputDetailEntity) + 1) + context.getResources().getString(R.string.wom_output_greater_than_zero));
+                ToastUtils.show(context, context.getResources().getString(R.string.wom_di) + (list.indexOf(outputDetailEntity) + 1) + context.getResources().getString(R.string.wom_output_greater_than_zero));
                 return true;
             }
         }

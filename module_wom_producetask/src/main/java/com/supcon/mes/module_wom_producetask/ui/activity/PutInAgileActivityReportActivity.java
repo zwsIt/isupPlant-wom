@@ -74,6 +74,7 @@ import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
@@ -258,6 +259,7 @@ public class PutInAgileActivityReportActivity extends BaseRefreshRecyclerActivit
 
         if (remainMaterialEntity != null) { // 尾料参照
             putInDetailEntity.setRemainId(remainMaterialEntity);
+            putInDetailEntity.setMaterialId(remainMaterialEntity.getMaterial());
             putInDetailEntity.setRemainOperate(new SystemCodeEntity(WomConstant.SystemCode.WOM_remainOperate_02)); // 使用
             putInDetailEntity.setMaterialBatchNum(remainMaterialEntity.getBatchText());
             putInDetailEntity.setPutinNum(remainMaterialEntity.getRemainNum());
@@ -326,25 +328,30 @@ public class PutInAgileActivityReportActivity extends BaseRefreshRecyclerActivit
     }
 
     private boolean checkSubmit() {
-        if (mPutInAgileReportDetailAdapter.getList() == null || mPutInAgileReportDetailAdapter.getList().size() <= 0) {
+        List<PutInDetailEntity> list = mPutInAgileReportDetailAdapter.getList();
+        if (list == null || list.size() <= 0) {
             ToastUtils.show(context, context.getResources().getString(R.string.wom_no_data_operate));
             return true;
         }
-        for (PutInDetailEntity putInDetailEntity : mPutInAgileReportDetailAdapter.getList()) {
+        for (PutInDetailEntity putInDetailEntity : list) {
             if (putInDetailEntity.getMaterialId() == null || TextUtils.isEmpty(putInDetailEntity.getMaterialId().getCode())) {
-                ToastUtils.show(context, context.getResources().getString(R.string.wom_di) + (mPutInAgileReportDetailAdapter.getList().indexOf(putInDetailEntity) + 1) + context.getResources().getString(R.string.wom_please_write_material));
+                ToastUtils.show(context, context.getResources().getString(R.string.wom_di) + (list.indexOf(putInDetailEntity) + 1) + context.getResources().getString(R.string.wom_please_write_material));
                 return true;
             }
             if (WomConstant.SystemCode.MATERIAL_BATCH_02.equals(putInDetailEntity.getMaterialId().getIsBatch().id) && TextUtils.isEmpty(putInDetailEntity.getMaterialBatchNum())) {
-                ToastUtils.show(context, context.getResources().getString(R.string.wom_di) + (mPutInAgileReportDetailAdapter.getList().indexOf(putInDetailEntity) + 1) + context.getResources().getString(R.string.wom_please_write_material_batch));
+                ToastUtils.show(context, context.getResources().getString(R.string.wom_di) + (list.indexOf(putInDetailEntity) + 1) + context.getResources().getString(R.string.wom_please_write_material_batch));
                 return true;
             }
             if (putInDetailEntity.getWareId() == null) {
-                ToastUtils.show(context, context.getResources().getString(R.string.wom_di) + (mPutInAgileReportDetailAdapter.getList().indexOf(putInDetailEntity) + 1) + context.getResources().getString(R.string.wom_please_write_ware));
+                ToastUtils.show(context, context.getResources().getString(R.string.wom_di) + (list.indexOf(putInDetailEntity) + 1) + context.getResources().getString(R.string.wom_please_write_ware));
+                return true;
+            }
+            if (putInDetailEntity.getWareId() != null && putInDetailEntity.getWareId().getStoreSetState() && putInDetailEntity.getStoreId() == null) {
+                ToastUtils.show(context, context.getResources().getString(R.string.wom_di) + (list.indexOf(putInDetailEntity) + 1) + context.getResources().getString(R.string.wom_warehouse_enable_please_write_storage));
                 return true;
             }
             if (putInDetailEntity.getPutinNum() == null) {
-                ToastUtils.show(context, context.getResources().getString(R.string.wom_di) + (mPutInAgileReportDetailAdapter.getList().indexOf(putInDetailEntity) + 1) + context.getResources().getString(R.string.wom_please_write_material_num));
+                ToastUtils.show(context, context.getResources().getString(R.string.wom_di) + (list.indexOf(putInDetailEntity) + 1) + context.getResources().getString(R.string.wom_please_write_material_num));
                 return true;
             }
         }

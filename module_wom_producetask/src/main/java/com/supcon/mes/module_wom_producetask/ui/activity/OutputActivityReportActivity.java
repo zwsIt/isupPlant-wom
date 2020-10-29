@@ -78,6 +78,7 @@ import org.greenrobot.eventbus.ThreadMode;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
@@ -163,7 +164,7 @@ public class OutputActivityReportActivity extends BaseRefreshRecyclerActivity<Ou
         contentView.addOnItemTouchListener(new CustomSwipeLayout.OnSwipeItemTouchListener(context));
 
         if (!WomConstant.SystemCode.MATERIAL_BATCH_02.equals(mWaitPutinRecordEntity.getTaskActiveId().getMaterialId().getIsBatch().id)){
-            mOutputReportDetailAdapter.setMaterialBatchNo(true);
+            mOutputReportDetailAdapter.setNoMaterialBatchNo(true);
         }
 
     }
@@ -187,8 +188,8 @@ public class OutputActivityReportActivity extends BaseRefreshRecyclerActivity<Ou
         planNumTv.setText(planNumSpan);
 
         SpannableString sumNumSpan = new SpannableString(context.getResources().getString(R.string.wom_output) + "\n\n" + mWaitPutinRecordEntity.getTaskActiveId().getSumNum());
-        sumNumSpan.setSpan(new ForegroundColorSpan(context.getResources().getColor(R.color.dark_green)), 4, sumNumSpan.length(), Spanned.SPAN_INCLUSIVE_INCLUSIVE);
-        sumNumSpan.setSpan(new AbsoluteSizeSpan(DisplayUtil.dip2px(18, context)), 4, sumNumSpan.length(), Spanned.SPAN_INCLUSIVE_INCLUSIVE);
+        sumNumSpan.setSpan(new ForegroundColorSpan(context.getResources().getColor(R.color.dark_green)), 5, sumNumSpan.length(), Spanned.SPAN_INCLUSIVE_INCLUSIVE);
+        sumNumSpan.setSpan(new AbsoluteSizeSpan(DisplayUtil.dip2px(18, context)), 5, sumNumSpan.length(), Spanned.SPAN_INCLUSIVE_INCLUSIVE);
         sumNumTv.setText(sumNumSpan);
 
         SpannableString remainderNumSpan;
@@ -345,25 +346,30 @@ public class OutputActivityReportActivity extends BaseRefreshRecyclerActivity<Ou
     }
 
     private boolean checkSubmit() {
-        if (mOutputReportDetailAdapter.getList() == null || mOutputReportDetailAdapter.getList().size() <= 0) {
+        List<OutputDetailEntity> list = mOutputReportDetailAdapter.getList();
+        if (list == null || list.size() <= 0) {
             ToastUtils.show(context, context.getResources().getString(R.string.wom_no_data_operate));
             return true;
         }
-        for (OutputDetailEntity outputDetailEntity : mOutputReportDetailAdapter.getList()) {
+        for (OutputDetailEntity outputDetailEntity : list) {
             if (WomConstant.SystemCode.MATERIAL_BATCH_02.equals(mWaitPutinRecordEntity.getTaskActiveId().getMaterialId().getIsBatch().id) && TextUtils.isEmpty(outputDetailEntity.getMaterialBatchNum())) {
-                ToastUtils.show(context, context.getResources().getString(R.string.wom_di) + (mOutputReportDetailAdapter.getList().indexOf(outputDetailEntity) + 1) + context.getResources().getString(R.string.wom_please_write_material_batch));
+                ToastUtils.show(context, context.getResources().getString(R.string.wom_di) + (list.indexOf(outputDetailEntity) + 1) + context.getResources().getString(R.string.wom_please_write_material_batch));
                 return true;
             }
             if (outputDetailEntity.getWareId() == null) {
-                ToastUtils.show(context, context.getResources().getString(R.string.wom_di) + (mOutputReportDetailAdapter.getList().indexOf(outputDetailEntity) + 1) + context.getResources().getString(R.string.wom_please_write_ware));
+                ToastUtils.show(context, context.getResources().getString(R.string.wom_di) + (list.indexOf(outputDetailEntity) + 1) + context.getResources().getString(R.string.wom_please_write_ware));
+                return true;
+            }
+            if (outputDetailEntity.getWareId() != null && outputDetailEntity.getWareId().getStoreSetState() && outputDetailEntity.getStoreId() == null) {
+                ToastUtils.show(context, context.getResources().getString(R.string.wom_di) + (list.indexOf(outputDetailEntity) + 1) + context.getResources().getString(R.string.wom_warehouse_enable_please_write_storage));
                 return true;
             }
             if (outputDetailEntity.getOutputNum() == null) {
-                ToastUtils.show(context, context.getResources().getString(R.string.wom_di) + (mOutputReportDetailAdapter.getList().indexOf(outputDetailEntity) + 1) + context.getResources().getString(R.string.wom_please_write_output));
+                ToastUtils.show(context, context.getResources().getString(R.string.wom_di) + (list.indexOf(outputDetailEntity) + 1) + context.getResources().getString(R.string.wom_please_write_output));
                 return true;
             }
             if (outputDetailEntity.getOutputNum().floatValue() == 0f) {
-                ToastUtils.show(context, context.getResources().getString(R.string.wom_di) + (mOutputReportDetailAdapter.getList().indexOf(outputDetailEntity) + 1) + context.getResources().getString(R.string.wom_output_greater_than_zero));
+                ToastUtils.show(context, context.getResources().getString(R.string.wom_di) + (list.indexOf(outputDetailEntity) + 1) + context.getResources().getString(R.string.wom_output_greater_than_zero));
                 return true;
             }
         }

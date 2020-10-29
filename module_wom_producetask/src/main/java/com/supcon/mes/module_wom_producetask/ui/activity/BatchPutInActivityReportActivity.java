@@ -264,21 +264,26 @@ public class BatchPutInActivityReportActivity extends BaseRefreshRecyclerActivit
     }
 
     private boolean checkSubmit() {
-        if (mPutInReportDetailAdapter.getList() == null || mPutInReportDetailAdapter.getList().size() <= 0) {
+        List<PutInDetailEntity> list = mPutInReportDetailAdapter.getList();
+        if (list == null || list.size() <= 0) {
             ToastUtils.show(context, context.getResources().getString(R.string.wom_no_data_operate));
             return true;
         }
-        for (PutInDetailEntity putInDetailEntity : mPutInReportDetailAdapter.getList()) {
+        for (PutInDetailEntity putInDetailEntity : list) {
             if (WomConstant.SystemCode.MATERIAL_BATCH_02.equals(putInDetailEntity.getMaterialId().getIsBatch().id) && TextUtils.isEmpty(putInDetailEntity.getMaterialBatchNum())) {
-                ToastUtils.show(context, context.getResources().getString(R.string.wom_di) + (mPutInReportDetailAdapter.getList().indexOf(putInDetailEntity) + 1) + context.getResources().getString(R.string.wom_please_write_material_batch));
+                ToastUtils.show(context, context.getResources().getString(R.string.wom_di) + (list.indexOf(putInDetailEntity) + 1) + context.getResources().getString(R.string.wom_please_write_material_batch));
                 return true;
             }
             if (putInDetailEntity.getWareId() == null) {
-                ToastUtils.show(context, context.getResources().getString(R.string.wom_di) + (mPutInReportDetailAdapter.getList().indexOf(putInDetailEntity) + 1) + context.getResources().getString(R.string.wom_please_write_ware));
+                ToastUtils.show(context, context.getResources().getString(R.string.wom_di) + (list.indexOf(putInDetailEntity) + 1) + context.getResources().getString(R.string.wom_please_write_ware));
+                return true;
+            }
+            if (putInDetailEntity.getWareId() != null && putInDetailEntity.getWareId().getStoreSetState() && putInDetailEntity.getStoreId() == null) {
+                ToastUtils.show(context, context.getResources().getString(R.string.wom_di) + (list.indexOf(putInDetailEntity) + 1) + context.getResources().getString(R.string.wom_warehouse_enable_please_write_storage));
                 return true;
             }
             if (putInDetailEntity.getPutinNum() == null) {
-                ToastUtils.show(context, context.getResources().getString(R.string.wom_di) + (mPutInReportDetailAdapter.getList().indexOf(putInDetailEntity) + 1) + context.getResources().getString(R.string.wom_please_write_material_num));
+                ToastUtils.show(context, context.getResources().getString(R.string.wom_di) + (list.indexOf(putInDetailEntity) + 1) + context.getResources().getString(R.string.wom_please_write_material_num));
                 return true;
             }
         }

@@ -268,11 +268,12 @@ public class ProduceTaskEndReportActivity extends BaseRefreshRecyclerActivity<Ou
     }
 
     public boolean checkSubmit() {
-        if (mProduceTaskEndReportDetailAdapter.getList() == null || mProduceTaskEndReportDetailAdapter.getList().size() <= 0) {
+        List<OutputDetailEntity> list = mProduceTaskEndReportDetailAdapter.getList();
+        if (list == null || list.size() <= 0) {
             ToastUtils.show(context, "请添加报工明细");
             return true;
         }
-        List<OutputDetailEntity> list = mProduceTaskEndReportDetailAdapter.getList();
+
         for (OutputDetailEntity entity : list) {
             if (TextUtils.isEmpty(entity.getMaterialBatchNum())) {
                 ToastUtils.show(context, context.getResources().getString(R.string.wom_di) + (list.indexOf(entity) + 1) + context.getResources().getString(R.string.wom_please_write_into_ware_batch));
@@ -280,6 +281,10 @@ public class ProduceTaskEndReportActivity extends BaseRefreshRecyclerActivity<Ou
             }
             if (entity.getWareId() == null) {
                 ToastUtils.show(context, context.getResources().getString(R.string.wom_di) + (list.indexOf(entity) + 1) + context.getResources().getString(R.string.wom_select_ware));
+                return true;
+            }
+            if (entity.getWareId() != null && entity.getWareId().getStoreSetState() && entity.getStoreId() == null) {
+                ToastUtils.show(context, context.getResources().getString(R.string.wom_di) + (list.indexOf(entity) + 1) + context.getResources().getString(R.string.wom_warehouse_enable_please_write_storage));
                 return true;
             }
             if (entity.getOutputNum() == null) {
