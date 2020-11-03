@@ -2,6 +2,7 @@ package com.supcon.mes.module_wom_producetask.presenter;
 
 import com.supcon.mes.middleware.model.bean.BAP5CommonEntity;
 import com.supcon.mes.middleware.model.bean.BapResultEntity;
+import com.supcon.mes.middleware.model.bean.MaterialQRCodeEntity;
 import com.supcon.mes.middleware.util.HttpErrorReturnUtil;
 import com.supcon.mes.module_wom_producetask.model.contract.PutInReportContract;
 import com.supcon.mes.module_wom_producetask.model.contract.RemainQRCodeContract;
@@ -30,11 +31,14 @@ public class RemainQRCodePresenter extends RemainQRCodeContract.Presenter {
                     bap5CommonEntity.msg = HttpErrorReturnUtil.getErrorInfo(throwable);
                     return bap5CommonEntity;
                 })
-                .subscribe(bap5CommonEntity -> {
-                    if (bap5CommonEntity.success){
-                        getView().getMaterialByQRSuccess(bap5CommonEntity);
-                    }else {
-                        getView().getMaterialByQRFailed(bap5CommonEntity.msg);
+                .subscribe(new Consumer<BAP5CommonEntity<MaterialQRCodeEntity>>() {
+                    @Override
+                    public void accept(BAP5CommonEntity<MaterialQRCodeEntity> bap5CommonEntity) throws Exception {
+                        if (bap5CommonEntity.success) {
+                            RemainQRCodePresenter.this.getView().getMaterialByQRSuccess(bap5CommonEntity);
+                        } else {
+                            RemainQRCodePresenter.this.getView().getMaterialByQRFailed(bap5CommonEntity.msg);
+                        }
                     }
                 })
         );

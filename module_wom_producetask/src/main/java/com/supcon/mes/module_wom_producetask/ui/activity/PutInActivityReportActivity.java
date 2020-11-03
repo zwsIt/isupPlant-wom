@@ -452,7 +452,7 @@ public class PutInActivityReportActivity extends BaseRefreshRecyclerActivity<Put
     @Override
     public void getMaterialByQRSuccess(BAP5CommonEntity entity) {
         onLoadSuccess();
-        MaterialQRCodeEntity materialQRCodeEntity = GsonUtil.gsonToBean((String) entity.data,MaterialQRCodeEntity.class);
+        MaterialQRCodeEntity materialQRCodeEntity = (MaterialQRCodeEntity) entity.data;
         if (checkMaterial(materialQRCodeEntity)) return;
         addMaterialReport(materialQRCodeEntity,null);
     }

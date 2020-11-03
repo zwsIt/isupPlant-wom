@@ -416,10 +416,11 @@ public class PutInAgileActivityReportActivity extends BaseRefreshRecyclerActivit
 
     }
 
+
     @Override
     public void getMaterialByQRSuccess(BAP5CommonEntity entity) {
         onLoadSuccess();
-        MaterialQRCodeEntity materialQRCodeEntity = GsonUtil.gsonToBean((String) entity.data,MaterialQRCodeEntity.class);
+        MaterialQRCodeEntity materialQRCodeEntity = (MaterialQRCodeEntity) entity.data;
         addMaterialReport(materialQRCodeEntity,null);
     }
 

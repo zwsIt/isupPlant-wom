@@ -140,7 +140,11 @@ public class PutInReportDetailAdapter extends BaseListDataRecyclerViewAdapter<Pu
                             if (current.compareTo(data.getAvailableNum()) > 0){
                                 ToastUtils.show(context, context.getString(R.string.wom_putin_num_compare) + data.getAvailableNum());
                                 int index = numEt.editText().getSelectionStart();
-                                numEt.editText().getText().delete(index - 1, index);
+                                if (index == 0){
+                                    numEt.setContent(data.getAvailableNum().toString());
+                                }else {
+                                    numEt.editText().getText().delete(index-1, index);
+                                }
                                 return false;
                             }
                             data.setRemainNum(data.getAvailableNum().subtract(current));
@@ -150,7 +154,11 @@ public class PutInReportDetailAdapter extends BaseListDataRecyclerViewAdapter<Pu
                             if (current.compareTo(data.getSpecificationNum()) > 0) {
                                 ToastUtils.show(context, context.getString(R.string.wom_putin_num_compare_scan) + data.getSpecificationNum());
                                 int index = numEt.editText().getSelectionStart();
-                                numEt.editText().getText().delete(index - 1, index);
+                                if (index == 0){
+                                    numEt.setContent(data.getSpecificationNum().toString());
+                                }else {
+                                    numEt.editText().getText().delete(index-1, index);
+                                }
                                 return false;
                             }
                             data.setRemainNum(data.getSpecificationNum().subtract(current));
@@ -159,7 +167,11 @@ public class PutInReportDetailAdapter extends BaseListDataRecyclerViewAdapter<Pu
                             if (current.compareTo(data.getRemainId().getRemainNum()) > 0) {
                                 ToastUtils.show(context, context.getString(R.string.wom_putin_num_compare_remain) + data.getRemainId().getRemainNum());
                                 int index = numEt.editText().getSelectionStart();
-                                numEt.editText().getText().delete(index - 1, index);
+                                if (index == 0){
+                                    numEt.setContent(data.getRemainId().getRemainNum().toString());
+                                }else {
+                                    numEt.editText().getText().delete(index-1, index);
+                                }
                                 return false;
                             }
                             data.setRemainNum(data.getRemainId().getRemainNum().subtract(current));
@@ -253,7 +265,11 @@ public class PutInReportDetailAdapter extends BaseListDataRecyclerViewAdapter<Pu
                             if (current.compareTo(data.getSpecificationNum()) > 0) {
                                 ToastUtils.show(context, context.getString(R.string.wom_remain_num_compare) + data.getSpecificationNum());
                                 int index = remainderNumEt.editText().getSelectionStart();
-                                remainderNumEt.editText().getText().delete(index - 1, index);
+                                if (index == 0){
+                                    remainderNumEt.setContent(data.getSpecificationNum().toString());
+                                }else {
+                                    remainderNumEt.editText().getText().delete(index-1, index);
+                                }
                                 return false;
                             }
                             data.setPutinNum(data.getSpecificationNum().subtract(current));
@@ -262,7 +278,11 @@ public class PutInReportDetailAdapter extends BaseListDataRecyclerViewAdapter<Pu
                             if (current.compareTo(data.getRemainId().getRemainNum()) > 0) {
                                 ToastUtils.show(context, context.getString(R.string.wom_remain_compare_less) + data.getRemainId().getRemainNum());
                                 int index = remainderNumEt.editText().getSelectionStart();
-                                remainderNumEt.editText().getText().delete(index - 1, index);
+                                if (index == 0){
+                                    remainderNumEt.setContent(data.getRemainId().getRemainNum().toString());
+                                }else {
+                                    remainderNumEt.editText().getText().delete(index-1, index);
+                                }
                                 return false;
                             }
                             data.setPutinNum(data.getRemainId().getRemainNum().subtract(current));

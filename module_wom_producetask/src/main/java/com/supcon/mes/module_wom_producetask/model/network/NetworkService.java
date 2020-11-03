@@ -4,6 +4,7 @@ import com.app.annotation.apt.ApiFactory;
 import com.supcon.mes.middleware.model.bean.BAP5CommonEntity;
 import com.supcon.mes.middleware.model.bean.BapResultEntity;
 import com.supcon.mes.middleware.model.bean.CommonBAPListEntity;
+import com.supcon.mes.middleware.model.bean.MaterialQRCodeEntity;
 import com.supcon.mes.middleware.model.bean.wom.FactoryModelEntity;
 import com.supcon.mes.module_wom_producetask.model.bean.ActiExelogListEntity;
 import com.supcon.mes.module_wom_producetask.model.bean.WaitPutinRecordEntity;
@@ -169,6 +170,6 @@ public interface NetworkService {
      * @description 尾料二维码获取物料信息
      */
     @GET("/msService/WOM/remainMaterial/remainMaterial/getRemainMaterialJSON")
-    Flowable<BAP5CommonEntity> getRemainMaterialJSON(@Query("pk") Long id);
+    Flowable<BAP5CommonEntity<MaterialQRCodeEntity>> getRemainMaterialJSON(@Query("pk") Long id);
 
 }
