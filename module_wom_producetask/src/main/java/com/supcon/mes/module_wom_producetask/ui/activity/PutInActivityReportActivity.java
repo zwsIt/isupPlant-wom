@@ -352,7 +352,7 @@ public class PutInActivityReportActivity extends BaseRefreshRecyclerActivity<Put
 
         for (PutInDetailEntity putInDetailEntity : mPutInReportDetailAdapter.getList()) {
             // 尾料处理方式
-            if (putInDetailEntity.getRemainId() == null && putInDetailEntity.getRemainOperate() == null) {
+            if (putInDetailEntity.getRemainId() == null) {
                 if (putInDetailEntity.getRemainNum() == null || putInDetailEntity.getRemainNum().floatValue() == 0) {
                     putInDetailEntity.setRemainOperate(new SystemCodeEntity(WomConstant.SystemCode.WOM_remainOperate_03));
                 } else {
@@ -434,7 +434,11 @@ public class PutInActivityReportActivity extends BaseRefreshRecyclerActivity<Put
     public void getEventPost(SelectDataEvent selectDataEvent) {
         Object object = selectDataEvent.getEntity();
         if (object instanceof WarehouseEntity) {
-            mPutInDetailEntity.setWareId((WarehouseEntity) selectDataEvent.getEntity());
+            WarehouseEntity warehouseEntity = (WarehouseEntity) selectDataEvent.getEntity();
+            if (mPutInDetailEntity.getWareId() != null && !warehouseEntity.getId().equals(mPutInDetailEntity.getWareId().getId())){
+                mPutInDetailEntity.setStoreId(null);
+            }
+            mPutInDetailEntity.setWareId(warehouseEntity);
             mPutInReportDetailAdapter.notifyItemRangeChanged(mCurrentPosition, 1);
         } else if (object instanceof StoreSetEntity) {
             mPutInDetailEntity.setStoreId((StoreSetEntity) selectDataEvent.getEntity());

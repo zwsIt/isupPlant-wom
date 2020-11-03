@@ -324,12 +324,10 @@ public class OutputActivityReportActivity extends BaseRefreshRecyclerActivity<Ou
 
         for (OutputDetailEntity outputDetailEntity : mOutputReportDetailAdapter.getList()) {
             // 尾料处理方式
-            if (outputDetailEntity.getRemainOperate() == null) {
-                if (outputDetailEntity.getRemainNum() == null || outputDetailEntity.getRemainNum().floatValue() == 0) {
-                    outputDetailEntity.setRemainOperate(new SystemCodeEntity(WomConstant.SystemCode.WOM_remainOperate_03));
-                } else {
-                    outputDetailEntity.setRemainOperate(new SystemCodeEntity(WomConstant.SystemCode.WOM_remainOperate_01));
-                }
+            if (outputDetailEntity.getRemainNum() == null || outputDetailEntity.getRemainNum().floatValue() == 0) {
+                outputDetailEntity.setRemainOperate(new SystemCodeEntity(WomConstant.SystemCode.WOM_remainOperate_03));
+            } else {
+                outputDetailEntity.setRemainOperate(new SystemCodeEntity(WomConstant.SystemCode.WOM_remainOperate_01));
             }
         }
 
@@ -409,7 +407,11 @@ public class OutputActivityReportActivity extends BaseRefreshRecyclerActivity<Ou
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void getEventPost(SelectDataEvent selectDataEvent) {
         if (selectDataEvent.getEntity() instanceof WarehouseEntity) {
-            mOutputDetailEntity.setWareId((WarehouseEntity) selectDataEvent.getEntity());
+            WarehouseEntity warehouseEntity = (WarehouseEntity) selectDataEvent.getEntity();
+            if (mOutputDetailEntity.getWareId() != null && !warehouseEntity.getId().equals(mOutputDetailEntity.getWareId().getId())){
+                mOutputDetailEntity.setStoreId(null);
+            }
+            mOutputDetailEntity.setWareId(warehouseEntity);
         } else if (selectDataEvent.getEntity() instanceof StoreSetEntity) {
             mOutputDetailEntity.setStoreId((StoreSetEntity) selectDataEvent.getEntity());
         }

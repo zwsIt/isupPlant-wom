@@ -278,12 +278,10 @@ public class OutputAgileActivityReportActivity extends BaseRefreshRecyclerActivi
         outputDetailDTO.setProcReport(mWaitPutinRecordEntity.getProcReportId());
         for (OutputDetailEntity outputDetailEntity : mOutputAgileReportDetailAdapter.getList()) {
             // 尾料处理方式
-            if (outputDetailEntity.getRemainOperate() == null) {
-                if (outputDetailEntity.getRemainNum() == null || outputDetailEntity.getRemainNum().floatValue() == 0) {
-                    outputDetailEntity.setRemainOperate(new SystemCodeEntity(WomConstant.SystemCode.WOM_remainOperate_03));
-                } else {
-                    outputDetailEntity.setRemainOperate(new SystemCodeEntity(WomConstant.SystemCode.WOM_remainOperate_01));
-                }
+            if (outputDetailEntity.getRemainNum() == null || outputDetailEntity.getRemainNum().floatValue() == 0) {
+                outputDetailEntity.setRemainOperate(new SystemCodeEntity(WomConstant.SystemCode.WOM_remainOperate_03));
+            } else {
+                outputDetailEntity.setRemainOperate(new SystemCodeEntity(WomConstant.SystemCode.WOM_remainOperate_01));
             }
         }
         OutputDetailDTO.DgListEntity dgListEntity = new OutputDetailDTO.DgListEntity();
@@ -367,7 +365,11 @@ public class OutputAgileActivityReportActivity extends BaseRefreshRecyclerActivi
     public void getEventPost(SelectDataEvent selectDataEvent) {
         Object object = selectDataEvent.getEntity();
         if (object instanceof WarehouseEntity) {
-            mOutputDetailEntity.setWareId((WarehouseEntity) selectDataEvent.getEntity());
+            WarehouseEntity warehouseEntity = (WarehouseEntity) selectDataEvent.getEntity();
+            if (mOutputDetailEntity.getWareId() != null && !warehouseEntity.getId().equals(mOutputDetailEntity.getWareId().getId())){
+                mOutputDetailEntity.setStoreId(null);
+            }
+            mOutputDetailEntity.setWareId(warehouseEntity);
         } else if (object instanceof StoreSetEntity) {
             mOutputDetailEntity.setStoreId((StoreSetEntity) selectDataEvent.getEntity());
         }else if (object instanceof Good) {

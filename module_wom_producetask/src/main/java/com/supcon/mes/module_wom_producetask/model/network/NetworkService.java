@@ -169,6 +169,6 @@ public interface NetworkService {
      * @description 尾料二维码获取物料信息
      */
     @GET("/msService/WOM/remainMaterial/remainMaterial/getRemainMaterialJSON")
-    Flowable<BAP5CommonEntity> getRemainMaterialJSON(@Query(value = "pk") Long id);
+    Flowable<BAP5CommonEntity> getRemainMaterialJSON(@Query("pk") Long id);
 
 }
