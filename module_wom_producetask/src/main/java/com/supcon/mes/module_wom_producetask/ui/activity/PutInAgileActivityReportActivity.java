@@ -267,11 +267,9 @@ public class PutInAgileActivityReportActivity extends BaseRefreshRecyclerActivit
             putInDetailEntity.setStoreId(remainMaterialEntity.getStoreId());
         } else {
             if (materialQRCodeEntity != null) { // 扫描物料
-//                MaterialEntity materialEntity = new MaterialEntity();
-//                materialEntity.setCode(materialQRCodeEntity.getMaterialCode());
-//                materialEntity.setName(materialQRCodeEntity.getMaterialName());
                 putInDetailEntity.setMaterialId(materialQRCodeEntity.getMaterial());
-
+                putInDetailEntity.setWareId(materialQRCodeEntity.getFromWare());
+                putInDetailEntity.setStoreId(materialQRCodeEntity.getFromStore());
                 putInDetailEntity.setMaterialBatchNum(materialQRCodeEntity.getMaterialBatchNo());
                 putInDetailEntity.setPutinNum(materialQRCodeEntity.getNum());
                 putInDetailEntity.setSpecificationNum(materialQRCodeEntity.getNum());
