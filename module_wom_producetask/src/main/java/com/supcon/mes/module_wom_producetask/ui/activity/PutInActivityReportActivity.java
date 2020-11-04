@@ -267,6 +267,8 @@ public class PutInActivityReportActivity extends BaseRefreshRecyclerActivity<Put
                 });
     }
 
+
+
     /**
      * 扫描功能：红外、摄像头扫描监听事件
      *
@@ -396,6 +398,10 @@ public class PutInActivityReportActivity extends BaseRefreshRecyclerActivity<Put
                 ToastUtils.show(context, context.getResources().getString(R.string.wom_di) + (list.indexOf(putInDetailEntity) + 1) + context.getResources().getString(R.string.wom_please_write_material_num));
                 return true;
             }
+            if (putInDetailEntity.getRemainId() != null && putInDetailEntity.getPutinNum().floatValue() == 0f) { // 尾料来源 用料量非0
+                ToastUtils.show(context, context.getResources().getString(R.string.wom_di) + (list.indexOf(putInDetailEntity) + 1) + context.getResources().getString(R.string.wom_from_remain_putin_num_greater_zero));
+                return true;
+            }
         }
         return false;
     }
@@ -454,7 +460,18 @@ public class PutInActivityReportActivity extends BaseRefreshRecyclerActivity<Put
         onLoadSuccess();
         MaterialQRCodeEntity materialQRCodeEntity = (MaterialQRCodeEntity) entity.data;
         if (checkMaterial(materialQRCodeEntity)) return;
-        addMaterialReport(materialQRCodeEntity,null);
+
+        if ("remain".equals(materialQRCodeEntity.getType())){
+            RemainMaterialEntity remainMaterialEntity = new RemainMaterialEntity();
+            remainMaterialEntity.setId(materialQRCodeEntity.getPK());
+            remainMaterialEntity.setMaterial(materialQRCodeEntity.getMaterial());
+            remainMaterialEntity.setBatchText(materialQRCodeEntity.getMaterialBatchNo());
+            remainMaterialEntity.setRemainNum(materialQRCodeEntity.getNum());
+            remainMaterialEntity.setWareId(materialQRCodeEntity.getFromWare());
+            remainMaterialEntity.setStoreId(materialQRCodeEntity.getFromStore());
+
+            addMaterialReport(null,remainMaterialEntity);
+        }
     }
 
     @Override

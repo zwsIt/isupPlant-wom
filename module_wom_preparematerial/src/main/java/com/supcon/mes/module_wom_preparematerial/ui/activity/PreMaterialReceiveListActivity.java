@@ -165,7 +165,7 @@ public class PreMaterialReceiveListActivity extends BaseRefreshRecyclerActivity<
                 .subscribe(o -> back());
         RxView.clicks(customSearchTitleBar.rightBtn())
                 .throttleFirst(300, TimeUnit.MILLISECONDS)
-                .subscribe(o -> getController(CommonScanController.class).openCameraScan());
+                .subscribe(o -> getController(CommonScanController.class).openCameraScan(context.getClass().getSimpleName()));
 
         RxView.clicks(submitBtn)
                 .throttleFirst(200, TimeUnit.MILLISECONDS)
@@ -316,11 +316,13 @@ public class PreMaterialReceiveListActivity extends BaseRefreshRecyclerActivity<
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onCodeReceiver(CodeResultEvent codeResultEvent) {
-        MaterialQRCodeEntity materialQRCodeEntity = MaterQRUtil.materialQRCode(context, codeResultEvent.scanResult);
-        if (materialQRCodeEntity == null) return;
+        if (context.getClass().getSimpleName().equals(codeResultEvent.scanTag)){
+            MaterialQRCodeEntity materialQRCodeEntity = MaterQRUtil.materialQRCode(context, codeResultEvent.scanResult);
+            if (materialQRCodeEntity == null) return;
 
-        // doReceive
-        doReceive(materialQRCodeEntity);
+            // doReceive
+            doReceive(materialQRCodeEntity);
+        }
     }
 
     /**

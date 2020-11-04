@@ -148,4 +148,5 @@
     <string name="wom_output_greater_than_zero">】项产出量须大于0</string>
     <string name="wom_num_greater_than_zero">】项数量须大于0</string>
     <string name="wom_warehouse_enable_please_write_storage">】项仓库已启用货位，请填写货位</string>
+    <string name="wom_from_remain_putin_num_greater_zero">】项来源尾料，用料量须大于零</string>
 </resources>

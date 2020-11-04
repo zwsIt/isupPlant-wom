@@ -118,6 +118,7 @@ public class BatchPutInActivityReportActivity extends BaseRefreshRecyclerActivit
     private int mCurrentPosition;
     private PutInDetailEntity mPutInDetailEntity;
     private String dgDeletedIds = "";
+    private boolean scan;
 
     @Override
     protected IListAdapter<PutInDetailEntity> createAdapter() {
@@ -173,7 +174,7 @@ public class BatchPutInActivityReportActivity extends BaseRefreshRecyclerActivit
         super.initListener();
         leftBtn.setOnClickListener(v -> finish());
         rightBtn.setOnClickListener(v -> {
-            getController(CommonScanController.class).openCameraScan();
+            getController(CommonScanController.class).openCameraScan(context.getClass().getSimpleName());
         });
         refreshListController.setOnRefreshListener(() -> presenterRouter.create(CommonListAPI.class).list(1, customCondition, queryParams,
                 WomConstant.URL.BATCH_PUT_IN_REPORT_LIST_URL + "&id=" + (mWaitPutinRecordEntity.getProcReportId().getId() == null ? -1 : mWaitPutinRecordEntity.getProcReportId().getId()), ""));
@@ -329,14 +330,12 @@ public class BatchPutInActivityReportActivity extends BaseRefreshRecyclerActivit
         onLoadFailed(ErrorMsgHelper.msgParse(errorMsg));
     }
 
-
-    private boolean scan=false;
-
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onCodeReceiver(CodeResultEvent codeResultEvent) {
-        MaterialQRCodeEntity materialQRCodeEntity = MaterQRUtil.materialQRCode(context,codeResultEvent.scanResult);
-        if (materialQRCodeEntity == null) return;
-        ToastUtils.show(context, context.getResources().getString(R.string.wom_no_realize));
+        if (context.getClass().getSimpleName().equals(codeResultEvent.scanTag)){
+            MaterialQRCodeEntity materialQRCodeEntity = MaterQRUtil.materialQRCode(context,codeResultEvent.scanResult);
+            if (materialQRCodeEntity == null) return;
+            ToastUtils.show(context, context.getResources().getString(R.string.wom_no_realize));
 //        if (arr != null && arr.length == 8) {
 //            String materCode=mWaitPutinRecordEntity.getTaskActiveId().getMaterialId().getCode();
 //            specs=arr[7].replace("specs=","");
@@ -348,6 +347,7 @@ public class BatchPutInActivityReportActivity extends BaseRefreshRecyclerActivit
 //        } else {
 //            ToastUtils.show(context, "二维码退料信息解析异常！");
 //        }
+        }
     }
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void getEventPost(SelectDataEvent selectDataEvent) {

@@ -419,44 +419,46 @@ public class BatchMaterialRecordsFragment extends BaseRefreshRecyclerFragment<Ba
      */
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onCodeReceiver(CodeResultEvent codeResultEvent) {
-        if (mBatchMaterialRecordsListAdapter.getList().size() == 0){
-            ToastUtils.show(context,getResources().getString(R.string.middleware_no_data));
-            return;
-        }
-
-        MaterialQRCodeEntity materialQRCodeEntity = MaterQRUtil.materialQRCode(context,codeResultEvent.scanResult);
-        if (materialQRCodeEntity == null)return;
-
-        if (materialQRCodeEntity.isIsRequest()){
-            // TODO...
-        }else {
-            // 匹配配料记录数据
-            int count = 0;
-            for (BatchMaterialPartEntity batchMaterialPartEntity : mBatchMaterialRecordsListAdapter.getList()){
-                if (TextUtils.isEmpty(batchMaterialPartEntity.getMaterialBatchNum())){
-                    if (materialQRCodeEntity.getMaterial().getCode().equals(batchMaterialPartEntity.getMaterialId().getCode())){
-                        batchMaterialPartEntity.setChecked(true);
-                        mBatchMaterialRecordsListAdapter.notifyItemChanged(mBatchMaterialRecordsListAdapter.getList().indexOf(batchMaterialPartEntity));
-                        contentView.scrollToPosition(mBatchMaterialRecordsListAdapter.getList().indexOf(batchMaterialPartEntity));
-                        doAllSelect();
-                        return;
-                    }
-                }else {
-                    if (materialQRCodeEntity.getMaterial().getCode().equals(batchMaterialPartEntity.getMaterialId().getCode()) &&
-                            materialQRCodeEntity.getMaterialBatchNo().equals(batchMaterialPartEntity.getMaterialBatchNum())){
-                        batchMaterialPartEntity.setChecked(true);
-                        mBatchMaterialRecordsListAdapter.notifyItemChanged(mBatchMaterialRecordsListAdapter.getList().indexOf(batchMaterialPartEntity));
-                        contentView.scrollToPosition(mBatchMaterialRecordsListAdapter.getList().indexOf(batchMaterialPartEntity));
-                        doAllSelect();
-                        return;
-                    }
-                }
-
-                count++;
+        if (context.getClass().getSimpleName().equals(codeResultEvent.scanTag)){
+            if (mBatchMaterialRecordsListAdapter.getList().size() == 0){
+                ToastUtils.show(context,getResources().getString(R.string.middleware_no_data));
+                return;
             }
 
-            if (count == mBatchMaterialRecordsListAdapter.getList().size()){
-                ToastUtils.show(context, context.getResources().getString(R.string.wom_no_scan_material_info));
+            MaterialQRCodeEntity materialQRCodeEntity = MaterQRUtil.materialQRCode(context,codeResultEvent.scanResult);
+            if (materialQRCodeEntity == null)return;
+
+            if (materialQRCodeEntity.isIsRequest()){
+                // TODO...
+            }else {
+                // 匹配配料记录数据
+                int count = 0;
+                for (BatchMaterialPartEntity batchMaterialPartEntity : mBatchMaterialRecordsListAdapter.getList()){
+                    if (TextUtils.isEmpty(batchMaterialPartEntity.getMaterialBatchNum())){
+                        if (materialQRCodeEntity.getMaterial().getCode().equals(batchMaterialPartEntity.getMaterialId().getCode())){
+                            batchMaterialPartEntity.setChecked(true);
+                            mBatchMaterialRecordsListAdapter.notifyItemChanged(mBatchMaterialRecordsListAdapter.getList().indexOf(batchMaterialPartEntity));
+                            contentView.scrollToPosition(mBatchMaterialRecordsListAdapter.getList().indexOf(batchMaterialPartEntity));
+                            doAllSelect();
+                            return;
+                        }
+                    }else {
+                        if (materialQRCodeEntity.getMaterial().getCode().equals(batchMaterialPartEntity.getMaterialId().getCode()) &&
+                                materialQRCodeEntity.getMaterialBatchNo().equals(batchMaterialPartEntity.getMaterialBatchNum())){
+                            batchMaterialPartEntity.setChecked(true);
+                            mBatchMaterialRecordsListAdapter.notifyItemChanged(mBatchMaterialRecordsListAdapter.getList().indexOf(batchMaterialPartEntity));
+                            contentView.scrollToPosition(mBatchMaterialRecordsListAdapter.getList().indexOf(batchMaterialPartEntity));
+                            doAllSelect();
+                            return;
+                        }
+                    }
+
+                    count++;
+                }
+
+                if (count == mBatchMaterialRecordsListAdapter.getList().size()){
+                    ToastUtils.show(context, context.getResources().getString(R.string.wom_no_scan_material_info));
+                }
             }
         }
 
@@ -476,6 +478,6 @@ public class BatchMaterialRecordsFragment extends BaseRefreshRecyclerFragment<Ba
      *
      */
     public void scan() {
-        getController(CommonScanController.class).openCameraScan();
+        getController(CommonScanController.class).openCameraScan(context.getClass().getSimpleName());
     }
 }

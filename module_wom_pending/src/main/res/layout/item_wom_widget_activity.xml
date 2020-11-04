@@ -77,7 +77,6 @@
                     android:tag="sequenceCustomTv"
                     app:key_width="0dp"
                     app:content_size="13"
-                    app:gravity="right"
                     app:content_color="@color/dark_text"/>
             </LinearLayout>
             <LinearLayout
@@ -131,7 +130,6 @@
                     android:tag="factoryModelUnitCustomTv"
                     app:key_width="0dp"
                     app:content_size="13"
-                    app:gravity="right"
                     app:content_color="@color/dark_text"/>
             </LinearLayout>
             <LinearLayout
@@ -156,7 +154,6 @@
                     android:tag="timeCustomTv"
                     app:key_width="0dp"
                     app:content_size="13"
-                    app:gravity="right"
                     app:content_color="@color/dark_text"/>
             </LinearLayout>
         </LinearLayout>

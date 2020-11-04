@@ -163,7 +163,7 @@ public class BatchMaterialRecordsRecallAbandonListActivity extends BaseRefreshRe
         searchTitleBar.rightBtn().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                getController(CommonScanController.class).openCameraScan();
+                getController(CommonScanController.class).openCameraScan(context.getClass().getSimpleName());
             }
         });
         searchTitleBar.setOnExpandListener(isExpand -> {
@@ -349,42 +349,44 @@ public class BatchMaterialRecordsRecallAbandonListActivity extends BaseRefreshRe
      */
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onCodeReceiver(CodeResultEvent codeResultEvent) {
-        if (mBatchMaterialRecordsAbandonListAdapter.getList().size() == 0){
-            ToastUtils.show(context,getResources().getString(R.string.middleware_no_data));
-            return;
-        }
-
-        MaterialQRCodeEntity materialQRCodeEntity = MaterQRUtil.materialQRCode(context,codeResultEvent.scanResult);
-        if (materialQRCodeEntity == null)return;
-
-        if (materialQRCodeEntity.isIsRequest()){
-            // TODO...
-        }else {
-            // 匹配配料记录数据
-            int count = 0;
-            for (BatchMaterialPartEntity batchMaterialPartEntity : mBatchMaterialRecordsAbandonListAdapter.getList()){
-                if (TextUtils.isEmpty(batchMaterialPartEntity.getMaterialBatchNum())){
-                    if (materialQRCodeEntity.getMaterial().getCode().equals(batchMaterialPartEntity.getMaterialId().getCode())){
-                        batchMaterialPartEntity.setChecked(true);
-                        mBatchMaterialRecordsAbandonListAdapter.notifyItemChanged(mBatchMaterialRecordsAbandonListAdapter.getList().indexOf(batchMaterialPartEntity));
-                        doAllSelect();
-                        return;
-                    }
-                }else {
-                    if (materialQRCodeEntity.getMaterial().getCode().equals(batchMaterialPartEntity.getMaterialId().getCode()) &&
-                            materialQRCodeEntity.getMaterialBatchNo().equals(batchMaterialPartEntity.getMaterialBatchNum())){
-                        batchMaterialPartEntity.setChecked(true);
-                        mBatchMaterialRecordsAbandonListAdapter.notifyItemChanged(mBatchMaterialRecordsAbandonListAdapter.getList().indexOf(batchMaterialPartEntity));
-                        doAllSelect();
-                        return;
-                    }
-                }
-
-                count++;
+        if (context.getClass().getSimpleName().equals(codeResultEvent.scanTag)){
+            if (mBatchMaterialRecordsAbandonListAdapter.getList().size() == 0){
+                ToastUtils.show(context,getResources().getString(R.string.middleware_no_data));
+                return;
             }
 
-            if (count == mBatchMaterialRecordsAbandonListAdapter.getList().size()){
-                ToastUtils.show(context, context.getResources().getString(R.string.wom_no_scan_material_info));
+            MaterialQRCodeEntity materialQRCodeEntity = MaterQRUtil.materialQRCode(context,codeResultEvent.scanResult);
+            if (materialQRCodeEntity == null)return;
+
+            if (materialQRCodeEntity.isIsRequest()){
+                // TODO...
+            }else {
+                // 匹配配料记录数据
+                int count = 0;
+                for (BatchMaterialPartEntity batchMaterialPartEntity : mBatchMaterialRecordsAbandonListAdapter.getList()){
+                    if (TextUtils.isEmpty(batchMaterialPartEntity.getMaterialBatchNum())){
+                        if (materialQRCodeEntity.getMaterial().getCode().equals(batchMaterialPartEntity.getMaterialId().getCode())){
+                            batchMaterialPartEntity.setChecked(true);
+                            mBatchMaterialRecordsAbandonListAdapter.notifyItemChanged(mBatchMaterialRecordsAbandonListAdapter.getList().indexOf(batchMaterialPartEntity));
+                            doAllSelect();
+                            return;
+                        }
+                    }else {
+                        if (materialQRCodeEntity.getMaterial().getCode().equals(batchMaterialPartEntity.getMaterialId().getCode()) &&
+                                materialQRCodeEntity.getMaterialBatchNo().equals(batchMaterialPartEntity.getMaterialBatchNum())){
+                            batchMaterialPartEntity.setChecked(true);
+                            mBatchMaterialRecordsAbandonListAdapter.notifyItemChanged(mBatchMaterialRecordsAbandonListAdapter.getList().indexOf(batchMaterialPartEntity));
+                            doAllSelect();
+                            return;
+                        }
+                    }
+
+                    count++;
+                }
+
+                if (count == mBatchMaterialRecordsAbandonListAdapter.getList().size()){
+                    ToastUtils.show(context, context.getResources().getString(R.string.wom_no_scan_material_info));
+                }
             }
         }
 

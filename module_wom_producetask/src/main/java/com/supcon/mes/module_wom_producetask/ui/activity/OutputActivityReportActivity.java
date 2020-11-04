@@ -210,7 +210,7 @@ public class OutputActivityReportActivity extends BaseRefreshRecyclerActivity<Ou
         super.initListener();
         leftBtn.setOnClickListener(v -> finish());
         rightBtn.setOnClickListener(v -> {
-            getController(CommonScanController.class).openCameraScan();
+            getController(CommonScanController.class).openCameraScan(context.getClass().getSimpleName());
         });
         refreshListController.setOnRefreshListener(new OnRefreshListener() {
             @Override
@@ -276,31 +276,33 @@ public class OutputActivityReportActivity extends BaseRefreshRecyclerActivity<Ou
      */
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onCodeReceiver(CodeResultEvent codeResultEvent) {
-        MaterialQRCodeEntity materialQRCodeEntity = MaterQRUtil.materialQRCode(context,codeResultEvent.scanResult);
-        if (materialQRCodeEntity == null) return;
-        if (!mWaitPutinRecordEntity.getTaskActiveId().getMaterialId().getCode().equals(materialQRCodeEntity.getMaterial().getCode())){
-            ToastUtils.show(context, context.getResources().getString(R.string.wom_scan_material_error));
-            return;
-        }
-        if (!TextUtils.isEmpty(mWaitPutinRecordEntity.getTaskActiveId().getMaterialBatchNum()) && !materialQRCodeEntity.getMaterialBatchNo().equals(mWaitPutinRecordEntity.getTaskActiveId().getMaterialBatchNum())){
-            ToastUtils.show(context, context.getResources().getString(R.string.wom_scan_batchNo_error));
-            return;
-        }
-        if (materialQRCodeEntity.isRequest()){
-            //TODO...
-            ToastUtils.show(context,context.getResources().getString(R.string.wom_no_realize));
-        }else {
-            OutputDetailEntity outputDetailEntity = new OutputDetailEntity();
-            outputDetailEntity.setMaterialBatchNum(materialQRCodeEntity.getMaterialBatchNo());
-            outputDetailEntity.setOutputNum(materialQRCodeEntity.getNum());
-            outputDetailEntity.setProduct(mWaitPutinRecordEntity.getTaskActiveId().getMaterialId()); // 物料
-            outputDetailEntity.setWareId(materialQRCodeEntity.getToWare());
-            outputDetailEntity.setStoreId(materialQRCodeEntity.getToStore());
-            outputDetailEntity.setPutinTime(new Date().getTime());  // 报工时间
-            mOutputReportDetailAdapter.addData(outputDetailEntity);
-            mOutputReportDetailAdapter.notifyItemRangeInserted(mOutputReportDetailAdapter.getItemCount() - 1, 1);
-            mOutputReportDetailAdapter.notifyItemRangeChanged(mOutputReportDetailAdapter.getItemCount() - 1, 1);
-            contentView.smoothScrollToPosition(mOutputReportDetailAdapter.getItemCount() - 1);
+        if (context.getClass().getSimpleName().equals(codeResultEvent.scanTag)){
+            MaterialQRCodeEntity materialQRCodeEntity = MaterQRUtil.materialQRCode(context,codeResultEvent.scanResult);
+            if (materialQRCodeEntity == null) return;
+            if (!mWaitPutinRecordEntity.getTaskActiveId().getMaterialId().getCode().equals(materialQRCodeEntity.getMaterial().getCode())){
+                ToastUtils.show(context, context.getResources().getString(R.string.wom_scan_material_error));
+                return;
+            }
+            if (!TextUtils.isEmpty(mWaitPutinRecordEntity.getTaskActiveId().getMaterialBatchNum()) && !materialQRCodeEntity.getMaterialBatchNo().equals(mWaitPutinRecordEntity.getTaskActiveId().getMaterialBatchNum())){
+                ToastUtils.show(context, context.getResources().getString(R.string.wom_scan_batchNo_error));
+                return;
+            }
+            if (materialQRCodeEntity.isRequest()){
+                //TODO...
+                ToastUtils.show(context,context.getResources().getString(R.string.wom_no_realize));
+            }else {
+                OutputDetailEntity outputDetailEntity = new OutputDetailEntity();
+                outputDetailEntity.setMaterialBatchNum(materialQRCodeEntity.getMaterialBatchNo());
+                outputDetailEntity.setOutputNum(materialQRCodeEntity.getNum());
+                outputDetailEntity.setProduct(mWaitPutinRecordEntity.getTaskActiveId().getMaterialId()); // 物料
+                outputDetailEntity.setWareId(materialQRCodeEntity.getToWare());
+                outputDetailEntity.setStoreId(materialQRCodeEntity.getToStore());
+                outputDetailEntity.setPutinTime(new Date().getTime());  // 报工时间
+                mOutputReportDetailAdapter.addData(outputDetailEntity);
+                mOutputReportDetailAdapter.notifyItemRangeInserted(mOutputReportDetailAdapter.getItemCount() - 1, 1);
+                mOutputReportDetailAdapter.notifyItemRangeChanged(mOutputReportDetailAdapter.getItemCount() - 1, 1);
+                contentView.smoothScrollToPosition(mOutputReportDetailAdapter.getItemCount() - 1);
+            }
         }
     }
 

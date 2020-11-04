@@ -173,7 +173,7 @@ public class OutputAgileActivityReportActivity extends BaseRefreshRecyclerActivi
         super.initListener();
         leftBtn.setOnClickListener(v -> finish());
         rightBtn.setOnClickListener(v -> {
-            getController(CommonScanController.class).openCameraScan();
+            getController(CommonScanController.class).openCameraScan(context.getClass().getSimpleName());
         });
         refreshListController.setOnRefreshListener(new OnRefreshListener() {
             @Override
@@ -234,29 +234,30 @@ public class OutputAgileActivityReportActivity extends BaseRefreshRecyclerActivi
                     }
                 });
     }
+
+
     /**
      * 扫描功能：红外、摄像头扫描监听事件
      * @param codeResultEvent
      */
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onCodeReceiver(CodeResultEvent codeResultEvent) {
-        MaterialQRCodeEntity materialQRCodeEntity = MaterQRUtil.materialQRCode(context,codeResultEvent.scanResult);
-        if (materialQRCodeEntity == null) return;
+        if (context.getClass().getSimpleName().equals(codeResultEvent.scanTag)){
+            MaterialQRCodeEntity materialQRCodeEntity = MaterQRUtil.materialQRCode(context,codeResultEvent.scanResult);
+            if (materialQRCodeEntity == null) return;
 
-//        MaterialEntity materialEntity = new MaterialEntity();
-//        materialEntity.setCode(materialQRCodeEntity.getMaterialCode());
-//        materialEntity.setName(materialQRCodeEntity.getMaterialName());
-        OutputDetailEntity outputDetailEntity = new OutputDetailEntity();
-        outputDetailEntity.setProduct(materialQRCodeEntity.getMaterial());
-        outputDetailEntity.setMaterialBatchNum(materialQRCodeEntity.getMaterialBatchNo());
-        outputDetailEntity.setOutputNum(materialQRCodeEntity.getNum());
-        outputDetailEntity.setWareId(materialQRCodeEntity.getToWare());
-        outputDetailEntity.setStoreId(materialQRCodeEntity.getToStore());
-        outputDetailEntity.setPutinTime(new Date().getTime());  // 产出时间
-        mOutputAgileReportDetailAdapter.addData(outputDetailEntity);
-        mOutputAgileReportDetailAdapter.notifyItemRangeInserted(mOutputAgileReportDetailAdapter.getItemCount() - 1, 1);
-        mOutputAgileReportDetailAdapter.notifyItemRangeChanged(mOutputAgileReportDetailAdapter.getItemCount() - 1, 1);
-        contentView.smoothScrollToPosition(mOutputAgileReportDetailAdapter.getItemCount() - 1);
+            OutputDetailEntity outputDetailEntity = new OutputDetailEntity();
+            outputDetailEntity.setProduct(materialQRCodeEntity.getMaterial());
+            outputDetailEntity.setMaterialBatchNum(materialQRCodeEntity.getMaterialBatchNo());
+            outputDetailEntity.setOutputNum(materialQRCodeEntity.getNum());
+            outputDetailEntity.setWareId(materialQRCodeEntity.getToWare());
+            outputDetailEntity.setStoreId(materialQRCodeEntity.getToStore());
+            outputDetailEntity.setPutinTime(new Date().getTime());  // 产出时间
+            mOutputAgileReportDetailAdapter.addData(outputDetailEntity);
+            mOutputAgileReportDetailAdapter.notifyItemRangeInserted(mOutputAgileReportDetailAdapter.getItemCount() - 1, 1);
+            mOutputAgileReportDetailAdapter.notifyItemRangeChanged(mOutputAgileReportDetailAdapter.getItemCount() - 1, 1);
+            contentView.smoothScrollToPosition(mOutputAgileReportDetailAdapter.getItemCount() - 1);
+        }
 
     }
     /**
