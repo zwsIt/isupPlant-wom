@@ -9,6 +9,7 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.view.View;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.app.annotation.BindByTag;
@@ -51,6 +52,8 @@ public class ProduceTaskActivityListActivity extends BaseMultiFragmentActivity {
     CustomTab customTab;
     @BindByTag("viewPager")
     NoScrollViewPager viewPager;
+    @BindByTag("titleSetting")
+    ImageView titleSetting;
     private FormulaActivityListFragment mFormulaActivityListFragment;
     private TemporaryActivityListFragment mTemporaryActivityListFragment;
     WaitPutinRecordEntity waitPutinRecordEntity;
@@ -83,6 +86,8 @@ public class ProduceTaskActivityListActivity extends BaseMultiFragmentActivity {
         titleText.setText(context.getResources().getString(R.string.wom_activity_list));
         rightBtn.setVisibility(View.VISIBLE);
         rightBtn.setImageResource(R.drawable.ic_wts_reference_white);
+        titleSetting.setVisibility(View.VISIBLE);
+        titleSetting.setImageResource(R.drawable.ic_process);
         initTab();
         initViewPager();
     }
@@ -129,6 +134,13 @@ public class ProduceTaskActivityListActivity extends BaseMultiFragmentActivity {
                     Bundle bundle = new Bundle();
                     bundle.putSerializable(Constant.IntentKey.WAIT_PUT_RECORD, waitPutinRecordEntity);
                     IntentRouter.go(context, Constant.Router.ACTIVITY_EXEREDS_LIST, bundle);
+                });
+        RxView.clicks(titleSetting)
+                .throttleFirst(2000, TimeUnit.MILLISECONDS)
+                .subscribe(o->{
+                    Bundle bundle=new Bundle();
+                    bundle.putSerializable(Constant.IntentKey.WAIT_PUT_RECORD,waitPutinRecordEntity);
+                    IntentRouter.go(context,Constant.Router.WOM_ACTIVITY_PROCESS_LIST,bundle);
                 });
         customTab.setOnTabChangeListener(current -> viewPager.setCurrentItem(current));
         viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {

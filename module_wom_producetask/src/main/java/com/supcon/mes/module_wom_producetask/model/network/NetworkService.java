@@ -2,11 +2,13 @@ package com.supcon.mes.module_wom_producetask.model.network;
 
 import com.app.annotation.apt.ApiFactory;
 import com.supcon.mes.middleware.model.bean.BAP5CommonEntity;
+import com.supcon.mes.middleware.model.bean.BAP5CommonListEntity;
 import com.supcon.mes.middleware.model.bean.BapResultEntity;
 import com.supcon.mes.middleware.model.bean.CommonBAPListEntity;
 import com.supcon.mes.middleware.model.bean.MaterialQRCodeEntity;
 import com.supcon.mes.middleware.model.bean.wom.FactoryModelEntity;
 import com.supcon.mes.module_wom_producetask.model.bean.ActiExelogListEntity;
+import com.supcon.mes.module_wom_producetask.model.bean.TaskActiveEntity;
 import com.supcon.mes.module_wom_producetask.model.bean.WaitPutinRecordEntity;
 import com.supcon.mes.module_wom_producetask.model.dto.BatchPutinDetailDTO;
 import com.supcon.mes.module_wom_producetask.model.dto.OutputDetailDTO;
@@ -171,5 +173,12 @@ public interface NetworkService {
      */
     @GET("/msService/WOM/remainMaterial/remainMaterial/getRemainMaterialJSON")
     Flowable<BAP5CommonEntity<MaterialQRCodeEntity>> getRemainMaterialJSON(@Query("pk") Long id);
+    /**
+     * 根据工序获取活动
+     * @param paramMap
+     * @return
+     */
+    @POST("/msService/WOM/produceTask/taskActive/queryByProcess")
+    Flowable<BAP5CommonEntity<CommonBAPListEntity<TaskActiveEntity>>> listActivities(@QueryMap Map<String,Object> paramMap, @Body Map<String,Object> params);
 
 }

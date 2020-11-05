@@ -101,7 +101,6 @@
                     android:layout_height="@dimen/dp_36"
                     android:id="@+id/numCustomTv"
                     android:tag="numCustomTv"
-                    app:gravity="right"
                     app:key_width="0dp"
                     app:content_size="13"
                     app:content_color="@color/dark_text"/>
