@@ -22,12 +22,12 @@ public class ActiExelogEntity extends BaseEntity {
     public SystemCodeEntity activeType;//活动类型
     public BigDecimal actlongTime;//执行时长(分)
 
-    public Long actualNum;//实际数量
-    public String beforeNum;//前重
-    public String afterNum;//后重
+    public BigDecimal actualNum;//实际数量
+    public BigDecimal beforeNum;//前重
+    public BigDecimal afterNum;//后重
     public String checkResult;//检验结果
     public String checkState;//检验状态
-    public BaseIdValueEntity exeSystem;//执行系统
+    public SystemCodeEntity exeSystem;//执行系统
     public Long execSort;//报工顺序
     public Boolean isPassCheck;
     public String materialBatchNum;//物料批号
@@ -92,27 +92,27 @@ public class ActiExelogEntity extends BaseEntity {
         this.actlongTime = actlongTime;
     }
 
-    public Long getActualNum() {
+    public BigDecimal getActualNum() {
         return actualNum;
     }
 
-    public void setActualNum(Long actualNum) {
+    public void setActualNum(BigDecimal actualNum) {
         this.actualNum = actualNum;
     }
 
-    public String getBeforeNum() {
+    public BigDecimal getBeforeNum() {
         return beforeNum;
     }
 
-    public void setBeforeNum(String beforeNum) {
+    public void setBeforeNum(BigDecimal beforeNum) {
         this.beforeNum = beforeNum;
     }
 
-    public String getAfterNum() {
+    public BigDecimal getAfterNum() {
         return afterNum;
     }
 
-    public void setAfterNum(String afterNum) {
+    public void setAfterNum(BigDecimal afterNum) {
         this.afterNum = afterNum;
     }
 
@@ -132,11 +132,11 @@ public class ActiExelogEntity extends BaseEntity {
         this.checkState = checkState;
     }
 
-    public BaseIdValueEntity getExeSystem() {
+    public SystemCodeEntity getExeSystem() {
         return exeSystem;
     }
 
-    public void setExeSystem(BaseIdValueEntity exeSystem) {
+    public void setExeSystem(SystemCodeEntity exeSystem) {
         this.exeSystem = exeSystem;
     }
 

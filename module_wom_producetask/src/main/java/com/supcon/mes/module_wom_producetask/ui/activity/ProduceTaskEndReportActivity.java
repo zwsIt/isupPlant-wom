@@ -96,13 +96,10 @@ public class ProduceTaskEndReportActivity extends BaseRefreshRecyclerActivity<Ou
     ImageView customListWidgetAdd;
 
     private ProduceTaskEndReportDetailAdapter mProduceTaskEndReportDetailAdapter;
-//    private ProduceTaskEndReportDetailController mProduceTaskEndReportDetailController;
 
     private WaitPutinRecordEntity mWaitPutinRecordEntity;
     private OutputDetailEntity mOutputDetailEntity;
     private int mCurrentPosition;
-    private boolean mShouldScroll;
-    private LinearSmoothScroller mLinearSmoothScroller;
 
     @Override
     protected IListAdapter<OutputDetailEntity> createAdapter() {

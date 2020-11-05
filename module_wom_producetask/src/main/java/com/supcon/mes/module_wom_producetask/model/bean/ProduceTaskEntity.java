@@ -88,6 +88,9 @@ public class ProduceTaskEntity extends BaseEntity {
     }
 
     public FormulaEntity getFormulaId() {
+        if (formulaId == null){
+            formulaId = new FormulaEntity();
+        }
         return formulaId;
     }
 

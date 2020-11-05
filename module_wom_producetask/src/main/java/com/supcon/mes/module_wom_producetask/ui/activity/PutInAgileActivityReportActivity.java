@@ -175,7 +175,7 @@ public class PutInAgileActivityReportActivity extends BaseRefreshRecyclerActivit
         super.initListener();
         leftBtn.setOnClickListener(v -> finish());
         rightBtn.setOnClickListener(v -> {
-            getController(CommonScanController.class).openCameraScan();
+            getController(CommonScanController.class).openCameraScan(context.getClass().getSimpleName());
         });
         refreshListController.setOnRefreshListener(new OnRefreshListener() {
             @Override
@@ -256,49 +256,52 @@ public class PutInAgileActivityReportActivity extends BaseRefreshRecyclerActivit
     long lastTime;
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onCodeReceiver(CodeResultEvent codeResultEvent) {
-        long currentTime = System.currentTimeMillis();
-        if (currentTime - lastTime >= 100) {
-            String[] arr = MaterQRUtil.materialQRCode(codeResultEvent.scanResult);
-            if (arr != null && arr.length == 7) {
-                String incode = arr[0].replace("incode=", "");
-                String batchno = arr[1].replace("batchno=", "");
-                String batchno2 = arr[2].replace("batchno2=", "");
-                String packqty = arr[3].replace("packqty=", "");
-                String packs = arr[4].replace("packs=", "");
-                String purcode = arr[5].replace("purcode=", "");
-                String orderno = arr[6].replace("orderno=", "");
+        if (context.getClass().getSimpleName().equals(codeResultEvent.scanTag)){
+            long currentTime = System.currentTimeMillis();
+            if (currentTime - lastTime >= 100) {
+                String[] arr = MaterQRUtil.materialQRCode(codeResultEvent.scanResult);
+                if (arr != null && arr.length == 7) {
+                    String incode = arr[0].replace("incode=", "");
+                    String batchno = arr[1].replace("batchno=", "");
+                    String batchno2 = arr[2].replace("batchno2=", "");
+                    String packqty = arr[3].replace("packqty=", "");
+                    String packs = arr[4].replace("packs=", "");
+                    String purcode = arr[5].replace("purcode=", "");
+                    String orderno = arr[6].replace("orderno=", "");
 
-                goodMap.put(Constant.BAPQuery.CODE, incode);
-                getController(ProductController.class)
-                        .getProduct(goodMap)
-                        .setOnSuccessListener(new OnSuccessListener() {
-                            @Override
-                            public void onSuccess(Object result) {
-                                if (result instanceof Good) {
-                                    Good good = (Good) result;
-                                    MaterialEntity materialEntity = new MaterialEntity();
-                                    materialEntity.setId(good.id);
-                                    materialEntity.setCode(good.code);
-                                    materialEntity.setName(good.name);
-                                    PutInDetailEntity putInDetailEntity = new PutInDetailEntity();
-                                    putInDetailEntity.setMaterialId(materialEntity);
-                                    putInDetailEntity.setWareId(mWaitPutinRecordEntity.getWare());
-                                    putInDetailEntity.setMaterialBatchNum(batchno);
-                                    putInDetailEntity.setPutinNum(!TextUtils.isEmpty(packqty) ? new BigDecimal(packqty) : null);
-                                    putInDetailEntity.setPutinTime(new Date().getTime());  // 投料时间
-                                    mPutInAgileReportDetailAdapter.addData(putInDetailEntity);
-                                    mPutInAgileReportDetailAdapter.notifyItemRangeInserted(mPutInAgileReportDetailAdapter.getItemCount() - 1, 1);
-                                    mPutInAgileReportDetailAdapter.notifyItemRangeChanged(mPutInAgileReportDetailAdapter.getItemCount() - 1, 1);
-                                    contentView.smoothScrollToPosition(mPutInAgileReportDetailAdapter.getItemCount() - 1);
-                                } else {
-                                    ToastUtils.show(context, result.toString());
+                    goodMap.put(Constant.BAPQuery.CODE, incode);
+                    getController(ProductController.class)
+                            .getProduct(goodMap)
+                            .setOnSuccessListener(new OnSuccessListener() {
+                                @Override
+                                public void onSuccess(Object result) {
+                                    if (result instanceof Good) {
+                                        Good good = (Good) result;
+                                        MaterialEntity materialEntity = new MaterialEntity();
+                                        materialEntity.setId(good.id);
+                                        materialEntity.setCode(good.code);
+                                        materialEntity.setName(good.name);
+                                        PutInDetailEntity putInDetailEntity = new PutInDetailEntity();
+                                        putInDetailEntity.setMaterialId(materialEntity);
+                                        putInDetailEntity.setWareId(mWaitPutinRecordEntity.getWare());
+                                        putInDetailEntity.setMaterialBatchNum(batchno);
+                                        putInDetailEntity.setPutinNum(!TextUtils.isEmpty(packqty) ? new BigDecimal(packqty) : null);
+                                        putInDetailEntity.setPutinTime(new Date().getTime());  // 投料时间
+                                        mPutInAgileReportDetailAdapter.addData(putInDetailEntity);
+                                        mPutInAgileReportDetailAdapter.notifyItemRangeInserted(mPutInAgileReportDetailAdapter.getItemCount() - 1, 1);
+                                        mPutInAgileReportDetailAdapter.notifyItemRangeChanged(mPutInAgileReportDetailAdapter.getItemCount() - 1, 1);
+                                        contentView.smoothScrollToPosition(mPutInAgileReportDetailAdapter.getItemCount() - 1);
+                                    } else {
+                                        ToastUtils.show(context, result.toString());
+                                    }
                                 }
-                            }
-                        });
-            } else {
-                ToastUtils.show(context, "二维码信息解析异常！");
+                            });
+                } else {
+                    ToastUtils.show(context, "二维码信息解析异常！");
+                }
             }
         }
+
     }
     /**
      * @param

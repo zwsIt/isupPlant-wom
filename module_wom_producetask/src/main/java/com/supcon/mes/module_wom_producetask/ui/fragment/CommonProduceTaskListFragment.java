@@ -441,5 +441,4 @@ public class CommonProduceTaskListFragment extends BaseRefreshRecyclerFragment<W
 
     }
 
-
 }
