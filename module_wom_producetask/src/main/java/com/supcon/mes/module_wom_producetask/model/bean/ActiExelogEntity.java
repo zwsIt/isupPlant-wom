@@ -100,6 +100,7 @@ public class ActiExelogEntity extends BaseEntity {
         this.actualNum = actualNum;
     }
 
+
     public BigDecimal getBeforeNum() {
         return beforeNum;
     }
