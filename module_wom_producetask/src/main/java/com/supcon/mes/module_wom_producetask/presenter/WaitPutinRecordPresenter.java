@@ -75,7 +75,7 @@ public class WaitPutinRecordPresenter extends WaitPutinRecordsListContract.Prese
                     return bap5CommonEntity;
                 })
                         .subscribe(commonBAPListEntityBAP5CommonEntity -> {
-                            if (commonBAPListEntityBAP5CommonEntity.success) {
+                            if (commonBAPListEntityBAP5CommonEntity.success && commonBAPListEntityBAP5CommonEntity.data != null) {
                                 getView().listWaitPutinRecordsSuccess(commonBAPListEntityBAP5CommonEntity.data);
                             } else {
                                 getView().listWaitPutinRecordsFailed(commonBAPListEntityBAP5CommonEntity.msg);

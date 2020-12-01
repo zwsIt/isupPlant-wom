@@ -274,6 +274,16 @@ public class PreMaterialReceiveListActivity extends BaseRefreshRecyclerActivity<
                     ToastUtils.show(context, context.getResources().getString(R.string.wom_part_receivereason_forbidden_null));
                     return;
                 }
+                if (("WOM_receiveState/partReceive".equals(preMaterialEntity.receiveState.id) || "WOM_receiveState/receive".equals(preMaterialEntity.receiveState.id))
+                        && preMaterialEntity.preNum < preMaterialEntity.receiveNum ) {
+                    ToastUtils.show(context, context.getResources().getString(R.string.wom_receive_num_smaller_than_preparenum));
+                    return;
+                }
+                if (("WOM_receiveState/partReceive".equals(preMaterialEntity.receiveState.id))
+                        && preMaterialEntity.receiveNum == 0f ) {
+                    ToastUtils.show(context, context.getResources().getString(R.string.wom_part_receive_num_not_zero));
+                    return;
+                }
 
                 preMaterialEntity.receiveDate = System.currentTimeMillis();
 

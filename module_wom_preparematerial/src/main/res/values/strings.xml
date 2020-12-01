@@ -18,4 +18,6 @@
     <string name="wom_no_realize_request_data">暂未实现在线请求数据</string>
     <string name="wom_no_scan_prepare_result">未能扫描到匹配备料，请检查确认物料信息</string>
     <string name="wom_confirm_prepare_material_scan_receive">确认接收当前物料：</string>
+    <string name="wom_receive_num_smaller_than_preparenum">“接收数量”应小于“备料数量”</string>
+    <string name="wom_part_receive_num_not_zero">部分接收时，“接收数量”不应为0</string>
 </resources>

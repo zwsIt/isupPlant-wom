@@ -179,7 +179,8 @@ public class PreMaterialReceiveListAdapter extends BaseListDataRecyclerViewAdapt
                 mReceiveStateAdapter = new ArrayAdapter<>(context, R.layout.ly_spinner_item_dark14, mReceiveStateStr);
                 mReceiveStateAdapter.setDropDownViewResource(R.layout.ly_spinner_dropdown_item);
                 itemPreMaterialReceiveReasons.setAdapter(mReceiveStateAdapter);
-                itemPreMaterialReceiveReasons.setSelection(itemPreMaterialReceiveReasons.getSelectedItem() == null ? 1 : mReceiveStateStr.indexOf(itemPreMaterialReceiveReasons.getSelectedItem().toString()));
+                itemPreMaterialReceiveReasons.setSelection(itemPreMaterialReceiveReasons.getSelectedItem() == null ?
+                        mReceiveStateStr.indexOf(receiveStates.get("WOM_receiveState/receive")) : mReceiveStateStr.indexOf(itemPreMaterialReceiveReasons.getSelectedItem().toString()));
             }
             TextHelper.setRequired(true, itemPreMaterialRejectReasonViewText);
 
@@ -317,19 +318,10 @@ public class PreMaterialReceiveListAdapter extends BaseListDataRecyclerViewAdapt
                             ToastUtils.show(context, context.getResources().getString(R.string.wom_please_select_receive_type));
                             return;
                         }
-                        if ("WOM_receiveState/partReceive".equals(materialEntity.receiveState.id)) {
-                            if (materialEntity.preNum != null && receiveNumF >= materialEntity.preNum) {
-                                ToastUtils.show(context, context.getResources().getString(R.string.wom_part_receive_num_smaller_preparenum));
-                                return;
-                            } else {
-                                materialEntity.receiveNum = receiveNumF;
-                            }
-                        } else if ("WOM_receiveState/receive".equals(materialEntity.receiveState.id)) {
+                        if ("WOM_receiveState/partReceive".equals(materialEntity.receiveState.id) || "WOM_receiveState/receive".equals(materialEntity.receiveState.id)) {
                             if (materialEntity.preNum != null && receiveNumF > materialEntity.preNum) {
-                                ToastUtils.show(context, context.getResources().getString(R.string.wom_receive_num_smaller_preparenum));
+                                ToastUtils.show(context, context.getResources().getString(R.string.wom_receive_num_smaller_than_preparenum));
                                 return;
-                            } else {
-                                materialEntity.receiveNum = receiveNumF;
                             }
                         }
 
@@ -412,7 +404,7 @@ public class PreMaterialReceiveListAdapter extends BaseListDataRecyclerViewAdapt
                 itemPreMaterialRejectReasonLayout.setVisibility(View.GONE);
 
 
-                itemPreMaterialReceiveReasons.setSelection(itemPreMaterialReceiveReasons.getSelectedItem() == null ? 1 : mReceiveStateStr.indexOf(receiveStates.get(data.receiveState.id)));
+                itemPreMaterialReceiveReasons.setSelection(/*itemPreMaterialReceiveReasons.getSelectedItem() == null ? 1 : */mReceiveStateStr.indexOf(receiveStates.get(data.receiveState.id)));
 //                mReceiveStateAdapter.notifyDataSetChanged();
             } else if ("WOM_receiveState/reject".equals(data.receiveState.id)) {
                 itemPreMaterialRejectReasonLayout.setVisibility(View.VISIBLE);
@@ -424,11 +416,11 @@ public class PreMaterialReceiveListAdapter extends BaseListDataRecyclerViewAdapt
                 mRejectReasonAdapter.notifyDataSetChanged();
                 itemPreMaterialReceiveRealNum.setEnabled(false);
                 data.receiveNum = null;
-            } else {
+            } else if ("WOM_receiveState/receive".equals(data.receiveState.id)) {
                 itemPreMaterialRejectReasonLayout.setVisibility(View.GONE);
                 itemPreMaterialReceiveLine.setVisibility(View.GONE);
                 itemPreMaterialReceiveReason.setVisibility(View.GONE);
-                itemPreMaterialReceiveReasons.setSelection(1);
+                itemPreMaterialReceiveReasons.setSelection(mReceiveStateStr.indexOf(receiveStates.get(data.receiveState.id)));
                 itemPreMaterialReceiveRealNum.setEnabled(false);
                 data.receiveNum = data.preNum;
             }

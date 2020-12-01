@@ -16,15 +16,15 @@ public class ActivityOperatePresenter extends ActivityOperateContract.Presenter 
     @Override
     public void operateActivity(Long waitPutRecordId, Long qualityActiveId, boolean isFinish) {
         mCompositeSubscription.add(
-                WomHttpClient.activityOperate(waitPutRecordId,qualityActiveId,isFinish)
+                WomHttpClient.activityOperate(waitPutRecordId, qualityActiveId, isFinish)
                         .onErrorReturn(throwable -> {
                             BAP5CommonEntity<Object> bap5CommonEntity = new BAP5CommonEntity<>();
                             bap5CommonEntity.msg = HttpErrorReturnUtil.getErrorInfo(throwable);
                             return bap5CommonEntity;
                         }).subscribe(objectBAP5CommonEntity -> {
-                    if (objectBAP5CommonEntity.success){
+                    if (objectBAP5CommonEntity.success) {
                         getView().operateActivitySuccess(objectBAP5CommonEntity);
-                    }else {
+                    } else {
                         getView().operateActivityFailed(objectBAP5CommonEntity.msg);
                     }
                 })
