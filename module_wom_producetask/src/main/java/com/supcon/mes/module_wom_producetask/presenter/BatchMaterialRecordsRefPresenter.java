@@ -39,6 +39,7 @@ public class BatchMaterialRecordsRefPresenter extends CommonListContract.Present
                             public BAP5CommonEntity<Object> apply(Throwable throwable) throws Exception {
                                 BAP5CommonEntity<Object> bap5CommonEntity = new BAP5CommonEntity<>();
                                 bap5CommonEntity.msg = HttpErrorReturnUtil.getErrorInfo(throwable);
+                                bap5CommonEntity.success =false;
                                 return bap5CommonEntity;
                             }
                         })

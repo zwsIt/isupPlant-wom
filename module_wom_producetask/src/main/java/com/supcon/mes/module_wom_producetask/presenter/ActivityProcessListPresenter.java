@@ -36,6 +36,7 @@ public class ActivityProcessListPresenter extends ListAllActivityContract.Presen
                     public BAP5CommonEntity<CommonBAPListEntity<TaskActiveEntity>> apply(Throwable throwable) throws Exception {
                         BAP5CommonEntity bap5CommonEntity = new BAP5CommonEntity();
                         bap5CommonEntity.msg = HttpErrorReturnUtil.getErrorInfo(throwable);
+                        bap5CommonEntity.success = false;
                         return bap5CommonEntity;
                     }
                 })

@@ -25,6 +25,7 @@ public class BatchMaterialInstructionEditPresenter extends BatchMaterialInstruct
                         .onErrorReturn(throwable -> {
                             BAP5CommonEntity<BapResultEntity> bap5CommonEntity = new BAP5CommonEntity<>();
                             bap5CommonEntity.msg = HttpErrorReturnUtil.getErrorInfo(throwable);
+                            bap5CommonEntity.success = false;
                             return bap5CommonEntity;
                         })
                         .subscribe(bapResultEntityBAP5CommonEntity -> {

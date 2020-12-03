@@ -38,6 +38,7 @@ public class batchMaterialRecordsPresenter extends CommonListContract.Presenter 
                         .onErrorReturn(throwable -> {
                             BAP5CommonEntity<Object> bap5CommonEntity = new BAP5CommonEntity<>();
                             bap5CommonEntity.msg = HttpErrorReturnUtil.getErrorInfo(throwable);
+                            bap5CommonEntity.success =false;
                             return bap5CommonEntity;
                         })
                         .subscribe(objectBAP5CommonEntity -> {

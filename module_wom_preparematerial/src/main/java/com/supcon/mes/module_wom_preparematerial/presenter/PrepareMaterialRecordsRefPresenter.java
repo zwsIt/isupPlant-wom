@@ -38,6 +38,7 @@ public class PrepareMaterialRecordsRefPresenter extends CommonListContract.Prese
                             public BAP5CommonEntity<Object> apply(Throwable throwable) throws Exception {
                                 BAP5CommonEntity<Object> bap5CommonEntity = new BAP5CommonEntity<>();
                                 bap5CommonEntity.msg = throwable.toString();
+                                bap5CommonEntity.success = false;
                                 return bap5CommonEntity;
                             }
                         })

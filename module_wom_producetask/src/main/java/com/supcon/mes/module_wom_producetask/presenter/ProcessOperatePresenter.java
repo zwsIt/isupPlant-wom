@@ -28,6 +28,7 @@ public class ProcessOperatePresenter extends ProcessOperateContract.Presenter {
                         .onErrorReturn(throwable -> {
                             BAP5CommonEntity<BapResultEntity> bap5CommonEntity = new BAP5CommonEntity<>();
                             bap5CommonEntity.msg = HttpErrorReturnUtil.getErrorInfo(throwable);
+                            bap5CommonEntity.success = false;
                             return bap5CommonEntity;
                         })
                         .subscribe(bapResultEntityBAP5CommonEntity -> {
@@ -47,6 +48,7 @@ public class ProcessOperatePresenter extends ProcessOperateContract.Presenter {
                         .onErrorReturn(throwable -> {
                             BAP5CommonEntity<Object> bap5CommonEntity = new BAP5CommonEntity<>();
                             bap5CommonEntity.msg = throwable.toString();
+                            bap5CommonEntity.success = false;
                             return bap5CommonEntity;
                         }).subscribe(objectBAP5CommonEntity -> {
                     if (objectBAP5CommonEntity.success){
