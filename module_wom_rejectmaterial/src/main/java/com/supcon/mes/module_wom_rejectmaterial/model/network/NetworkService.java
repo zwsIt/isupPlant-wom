@@ -24,5 +24,5 @@ public interface NetworkService {
      * @return
      */
     @POST("{path}/submit")
-    Flowable<BAP5CommonEntity<BapResultEntity>> submit(@Path("path") String path, @Query("id") Long id, @Query("__pc__") String __pc__, @Body RejectMaterialDTO dto);
+    Flowable<BAP5CommonEntity<BapResultEntity>> submit(@Path(value = "path",encoded = true) String path, @Query("id") Long id, @Query("__pc__") String __pc__, @Body RejectMaterialDTO dto);
 }

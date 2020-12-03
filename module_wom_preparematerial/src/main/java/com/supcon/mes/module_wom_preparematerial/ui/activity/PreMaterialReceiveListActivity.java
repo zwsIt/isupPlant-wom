@@ -242,7 +242,7 @@ public class PreMaterialReceiveListActivity extends BaseRefreshRecyclerActivity<
 
     private void doSubmit(List<PreMaterialEntity> list) {
 
-        List<PreMaterialSubmitEntity> preMaterialEntities = new ArrayList<>();
+        List<PreMaterialEntity> preMaterialEntities = new ArrayList<>();
         for (PreMaterialEntity preMaterialEntity : list) {
             if (preMaterialEntity.isChecked) {
                 if (preMaterialEntity.toWareId.getStoreSetState() && (preMaterialEntity.toStoreId == null || preMaterialEntity.toStoreId.getId() == null)) {
@@ -259,19 +259,13 @@ public class PreMaterialReceiveListActivity extends BaseRefreshRecyclerActivity<
                     return;
                 }
 
-                if (preMaterialEntity.receiveNum == null) {
+                if (!"WOM_receiveState/reject".equals(preMaterialEntity.receiveState.id) && preMaterialEntity.receiveNum == null) {
                     ToastUtils.show(context, context.getResources().getString(R.string.wom_receivenum_forbidden_null));
                     return;
                 }
 
-
                 if ("WOM_receiveState/reject".equals(preMaterialEntity.receiveState.id) && preMaterialEntity.rejectReason == null) {
                     ToastUtils.show(context, context.getResources().getString(R.string.wom_receivereason_forbidden_null));
-                    return;
-                }
-
-                if ("WOM_receiveState/partReceive".equals(preMaterialEntity.receiveState.id) && TextUtils.isEmpty(preMaterialEntity.remark)) {
-                    ToastUtils.show(context, context.getResources().getString(R.string.wom_part_receivereason_forbidden_null));
                     return;
                 }
                 if (("WOM_receiveState/partReceive".equals(preMaterialEntity.receiveState.id) || "WOM_receiveState/receive".equals(preMaterialEntity.receiveState.id))
@@ -284,11 +278,15 @@ public class PreMaterialReceiveListActivity extends BaseRefreshRecyclerActivity<
                     ToastUtils.show(context, context.getResources().getString(R.string.wom_part_receive_num_not_zero));
                     return;
                 }
+                if ("WOM_receiveState/partReceive".equals(preMaterialEntity.receiveState.id) && TextUtils.isEmpty(preMaterialEntity.remark)) {
+                    ToastUtils.show(context, context.getResources().getString(R.string.wom_part_receivereason_forbidden_null));
+                    return;
+                }
 
                 preMaterialEntity.receiveDate = System.currentTimeMillis();
 
-                PreMaterialSubmitEntity submitEntity = GsonUtil.gsonToBean(preMaterialEntity.toString(), PreMaterialSubmitEntity.class);
-                preMaterialEntities.add(submitEntity);
+//                PreMaterialSubmitEntity submitEntity = GsonUtil.gsonToBean(preMaterialEntity.toString(), PreMaterialSubmitEntity.class);
+                preMaterialEntities.add(preMaterialEntity);
             }
 
         }

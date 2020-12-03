@@ -41,5 +41,5 @@ public interface NetworkService {
      * @return
      */
     @POST("/msService/WOM/prePraOrder/prepMatralReco/prepRecodeSignFor")
-    Flowable<BAP5CommonEntity<PreResultEntity>> prepRecodeSubmit(@Body List<PreMaterialSubmitEntity> preMaterials);
+    Flowable<BAP5CommonEntity<PreResultEntity>> prepRecodeSubmit(@Body List<PreMaterialEntity> preMaterials);
 }

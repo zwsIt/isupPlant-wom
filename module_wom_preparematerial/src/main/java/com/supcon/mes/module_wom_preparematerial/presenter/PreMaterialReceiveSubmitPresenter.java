@@ -2,6 +2,7 @@ package com.supcon.mes.module_wom_preparematerial.presenter;
 
 import com.supcon.mes.mbap.utils.GsonUtil;
 import com.supcon.mes.middleware.model.bean.BAP5CommonEntity;
+import com.supcon.mes.middleware.util.HttpErrorReturnUtil;
 import com.supcon.mes.module_wom_preparematerial.model.bean.PreMaterialEntity;
 import com.supcon.mes.module_wom_preparematerial.model.bean.PreMaterialSubmitEntity;
 import com.supcon.mes.module_wom_preparematerial.model.bean.PreMaterialSubmitListEntity;
@@ -21,7 +22,7 @@ import io.reactivex.functions.Function;
  */
 public class PreMaterialReceiveSubmitPresenter extends PreMaterialReceiveSubmitContract.Presenter {
     @Override
-    public void doSubmitPreMaterial(List<PreMaterialSubmitEntity> preMaterialEntities) {
+    public void doSubmitPreMaterial(List<PreMaterialEntity> preMaterialEntities) {
 
         mCompositeSubscription.add(
                 WomHttpClient.prepRecodeSubmit(preMaterialEntities)
@@ -29,8 +30,7 @@ public class PreMaterialReceiveSubmitPresenter extends PreMaterialReceiveSubmitC
                             @Override
                             public BAP5CommonEntity<PreResultEntity> apply(Throwable throwable) throws Exception {
                                 BAP5CommonEntity bap5CommonEntity = new BAP5CommonEntity();
-                                bap5CommonEntity.success = false;
-                                bap5CommonEntity.msg = throwable.toString();
+                                bap5CommonEntity.msg = HttpErrorReturnUtil.getErrorInfo(throwable);
                                 return bap5CommonEntity;
                             }
                         })
