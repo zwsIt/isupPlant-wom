@@ -122,7 +122,8 @@ public class PutInAgileActivityReportActivity extends BaseRefreshRecyclerActivit
     private int mCurrentPosition;
     private PutInDetailEntity mPutInDetailEntity;
     private String dgDeletedIds = "";
-    private List<PutInDetailEntity> inDetailEntities=new ArrayList<>();
+    private List<PutInDetailEntity> inDetailEntities = new ArrayList<>();
+
     @Override
     protected IListAdapter<PutInDetailEntity> createAdapter() {
         mPutInAgileReportDetailAdapter = new PutInAgileReportDetailAdapter(context);
@@ -164,7 +165,7 @@ public class PutInAgileActivityReportActivity extends BaseRefreshRecyclerActivit
         customListWidgetName.setText(context.getResources().getString(R.string.wom_produce_task_report_detail));
 //        customListWidgetEdit.setVisibility(View.GONE);
         customListWidgetEdit.setImageResource(R.drawable.ic_search_view);
-        taskProcess.setContent(TextUtils.isEmpty(mWaitPutinRecordEntity.getTaskProcessId().getName()) ? mWaitPutinRecordEntity.getProcessName(): mWaitPutinRecordEntity.getTaskProcessId().getName());
+        taskProcess.setContent(TextUtils.isEmpty(mWaitPutinRecordEntity.getTaskProcessId().getName()) ? mWaitPutinRecordEntity.getProcessName() : mWaitPutinRecordEntity.getTaskProcessId().getName());
         planNum.setContent(mWaitPutinRecordEntity.getTaskActiveId().getPlanQuantity() == null ? "--" : mWaitPutinRecordEntity.getTaskActiveId().getPlanQuantity().toString());
 
     }
@@ -185,15 +186,15 @@ public class PutInAgileActivityReportActivity extends BaseRefreshRecyclerActivit
             }
         });
         RxView.clicks(customListWidgetEdit)
-                .throttleFirst(2,TimeUnit.SECONDS)
+                .throttleFirst(2, TimeUnit.SECONDS)
                 .subscribe(o -> {
-                    if (inDetailEntities.isEmpty()){
-                        ToastUtils.show(context,"已投料为空");
+                    if (inDetailEntities.isEmpty()) {
+                        ToastUtils.show(context, "已投料为空");
                         return;
                     }
-                    Bundle bundle=new Bundle();
+                    Bundle bundle = new Bundle();
                     bundle.putSerializable("list", (Serializable) inDetailEntities);
-                    IntentRouter.go(this,Constant.Router.WOM_PUT_IN_HISTORY,bundle);
+                    IntentRouter.go(this, Constant.Router.WOM_PUT_IN_HISTORY, bundle);
                 });
         customListWidgetAdd.setOnClickListener(v -> {
             PutInDetailEntity putInDetailEntity = new PutInDetailEntity();
@@ -212,8 +213,8 @@ public class PutInAgileActivityReportActivity extends BaseRefreshRecyclerActivit
                 Bundle bundle = new Bundle();
                 switch (childView.getTag().toString()) {
                     case "materialName":
-                        bundle.putBoolean(Constant.IntentKey.SINGLE_CHOICE,true);
-                        IntentRouter.go(context, Constant.Router.PRODUCT_DETAIL,bundle);
+                        bundle.putBoolean(Constant.IntentKey.SINGLE_CHOICE, true);
+                        IntentRouter.go(context, Constant.Router.PRODUCT_DETAIL, bundle);
                         break;
                     case "warehouseTv":
                         IntentRouter.go(context, Constant.Router.WAREHOUSE_LIST_REF);
@@ -229,7 +230,7 @@ public class PutInAgileActivityReportActivity extends BaseRefreshRecyclerActivit
                     case "itemViewDelBtn":
                         mPutInAgileReportDetailAdapter.getList().remove(obj);
                         mPutInAgileReportDetailAdapter.notifyItemRangeRemoved(position, 1);
-                        mPutInAgileReportDetailAdapter.notifyItemRangeChanged(position, mPutInAgileReportDetailAdapter.getItemCount()-position);
+                        mPutInAgileReportDetailAdapter.notifyItemRangeChanged(position, mPutInAgileReportDetailAdapter.getItemCount() - position);
                         if (mPutInDetailEntity.getId() != null) {
                             dgDeletedIds += mPutInDetailEntity.getId() + ",";
                         }
@@ -250,56 +251,60 @@ public class PutInAgileActivityReportActivity extends BaseRefreshRecyclerActivit
 
     /**
      * 扫描功能：红外、摄像头扫描监听事件
+     *
      * @param codeResultEvent
      */
     Map<String, Object> goodMap = new HashMap<>();
     long lastTime;
+
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onCodeReceiver(CodeResultEvent codeResultEvent) {
         long currentTime = System.currentTimeMillis();
-        if (currentTime - lastTime >= 100) {
-            String[] arr = MaterQRUtil.materialQRCode(codeResultEvent.scanResult);
-            if (arr != null && arr.length == 7) {
-                String incode = arr[0].replace("incode=", "");
-                String batchno = arr[1].replace("batchno=", "");
-                String batchno2 = arr[2].replace("batchno2=", "");
-                String packqty = arr[3].replace("packqty=", "");
-                String packs = arr[4].replace("packs=", "");
-                String purcode = arr[5].replace("purcode=", "");
-                String orderno = arr[6].replace("orderno=", "");
 
-                goodMap.put(Constant.BAPQuery.CODE, incode);
-                getController(ProductController.class)
-                        .getProduct(goodMap)
-                        .setOnSuccessListener(new OnSuccessListener() {
-                            @Override
-                            public void onSuccess(Object result) {
-                                if (result instanceof Good) {
-                                    Good good = (Good) result;
-                                    MaterialEntity materialEntity = new MaterialEntity();
-                                    materialEntity.setId(good.id);
-                                    materialEntity.setCode(good.code);
-                                    materialEntity.setName(good.name);
-                                    PutInDetailEntity putInDetailEntity = new PutInDetailEntity();
-                                    putInDetailEntity.setMaterialId(materialEntity);
-                                    putInDetailEntity.setWareId(mWaitPutinRecordEntity.getWare());
-                                    putInDetailEntity.setMaterialBatchNum(batchno);
-                                    putInDetailEntity.setPutinNum(!TextUtils.isEmpty(packqty) ? new BigDecimal(packqty) : null);
-                                    putInDetailEntity.setPutinTime(new Date().getTime());  // 投料时间
-                                    mPutInAgileReportDetailAdapter.addData(putInDetailEntity);
-                                    mPutInAgileReportDetailAdapter.notifyItemRangeInserted(mPutInAgileReportDetailAdapter.getItemCount() - 1, 1);
-                                    mPutInAgileReportDetailAdapter.notifyItemRangeChanged(mPutInAgileReportDetailAdapter.getItemCount() - 1, 1);
-                                    contentView.smoothScrollToPosition(mPutInAgileReportDetailAdapter.getItemCount() - 1);
-                                } else {
-                                    ToastUtils.show(context, result.toString());
-                                }
+        String[] arr = MaterQRUtil.materialQRCode(codeResultEvent.scanResult);
+        if (arr != null && arr.length == 7) {
+            String incode = arr[0].replace("incode=", "");
+            String batchno = arr[1].replace("batchno=", "");
+            String batchno2 = arr[2].replace("batchno2=", "");
+            String packqty = arr[3].replace("packqty=", "");//换算率
+            String packs = arr[4].replace("packs=", "");//用料量
+            String purcode = arr[5].replace("purcode=", "");
+            String orderno = arr[6].replace("orderno=", "");
+
+            goodMap.put(Constant.BAPQuery.CODE, incode);
+            getController(ProductController.class)
+                    .getProduct(goodMap)
+                    .setOnSuccessListener(new OnSuccessListener() {
+                        @Override
+                        public void onSuccess(Object result) {
+                            if (result instanceof Good) {
+                                Good good = (Good) result;
+                                MaterialEntity materialEntity = new MaterialEntity();
+                                materialEntity.setId(good.id);
+                                materialEntity.setCode(good.code);
+                                materialEntity.setName(good.name);
+                                PutInDetailEntity putInDetailEntity = new PutInDetailEntity();
+                                putInDetailEntity.setMaterialId(materialEntity);
+                                putInDetailEntity.setWareId(mWaitPutinRecordEntity.getWare());
+                                putInDetailEntity.setMaterialBatchNum(batchno);
+                                putInDetailEntity.setPutinNum(!TextUtils.isEmpty(packs) ? new BigDecimal(packs) : null);
+                                putInDetailEntity.setConversion(packqty);
+                                putInDetailEntity.setPutinTime(new Date().getTime());  // 投料时间
+                                mPutInAgileReportDetailAdapter.addData(putInDetailEntity);
+                                mPutInAgileReportDetailAdapter.notifyItemRangeInserted(mPutInAgileReportDetailAdapter.getItemCount() - 1, 1);
+                                mPutInAgileReportDetailAdapter.notifyItemRangeChanged(mPutInAgileReportDetailAdapter.getItemCount() - 1, 1);
+                                contentView.smoothScrollToPosition(mPutInAgileReportDetailAdapter.getItemCount() - 1);
+                            } else {
+                                ToastUtils.show(context, result.toString());
                             }
-                        });
-            } else {
-                ToastUtils.show(context, "二维码信息解析异常！");
-            }
+                        }
+                    });
+        } else {
+            ToastUtils.show(context, "二维码信息解析异常！");
         }
+
     }
+
     /**
      * @param
      * @return
@@ -366,7 +371,7 @@ public class PutInAgileActivityReportActivity extends BaseRefreshRecyclerActivit
     public void listSuccess(BAP5CommonEntity entity) {
         CommonBAPListEntity commonBAPListEntity = GsonUtil.gsonToBean(GsonUtil.gsonString(entity.data), CommonBAPListEntity.class);
         refreshListController.refreshComplete();
-        inDetailEntities.addAll(GsonUtil.jsonToList(GsonUtil.gsonString((Object) commonBAPListEntity.result),PutInDetailEntity.class));
+        inDetailEntities.addAll(GsonUtil.jsonToList(GsonUtil.gsonString((Object) commonBAPListEntity.result), PutInDetailEntity.class));
 //        refreshListController.refreshComplete(GsonUtil.jsonToList(GsonUtil.gsonString((Object) commonBAPListEntity.result), PutInDetailEntity.class));
     }
 
@@ -395,7 +400,7 @@ public class PutInAgileActivityReportActivity extends BaseRefreshRecyclerActivit
             mPutInDetailEntity.setWareId((WarehouseEntity) selectDataEvent.getEntity());
         } else if (object instanceof StoreSetEntity) {
             mPutInDetailEntity.setStoreId((StoreSetEntity) selectDataEvent.getEntity());
-        }else if (object instanceof Good) {
+        } else if (object instanceof Good) {
             Good good = (Good) selectDataEvent.getEntity();
             MaterialEntity materialEntity = new MaterialEntity();
             materialEntity.setId(good.id);
