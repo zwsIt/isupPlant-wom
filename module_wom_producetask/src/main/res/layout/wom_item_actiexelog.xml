@@ -55,6 +55,7 @@
                     android:layout_height="@dimen/dp_30"
                     android:id="@+id/activityName"
                     android:tag="activityName"
+                    app:content_hint="活动名称"
                     app:key_width="0dp"
                     app:content_size="16"
                     app:content_color="@color/customBlue4"
@@ -108,8 +109,7 @@
                             app:key_width="40dp"
                             app:key_color="@color/gray"
                             app:key_size="13"
-                            app:content_size="13"
-                            />
+                            app:content_size="13"/>
                         <com.supcon.mes.mbap.view.CustomTextView
                             android:layout_width="0dp"
                             android:layout_height="@dimen/dp_35"
@@ -120,8 +120,7 @@
                             app:key_width="40dp"
                             app:key_color="@color/gray"
                             app:key_size="13"
-                            app:content_size="13"
-                           />
+                            app:content_size="13"/>
                     </LinearLayout>
                     <com.supcon.mes.mbap.view.CustomTextView
                         android:layout_width="wrap_content"
@@ -132,8 +131,7 @@
                         app:key_width="40dp"
                         app:key_color="@color/gray"
                         app:key_size="13"
-                        app:content_size="13"
-                        />
+                        app:content_size="13"/>
                 </LinearLayout>
             </RelativeLayout>
 
@@ -146,7 +144,6 @@
                 app:key_width="80dp"
                 app:key_size="13"
                 app:key_color="@color/gray"
-                app:content_hint=""
                 app:content_size="13"
                 app:max_lines="1"/>
             <LinearLayout
@@ -163,6 +160,7 @@
                     app:key_size="13"
                     app:key_color="@color/gray"
                     app:content_size="13"
+                    app:content_hint="工序"
                     app:max_lines="2"/>
                 <com.supcon.mes.mbap.view.CustomTextView
                     android:layout_width="0dp"
@@ -175,10 +173,13 @@
                     app:key_size="13"
                     app:key_color="@color/gray"
                     app:content_size="13"
-                    app:content_hint=""
+                    app:content_hint="2019-07-26 14:21:16"
                     app:max_lines="3"/>
             </LinearLayout>
+
         </LinearLayout>
+
+
     </RelativeLayout>
 
 </LinearLayout>
