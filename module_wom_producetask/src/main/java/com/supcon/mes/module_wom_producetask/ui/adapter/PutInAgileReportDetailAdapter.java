@@ -61,7 +61,8 @@ public class PutInAgileReportDetailAdapter extends BaseListDataRecyclerViewAdapt
         CustomEditText numEt;
         @BindByTag("itemViewDelBtn")
         TextView itemViewDelBtn;
-
+        @BindByTag("conversionTv")
+        CustomTextView conversionTv;
         public ReportViewHolder(Context context) {
             super(context,parent);
         }
@@ -145,6 +146,7 @@ public class PutInAgileReportDetailAdapter extends BaseListDataRecyclerViewAdapt
             numEt.setContent(data.getPutinNum() == null ? "" : String.valueOf(data.getPutinNum()));
             warehouseTv.setContent(data.getWareId() == null ? "" : data.getWareId().getName());
             storeSetTv.setContent(data.getStoreId() == null ? "" : data.getStoreId().getName());
+            conversionTv.setValue(data.getConversion());
         }
     }
 

@@ -154,6 +154,35 @@
                 app:text_width="0dp"
                 app:text_color="@color/dark_text"/>
         </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:drawableStart="@drawable/ic_conversion"
+                android:drawablePadding="@dimen/dp_5"
+                android:gravity="center_vertical"
+                android:paddingStart="@dimen/dp_10"
+                android:paddingEnd="@dimen/dp_10"
+                android:text="@string/wom_conversion"
+                android:textColor="@color/titleTextColor"
+                android:textSize="@dimen/fontSize_13sp" />
+
+            <com.supcon.mes.mbap.view.CustomTextView
+                android:id="@+id/conversionTv"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/dp_40"
+                android:tag="conversionTv"
+                app:gravity="right|vertical_center"
+                app:text_color="@color/dark_text"
+                app:text_width="0dp" />
+        </LinearLayout>
+
     </LinearLayout>
 
     <LinearLayout
