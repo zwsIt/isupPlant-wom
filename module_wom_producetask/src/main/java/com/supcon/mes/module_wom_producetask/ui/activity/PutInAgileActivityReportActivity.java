@@ -10,6 +10,7 @@ import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.app.annotation.BindByTag;
@@ -98,6 +99,8 @@ public class PutInAgileActivityReportActivity extends BaseRefreshRecyclerActivit
     CustomImageButton rightBtn;
     @BindByTag("customListWidgetName")
     TextView customListWidgetName;
+    @BindByTag("customWidgetEditLl")
+    LinearLayout customWidgetEditLl;
     @BindByTag("customListWidgetEdit")
     ImageView customListWidgetEdit;
     @BindByTag("customListWidgetAdd")
@@ -163,7 +166,7 @@ public class PutInAgileActivityReportActivity extends BaseRefreshRecyclerActivit
         rightBtn.setVisibility(View.VISIBLE);
         rightBtn.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_top_scan));
         customListWidgetName.setText(context.getResources().getString(R.string.wom_produce_task_report_detail));
-//        customListWidgetEdit.setVisibility(View.GONE);
+        customWidgetEditLl.setVisibility(View.VISIBLE);
         customListWidgetEdit.setImageResource(R.drawable.ic_search_view);
         taskProcess.setContent(TextUtils.isEmpty(mWaitPutinRecordEntity.getTaskProcessId().getName()) ? mWaitPutinRecordEntity.getProcessName() : mWaitPutinRecordEntity.getTaskProcessId().getName());
         planNum.setContent(mWaitPutinRecordEntity.getTaskActiveId().getPlanQuantity() == null ? "--" : mWaitPutinRecordEntity.getTaskActiveId().getPlanQuantity().toString());
