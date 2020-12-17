@@ -22,6 +22,7 @@ import com.supcon.common.view.base.adapter.IListAdapter;
 import com.supcon.common.view.util.DisplayUtil;
 import com.supcon.common.view.util.StatusBarUtils;
 import com.supcon.common.view.util.ToastUtils;
+import com.supcon.common.view.view.loader.base.OnLoaderFinishListener;
 import com.supcon.mes.mbap.view.CustomDialog;
 import com.supcon.mes.mbap.view.CustomImageButton;
 import com.supcon.mes.middleware.IntentRouter;
@@ -225,8 +226,18 @@ public class SimpleActivityListActivity extends BaseRefreshRecyclerActivity<Wait
 
     @Override
     public void operateActivitySuccess(BAP5CommonEntity entity) {
-        onLoadSuccess(context.getResources().getString(R.string.wom_dealt_success));
-        refreshListController.refreshBegin();
+        if (mSimpleActivityListAdapter.getList()!=null && !mSimpleActivityListAdapter.getList().isEmpty()){
+            mSimpleActivityListAdapter.clear();
+            mSimpleActivityListAdapter.notifyDataSetChanged();
+        }
+        onLoadSuccessAndExit(context.getResources().getString(R.string.wom_dealt_success), new OnLoaderFinishListener() {
+            @Override
+            public void onLoaderFinished() {
+                onLoadSuccess(context.getResources().getString(R.string.wom_dealt_success));
+                refreshListController.refreshBegin();
+            }
+        });
+
     }
 
     @Override

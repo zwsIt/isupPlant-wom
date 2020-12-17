@@ -133,7 +133,7 @@ public class FormulaActivityListAdapter extends BaseListDataRecyclerViewAdapter<
 //                        bundle.putSerializable(Constant.IntentKey.WAIT_PUT_RECORD, getItem(getAdapterPosition()));
 //                        IntentRouter.go(context, Constant.Router.WOM_ACTIVITY_LIST, bundle);
                     });
-            RxView.clicks(routineStartTv).throttleFirst(100, TimeUnit.MILLISECONDS)
+            RxView.clicks(routineStartTv).throttleFirst(1000, TimeUnit.MILLISECONDS)
                     .subscribe(o -> {
                         WaitPutinRecordEntity entity = getItem(getAdapterPosition());
                         onItemChildViewClick(routineStartTv, getAdapterPosition(), entity);
@@ -220,7 +220,7 @@ public class FormulaActivityListAdapter extends BaseListDataRecyclerViewAdapter<
                         bundle.putSerializable(Constant.IntentKey.WAIT_PUT_RECORD, getItem(getAdapterPosition()));
                         IntentRouter.go(context, Constant.Router.WOM_CHECK_LIST, bundle);
                     });
-            RxView.clicks(checkStartTv).throttleFirst(200, TimeUnit.MILLISECONDS)
+            RxView.clicks(checkStartTv).throttleFirst(1000, TimeUnit.MILLISECONDS)
                     .subscribe(o -> onItemChildViewClick(checkStartTv, getAdapterPosition(), getItem(getAdapterPosition())));
         }
 
@@ -303,7 +303,7 @@ public class FormulaActivityListAdapter extends BaseListDataRecyclerViewAdapter<
                         bundle.putSerializable(Constant.IntentKey.WAIT_PUT_RECORD, entity);
                         IntentRouter.go(context, Constant.Router.WOM_PUT_IN_REPORT, bundle);
                     });
-            RxView.clicks(putInStartTv).throttleFirst(200, TimeUnit.MILLISECONDS)
+            RxView.clicks(putInStartTv).throttleFirst(1000, TimeUnit.MILLISECONDS)
                     .subscribe(o -> onItemChildViewClick(putInStartTv, getAdapterPosition(), getItem(getAdapterPosition())));
         }
 
@@ -370,7 +370,7 @@ public class FormulaActivityListAdapter extends BaseListDataRecyclerViewAdapter<
         @Override
         protected void initListener() {
             super.initListener();
-            RxView.clicks(itemView).throttleFirst(200, TimeUnit.MILLISECONDS)
+            RxView.clicks(itemView).throttleFirst(1000, TimeUnit.MILLISECONDS)
                     .filter(new Predicate<Object>() {
                         @Override
                         public boolean test(Object o) throws Exception {
@@ -388,7 +388,7 @@ public class FormulaActivityListAdapter extends BaseListDataRecyclerViewAdapter<
                         bundle.putSerializable(Constant.IntentKey.WAIT_PUT_RECORD, entity);
                         IntentRouter.go(context, Constant.Router.WOM_BATCH_PUT_IN_REPORT, bundle);
                     });
-            RxView.clicks(putInStartTv).throttleFirst(200, TimeUnit.MILLISECONDS)
+            RxView.clicks(putInStartTv).throttleFirst(1000, TimeUnit.MILLISECONDS)
                     .subscribe(o -> onItemChildViewClick(putInStartTv, getAdapterPosition(), getItem(getAdapterPosition())));
         }
 
@@ -454,7 +454,7 @@ public class FormulaActivityListAdapter extends BaseListDataRecyclerViewAdapter<
         @Override
         protected void initListener() {
             super.initListener();
-            RxView.clicks(itemView).throttleFirst(200, TimeUnit.MILLISECONDS)
+            RxView.clicks(itemView).throttleFirst(1000, TimeUnit.MILLISECONDS)
                     .filter(new Predicate<Object>() {
                         @Override
                         public boolean test(Object o) throws Exception {
@@ -472,7 +472,7 @@ public class FormulaActivityListAdapter extends BaseListDataRecyclerViewAdapter<
                         bundle.putSerializable(Constant.IntentKey.WAIT_PUT_RECORD, entity);
                         IntentRouter.go(context, Constant.Router.WOM_OUTPUT_REPORT, bundle);
                     });
-            RxView.clicks(putInStartTv).throttleFirst(200, TimeUnit.MILLISECONDS)
+            RxView.clicks(putInStartTv).throttleFirst(1000, TimeUnit.MILLISECONDS)
                     .subscribe(o -> onItemChildViewClick(putInStartTv, getAdapterPosition(), getItem(getAdapterPosition())));
         }
 
@@ -557,7 +557,7 @@ public class FormulaActivityListAdapter extends BaseListDataRecyclerViewAdapter<
         @Override
         protected void initListener() {
             super.initListener();
-//            RxView.clicks(itemView).throttleFirst(200, TimeUnit.MILLISECONDS)
+//            RxView.clicks(itemView).throttleFirst(1000, TimeUnit.MILLISECONDS)
 //                    .filter(o ->getItem(getAdapterPosition()).getActiveBatchState()!=null && WomConstant.SystemCode.BASE_DEAL_ADJUST.equals(getItem(getAdapterPosition()).getActiveBatchState().getDealType().id))
 //                    .subscribe(o -> {
 //                        // 调整
@@ -566,7 +566,7 @@ public class FormulaActivityListAdapter extends BaseListDataRecyclerViewAdapter<
 //                        IntentRouter.go(context, Constant.Router.WOM_ADJUST_ACTIVITY_LIST, bundle);
 //                    });
             RxView.clicks(itemView)
-                    .throttleFirst(200, TimeUnit.MILLISECONDS)
+                    .throttleFirst(1000, TimeUnit.MILLISECONDS)
                     .subscribe(o -> {
                         WaitPutinRecordEntity data = getItem(getAdapterPosition());
                         if (data.getActiExelog() != null && !TextUtils.isEmpty(data.getActiExelog().adjustPlan)) {
@@ -575,7 +575,7 @@ public class FormulaActivityListAdapter extends BaseListDataRecyclerViewAdapter<
                             IntentRouter.go(context, Constant.Router.WOM_ADJUST_ACTIVITY_LIST, bundle);
                         }
                     });
-            RxView.clicks(qualityStartTv).throttleFirst(100, TimeUnit.MILLISECONDS)
+            RxView.clicks(qualityStartTv).throttleFirst(1000, TimeUnit.MILLISECONDS)
                     .subscribe(o -> {
                         WaitPutinRecordEntity entity = getItem(getAdapterPosition());
                         onItemChildViewClick(qualityStartTv, getAdapterPosition(), entity);

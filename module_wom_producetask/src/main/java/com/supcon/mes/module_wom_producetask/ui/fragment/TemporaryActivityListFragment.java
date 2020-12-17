@@ -15,6 +15,7 @@ import com.supcon.common.view.base.adapter.IListAdapter;
 import com.supcon.common.view.base.fragment.BaseRefreshRecyclerFragment;
 import com.supcon.common.view.util.DisplayUtil;
 import com.supcon.common.view.util.ToastUtils;
+import com.supcon.common.view.view.loader.base.OnLoaderFinishListener;
 import com.supcon.mes.mbap.view.CustomDialog;
 import com.supcon.mes.middleware.constant.Constant;
 import com.supcon.mes.middleware.model.bean.BAP5CommonEntity;
@@ -198,8 +199,17 @@ public class TemporaryActivityListFragment extends BaseRefreshRecyclerFragment<W
 
     @Override
     public void operateActivitySuccess(BAP5CommonEntity entity) {
-        onLoadSuccess(context.getResources().getString(R.string.wom_dealt_success));
-        refreshListController.refreshBegin();
+        if (mTemporaryActivityListAdapter.getList()!=null && !mTemporaryActivityListAdapter.getList().isEmpty()){
+            mTemporaryActivityListAdapter.clear();
+            mTemporaryActivityListAdapter.notifyDataSetChanged();
+        }
+        onLoadSuccessAndExit(context.getResources().getString(R.string.wom_dealt_success), new OnLoaderFinishListener() {
+            @Override
+            public void onLoaderFinished() {
+                onLoadSuccess(context.getResources().getString(R.string.wom_dealt_success));
+                refreshListController.refreshBegin();
+            }
+        });
     }
 
     @Override

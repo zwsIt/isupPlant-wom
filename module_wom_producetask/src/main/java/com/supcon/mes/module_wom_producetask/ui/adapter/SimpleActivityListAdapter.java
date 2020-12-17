@@ -92,7 +92,7 @@ public class SimpleActivityListAdapter extends BaseListDataRecyclerViewAdapter<W
         @Override
         protected void initListener() {
             super.initListener();
-            RxView.clicks(itemView).throttleFirst(200, TimeUnit.MILLISECONDS)
+            RxView.clicks(itemView).throttleFirst(1000, TimeUnit.MILLISECONDS)
                     .filter(new Predicate<Object>() {
                         @Override
                         public boolean test(Object o) throws Exception {
@@ -108,7 +108,7 @@ public class SimpleActivityListAdapter extends BaseListDataRecyclerViewAdapter<W
                         bundle.putSerializable(Constant.IntentKey.WAIT_PUT_RECORD, getItem(getAdapterPosition()));
                         IntentRouter.go(context, Constant.Router.WOM_PUT_IN_REPORT, bundle);
                     });
-            RxView.clicks(putInStartTv).throttleFirst(200, TimeUnit.MILLISECONDS)
+            RxView.clicks(putInStartTv).throttleFirst(1000, TimeUnit.MILLISECONDS)
                     .subscribe(o -> onItemChildViewClick(putInStartTv, getAdapterPosition(), getItem(getAdapterPosition())));
         }
 
@@ -160,7 +160,7 @@ public class SimpleActivityListAdapter extends BaseListDataRecyclerViewAdapter<W
         @Override
         protected void initListener() {
             super.initListener();
-            RxView.clicks(itemView).throttleFirst(200, TimeUnit.MILLISECONDS)
+            RxView.clicks(itemView).throttleFirst(1000, TimeUnit.MILLISECONDS)
                     .filter(new Predicate<Object>() {
                         @Override
                         public boolean test(Object o) throws Exception {
@@ -176,7 +176,7 @@ public class SimpleActivityListAdapter extends BaseListDataRecyclerViewAdapter<W
                         bundle.putSerializable(Constant.IntentKey.WAIT_PUT_RECORD, getItem(getAdapterPosition()));
                         IntentRouter.go(context, Constant.Router.WOM_OUTPUT_REPORT, bundle);
                     });
-            RxView.clicks(putInStartTv).throttleFirst(200, TimeUnit.MILLISECONDS)
+            RxView.clicks(putInStartTv).throttleFirst(1000, TimeUnit.MILLISECONDS)
                     .subscribe(o -> onItemChildViewClick(putInStartTv, getAdapterPosition(), getItem(getAdapterPosition())));
         }
 
@@ -230,14 +230,14 @@ public class SimpleActivityListAdapter extends BaseListDataRecyclerViewAdapter<W
         @Override
         protected void initListener() {
             super.initListener();
-            RxView.clicks(itemView).throttleFirst(200, TimeUnit.MILLISECONDS)
+            RxView.clicks(itemView).throttleFirst(1000, TimeUnit.MILLISECONDS)
                     .filter(o -> WomConstant.SystemCode.RM_TYPE_SIMPLE.equals(getItem(getAdapterPosition()).getFormulaId().getSetProcess().id))
                     .subscribe(o -> {
 //                        Bundle bundle = new Bundle();
 //                        bundle.putSerializable(Constant.IntentKey.WAIT_PUT_RECORD, getItem(getAdapterPosition()));
 //                        IntentRouter.go(context, Constant.Router.WOM_ACTIVITY_LIST, bundle);
                     });
-            RxView.clicks(putInStartTv).throttleFirst(100, TimeUnit.MILLISECONDS)
+            RxView.clicks(putInStartTv).throttleFirst(1000, TimeUnit.MILLISECONDS)
                     .subscribe(o -> {
                         WaitPutinRecordEntity entity = getItem(getAdapterPosition());
                         onItemChildViewClick(putInStartTv, getAdapterPosition(), entity);
