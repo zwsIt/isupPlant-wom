@@ -1,5 +1,6 @@
 package com.supcon.mes.module_wom_producetask.presenter;
 
+import com.supcon.mes.middleware.SupPlantApplication;
 import com.supcon.mes.middleware.model.bean.BAP5CommonEntity;
 import com.supcon.mes.middleware.util.HttpErrorReturnUtil;
 import com.supcon.mes.module_wom_producetask.model.contract.ActivityOperateContract;
@@ -15,8 +16,9 @@ public class ActivityOperatePresenter extends ActivityOperateContract.Presenter 
 
     @Override
     public void operateActivity(Long waitPutRecordId, Long qualityActiveId,boolean isFinish) {
+        Long operateStaffId= SupPlantApplication.getAccountInfo().userId;
         mCompositeSubscription.add(
-                WomHttpClient.activityOperate(waitPutRecordId,qualityActiveId,isFinish)
+                WomHttpClient.activityOperate(waitPutRecordId,qualityActiveId,isFinish,operateStaffId)
                         .onErrorReturn(throwable -> {
                             BAP5CommonEntity<Object> bap5CommonEntity = new BAP5CommonEntity<>();
                             bap5CommonEntity.msg = HttpErrorReturnUtil.getErrorInfo(throwable);

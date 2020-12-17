@@ -14,6 +14,8 @@ import com.supcon.mes.module_wom_producetask.model.dto.OutputDetailDTO;
 import com.supcon.mes.module_wom_producetask.model.dto.ProCheckDetailDTO;
 import com.supcon.mes.module_wom_producetask.model.dto.PutinDetailDTO;
 
+import org.greenrobot.eventbus.Subscribe;
+
 import java.util.Map;
 
 import io.reactivex.Flowable;
@@ -112,7 +114,7 @@ public interface NetworkService {
      *
      */
     @POST("/msService/WOMmobile/produceTask/mobile/commonActiveReport")
-    Flowable<BAP5CommonEntity<Object>> activityOperate(@Query(value = "waitPutRecordId") Long waitPutRecordId,@Query(value = "qualityActiveId") Long qualityActiveId, @Query(value = "isFinish") boolean isFinish);
+    Flowable<BAP5CommonEntity<Object>> activityOperate(@Query(value = "waitPutRecordId") Long waitPutRecordId, @Query(value = "qualityActiveId") Long qualityActiveId, @Query(value = "isFinish") boolean isFinish, @Query("operateStaffId") Long operateStaffId);
 
     /**
      * 检查活动报工提交
