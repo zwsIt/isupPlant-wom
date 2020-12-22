@@ -245,7 +245,7 @@ public class PreMaterialReceiveListActivity extends BaseRefreshRecyclerActivity<
         List<PreMaterialEntity> preMaterialEntities = new ArrayList<>();
         for (PreMaterialEntity preMaterialEntity : list) {
             if (preMaterialEntity.isChecked) {
-                if (preMaterialEntity.toWareId.getStoreSetState() && (preMaterialEntity.toStoreId == null || preMaterialEntity.toStoreId.getId() == null)) {
+                if (!"WOM_receiveState/reject".equals(preMaterialEntity.receiveState.id) && preMaterialEntity.toWareId.getStoreSetState() && (preMaterialEntity.toStoreId == null || preMaterialEntity.toStoreId.getId() == null)) {
                     ToastUtils.show(context, context.getResources().getString(R.string.wom_store_forbidden_null));
                     return;
                 }

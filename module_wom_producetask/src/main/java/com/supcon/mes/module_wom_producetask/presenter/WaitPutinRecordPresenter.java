@@ -45,13 +45,13 @@ public class WaitPutinRecordPresenter extends WaitPutinRecordsListContract.Prese
             if (Constant.BAPQuery.FORMULA_SET_PROCESS.equals(key)) { // 配方属性(普通/标准工单)
                 joinSubconds.put(key, Objects.requireNonNull(queryParams.get(key)));
                 fastQueryCondEntity.subconds.add(BAPQueryParamsHelper.crateJoinSubcondEntity(joinSubconds, "RM_FORMULAS,ID,WOM_WAIT_PUT_RECORDS,FORMULA_ID"));
-            }else if (Constant.BAPQuery.IS_MORE_OTHER.equals(key)) { // 是否其他活动(配方/其他活动{机动、调整活动})
+            } else if (Constant.BAPQuery.IS_MORE_OTHER.equals(key)) { // 是否其他活动(配方/其他活动{机动、调整活动})
                 joinSubconds.put(key, Objects.requireNonNull(queryParams.get(key)));
                 fastQueryCondEntity.subconds.add(BAPQueryParamsHelper.crateJoinSubcondEntity(joinSubconds, "WOM_TASK_ACTIVES,ID,WOM_WAIT_PUT_RECORDS,TASK_ACTIVE_ID"));
-            }else if (Constant.BAPQuery.TASK_PROCESS_ID.equals(key)) { // 工序ID
+            } else if (Constant.BAPQuery.TASK_PROCESS_ID.equals(key)) { // 工序ID
                 joinSubconds.put(Constant.BAPQuery.ID, Objects.requireNonNull(queryParams.get(key)));
                 fastQueryCondEntity.subconds.add(BAPQueryParamsHelper.crateJoinSubcondEntity(joinSubconds, "WOM_TASK_PROCESSES,ID,WOM_WAIT_PUT_RECORDS,TASK_PROCESS_ID"));
-            }else {
+            } else {
                 subconds.put(key, queryParams.get(key) == null ? "" : queryParams.get(key));
             }
         }

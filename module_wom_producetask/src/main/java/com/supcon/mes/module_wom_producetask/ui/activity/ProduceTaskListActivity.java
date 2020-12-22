@@ -95,7 +95,11 @@ public class ProduceTaskListActivity extends BaseMultiFragmentActivity {
     private void initViewPager() {
         mCommonProduceTaskListFragment = new CommonProduceTaskListFragment();
         mSimpleProduceTaskListFragment = new SimpleProduceTaskListFragment();
-        viewPager.setCurrentItem(0);
+        if (!womType) {
+            viewPager.setCurrentItem(0);
+        }else {
+            viewPager.setCurrentItem(1);
+        }
         viewPager.setAdapter(new InnerFragmentPagerAdapter(getSupportFragmentManager()));
 //        viewPager.setOffscreenPageLimit(2); // 预加载下一页的界面个数，默认加载下一页面
     }

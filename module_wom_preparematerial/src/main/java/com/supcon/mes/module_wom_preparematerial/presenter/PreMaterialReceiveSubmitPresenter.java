@@ -30,6 +30,7 @@ public class PreMaterialReceiveSubmitPresenter extends PreMaterialReceiveSubmitC
                             @Override
                             public BAP5CommonEntity<PreResultEntity> apply(Throwable throwable) throws Exception {
                                 BAP5CommonEntity bap5CommonEntity = new BAP5CommonEntity();
+                                bap5CommonEntity.success = false;
                                 bap5CommonEntity.msg = HttpErrorReturnUtil.getErrorInfo(throwable);
                                 return bap5CommonEntity;
                             }

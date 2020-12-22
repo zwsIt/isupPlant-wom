@@ -99,6 +99,25 @@ public class WaitPutinRecordEntity extends BaseEntity {
     private int checkTimes; // 检验次数
     private TaskActiveEntity.ActBatStateEntity activeBatchState;
 
+    private Boolean isForTemp; // 可机动执行
+    private Boolean isForAdjust; // 可用于调整
+
+    public Boolean getForTemp() {
+        return isForTemp;
+    }
+
+    public void setForTemp(Boolean forTemp) {
+        isForTemp = forTemp;
+    }
+
+    public Boolean getForAdjust() {
+        return isForAdjust;
+    }
+
+    public void setForAdjust(Boolean forAdjust) {
+        isForAdjust = forAdjust;
+    }
+
     public int getCheckTimes() {
         return checkTimes;
     }

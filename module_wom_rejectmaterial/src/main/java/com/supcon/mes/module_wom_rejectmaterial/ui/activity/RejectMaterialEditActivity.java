@@ -400,6 +400,10 @@ public class RejectMaterialEditActivity extends BaseRefreshRecyclerActivity<Reje
             return;
         }
         if (selectDataEvent.getEntity() instanceof WarehouseEntity) {
+            // 判断是否清空货位
+            if(mRejectMaterialPartEntity.getWareId() != null && !mRejectMaterialPartEntity.getWareId().getId().equals(((WarehouseEntity) selectDataEvent.getEntity()).getId())){
+                mRejectMaterialPartEntity.setStoreId(null);
+            }
             mRejectMaterialPartEntity.setWareId((WarehouseEntity) selectDataEvent.getEntity());
         } else if (selectDataEvent.getEntity() instanceof StoreSetEntity) {
             mRejectMaterialPartEntity.setStoreId((StoreSetEntity) selectDataEvent.getEntity());

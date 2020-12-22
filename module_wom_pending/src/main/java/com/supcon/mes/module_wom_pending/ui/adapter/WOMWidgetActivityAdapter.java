@@ -78,10 +78,19 @@ public class WOMWidgetActivityAdapter extends BaseListDataRecyclerViewAdapter<Wa
                     .subscribe(o -> {
                         Bundle bundle = new Bundle();
                         bundle.putSerializable(Constant.IntentKey.WAIT_PUT_RECORD,getItem(getAdapterPosition()));
+
                         if (WomConstant.SystemCode.RM_TYPE_SIMPLE.equals(getItem(getAdapterPosition()).getFormulaId().getSetProcess().id)){
                             IntentRouter.go(context,Constant.Router.WOM_SIMPLE_ACTIVITY_LIST,bundle);
                         }
                         else{
+                            if (getItem(getAdapterPosition()).getForAdjust()){ // 调整活动
+                                IntentRouter.go(context,Constant.Router.WOM_ADJUST_ACTIVITY_LIST,bundle);
+                                return;
+                            }else if (getItem(getAdapterPosition()).getForTemp()){ // 机动活动
+                                bundle.putInt(Constant.IntentKey.SELECT_POS,1);
+                            }else {
+                                bundle.putInt(Constant.IntentKey.SELECT_POS,0);
+                            }
                             IntentRouter.go(context,Constant.Router.WOM_ACTIVITY_LIST,bundle);
                         }
                     });

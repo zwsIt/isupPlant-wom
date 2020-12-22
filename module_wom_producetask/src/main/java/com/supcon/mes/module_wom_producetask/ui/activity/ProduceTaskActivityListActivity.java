@@ -98,7 +98,7 @@ public class ProduceTaskActivityListActivity extends BaseMultiFragmentActivity {
     private void initViewPager() {
         mFormulaActivityListFragment = new FormulaActivityListFragment();
         mTemporaryActivityListFragment = new TemporaryActivityListFragment();
-        viewPager.setCurrentItem(0);
+        viewPager.setCurrentItem(getIntent().getIntExtra(Constant.IntentKey.SELECT_POS,0));
         viewPager.setAdapter(new InnerFragmentPagerAdapter(getSupportFragmentManager()));
 //        viewPager.setOffscreenPageLimit(2); // 预加载下一页的界面个数，默认加载下一页面
     }
@@ -109,7 +109,7 @@ public class ProduceTaskActivityListActivity extends BaseMultiFragmentActivity {
     private void initTab() {
         customTab.addTab(context.getResources().getString(R.string.wom_formula_activity));
         customTab.addTab(context.getResources().getString(R.string.wom_temporary_activity));
-        customTab.setCurrentTab(0);
+        customTab.setCurrentTab(getIntent().getIntExtra(Constant.IntentKey.SELECT_POS,0));
     }
 
     @Override
