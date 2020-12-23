@@ -244,6 +244,7 @@ public class PreMaterialReceiveListAdapter extends BaseListDataRecyclerViewAdapt
                                 itemPreMaterialRejectReasonLayout.setVisibility(View.GONE);
                                 itemPreMaterialReceiveRealNum.setEditable(true);
                                 itemPreMaterialReceiveRealNum.setContent(null);
+                                itemPreMaterialReceiveReason.setContent(entity.remark);
                                 entity.receiveNum = null;
                             } else if ("WOM_receiveState/reject".equals(key)) {
                                 itemPreMaterialReceiveStoreLocation.setEditable(false);
