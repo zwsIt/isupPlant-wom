@@ -3,6 +3,7 @@ package com.supcon.mes.module_wom_batchmaterial.ui.adapter;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -87,9 +88,8 @@ public class BatchMaterialInstructionListAdapter extends BaseListDataRecyclerVie
             });
             RxView.clicks(itemView).throttleFirst(200,TimeUnit.MILLISECONDS)
                     .subscribe(o -> {
-
                         BatchMaterilEntity data = getItem(getAdapterPosition());
-                        if (BmConstant.ViewName.BATCH_MATERIAL_EDIT.equals(data.getPending().openUrl)){
+                        if (!TextUtils.isEmpty(data.getPending().openUrl) && data.getPending().openUrl.contains(BmConstant.ViewName.BATCH_MATERIAL_EDIT)){
                             Bundle bundle = new Bundle();
                             bundle.putSerializable(Constant.IntentKey.BATCH_MATERIAL_INSTRUCTION,data);
                             IntentRouter.go(context,Constant.Router.BATCH_MATERIAL_INSTRUCTION_EDIT,bundle);
@@ -98,7 +98,6 @@ public class BatchMaterialInstructionListAdapter extends BaseListDataRecyclerVie
                         }
 
                     });
-
         }
 
         @Override

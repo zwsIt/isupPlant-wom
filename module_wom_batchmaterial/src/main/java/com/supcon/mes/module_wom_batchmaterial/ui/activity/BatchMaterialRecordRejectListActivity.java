@@ -149,7 +149,7 @@ public class BatchMaterialRecordRejectListActivity extends BaseRefreshRecyclerAc
             BatchMaterialPartEntity batchMaterialPartEntity = (BatchMaterialPartEntity) obj;
             if ("rejectReason".equals(childView.getTag().toString())){
                 if (mSystemCodeEntities == null || mSystemCodeEntities.size() <= 0){
-                    ToastUtils.show(context, getString(R.string.wom_null_list));
+                    ToastUtils.show(context, context.getResources().getString(R.string.wom_null_systemcode));
                     return;
                 }
                 new SinglePickController<String>(this)

@@ -231,7 +231,7 @@ public class RejectMaterialEditActivity extends BaseRefreshRecyclerActivity<Reje
                         break;
                     case "rejectReason":
                         if (mSystemCodeEntities == null || mSystemCodeEntities.size() <= 0) {
-                            ToastUtils.show(context, getString(R.string.wom_null_list));
+                            ToastUtils.show(context, getString(R.string.wom_null_systemcode));
                             return;
                         }
                         mStringSinglePickController

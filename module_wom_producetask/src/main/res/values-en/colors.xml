@@ -7,4 +7,5 @@
     <color name="active_log_batch_start">#75AED2</color>
     <color name="active_log_batch_end">#9AC7E2</color>
     <color name="active_data_source1">#D3E7F4</color>
+    <color name="wom_black_333333">#333333</color>
 </resources>

@@ -98,13 +98,13 @@ public class ActivityProcessListActivity extends BaseRefreshRecyclerActivity<Tas
         customCondition.put("pageSize", 65535);
 
         contentView.setLayoutManager(new LinearLayoutManager(context));
-//        contentView.addItemDecoration(new RecyclerView.ItemDecoration() {
-//            @Override
-//            public void getItemOffsets(@NonNull Rect outRect, @NonNull View view, @NonNull RecyclerView parent, @NonNull RecyclerView.State state) {
-//                super.getItemOffsets(outRect, view, parent, state);
-//                outRect.set(DisplayUtil.dip2px(10,context),DisplayUtil.dip2px(10,context),DisplayUtil.dip2px(10,context),0);
-//            }
-//        });
+        contentView.addItemDecoration(new RecyclerView.ItemDecoration() {
+            @Override
+            public void getItemOffsets(@NonNull Rect outRect, @NonNull View view, @NonNull RecyclerView parent, @NonNull RecyclerView.State state) {
+                super.getItemOffsets(outRect, view, parent, state);
+                outRect.set(DisplayUtil.dip2px(10,context),0,DisplayUtil.dip2px(10,context),0);
+            }
+        });
     }
 
     @Override

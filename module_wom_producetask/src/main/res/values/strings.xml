@@ -77,6 +77,7 @@
     <string name="wom_output">已产出</string>
     <string name="wom_remainder">剩余</string>
     <string name="wom_null_list">原因列表为空，请尝试重启应用</string>
+    <string name="wom_null_systemcode"><![CDATA[原因列表为空，请进入主页数据管理-->系统编码下载]]></string>
     <string name="wom_report">报工</string>
     <string name="wom_putin_num_compare">用料量禁止大于可用量:</string>
     <string name="wom_receive_reason_all">接收</string>
@@ -150,4 +151,5 @@
     <string name="wom_warehouse_enable_please_write_storage">】项仓库已启用货位，请填写货位</string>
     <string name="wom_from_remain_putin_num_greater_zero">】项来源尾料，用料量须大于零</string>
     <string name="wom_activity_process">活动执行流程</string>
+    <string name="wom_check_result">检验结果</string>
 </resources>

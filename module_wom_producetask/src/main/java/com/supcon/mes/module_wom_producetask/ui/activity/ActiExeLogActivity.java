@@ -1,7 +1,10 @@
 package com.supcon.mes.module_wom_producetask.ui.activity;
 
+import android.graphics.Rect;
+import android.support.annotation.NonNull;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -12,6 +15,7 @@ import com.supcon.common.view.base.activity.BaseRefreshRecyclerActivity;
 import com.supcon.common.view.base.adapter.IListAdapter;
 import com.supcon.common.view.listener.OnRefreshPageListener;
 import com.supcon.common.view.ptr.PtrFrameLayout;
+import com.supcon.common.view.util.DisplayUtil;
 import com.supcon.common.view.util.ToastUtils;
 import com.supcon.mes.mbap.utils.SpaceItemDecoration;
 import com.supcon.mes.mbap.utils.StatusBarUtils;
@@ -63,9 +67,17 @@ public class ActiExeLogActivity extends BaseRefreshRecyclerActivity<ActiExelogEn
         waitPutinRecordEntity = (WaitPutinRecordEntity) getIntent().getSerializableExtra(Constant.IntentKey.WAIT_PUT_RECORD);
         StatusBarUtils.setWindowStatusBarColor(this, R.color.themeColor);
         contentView.setLayoutManager(new LinearLayoutManager(this));
-        contentView.addItemDecoration(new SpaceItemDecoration(10));
+//        contentView.addItemDecoration(new SpaceItemDecoration(10));
         refreshListController.setAutoPullDownRefresh(true);
         refreshListController.setPullDownRefreshEnabled(true);
+
+        contentView.addItemDecoration(new RecyclerView.ItemDecoration() {
+            @Override
+            public void getItemOffsets(@NonNull Rect outRect, @NonNull View view, @NonNull RecyclerView parent, @NonNull RecyclerView.State state) {
+                super.getItemOffsets(outRect, view, parent, state);
+                outRect.set(DisplayUtil.dip2px(10,context),DisplayUtil.dip2px(10,context),DisplayUtil.dip2px(10,context),0);
+            }
+        });
     }
 
     @Override
