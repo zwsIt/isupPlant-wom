@@ -80,13 +80,31 @@ public class CommonProduceTaskListFragment extends BaseRefreshRecyclerFragment<W
     @BindByTag("contentView")
     RecyclerView contentView;
     private ProduceTaskListAdapter mProduceTaskListAdapter;
-    Map<String, Object> queryParams = new HashMap<>();          // 指令单查询
-    Map<String, Object> processQueryParams = new HashMap<>();   // 工序查询
-    Map<String, Object> submitMap = new HashMap<>();            // 工序修改工作单元submit
-    private boolean mIsTaskLoad = true;         // 默认工单待办类型加载
+    /**
+     * 指令单查询
+     */
+    Map<String, Object> queryParams = new HashMap<>();
+    /**
+     * 工序查询
+     */
+    Map<String, Object> processQueryParams = new HashMap<>();
+    /**
+     * 工序修改工作单元submit
+     */
+    Map<String, Object> submitMap = new HashMap<>();
+    /**
+     * 默认工单待办类型加载
+     */
+    private boolean mIsTaskLoad = true;
     private int mCurrentItemPos;
-    private CustomTextView mFactoryCustomTv;    // 工作单元
-    private WaitPutinRecordEntity mWaitPutinRecordEntity;   // 当前操作项
+    /**
+     * 工作单元
+     */
+    private CustomTextView mFactoryCustomTv;
+    /**
+     * 当前操作项
+     */
+    private WaitPutinRecordEntity mWaitPutinRecordEntity;
     private int mFatherPosition;
 
     @Override
@@ -126,6 +144,7 @@ public class CommonProduceTaskListFragment extends BaseRefreshRecyclerFragment<W
         queryParams.put(Constant.BAPQuery.RECORD_TYPE, WomConstant.SystemCode.RECORD_TYPE_TASK);
         queryParams.put(Constant.BAPQuery.FORMULA_SET_PROCESS, WomConstant.SystemCode.RM_TYPE_COMMON);
     }
+
     @Override
     protected void initData() {
         super.initData();
@@ -137,9 +156,9 @@ public class CommonProduceTaskListFragment extends BaseRefreshRecyclerFragment<W
         super.initListener();
         refreshListController.setOnRefreshPageListener(pageIndex -> {
             if (mIsTaskLoad) {
-                presenterRouter.create(WaitPutinRecordsListAPI.class).listWaitPutinRecords(pageIndex, 20, queryParams,true);
+                presenterRouter.create(WaitPutinRecordsListAPI.class).listWaitPutinRecords(pageIndex, 20, queryParams, true);
             } else {
-                presenterRouter.create(WaitPutinRecordsListAPI.class).listWaitPutinRecords(pageIndex, 20, processQueryParams,false);
+                presenterRouter.create(WaitPutinRecordsListAPI.class).listWaitPutinRecords(pageIndex, 20, processQueryParams, false);
             }
         });
 
@@ -184,14 +203,13 @@ public class CommonProduceTaskListFragment extends BaseRefreshRecyclerFragment<W
                 case "stopTv":
                     // 结束工单报工
 
-                    if(mWaitPutinRecordEntity!=null && mWaitPutinRecordEntity.getTaskId()!=null
-                            && mWaitPutinRecordEntity.getTaskId().getBatchContral()!=null
-                            &&mWaitPutinRecordEntity.getTaskId().getBatchContral()){
+                    if (mWaitPutinRecordEntity != null && mWaitPutinRecordEntity.getTaskId() != null
+                            && mWaitPutinRecordEntity.getTaskId().getBatchContral() != null
+                            && mWaitPutinRecordEntity.getTaskId().getBatchContral()) {
                         paramsList.add("结束");
                         paramsList.add("stop");
                         showOperateConfirmDialog(paramsList, mWaitPutinRecordEntity, true);
-                    }
-                    else{
+                    } else {
                         endProduceTaskReport();
                     }
 
@@ -203,6 +221,7 @@ public class CommonProduceTaskListFragment extends BaseRefreshRecyclerFragment<W
                         mIsTaskLoad = false;
                         processQueryParams.put(Constant.BAPQuery.RECORD_TYPE, WomConstant.SystemCode.RECORD_TYPE_PROCESS); // 工序类型
                         processQueryParams.put(Constant.BAPQuery.PRODUCE_BATCH_NUM, mWaitPutinRecordEntity.getProduceBatchNum());
+                        refreshListController.setLoadMoreEnable(false);
                         refreshListController.refreshBegin();
                     }
                     break;
@@ -219,6 +238,7 @@ public class CommonProduceTaskListFragment extends BaseRefreshRecyclerFragment<W
                 case "setEquipmentTv":
                     updateCurrentFactory();
                     break;
+                default:
             }
 
         });
@@ -226,16 +246,15 @@ public class CommonProduceTaskListFragment extends BaseRefreshRecyclerFragment<W
     }
 
     /**
-     * @author zhangwenshuai1 2020/4/1
      * @param
      * @return
+     * @author zhangwenshuai1 2020/4/1
      * @description 工单结束报工
-     *
      */
     private void endProduceTaskReport() {
-       Bundle bundle = new Bundle();
-       bundle.putSerializable(Constant.IntentKey.WAIT_PUT_RECORD,mWaitPutinRecordEntity);
-        IntentRouter.go(context,Constant.Router.WOM_PRODUCE_TASK_END_REPORT,bundle);
+        Bundle bundle = new Bundle();
+        bundle.putSerializable(Constant.IntentKey.WAIT_PUT_RECORD, mWaitPutinRecordEntity);
+        IntentRouter.go(context, Constant.Router.WOM_PRODUCE_TASK_END_REPORT, bundle);
     }
 
     /**
@@ -252,8 +271,8 @@ public class CommonProduceTaskListFragment extends BaseRefreshRecyclerFragment<W
         mFactoryCustomTv.setContent(mWaitPutinRecordEntity.getTaskProcessId().getEquipmentId().getName());
         customDialog.bindChildListener(R.id.factoryCustomTv, (childView, action, obj) -> {
             Bundle bundle = new Bundle();
-            bundle.putSerializable(Constant.IntentKey.WAIT_PUT_RECORD,mWaitPutinRecordEntity);
-            IntentRouter.go(context, Constant.Router.WOM_FACTORY_LIST,bundle);
+            bundle.putSerializable(Constant.IntentKey.WAIT_PUT_RECORD, mWaitPutinRecordEntity);
+            IntentRouter.go(context, Constant.Router.WOM_FACTORY_LIST, bundle);
         }).bindClickListener(R.id.cancelTv, null, true)
                 .bindClickListener(R.id.confirmTv, v -> {
                     if (TextUtils.isEmpty(mFactoryCustomTv.getContent())) {
@@ -262,12 +281,12 @@ public class CommonProduceTaskListFragment extends BaseRefreshRecyclerFragment<W
                     }
                     customDialog.getDialog().dismiss();
                     onLoading(context.getResources().getString(R.string.wom_dealing));
-                    submitMap.put("operateType","save");
-                    submitMap.put("taskProcess",mWaitPutinRecordEntity.getTaskProcessId());
-                    submitMap.put("ids2del","");
-                    submitMap.put("viewCode","WOM_1.0.0_produceTask_processUnitEdit");
+                    submitMap.put("operateType", "save");
+                    submitMap.put("taskProcess", mWaitPutinRecordEntity.getTaskProcessId());
+                    submitMap.put("ids2del", "");
+                    submitMap.put("viewCode", "WOM_1.0.0_produceTask_processUnitEdit");
 //                    submitMap.put("workFlowVar",new WorkFlowVarDTO());
-                    presenterRouter.create(ProcessOperateAPI.class).updateProcessFactoryModelUnit(mWaitPutinRecordEntity.getTaskProcessId().getId(),getController(GetPowerCodeController.class).getPowerCodeResult(),submitMap);
+                    presenterRouter.create(ProcessOperateAPI.class).updateProcessFactoryModelUnit(mWaitPutinRecordEntity.getTaskProcessId().getId(), getController(GetPowerCodeController.class).getPowerCodeResult(), submitMap);
                 }, false);
         customDialog.show();
     }
@@ -287,7 +306,7 @@ public class CommonProduceTaskListFragment extends BaseRefreshRecyclerFragment<W
                     .bindClickListener(R.id.cancelTv, null, true)
                     .bindClickListener(R.id.confirmTv, v -> {
                         onLoading(getString(R.string.wom_dealing));
-                        presenterRouter.create(ProduceTaskOperateAPI.class).operateProduceTask(waitPutinRecordEntity.getId(), String.valueOf(paramsList.get(1)),null);
+                        presenterRouter.create(ProduceTaskOperateAPI.class).operateProduceTask(waitPutinRecordEntity.getId(), String.valueOf(paramsList.get(1)), null);
                     }, true)
                     .show();
         } else {
@@ -318,9 +337,10 @@ public class CommonProduceTaskListFragment extends BaseRefreshRecyclerFragment<W
     public void refresh(RefreshEvent refreshEvent) {
         refreshListController.refreshBegin();
     }
+
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void getSelectDataEvent(SelectDataEvent selectDataEvent) {
-        if (selectDataEvent.getEntity() instanceof FactoryModelEntity){
+        if (selectDataEvent.getEntity() instanceof FactoryModelEntity) {
             mFactoryCustomTv.setContent(((FactoryModelEntity) selectDataEvent.getEntity()).getName());
             mWaitPutinRecordEntity.setEuqId((FactoryModelEntity) selectDataEvent.getEntity());
             mWaitPutinRecordEntity.getTaskProcessId().setEquipmentId((FactoryModelEntity) selectDataEvent.getEntity());
@@ -338,13 +358,14 @@ public class CommonProduceTaskListFragment extends BaseRefreshRecyclerFragment<W
             if (entity.result.size() <= 0) {
                 ToastUtils.show(context, "无执行工序");
             } else {
-                for (Object waitPutinRecordEntity : entity.result){
-                    ((WaitPutinRecordEntity)waitPutinRecordEntity).setFatherPosition(mCurrentItemPos); // 记录父位置
+                for (Object waitPutinRecordEntity : entity.result) {
+                    ((WaitPutinRecordEntity) waitPutinRecordEntity).setFatherPosition(mCurrentItemPos); // 记录父位置
                 }
                 mProduceTaskListAdapter.getItem(mCurrentItemPos).getProcessWaitPutinRecordEntityList().addAll(entity.result); // 当前工单存储工序list
                 updateProcessList();
             }
             refreshListController.refreshComplete();
+            refreshListController.setLoadMoreEnable(true);
         }
 
     }
@@ -359,7 +380,7 @@ public class CommonProduceTaskListFragment extends BaseRefreshRecyclerFragment<W
         List<WaitPutinRecordEntity> processWaitRecordsList = mProduceTaskListAdapter.getItem(mCurrentItemPos).getProcessWaitPutinRecordEntityList();
         mProduceTaskListAdapter.getList().addAll(mCurrentItemPos + 1, processWaitRecordsList);
         mProduceTaskListAdapter.notifyItemRangeInserted(mCurrentItemPos + 1, processWaitRecordsList.size());
-        mProduceTaskListAdapter.notifyItemRangeChanged(mCurrentItemPos, processWaitRecordsList.size());
+        mProduceTaskListAdapter.notifyItemRangeChanged(mCurrentItemPos, processWaitRecordsList.size() + 1);
     }
 
     @Override
@@ -384,7 +405,7 @@ public class CommonProduceTaskListFragment extends BaseRefreshRecyclerFragment<W
     public void updateProcessFactoryModelUnitSuccess(BAP5CommonEntity entity) {
         onLoadSuccess(context.getResources().getString(R.string.wom_dealt_success));
         // 只刷新当前项
-        mProduceTaskListAdapter.notifyItemRangeChanged(mCurrentItemPos,1);
+        mProduceTaskListAdapter.notifyItemRangeChanged(mCurrentItemPos, 1);
 
     }
 
@@ -399,31 +420,31 @@ public class CommonProduceTaskListFragment extends BaseRefreshRecyclerFragment<W
         // 更新当前项目
         TaskProcessEntity process;
         try {
-            Map<String,Object> map = (Map<String, Object>) entity.data;
-            process = GsonUtil.gsonToBean(GsonUtil.gsonString(map.get("process")),TaskProcessEntity.class);
+            Map<String, Object> map = (Map<String, Object>) entity.data;
+            process = GsonUtil.gsonToBean(GsonUtil.gsonString(map.get("process")), TaskProcessEntity.class);
         } catch (Exception e) {
             e.printStackTrace();
             refreshListController.refreshBegin();
             return;
         }
-        if (WomConstant.SystemCode.EXE_STATE_END.equals(process.getProcessRunState().id)){ // 已结束工序
+        if (WomConstant.SystemCode.EXE_STATE_END.equals(process.getProcessRunState().id)) { // 已结束工序
             // 清理工序list位置项
             mCurrentItemPos = mFatherPosition;  // 确保加载工序后位置
             List<WaitPutinRecordEntity> processList = mProduceTaskListAdapter.getItem(mFatherPosition).getProcessWaitPutinRecordEntityList();
             mProduceTaskListAdapter.getList().removeAll(processList);
-            mProduceTaskListAdapter.notifyItemRangeRemoved(mFatherPosition+1,processList.size());
-            mProduceTaskListAdapter.notifyItemRangeChanged(mFatherPosition,mProduceTaskListAdapter.getItemCount()-1);
+            mProduceTaskListAdapter.notifyItemRangeRemoved(mFatherPosition + 1, processList.size());
+            mProduceTaskListAdapter.notifyItemRangeChanged(mFatherPosition, mProduceTaskListAdapter.getItemCount() - 1);
             // 清理当前指令单下工序
             processList.clear();
             // 重新加载工序
             mIsTaskLoad = false;
             refreshListController.refreshBegin();
-        }else {
+        } else {
             WaitPutinRecordEntity waitPutinRecordEntity = mProduceTaskListAdapter.getList().get(mCurrentItemPos);
             waitPutinRecordEntity.setExeState(process.getProcessRunState());
             waitPutinRecordEntity.setTaskProcessId(process);
 //            waitPutinRecordEntity.getTaskProcessId().setActStartTime(process.getActStartTime());
-            mProduceTaskListAdapter.notifyItemRangeChanged(mCurrentItemPos,1);
+            mProduceTaskListAdapter.notifyItemRangeChanged(mCurrentItemPos, 1);
         }
 
     }
@@ -433,9 +454,9 @@ public class CommonProduceTaskListFragment extends BaseRefreshRecyclerFragment<W
         onLoadFailed(ErrorMsgHelper.msgParse(errorMsg));
     }
 
-    public void search(String searchContent){
+    public void search(String searchContent) {
         queryParams.put(Constant.BAPQuery.PRODUCE_BATCH_NUM, searchContent);
-        if(refreshListController!=null){
+        if (refreshListController != null) {
             refreshListController.refreshBegin();
         }
 
