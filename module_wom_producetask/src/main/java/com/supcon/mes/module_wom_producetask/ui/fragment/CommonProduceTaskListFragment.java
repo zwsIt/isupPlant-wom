@@ -231,6 +231,7 @@ public class CommonProduceTaskListFragment extends BaseRefreshRecyclerFragment<W
         mIsTaskLoad = false;
         processQueryParams.put(Constant.BAPQuery.RECORD_TYPE, WomConstant.SystemCode.RECORD_TYPE_PROCESS); // 工序类型
         processQueryParams.put(Constant.BAPQuery.PRODUCE_BATCH_NUM, mWaitPutinRecordEntity.getProduceBatchNum());
+        refreshListController.setLoadMoreEnable(false);
         refreshListController.refreshBegin();
     }
 
@@ -365,6 +366,7 @@ public class CommonProduceTaskListFragment extends BaseRefreshRecyclerFragment<W
                 updateProcessList();
             }
             refreshListController.refreshComplete();
+            refreshListController.setLoadMoreEnable(true);
         }
 
     }
@@ -379,7 +381,7 @@ public class CommonProduceTaskListFragment extends BaseRefreshRecyclerFragment<W
         List<WaitPutinRecordEntity> processWaitRecordsList = mProduceTaskListAdapter.getItem(mCurrentItemPos).getProcessWaitPutinRecordEntityList();
         mProduceTaskListAdapter.getList().addAll(mCurrentItemPos + 1, processWaitRecordsList);
         mProduceTaskListAdapter.notifyItemRangeInserted(mCurrentItemPos + 1, processWaitRecordsList.size());
-        mProduceTaskListAdapter.notifyItemRangeChanged(mCurrentItemPos, processWaitRecordsList.size());
+        mProduceTaskListAdapter.notifyItemRangeChanged(mCurrentItemPos, processWaitRecordsList.size()+1);
     }
 
     @Override
