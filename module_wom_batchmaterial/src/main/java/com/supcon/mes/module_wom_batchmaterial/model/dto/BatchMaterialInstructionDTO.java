@@ -31,7 +31,7 @@ public class BatchMaterialInstructionDTO extends BaseEntity {
      * viewCode : WOM_1.0.0_batchMaterial_batchMaterialOrder
      */
 
-    private WorkFlowVarDTO mWorkFlowVarDTO;
+    private WorkFlowVarDTO workFlowVar;
     private String operateType;
     private String deploymentId;
     private String taskDescription;
@@ -45,11 +45,11 @@ public class BatchMaterialInstructionDTO extends BaseEntity {
     private List<?> uploadFileFormMap;
 
     public WorkFlowVarDTO getWorkFlowVarDTO() {
-        return mWorkFlowVarDTO;
+        return workFlowVar;
     }
 
     public void setWorkFlowVarDTO(WorkFlowVarDTO workFlowVarDTO) {
-        this.mWorkFlowVarDTO = workFlowVarDTO;
+        this.workFlowVar = workFlowVarDTO;
     }
 
     public String getOperateType() {

@@ -1,5 +1,6 @@
 package com.supcon.mes.module_wom_producetask.model.bean;
 
+import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 import com.supcon.common.com_http.BaseEntity;
 import com.supcon.mes.middleware.model.bean.DepartmentEntity;
@@ -67,13 +68,15 @@ public class BatchMaterilEntity extends BaseEntity {
     @SerializedName("orderDepartMent")
     private DepartmentEntity orderDepartment; // 配料部门
     private SystemCodeEntity orderState; // 配料指令状态
+    @Expose(serialize = false)
     private PendingEntity pending;
+    @Expose(deserialize = false)
     private String produceBatchNum; // 生产批号
     private MaterialEntity productId; // 物料
     private String remark;
     private BigDecimal returnNum; // 已退数量
     private int status;
-    private int tableInfoId;
+    private Long tableInfoId;
     private String tableNo;
     private ProduceTaskEntity taskId; // 制造指令单
     private boolean valid;
@@ -280,11 +283,11 @@ public class BatchMaterilEntity extends BaseEntity {
         this.status = status;
     }
 
-    public int getTableInfoId() {
+    public Long getTableInfoId() {
         return tableInfoId;
     }
 
-    public void setTableInfoId(int tableInfoId) {
+    public void setTableInfoId(Long tableInfoId) {
         this.tableInfoId = tableInfoId;
     }
 

@@ -19,6 +19,8 @@ import com.app.annotation.BindByTag;
 import com.app.annotation.Controller;
 import com.app.annotation.Presenter;
 import com.app.annotation.apt.Router;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.jakewharton.rxbinding2.view.RxView;
 import com.supcon.common.view.base.activity.BaseRefreshRecyclerActivity;
 import com.supcon.common.view.base.adapter.IListAdapter;
@@ -288,8 +290,8 @@ public class BatchMaterialInstructionEditActivity extends BaseRefreshRecyclerAct
         batchMaterialInstructionDTO.setOperateType("save");
         batchMaterialInstructionDTO.setDeploymentId(String.valueOf(mBatchMaterialEntity.getPending().deploymentId));
         batchMaterialInstructionDTO.setActivityName(mBatchMaterialEntity.getPending().activityName);
+        batchMaterialInstructionDTO.setTaskDescription(mBatchMaterialEntity.getPending().taskDescription);
         batchMaterialInstructionDTO.setPendingId(String.valueOf(mBatchMaterialEntity.getPending().id));
-
         BatchMaterialInstructionDTO.DgListEntity dgListEntity = new BatchMaterialInstructionDTO.DgListEntity();
         dgListEntity.setDg(GsonUtil.gsonString(mBatchMaterialRecordsEditAdapter.getList()));
         batchMaterialInstructionDTO.setDgList(dgListEntity);
@@ -298,6 +300,7 @@ public class BatchMaterialInstructionEditActivity extends BaseRefreshRecyclerAct
         dgDeletedIdsList.setDg(TextUtils.isEmpty(dgDeletedIds) ? null : dgDeletedIds);
         batchMaterialInstructionDTO.setDgDeletedIds(dgDeletedIdsList);
 
+        mBatchMaterialEntity.setPending(null); // bap 6.0  传输会单据异常
         batchMaterialInstructionDTO.setBatchMateril(mBatchMaterialEntity);
         batchMaterialInstructionDTO.setIds2del("");
         batchMaterialInstructionDTO.setViewCode("WOM_1.0.0_batchMaterial_batchMaterialOrder");
