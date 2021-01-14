@@ -293,14 +293,15 @@ public class BatchMaterialInstructionEditActivity extends BaseRefreshRecyclerAct
         batchMaterialInstructionDTO.setTaskDescription(mBatchMaterialEntity.getPending().taskDescription);
         batchMaterialInstructionDTO.setPendingId(String.valueOf(mBatchMaterialEntity.getPending().id));
         BatchMaterialInstructionDTO.DgListEntity dgListEntity = new BatchMaterialInstructionDTO.DgListEntity();
-        dgListEntity.setDg(GsonUtil.gsonString(mBatchMaterialRecordsEditAdapter.getList()));
+        dgListEntity.setDg(GsonUtil.gsonStringSerializeNulls(mBatchMaterialRecordsEditAdapter.getList()));
         batchMaterialInstructionDTO.setDgList(dgListEntity);
 
         BatchMaterialInstructionDTO.DgListEntity dgDeletedIdsList = new BatchMaterialInstructionDTO.DgListEntity();
         dgDeletedIdsList.setDg(TextUtils.isEmpty(dgDeletedIds) ? null : dgDeletedIds);
         batchMaterialInstructionDTO.setDgDeletedIds(dgDeletedIdsList);
 
-        mBatchMaterialEntity.setPending(null); // bap 6.0  传输会单据异常
+        // bap 6.0  传输会单据异常
+        mBatchMaterialEntity.setPending(null);
         batchMaterialInstructionDTO.setBatchMateril(mBatchMaterialEntity);
         batchMaterialInstructionDTO.setIds2del("");
         batchMaterialInstructionDTO.setViewCode("WOM_1.0.0_batchMaterial_batchMaterialOrder");

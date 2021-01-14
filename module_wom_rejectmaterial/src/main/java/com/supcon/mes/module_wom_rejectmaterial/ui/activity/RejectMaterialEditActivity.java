@@ -301,15 +301,18 @@ public class RejectMaterialEditActivity extends BaseRefreshRecyclerActivity<Reje
 
         RejectMaterialDTO.DgListEntity dgListEntity = new RejectMaterialDTO.DgListEntity();
         RejectMaterialDTO.DgListEntity dgDeletedIdsList = new RejectMaterialDTO.DgListEntity();
-        String path = ""; // 提交前缀url
-        if (RmConstant.SystemCode.REJECT_TYPE_BATCH.equals(mRejectMaterialEntity.getRejectType().id)) { // 配料退料
-            dgListEntity.setDgEditBatch(GsonUtil.gsonString(mRejectMaterialRecordsEditAdapter.getList()));
+        // 提交前缀url
+        String path = "";
+        if (RmConstant.SystemCode.REJECT_TYPE_BATCH.equals(mRejectMaterialEntity.getRejectType().id)) {
+            // 配料退料
+            dgListEntity.setDgEditBatch(GsonUtil.gsonStringSerializeNulls(mRejectMaterialRecordsEditAdapter.getList()));
             dgDeletedIdsList.setDgEditBatch(TextUtils.isEmpty(dgDeletedIds) ? null : dgDeletedIds);
 
             path = RmConstant.URL.REJECT_BATCH_MATERIAL_EDIT__URL;
             rejectMaterialDTO.setViewCode("WOM_1.0.0_rejectMaterilal_batchRejectEdit");
-        } else if (RmConstant.SystemCode.REJECT_TYPE_PREPARE.equals(mRejectMaterialEntity.getRejectType().id)) { // 备料退料
-            dgListEntity.setDgEditPrepare(GsonUtil.gsonString(mRejectMaterialRecordsEditAdapter.getList()));
+        } else if (RmConstant.SystemCode.REJECT_TYPE_PREPARE.equals(mRejectMaterialEntity.getRejectType().id)) {
+            // 备料退料
+            dgListEntity.setDgEditPrepare(GsonUtil.gsonStringSerializeNulls(mRejectMaterialRecordsEditAdapter.getList()));
             dgDeletedIdsList.setDgEditPrepare(TextUtils.isEmpty(dgDeletedIds) ? null : dgDeletedIds);
 
             path = RmConstant.URL.REJECT_PREPARE_MATERIAL_EDIT_URL;
@@ -332,7 +335,8 @@ public class RejectMaterialEditActivity extends BaseRefreshRecyclerActivity<Reje
         workFlowVarDTO.setActivityName(mRejectMaterialEntity.getPending().activityName);
         workFlowVarDTO.setActivityType(mRejectMaterialEntity.getPending().activityType);
 
-        if (action == WorkFlowBtn.SAVE_BTN.value()) { // 保存
+        if (action == WorkFlowBtn.SAVE_BTN.value()) {
+            // 保存
             rejectMaterialDTO.setOperateType(Constant.Transition.SAVE);
         } else { // 提交
             // 选人参数
