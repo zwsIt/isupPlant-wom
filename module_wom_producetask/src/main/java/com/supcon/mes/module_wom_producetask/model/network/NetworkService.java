@@ -41,7 +41,7 @@ public interface NetworkService {
      * @author zhangwenshuai1 2020/3/23
      * @description 工单待办记录list
      */
-    @POST("/msService/WOM/waitPutinRecord/waitPutRecord/waitPutTaskList-query")
+    @POST("/msService/WOM/waitPutinRecord/waitPutRecord/waitPutTaskList1-query")
     Flowable<BAP5CommonEntity<CommonBAPListEntity<WaitPutinRecordEntity>>> waitPutTaskList(@Body Map<String, Object> paramMap);
 
     /**
