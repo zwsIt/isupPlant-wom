@@ -222,7 +222,7 @@ public class OutputActivityReportActivity extends BaseRefreshRecyclerActivity<Ou
         customListWidgetAdd.setOnClickListener(v -> {
             OutputDetailEntity outputDetailEntity = new OutputDetailEntity();
             outputDetailEntity.setProduct(mWaitPutinRecordEntity.getTaskActiveId().getMaterialId()); // 物料
-            outputDetailEntity.setPutinTime(new Date().getTime());  // 投料时间
+            outputDetailEntity.setPutinTime(System.currentTimeMillis());  // 投料时间
             mOutputReportDetailAdapter.addData(outputDetailEntity);
             mOutputReportDetailAdapter.notifyItemRangeInserted(mOutputReportDetailAdapter.getItemCount() - 1, 1);
             mOutputReportDetailAdapter.notifyItemRangeChanged(mOutputReportDetailAdapter.getItemCount() - 1, 1);
@@ -297,7 +297,7 @@ public class OutputActivityReportActivity extends BaseRefreshRecyclerActivity<Ou
                 outputDetailEntity.setProduct(mWaitPutinRecordEntity.getTaskActiveId().getMaterialId()); // 物料
                 outputDetailEntity.setWareId(materialQRCodeEntity.getToWare());
                 outputDetailEntity.setStoreId(materialQRCodeEntity.getToStore());
-                outputDetailEntity.setPutinTime(new Date().getTime());  // 报工时间
+                outputDetailEntity.setPutinTime(System.currentTimeMillis());  // 报工时间
                 mOutputReportDetailAdapter.addData(outputDetailEntity);
                 mOutputReportDetailAdapter.notifyItemRangeInserted(mOutputReportDetailAdapter.getItemCount() - 1, 1);
                 mOutputReportDetailAdapter.notifyItemRangeChanged(mOutputReportDetailAdapter.getItemCount() - 1, 1);
