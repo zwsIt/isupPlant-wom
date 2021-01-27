@@ -184,7 +184,7 @@ public class OutputAgileActivityReportActivity extends BaseRefreshRecyclerActivi
         });
         customListWidgetAdd.setOnClickListener(v -> {
             OutputDetailEntity outputDetailEntity = new OutputDetailEntity();
-            outputDetailEntity.setPutinTime(new Date().getTime());  // 投料时间
+            outputDetailEntity.setPutinTime(System.currentTimeMillis());  // 投料时间
             mOutputAgileReportDetailAdapter.addData(outputDetailEntity);
             mOutputAgileReportDetailAdapter.notifyItemRangeInserted(mOutputAgileReportDetailAdapter.getItemCount() - 1, 1);
             mOutputAgileReportDetailAdapter.notifyItemRangeChanged(mOutputAgileReportDetailAdapter.getItemCount() - 1, 1);
@@ -252,7 +252,7 @@ public class OutputAgileActivityReportActivity extends BaseRefreshRecyclerActivi
             outputDetailEntity.setOutputNum(materialQRCodeEntity.getNum());
             outputDetailEntity.setWareId(materialQRCodeEntity.getToWare());
             outputDetailEntity.setStoreId(materialQRCodeEntity.getToStore());
-            outputDetailEntity.setPutinTime(new Date().getTime());  // 产出时间
+            outputDetailEntity.setPutinTime(System.currentTimeMillis());  // 产出时间
             mOutputAgileReportDetailAdapter.addData(outputDetailEntity);
             mOutputAgileReportDetailAdapter.notifyItemRangeInserted(mOutputAgileReportDetailAdapter.getItemCount() - 1, 1);
             mOutputAgileReportDetailAdapter.notifyItemRangeChanged(mOutputAgileReportDetailAdapter.getItemCount() - 1, 1);

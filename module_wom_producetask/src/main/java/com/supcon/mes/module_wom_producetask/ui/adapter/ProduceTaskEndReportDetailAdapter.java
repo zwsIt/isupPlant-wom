@@ -17,6 +17,7 @@ import com.supcon.mes.module_wom_producetask.model.bean.OutputDetailEntity;
 
 import java.math.BigDecimal;
 
+import io.reactivex.functions.Consumer;
 import io.reactivex.functions.Predicate;
 
 /**
@@ -90,6 +91,7 @@ public class ProduceTaskEndReportDetailAdapter extends BaseListDataRecyclerViewA
                         public boolean test(CharSequence charSequence) throws Exception {
                             if (TextUtils.isEmpty(charSequence.toString())){
                                 getItem(getAdapterPosition()).setOutputNum(null);
+                                getItem(getAdapterPosition()).setReportNum(getItem(getAdapterPosition()).getOutputNum());
                                 return false;
                             }
                             if(charSequence.toString().startsWith(".")){
@@ -100,7 +102,13 @@ public class ProduceTaskEndReportDetailAdapter extends BaseListDataRecyclerViewA
                             return true;
                         }
                     })
-                    .subscribe(charSequence -> getItem(getAdapterPosition()).setOutputNum(new BigDecimal(charSequence.toString().trim())));
+                    .subscribe(new Consumer<CharSequence>() {
+                        @Override
+                        public void accept(CharSequence charSequence) throws Exception {
+                            getItem(getAdapterPosition()).setOutputNum(new BigDecimal(charSequence.toString().trim()));
+                            getItem(getAdapterPosition()).setReportNum(getItem(getAdapterPosition()).getOutputNum());
+                        }
+                    });
             warehouseTv.setOnChildViewClickListener((childView, action, obj) -> {
                 if (action == -1){
                     getItem(getAdapterPosition()).setWareId(null);
