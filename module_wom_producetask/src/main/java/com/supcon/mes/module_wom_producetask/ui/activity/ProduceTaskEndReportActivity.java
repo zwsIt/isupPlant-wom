@@ -166,7 +166,7 @@ public class ProduceTaskEndReportActivity extends BaseRefreshRecyclerActivity<Ou
             outputDetailEntity.setProduct(mWaitPutinRecordEntity.getProductId()); // 产品
             outputDetailEntity.setMaterialBatchNum(mWaitPutinRecordEntity.getProduceBatchNum()); // 生产批默认入库批号
             outputDetailEntity.setOutputNum(mWaitPutinRecordEntity.getTaskId().getPlanNum());  // 默认入库数量为计划数量
-            outputDetailEntity.setPutinTime(new Date().getTime());  // 报工时间
+            outputDetailEntity.setPutinTime(System.currentTimeMillis());  // 报工时间
             mProduceTaskEndReportDetailAdapter.addData(outputDetailEntity);
             mProduceTaskEndReportDetailAdapter.notifyItemRangeInserted(mProduceTaskEndReportDetailAdapter.getItemCount() - 1, 1);
             mProduceTaskEndReportDetailAdapter.notifyItemRangeChanged(mProduceTaskEndReportDetailAdapter.getItemCount() - 1, 1);
@@ -231,7 +231,7 @@ public class ProduceTaskEndReportActivity extends BaseRefreshRecyclerActivity<Ou
                 outputDetailEntity.setOutputNum(materialQRCodeEntity.getNum());  // 扫描数量
                 outputDetailEntity.setWareId(materialQRCodeEntity.getToWare());
                 outputDetailEntity.setStoreId(materialQRCodeEntity.getToStore());
-                outputDetailEntity.setPutinTime(new Date().getTime());  // 报工时间
+                outputDetailEntity.setPutinTime(System.currentTimeMillis());  // 报工时间
                 mProduceTaskEndReportDetailAdapter.addData(outputDetailEntity);
                 mProduceTaskEndReportDetailAdapter.notifyItemRangeInserted(mProduceTaskEndReportDetailAdapter.getItemCount() - 1, 1);
                 mProduceTaskEndReportDetailAdapter.notifyItemRangeChanged(mProduceTaskEndReportDetailAdapter.getItemCount() - 1, 1);
