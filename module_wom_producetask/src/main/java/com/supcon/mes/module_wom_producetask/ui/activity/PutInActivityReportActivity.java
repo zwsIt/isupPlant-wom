@@ -288,8 +288,9 @@ public class PutInActivityReportActivity extends BaseRefreshRecyclerActivity<Put
                     ToastUtils.show(context,context.getResources().getString(R.string.wom_no_realize));
                 }
             } else {
-                if (checkMaterial(materialQRCodeEntity))
+                if (checkMaterial(materialQRCodeEntity)) {
                     return;
+                }
                 addMaterialReport(materialQRCodeEntity, null);
             }
         }
@@ -305,7 +306,7 @@ public class PutInActivityReportActivity extends BaseRefreshRecyclerActivity<Put
     private void addMaterialReport(MaterialQRCodeEntity materialQRCodeEntity, RemainMaterialEntity remainMaterialEntity) {
         PutInDetailEntity putInDetailEntity = new PutInDetailEntity();
         putInDetailEntity.setMaterialId(mWaitPutinRecordEntity.getTaskActiveId().getMaterialId()); // 物料
-        putInDetailEntity.setPutinTime(new Date().getTime());  // 投料时间
+        putInDetailEntity.setPutinTime(System.currentTimeMillis());  // 投料时间
 
         if (remainMaterialEntity != null) { // 尾料参照
             putInDetailEntity.setRemainId(remainMaterialEntity);

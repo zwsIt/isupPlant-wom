@@ -62,6 +62,15 @@ public class PutInDetailEntity extends BaseEntity {
     private SystemCodeEntity remainOperate;      // 尾料处理
     @SerializedName(value = "remianId")
     private RemainMaterialEntity remainId; // 尾料记录id
+    private BigDecimal remainAfter; // 尾料使用后
+
+    public BigDecimal getRemainAfter() {
+        return remainAfter;
+    }
+
+    public void setRemainAfter(BigDecimal remainAfter) {
+        this.remainAfter = remainAfter;
+    }
 
     public BigDecimal getSpecificationNum() {
         return specificationNum;
