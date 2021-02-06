@@ -166,6 +166,9 @@ public class OutputActivityReportActivity extends BaseRefreshRecyclerActivity<Ou
         if (!WomConstant.SystemCode.MATERIAL_BATCH_02.equals(mWaitPutinRecordEntity.getTaskActiveId().getMaterialId().getIsBatch().id)){
             mOutputReportDetailAdapter.setNoMaterialBatchNo(true);
         }
+        if (WomConstant.SystemCode.RM_activeType_PIPE_PUTIN.equals(mWaitPutinRecordEntity.getTaskActiveId().getActiveType().id)){
+            mOutputReportDetailAdapter.setPipe(true);
+        }
 
     }
 

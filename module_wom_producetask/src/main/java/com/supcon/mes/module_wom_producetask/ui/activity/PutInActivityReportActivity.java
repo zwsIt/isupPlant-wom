@@ -163,6 +163,9 @@ public class PutInActivityReportActivity extends BaseRefreshRecyclerActivity<Put
         if (!WomConstant.SystemCode.MATERIAL_BATCH_02.equals(mWaitPutinRecordEntity.getTaskActiveId().getMaterialId().getIsBatch().id)) {
             mPutInReportDetailAdapter.setNoMaterialBatchNo(true);
         }
+        if (WomConstant.SystemCode.RM_activeType_PIPE_PUTIN.equals(mWaitPutinRecordEntity.getTaskActiveId().getActiveType().id)){
+            mPutInReportDetailAdapter.setPipe(true);
+        }
     }
 
     @Override
@@ -173,9 +176,12 @@ public class PutInActivityReportActivity extends BaseRefreshRecyclerActivity<Put
         rightBtn.setVisibility(View.VISIBLE);
         rightBtn.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_top_scan));
         customListWidgetName.setText(context.getResources().getString(R.string.wom_material_report_detail));
-        customWidgetEditLl.setVisibility(View.VISIBLE);
-        customListWidgetEdit.setImageResource(R.drawable.ic_wxgd_reference);
-        customWidgetRightName.setText(context.getResources().getString(R.string.wom_remain_material_refence));
+
+        if (WomConstant.SystemCode.RM_activeType_PUTIN.equals(mWaitPutinRecordEntity.getTaskActiveId().getActiveType().id)){
+            customWidgetEditLl.setVisibility(View.VISIBLE);
+            customListWidgetEdit.setImageResource(R.drawable.ic_wxgd_reference);
+            customWidgetRightName.setText(context.getResources().getString(R.string.wom_remain_material_refence));
+        }
 
         materialName.setContent(String.format("%s(%s)", mWaitPutinRecordEntity.getTaskActiveId().getMaterialId().getName(), mWaitPutinRecordEntity.getTaskActiveId().getMaterialId().getCode()));
 //        materialCode.setContent(mWaitPutinRecordEntity.getTaskActiveId().getMaterialId().getCode());

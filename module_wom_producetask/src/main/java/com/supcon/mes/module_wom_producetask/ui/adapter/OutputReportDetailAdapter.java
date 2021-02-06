@@ -5,6 +5,7 @@ import android.content.Context;
 import android.text.InputType;
 import android.text.TextUtils;
 import android.view.View;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.app.annotation.BindByTag;
@@ -31,6 +32,8 @@ import io.reactivex.functions.Predicate;
 public class OutputReportDetailAdapter extends BaseListDataRecyclerViewAdapter<OutputDetailEntity> {
 
     private boolean noMaterialBatchNo; // 物料是否未启用批次
+    private boolean pipe; // 是否管道
+
     public OutputReportDetailAdapter(Context context) {
         super(context);
     }
@@ -42,6 +45,10 @@ public class OutputReportDetailAdapter extends BaseListDataRecyclerViewAdapter<O
 
     public void setNoMaterialBatchNo(boolean b) {
         noMaterialBatchNo = b;
+    }
+
+    public void setPipe(boolean pipe) {
+        this.pipe = pipe;
     }
 
     /**
@@ -67,6 +74,8 @@ public class OutputReportDetailAdapter extends BaseListDataRecyclerViewAdapter<O
         TextView preBatchNumTv;
         @BindByTag("preNumTv")
         TextView preNumTv;
+        @BindByTag("remainderNumEtLl")
+        LinearLayout remainderNumEtLl;
 
         public ReportViewHolder(Context context) {
             super(context,parent);
@@ -85,6 +94,9 @@ public class OutputReportDetailAdapter extends BaseListDataRecyclerViewAdapter<O
             numEt.setInputType(InputType.TYPE_CLASS_NUMBER|InputType.TYPE_NUMBER_FLAG_DECIMAL);
             if (noMaterialBatchNo){
                 preBatchNumTv.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_batch_number,0,0,0);
+            }
+            if (pipe){
+                remainderNumEtLl.setVisibility(View.GONE);
             }
             remainderNumEt.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
         }

@@ -34,6 +34,7 @@ public class PutInReportDetailAdapter extends BaseListDataRecyclerViewAdapter<Pu
 
     private boolean batchPutInActivity; // 是否投配料活动
     private boolean noMaterialBatchNo; // 物料是否未启用批次
+    private boolean pipe; // 是否管道
 
     public PutInReportDetailAdapter(Context context) {
         super(context);
@@ -50,6 +51,10 @@ public class PutInReportDetailAdapter extends BaseListDataRecyclerViewAdapter<Pu
 
     public void setNoMaterialBatchNo(boolean b) {
         noMaterialBatchNo = b;
+    }
+
+    public void setPipe(boolean pipe) {
+        this.pipe = pipe;
     }
 
     /**
@@ -94,6 +99,9 @@ public class PutInReportDetailAdapter extends BaseListDataRecyclerViewAdapter<Pu
             super.initView();
             if (batchPutInActivity) {
                 materialNameLl.setVisibility(View.VISIBLE);
+                remainderNumEtLl.setVisibility(View.GONE);
+            }
+            if (pipe){
                 remainderNumEtLl.setVisibility(View.GONE);
             }
             if (noMaterialBatchNo) {
