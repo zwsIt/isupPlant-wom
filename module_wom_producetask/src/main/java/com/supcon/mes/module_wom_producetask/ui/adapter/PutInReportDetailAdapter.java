@@ -99,11 +99,11 @@ public class PutInReportDetailAdapter extends BaseListDataRecyclerViewAdapter<Pu
             super.initView();
             if (batchPutInActivity) {
                 materialNameLl.setVisibility(View.VISIBLE);
-                remainderNumEtLl.setVisibility(View.GONE);
+//                remainderNumEtLl.setVisibility(View.GONE);
             }
-            if (pipe){
-                remainderNumEtLl.setVisibility(View.GONE);
-            }
+//            if (pipe){
+//                remainderNumEtLl.setVisibility(View.GONE);
+//            }
             if (noMaterialBatchNo) {
                 materialBatchNumTv.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_batch_number, 0, 0, 0);
             }
@@ -335,13 +335,16 @@ public class PutInReportDetailAdapter extends BaseListDataRecyclerViewAdapter<Pu
         protected void update(PutInDetailEntity data) {
             if (data.getRemainId() != null){
                 batchNum.setEditable(false);
-                warehouseTv.setEditable(false);
-                storeSetTv.setEditable(false);
             }else {
                 batchNum.setEditable(true);
-                warehouseTv.setEditable(true);
-                storeSetTv.setEditable(true);
             }
+
+            if (data.getRemainId() != null || pipe || batchPutInActivity){
+                remainderNumEtLl.setVisibility(View.GONE);
+            }else {
+                remainderNumEtLl.setVisibility(View.VISIBLE);
+            }
+
             materialName.setContent(String.format("%s(%s)", data.getMaterialId().getName(), data.getMaterialId().getCode()));
             batchNum.setContent(data.getMaterialBatchNum());
             numEt.setContent(data.getPutinNum() == null ? "" : String.valueOf(data.getPutinNum()));
