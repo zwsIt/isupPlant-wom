@@ -27,6 +27,7 @@ import com.supcon.common.view.base.activity.BaseRefreshRecyclerActivity;
 import com.supcon.common.view.base.adapter.IListAdapter;
 import com.supcon.common.view.listener.OnRefreshListener;
 import com.supcon.common.view.util.DisplayUtil;
+import com.supcon.common.view.util.LogUtil;
 import com.supcon.common.view.util.StatusBarUtils;
 import com.supcon.common.view.util.ToastUtils;
 import com.supcon.common.view.view.CustomSwipeLayout;
@@ -54,16 +55,20 @@ import com.supcon.mes.module_wom_producetask.constant.WomConstant;
 import com.supcon.mes.module_wom_producetask.model.api.CommonListAPI;
 import com.supcon.mes.module_wom_producetask.model.api.PutInReportAPI;
 import com.supcon.mes.module_wom_producetask.model.api.RemainQRCodeAPI;
+import com.supcon.mes.module_wom_producetask.model.api.RemainWareQueryAPI;
 import com.supcon.mes.module_wom_producetask.model.bean.PutInDetailEntity;
 import com.supcon.mes.module_wom_producetask.model.bean.RemainMaterialEntity;
+import com.supcon.mes.module_wom_producetask.model.bean.RemainWareEntity;
 import com.supcon.mes.module_wom_producetask.model.bean.WaitPutinRecordEntity;
 import com.supcon.mes.module_wom_producetask.model.contract.CommonListContract;
 import com.supcon.mes.module_wom_producetask.model.contract.PutInReportContract;
 import com.supcon.mes.module_wom_producetask.model.contract.RemainQRCodeContract;
+import com.supcon.mes.module_wom_producetask.model.contract.RemainWareQueryContract;
 import com.supcon.mes.module_wom_producetask.model.dto.PutinDetailDTO;
 import com.supcon.mes.module_wom_producetask.presenter.CommonListPresenter;
 import com.supcon.mes.module_wom_producetask.presenter.PutInReportPresenter;
 import com.supcon.mes.module_wom_producetask.presenter.RemainQRCodePresenter;
+import com.supcon.mes.module_wom_producetask.presenter.RemainWareQueryPresenter;
 import com.supcon.mes.module_wom_producetask.ui.adapter.PutInReportDetailAdapter;
 import com.supcon.mes.module_wom_producetask.util.MaterQRUtil;
 import com.supcon.mes.module_wom_producetask.util.SmoothScrollLayoutManager;
@@ -87,10 +92,11 @@ import io.reactivex.functions.Consumer;
  * Desc 人工投料活动报工
  */
 @Router(Constant.Router.WOM_PUT_IN_REPORT)
-@Presenter(value = {CommonListPresenter.class, PutInReportPresenter.class, RemainQRCodePresenter.class})
+@Presenter(value = {CommonListPresenter.class, PutInReportPresenter.class, RemainQRCodePresenter.class, RemainWareQueryPresenter.class})
 @PowerCode(entityCode = WomConstant.PowerCode.PRODUCE_TASK_LIST)
 @Controller(value = {GetPowerCodeController.class, CommonScanController.class})
-public class PutInActivityReportActivity extends BaseRefreshRecyclerActivity<PutInDetailEntity> implements CommonListContract.View, PutInReportContract.View, RemainQRCodeContract.View {
+public class PutInActivityReportActivity extends BaseRefreshRecyclerActivity<PutInDetailEntity> implements CommonListContract.View, PutInReportContract.View,
+        RemainQRCodeContract.View, RemainWareQueryContract.View {
     @BindByTag("leftBtn")
     CustomImageButton leftBtn;
     @BindByTag("titleText")
@@ -131,6 +137,10 @@ public class PutInActivityReportActivity extends BaseRefreshRecyclerActivity<Put
     private int mCurrentPosition;
     private PutInDetailEntity mPutInDetailEntity;
     private String dgDeletedIds = "";
+    /**
+     * 参照尾料
+     */
+    private RemainMaterialEntity mRemainMaterialEntity;
 
     @Override
     protected IListAdapter<PutInDetailEntity> createAdapter() {
@@ -416,6 +426,7 @@ public class PutInActivityReportActivity extends BaseRefreshRecyclerActivity<Put
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        mRemainMaterialEntity = null;
         EventBus.getDefault().unregister(this);
     }
 
@@ -457,10 +468,14 @@ public class PutInActivityReportActivity extends BaseRefreshRecyclerActivity<Put
             mPutInDetailEntity.setStoreId((StoreSetEntity) selectDataEvent.getEntity());
             mPutInReportDetailAdapter.notifyItemRangeChanged(mCurrentPosition, 1);
         } else if (object instanceof RemainMaterialEntity) {
-            addMaterialReport(null, (RemainMaterialEntity) selectDataEvent.getEntity());
+            // 根据参照尾料id获取物料的车间仓信息
+            onLoading(context.getResources().getString(R.string.wom_query_workshop_warehouse));
+            mRemainMaterialEntity = (RemainMaterialEntity) selectDataEvent.getEntity();
+            presenterRouter.create(RemainWareQueryAPI.class).getWareByRemainId(mRemainMaterialEntity.getId());
+
+//            addMaterialReport(null, mRemainMaterialEntity);
         }
     }
-
 
     @Override
     public void getMaterialByQRSuccess(BAP5CommonEntity entity) {
@@ -498,4 +513,20 @@ public class PutInActivityReportActivity extends BaseRefreshRecyclerActivity<Put
         return false;
     }
 
+    @Override
+    public void getWareByRemainIdSuccess(BAP5CommonEntity entity) {
+        onLoadSuccess();
+        RemainWareEntity remainWareEntity = (RemainWareEntity) entity.data;
+        mRemainMaterialEntity.setWareId(remainWareEntity.warehouse);
+        mRemainMaterialEntity.setStoreId(remainWareEntity.storeSet);
+        addMaterialReport(null, mRemainMaterialEntity);
+
+    }
+
+    @Override
+    public void getWareByRemainIdFailed(String errorMsg) {
+        onLoadFailed(errorMsg);
+        LogUtil.e(errorMsg);
+        addMaterialReport(null, mRemainMaterialEntity);
+    }
 }
