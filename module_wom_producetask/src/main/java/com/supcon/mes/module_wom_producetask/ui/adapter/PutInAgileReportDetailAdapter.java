@@ -68,6 +68,8 @@ public class PutInAgileReportDetailAdapter extends BaseListDataRecyclerViewAdapt
         TextView itemViewDelBtn;
         @BindByTag("materialBatchNumTv")
         TextView materialBatchNumTv;
+        @BindByTag("remainderNumEtLl")
+        LinearLayout remainderNumEtLl;
 
         public ReportViewHolder(Context context) {
             super(context,parent);
@@ -246,13 +248,15 @@ public class PutInAgileReportDetailAdapter extends BaseListDataRecyclerViewAdapt
             if (data.getRemainId() != null){
                 materialName.setEditable(false);
                 batchNum.setEditable(false);
-                warehouseTv.setEditable(false);
-                storeSetTv.setEditable(false);
+//                warehouseTv.setEditable(false);
+//                storeSetTv.setEditable(false);
+                remainderNumEtLl.setVisibility(View.GONE);
             }else {
                 materialName.setEditable(true);
                 batchNum.setEditable(true);
-                warehouseTv.setEditable(true);
-                storeSetTv.setEditable(true);
+//                warehouseTv.setEditable(true);
+//                storeSetTv.setEditable(true);
+                remainderNumEtLl.setVisibility(View.VISIBLE);
             }
             if (WomConstant.SystemCode.MATERIAL_BATCH_02.equals(data.getMaterialId().getIsBatch().id)){
                 materialBatchNumTv.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_batch_number,0,R.drawable.ic_necessary,0);

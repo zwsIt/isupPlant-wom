@@ -113,7 +113,9 @@ public class ActivityProcessInfoAdapter extends BaseListDataRecyclerViewAdapter<
                 if (getItem(getAdapterPosition() -1) != null && !WomConstant.SystemCode.EXE_STATE_WAIT.equals(getItem(getAdapterPosition() -1).getRunState().id)){
                     itemAreaLineTop.setBackgroundColor(context.getResources().getColor(R.color.wom_blue_5DB7FF));
                 }else {
-                    itemAreaLineTop.setBackgroundColor(context.getResources().getColor(R.color.wom_grey_DDDDDD));
+                    if (getAdapterPosition() != 0){
+                        itemAreaLineTop.setBackgroundColor(context.getResources().getColor(R.color.wom_grey_DDDDDD));
+                    }
                 }
             }
 
@@ -128,16 +130,6 @@ public class ActivityProcessInfoAdapter extends BaseListDataRecyclerViewAdapter<
             }else {
                 material.setText("--");
             }
-//            SpannableStringBuilder spannableStringBuilder = new SpannableStringBuilder("进行了"+data.dealStaff +"操作，处理结果" + data.operateDes);
-//            String html = "进行了<font color='#366CBC'>"+data.activityName+"</font>操作，处理结果<font color='#366CBC'>" + data.operateDes + "</font>";
-//            activityName.setText(Html.fromHtml(html));
-//            if (TextUtils.isEmpty(data.dealAdvice)){
-//                dealAdvice.setVisibility(View.GONE);
-//            }else {
-//                dealAdvice.setVisibility(View.VISIBLE);
-//                dealAdvice.setText(String.format("意见：%s", data.dealAdvice));
-//            }
-//            dealTime.setText(DateUtil.dateFormat(data.dealTime, Constant.TimeString.YEAR_MONTH_DAY_HOUR_MIN_SEC));
         }
     }
 }

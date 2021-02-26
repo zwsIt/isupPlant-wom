@@ -8,6 +8,7 @@ import com.supcon.mes.middleware.model.bean.CommonBAPListEntity;
 import com.supcon.mes.middleware.model.bean.MaterialQRCodeEntity;
 import com.supcon.mes.middleware.model.bean.wom.FactoryModelEntity;
 import com.supcon.mes.module_wom_producetask.model.bean.ActiExelogListEntity;
+import com.supcon.mes.module_wom_producetask.model.bean.RemainWareEntity;
 import com.supcon.mes.module_wom_producetask.model.bean.TaskActiveEntity;
 import com.supcon.mes.module_wom_producetask.model.bean.WaitPutinRecordEntity;
 import com.supcon.mes.module_wom_producetask.model.dto.BatchPutinDetailDTO;
@@ -180,5 +181,14 @@ public interface NetworkService {
      */
     @POST("/msService/WOM/produceTask/taskActive/queryByProcess")
     Flowable<BAP5CommonEntity<CommonBAPListEntity<TaskActiveEntity>>> listActivities(@QueryMap Map<String,Object> paramMap, @Body Map<String,Object> params);
+
+    /**
+     * @param
+     * @return
+     * @author zhangwenshuai1 2020/10/26
+     * @description 根据尾料id获取仓库信息
+     */
+    @GET("/msService/WOM/remainMaterial/remainMaterial/getWorkAreaId")
+    Flowable<BAP5CommonEntity<RemainWareEntity>> getWorkAreaId(@Query("remianId") Long id);
 
 }

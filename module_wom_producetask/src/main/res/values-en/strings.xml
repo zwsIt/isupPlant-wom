@@ -152,4 +152,5 @@
     <string name="wom_from_remain_putin_num_greater_zero">】项来源尾料，用料量须大于零</string>
     <string name="wom_activity_process">活动执行流程</string>
     <string name="wom_check_result">检验结果</string>
+    <string name="wom_query_workshop_warehouse">车间仓查询中...</string>
 </resources>

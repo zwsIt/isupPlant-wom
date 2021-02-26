@@ -22,6 +22,7 @@ import com.supcon.mes.module_wom_producetask.IntentRouter;
 import com.supcon.mes.module_wom_producetask.R;
 import com.supcon.mes.module_wom_producetask.constant.WomConstant;
 import com.supcon.mes.module_wom_producetask.model.bean.WaitPutinRecordEntity;
+import com.supcon.mes.module_wom_producetask.util.ActiveType;
 
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -64,27 +65,28 @@ public class FormulaActivityListAdapter extends BaseListDataRecyclerViewAdapter<
 
     @Override
     public int getItemViewType(int position, WaitPutinRecordEntity waitPutinRecordEntity) {
-        if (WomConstant.SystemCode.RM_activeType_COMMON.equals(waitPutinRecordEntity.getTaskActiveId().getActiveType().id)) {
-            return 1;
-        } else if (WomConstant.SystemCode.RM_activeType_CHECK.equals(waitPutinRecordEntity.getTaskActiveId().getActiveType().id)) {
-            return 2;
-        } else if (WomConstant.SystemCode.RM_activeType_PUTIN.equals(waitPutinRecordEntity.getTaskActiveId().getActiveType().id)) {
-            return 3;
-        } else if (WomConstant.SystemCode.RM_activeType_BATCH_PUTIN.equals(waitPutinRecordEntity.getTaskActiveId().getActiveType().id)) {
-            return 4;
-        } else if (WomConstant.SystemCode.RM_activeType_QUALITY.equals(waitPutinRecordEntity.getTaskActiveId().getActiveType().id)) {
-            return 5;
-        } else if (WomConstant.SystemCode.RM_activeType_OUTPUT.equals(waitPutinRecordEntity.getTaskActiveId().getActiveType().id)) {
-            return 6;
-        } else if (WomConstant.SystemCode.RM_activeType_PIPE_PUTIN.equals(waitPutinRecordEntity.getTaskActiveId().getActiveType().id)) {
-            return 7;
-        } else if (WomConstant.SystemCode.RM_activeType_PIPE_BATCH_PUTIN.equals(waitPutinRecordEntity.getTaskActiveId().getActiveType().id)) {
-            return 8;
-        } else if (WomConstant.SystemCode.RM_activeType_PIPE_OUTPUT.equals(waitPutinRecordEntity.getTaskActiveId().getActiveType().id)) {
-            return 9;
-        } else {
-            return -1;
-        }
+        return ActiveType.getType(waitPutinRecordEntity.getTaskActiveId().getActiveType().id);
+//        if (WomConstant.SystemCode.RM_activeType_COMMON.equals(waitPutinRecordEntity.getTaskActiveId().getActiveType().id)) {
+//            return 1;
+//        } else if (WomConstant.SystemCode.RM_activeType_CHECK.equals(waitPutinRecordEntity.getTaskActiveId().getActiveType().id)) {
+//            return 2;
+//        } else if (WomConstant.SystemCode.RM_activeType_PUTIN.equals(waitPutinRecordEntity.getTaskActiveId().getActiveType().id)) {
+//            return 3;
+//        } else if (WomConstant.SystemCode.RM_activeType_BATCH_PUTIN.equals(waitPutinRecordEntity.getTaskActiveId().getActiveType().id)) {
+//            return 4;
+//        } else if (WomConstant.SystemCode.RM_activeType_QUALITY.equals(waitPutinRecordEntity.getTaskActiveId().getActiveType().id)) {
+//            return 5;
+//        } else if (WomConstant.SystemCode.RM_activeType_OUTPUT.equals(waitPutinRecordEntity.getTaskActiveId().getActiveType().id)) {
+//            return 6;
+//        } else if (WomConstant.SystemCode.RM_activeType_PIPE_PUTIN.equals(waitPutinRecordEntity.getTaskActiveId().getActiveType().id)) {
+//            return 7;
+//        } else if (WomConstant.SystemCode.RM_activeType_PIPE_BATCH_PUTIN.equals(waitPutinRecordEntity.getTaskActiveId().getActiveType().id)) {
+//            return 8;
+//        } else if (WomConstant.SystemCode.RM_activeType_PIPE_OUTPUT.equals(waitPutinRecordEntity.getTaskActiveId().getActiveType().id)) {
+//            return 9;
+//        } else {
+//            return -1;
+//        }
     }
 
     /**

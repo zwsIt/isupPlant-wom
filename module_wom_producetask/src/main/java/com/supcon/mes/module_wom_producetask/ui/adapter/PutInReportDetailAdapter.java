@@ -182,31 +182,9 @@ public class PutInReportDetailAdapter extends BaseListDataRecyclerViewAdapter<Pu
                                 }
                                 return false;
                             }
-                            data.setRemainNum(data.getRemainId().getRemainNum().subtract(current));
+//                            data.setRemainNum(data.getRemainId().getRemainNum().subtract(current));
+                            data.setRemainAfter(data.getRemainId().getRemainNum().subtract(current));
                         }
-                        // 扫描：尾料量+用料量 > 扫描规格量 ？
-//                                    if (data.getSpecificationNum() != null && current.add(data.getRemainNum() == null ? new BigDecimal(0): data.getRemainNum()).compareTo(data.getSpecificationNum()) > 0){
-//                                        if (data.getRemainNum() == null){
-//                                            ToastUtils.show(context,context.getString(R.string.wom_putin_num_compare_scan) + data.getSpecificationNum());
-//                                        }else {
-//                                            ToastUtils.show(context,context.getString(R.string.wom_putin_num_compare_sum) + data.getSpecificationNum());
-//                                        }
-//                                        int index = numEt.editText().getSelectionStart();
-//                                        numEt.editText().getText().delete(index -1 ,index);
-//                                        return false;
-//                                    }
-
-                        // 尾料参照：用料量 > 尾料可用量-尾料量
-//                                    if (data.getRemainId() != null && current.add(data.getRemainNum() == null ? new BigDecimal(0): data.getRemainNum()).compareTo(data.getRemainId().getRemainNum()) > 0){
-//                                        if (data.getRemainNum() == null){
-//                                            ToastUtils.show(context,context.getString(R.string.wom_putin_num_compare_remain) + data.getRemainId().getRemainNum());
-//                                        }else {
-//                                            ToastUtils.show(context,context.getString(R.string.wom_putin_num_compare_remain_sum) + data.getRemainId().getRemainNum());
-//                                        }
-//                                        int index = numEt.editText().getSelectionStart();
-//                                        numEt.editText().getText().delete(index -1 ,index);
-//                                        return false;
-//                                    }
                         return true;
                     })
                     .subscribe(charSequence -> {
@@ -295,29 +273,6 @@ public class PutInReportDetailAdapter extends BaseListDataRecyclerViewAdapter<Pu
                             }
                             data.setPutinNum(data.getRemainId().getRemainNum().subtract(current));
                         }
-
-                        // 扫描：尾料量+用料量 > 扫描规格量 ？
-//                                    if (data.getSpecificationNum() != null && current.add(data.getPutinNum() == null ? new BigDecimal(0): data.getPutinNum()).compareTo(data.getSpecificationNum()) > 0){
-//                                        if (data.getPutinNum() == null){
-//                                            ToastUtils.show(context,context.getString(R.string.wom_remain_num_compare) + data.getSpecificationNum());
-//                                        }else {
-//                                            ToastUtils.show(context,context.getString(R.string.wom_remain_num_compare_sum) + data.getSpecificationNum());
-//                                        }
-//                                        int index = remainderNumEt.editText().getSelectionStart();
-//                                        remainderNumEt.editText().getText().delete(index -1 ,index);
-//                                        return false;
-//                                    }
-                        // 尾料参照：尾料量+用料量 > 尾料可用量?
-//                                    if (data.getRemainId() != null && current.add(data.getPutinNum() == null ? new BigDecimal(0): data.getPutinNum()).compareTo(data.getRemainId().getRemainNum()) > 0){
-//                                        if (data.getPutinNum() == null){
-//                                            ToastUtils.show(context,context.getString(R.string.wom_remain_compare_less) + data.getRemainId().getRemainNum());
-//                                        }else {
-//                                            ToastUtils.show(context,context.getString(R.string.wom_remain_compare_less_sum) + data.getRemainId().getRemainNum());
-//                                        }
-//                                        int index = remainderNumEt.editText().getSelectionStart();
-//                                        remainderNumEt.editText().getText().delete(index -1 ,index);
-//                                        return false;
-//                                    }
 
                         return true;
                     })
