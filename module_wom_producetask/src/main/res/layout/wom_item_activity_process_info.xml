@@ -5,21 +5,23 @@
     android:layout_height="wrap_content"
     android:background="@drawable/white"
     android:paddingLeft="@dimen/dp_10"
-    android:paddingRight="@dimen/dp_15">
+    android:paddingRight="@dimen/dp_15"
+    android:elevation="@dimen/dp_2">
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
+        android:layout_marginEnd="@dimen/dp_5"
+        android:paddingTop="@dimen/dp_10"
         android:id="@+id/index"
         android:tag="index"
-        android:textColor="@color/black"
+        android:textColor="@color/titleTextColor"
         android:textSize="@dimen/fontSize_15sp"
         android:gravity="center_horizontal"
-        tools:text="@string/wom_sequence"
-        android:textStyle="bold"/>
+        tools:text="@string/wom_sequence"/>
 
     <!--layout_height设置为 match_parent-->
-    <LinearLayout
+    <RelativeLayout
         android:id="@+id/itemAreaDotLayout"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
@@ -27,37 +29,64 @@
         android:gravity="center_horizontal"
         android:orientation="vertical">
 
+        <View
+            android:id="@+id/itemAreaLineTop"
+            android:layout_width="1dp"
+            android:layout_height="@dimen/dp_13"
+            android:layout_centerHorizontal="true"
+            android:background="@color/wom_blue_5DB7FF"
+            android:tag="itemAreaLineTop"/>
         <ImageView
             android:id="@+id/itemAreaDot"
-            android:layout_width="20dp"
-            android:layout_height="20dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/itemAreaLineTop"
+            android:layout_centerHorizontal="true"
             android:scaleType="centerInside"
-            android:src="@drawable/ic_point_end"
+            android:src="@drawable/wom_ic_node_blue"
             android:tag="itemAreaDot" />
         <View
             android:id="@+id/itemAreaLineBottom"
             android:layout_width="1dp"
-            android:layout_height="wrap_content"
-            android:background="@color/gray_text"
+            android:layout_height="match_parent"
+            android:layout_below="@+id/itemAreaDot"
+            android:layout_centerInParent="true"
+            android:background="@color/wom_blue_5DB7FF"
             android:tag="itemAreaLineBottom" />
-    </LinearLayout>
+    </RelativeLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/dp_10"
-        android:layout_marginBottom="@dimen/dp_5"
+        android:paddingTop="@dimen/dp_10"
         android:orientation="vertical">
 
-        <TextView
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/activityName"
-            android:tag="activityName"
-            android:textColor="@color/black"
-            android:textSize="@dimen/fontSize_15sp"
-            tools:text="@string/activity"
-            android:textStyle="bold"/>
+            android:orientation="horizontal">
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginEnd="@dimen/dp_10"
+                android:id="@+id/activityName"
+                android:tag="activityName"
+                android:textColor="@color/wom_black_333333"
+                android:textSize="@dimen/fontSize_15sp"
+                tools:text="@string/activity"
+                android:textStyle="bold"/>
+
+            <TextView
+                android:id="@+id/statusTv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:tag="statusTv"
+                android:text="@string/wom_executing"
+                android:textColor="@color/textColorlightblack"
+                android:textSize="@dimen/fontSize_12sp" />
+        </LinearLayout>
 
         <TextView
             android:layout_width="match_parent"
