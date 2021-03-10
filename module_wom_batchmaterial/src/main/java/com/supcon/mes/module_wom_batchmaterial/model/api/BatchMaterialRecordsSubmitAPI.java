@@ -2,11 +2,8 @@ package com.supcon.mes.module_wom_batchmaterial.model.api;
 
 import com.app.annotation.apt.ContractFactory;
 import com.supcon.mes.middleware.model.bean.BAP5CommonEntity;
-import com.supcon.mes.module_wom_batchmaterial.model.dto.BatchMaterialInstructionDTO;
 import com.supcon.mes.module_wom_batchmaterial.model.dto.BatchMaterialRecordsSignSubmitDTO;
-import com.supcon.mes.module_wom_producetask.model.bean.BatchMaterialPartEntity;
 
-import java.util.List;
 import java.util.Map;
 
 /**

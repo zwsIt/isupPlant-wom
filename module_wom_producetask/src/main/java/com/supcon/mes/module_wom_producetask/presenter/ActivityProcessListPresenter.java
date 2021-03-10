@@ -1,16 +1,10 @@
 package com.supcon.mes.module_wom_producetask.presenter;
 
 
-import android.text.TextUtils;
-
 import com.supcon.mes.middleware.model.bean.BAP5CommonEntity;
 import com.supcon.mes.middleware.model.bean.CommonBAPListEntity;
-import com.supcon.mes.middleware.model.bean.FastQueryCondEntity;
-import com.supcon.mes.middleware.util.BAPQueryParamsHelper;
 import com.supcon.mes.middleware.util.HttpErrorReturnUtil;
-import com.supcon.mes.middleware.util.ListRequestParamUtil;
 import com.supcon.mes.module_wom_producetask.model.bean.TaskActiveEntity;
-import com.supcon.mes.module_wom_producetask.model.contract.CommonListContract;
 import com.supcon.mes.module_wom_producetask.model.contract.ListAllActivityContract;
 import com.supcon.mes.module_wom_producetask.model.network.WomHttpClient;
 

@@ -6,9 +6,6 @@ import com.supcon.mes.middleware.util.HttpErrorReturnUtil;
 import com.supcon.mes.module_wom_batchmaterial.model.contract.BatchMaterialInstructionEditContract;
 import com.supcon.mes.module_wom_batchmaterial.model.dto.BatchMaterialInstructionDTO;
 import com.supcon.mes.module_wom_batchmaterial.model.network.BmHttpClient;
-import com.supcon.mes.module_wom_producetask.model.contract.OutputReportContract;
-import com.supcon.mes.module_wom_producetask.model.dto.OutputDetailDTO;
-import com.supcon.mes.module_wom_producetask.model.network.WomHttpClient;
 
 /**
  * ClassName

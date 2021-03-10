@@ -2,21 +2,15 @@ package com.supcon.mes.module_wom_batchmaterial.ui.adapter;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.view.View;
-import android.widget.CheckBox;
 import android.widget.TextView;
 
 import com.app.annotation.BindByTag;
-import com.jakewharton.rxbinding2.view.RxView;
 import com.supcon.common.view.base.adapter.BaseListDataRecyclerViewAdapter;
 import com.supcon.common.view.base.adapter.viewholder.BaseRecyclerViewHolder;
-import com.supcon.common.view.listener.OnChildViewClickListener;
 import com.supcon.mes.mbap.view.CustomTextView;
 import com.supcon.mes.module_wom_batchmaterial.R;
 import com.supcon.mes.module_wom_producetask.model.bean.BatchMaterialPartEntity;
-import com.supcon.mes.module_wom_producetask.ui.activity.BatchMaterialRefListActivity;
 
-import java.util.concurrent.TimeUnit;
 
 /**
  * ClassName
@@ -70,16 +64,13 @@ public class BatchMaterialRecordsRejectListAdapter extends BaseListDataRecyclerV
         protected void initListener() {
             super.initListener();
 
-            rejectReason.setOnChildViewClickListener(new OnChildViewClickListener() {
-                @Override
-                public void onChildViewClick(View childView, int action, Object obj) {
-                    if (action == -1){
-                        getItem(getAdapterPosition()).setRejectReason(null);
-                    }else {
-                        onItemChildViewClick(rejectReason,getAdapterPosition(),getItem(getAdapterPosition()));
-                    }
-
+            rejectReason.setOnChildViewClickListener((childView, action, obj) -> {
+                if (action == -1){
+                    getItem(getAdapterPosition()).setRejectReason(null);
+                }else {
+                    onItemChildViewClick(rejectReason,getAdapterPosition(),getItem(getAdapterPosition()));
                 }
+
             });
         }
 

@@ -2,7 +2,6 @@ package com.supcon.mes.module_wom_preparematerial.ui.adapter;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.InputType;
@@ -21,8 +20,6 @@ import com.jakewharton.rxbinding2.view.RxView;
 import com.jakewharton.rxbinding2.widget.RxTextView;
 import com.supcon.common.view.base.adapter.BaseListDataRecyclerViewAdapter;
 import com.supcon.common.view.base.adapter.viewholder.BaseRecyclerViewHolder;
-import com.supcon.common.view.listener.OnChildViewClickListener;
-import com.supcon.common.view.listener.OnItemChildViewClickListener;
 import com.supcon.common.view.util.DisplayUtil;
 import com.supcon.common.view.util.LogUtil;
 import com.supcon.common.view.util.ToastUtils;
@@ -34,11 +31,9 @@ import com.supcon.mes.mbap.view.CustomEditText;
 import com.supcon.mes.mbap.view.CustomRoundTextImageView;
 import com.supcon.mes.mbap.view.CustomTextView;
 import com.supcon.mes.middleware.SupPlantApplication;
-import com.supcon.mes.middleware.constant.Constant;
 import com.supcon.mes.middleware.model.bean.ObjectEntity;
 import com.supcon.mes.middleware.model.bean.wom.StoreSetEntity;
 import com.supcon.mes.middleware.util.SystemCodeManager;
-import com.supcon.mes.module_wom_preparematerial.IntentRouter;
 import com.supcon.mes.module_wom_preparematerial.R;
 import com.supcon.mes.module_wom_preparematerial.model.bean.PreMaterialEntity;
 import com.supcon.mes.module_wom_producetask.constant.WomConstant;
@@ -50,7 +45,6 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.functions.Consumer;
 
 /**
  * Created by wangshizhan on 2020/6/24
@@ -148,9 +142,8 @@ public class PreMaterialReceiveListAdapter extends BaseListDataRecyclerViewAdapt
 
         private RejectReasonAdapter mRejectReasonAdapter;
         private List<String> mReceiveStateStr;
-        private ArrayAdapter<String> mReceiveStateAdapter;
 
-        public PreMaterialReceiveViewHolder(Context context) {
+        PreMaterialReceiveViewHolder(Context context) {
             super(context);
         }
 
@@ -176,9 +169,9 @@ public class PreMaterialReceiveListAdapter extends BaseListDataRecyclerViewAdapt
             if (receiveStates != null && receiveStates.size() != 0) {
                 mReceiveStateStr = new ArrayList<>();
                 mReceiveStateStr.addAll(receiveStates.values());
-                mReceiveStateAdapter = new ArrayAdapter<>(context, R.layout.ly_spinner_item_dark14, mReceiveStateStr);
-                mReceiveStateAdapter.setDropDownViewResource(R.layout.ly_spinner_dropdown_item);
-                itemPreMaterialReceiveReasons.setAdapter(mReceiveStateAdapter);
+                ArrayAdapter<String> receiveStateAdapter = new ArrayAdapter<>(context, R.layout.ly_spinner_item_dark14, mReceiveStateStr);
+                receiveStateAdapter.setDropDownViewResource(R.layout.ly_spinner_dropdown_item);
+                itemPreMaterialReceiveReasons.setAdapter(receiveStateAdapter);
                 itemPreMaterialReceiveReasons.setSelection(itemPreMaterialReceiveReasons.getSelectedItem() == null ?
                         mReceiveStateStr.indexOf(receiveStates.get("WOM_receiveState/receive")) : mReceiveStateStr.indexOf(itemPreMaterialReceiveReasons.getSelectedItem().toString()));
             }
@@ -196,15 +189,12 @@ public class PreMaterialReceiveListAdapter extends BaseListDataRecyclerViewAdapt
         protected void initListener() {
             super.initListener();
 
-            itemPreMaterialReceiveStaff.setOnChildViewClickListener(new OnChildViewClickListener() {
-                @Override
-                public void onChildViewClick(View childView, int action, Object obj) {
+            itemPreMaterialReceiveStaff.setOnChildViewClickListener((childView, action, obj) -> {
 
-                    if (action == ViewAction.CONTENT_CLEAN.value()) {
-                        getItem(getAdapterPosition()).receiveStaff = null;
-                    } else {
-                        onItemChildViewClick(itemPreMaterialReceiveStaff, 0, getItem(getAdapterPosition()));
-                    }
+                if (action == ViewAction.CONTENT_CLEAN.value()) {
+                    getItem(getAdapterPosition()).receiveStaff = null;
+                } else {
+                    onItemChildViewClick(itemPreMaterialReceiveStaff, 0, getItem(getAdapterPosition()));
                 }
             });
 

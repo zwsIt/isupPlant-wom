@@ -2,13 +2,9 @@ package com.supcon.mes.module_wom_preparematerial.model.network;
 
 import com.app.annotation.apt.ApiFactory;
 import com.supcon.mes.middleware.model.bean.BAP5CommonEntity;
-import com.supcon.mes.middleware.model.bean.BapResultEntity;
 import com.supcon.mes.middleware.model.bean.CommonBAPListEntity;
 import com.supcon.mes.module_wom_preparematerial.model.bean.PreMaterialEntity;
-import com.supcon.mes.module_wom_preparematerial.model.bean.PreMaterialSubmitEntity;
-import com.supcon.mes.module_wom_preparematerial.model.bean.PreMaterialSubmitListEntity;
 import com.supcon.mes.module_wom_preparematerial.model.bean.PreResultEntity;
-import com.supcon.mes.module_wom_preparematerial.model.bean.PrepareMaterialEntity;
 
 import java.util.List;
 import java.util.Map;

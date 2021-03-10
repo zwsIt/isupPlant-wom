@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -34,7 +33,7 @@
             android:gravity="center"
             android:singleLine="true"
             android:tag="activeType"
-            android:text="活动类型"
+            android:text="@string/wom_active_type"
             android:textSize="@dimen/fontSize_15sp"
             android:textColor="@color/wom_black_333333"
             android:textStyle="bold"/>

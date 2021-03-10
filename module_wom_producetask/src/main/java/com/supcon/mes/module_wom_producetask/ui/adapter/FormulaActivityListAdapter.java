@@ -207,10 +207,8 @@ public class FormulaActivityListAdapter extends BaseListDataRecyclerViewAdapter<
                                 ToastUtils.show(context, context.getResources().getString(R.string.wom_first_start_activity));
                                 return false;
                             }
-                            if (data.getProcReportId().getDetailsIsNull()) { // 是否存在检查明细
-                                return false;
-                            }
-                            return true;
+                            // 是否存在检查明细
+                            return !data.getProcReportId().getDetailsIsNull();
                         }
                     })
                     .subscribe(o -> {
@@ -520,8 +518,8 @@ public class FormulaActivityListAdapter extends BaseListDataRecyclerViewAdapter<
         TextView qualityStartTv;
         @BindByTag("itemStateTv")
         TextView itemStateTv;
-        @BindByTag("adjustLl")
-        LinearLayout adjustLl;
+        @BindByTag("adjustTv")
+        TextView adjustTv;
         @BindByTag("qualityTimes")
         CustomTextView qualityTimes;
 
@@ -579,14 +577,10 @@ public class FormulaActivityListAdapter extends BaseListDataRecyclerViewAdapter<
                     + (TextUtils.isEmpty(data.getCheckState()) ? (data.getTaskActiveId().getCheckState() == null ? "" : data.getTaskActiveId().getCheckState() ) : data.getCheckState()));
 //            routineStartTv.setEnabled(true);
             qualityStartTv.setVisibility(View.GONE);
-            adjustLl.setVisibility(View.GONE);
+            adjustTv.setVisibility(View.GONE);
             itemStateTv.setVisibility(View.GONE);
             if (WomConstant.SystemCode.EXE_STATE_WAIT.equals(data.getExeState().id)) {
-                if (data.getTaskId().getBatchContral() != null && data.getTaskId().getBatchContral()) { // 批控
-//                    routineStartTv.setBackgroundResource(R.drawable.wom_sh_disable_bg);
-//                    routineStartTv.setText(context.getResources().getString(R.string.wom_end));
-//                    routineStartTv.setEnabled(false);
-                } else {
+                if (data.getTaskId().getBatchContral() == null || !data.getTaskId().getBatchContral()) {// 非批控
                     qualityStartTv.setVisibility(View.VISIBLE);
                     qualityStartTv.setText(context.getResources().getString(R.string.wom_start));
                     qualityStartTv.setBackgroundResource(R.drawable.wom_sh_start_bg);
@@ -605,7 +599,7 @@ public class FormulaActivityListAdapter extends BaseListDataRecyclerViewAdapter<
                 }
                 // 调整
                 if (WomConstant.SystemCode.BASE_DEAL_ADJUST.equals(data.getActiveBatchState().getDealType().id)){
-                    adjustLl.setVisibility(View.VISIBLE);
+                    adjustTv.setVisibility(View.VISIBLE);
                 }
 
             }

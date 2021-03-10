@@ -183,7 +183,7 @@ public class RejectMaterialPartEntity extends BaseEntity {
         this.wareId = wareId;
     }
 
-    public static class BatchingPartIdEntity extends BaseEntity {
+    static class BatchingPartIdEntity extends BaseEntity {
         /**
          * batRecordState : {"id":"WOM_batMatState/stop","value":"已中止"}
          * id : 1440

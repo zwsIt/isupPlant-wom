@@ -39,23 +39,17 @@ public class BatchMaterialRecordsSubmitPresenter extends BatchMaterialRecordsSub
 
         }
         mCompositeSubscription.add(
-                http.onErrorReturn(new Function<Throwable, BAP5CommonEntity<Object>>() {
-                    @Override
-                    public BAP5CommonEntity<Object> apply(Throwable throwable) throws Exception {
-                        BAP5CommonEntity<Object> bap5CommonEntity = new BAP5CommonEntity<>();
-                        bap5CommonEntity.msg = HttpErrorReturnUtil.getErrorInfo(throwable);
-                        bap5CommonEntity.success = false;
-                        return bap5CommonEntity;
-                    }
+                http.onErrorReturn(throwable -> {
+                    BAP5CommonEntity<Object> bap5CommonEntity = new BAP5CommonEntity<>();
+                    bap5CommonEntity.msg = HttpErrorReturnUtil.getErrorInfo(throwable);
+                    bap5CommonEntity.success = false;
+                    return bap5CommonEntity;
                 })
-                        .subscribe(new Consumer<BAP5CommonEntity<Object>>() {
-                            @Override
-                            public void accept(BAP5CommonEntity<Object> bapResultEntityBAP5CommonEntity) throws Exception {
-                                if (bapResultEntityBAP5CommonEntity.success) {
-                                    BatchMaterialRecordsSubmitPresenter.this.getView().submitSuccess(bapResultEntityBAP5CommonEntity);
-                                } else {
-                                    BatchMaterialRecordsSubmitPresenter.this.getView().submitFailed(bapResultEntityBAP5CommonEntity.msg);
-                                }
+                        .subscribe(bapResultEntityBAP5CommonEntity -> {
+                            if (bapResultEntityBAP5CommonEntity.success) {
+                                BatchMaterialRecordsSubmitPresenter.this.getView().submitSuccess(bapResultEntityBAP5CommonEntity);
+                            } else {
+                                BatchMaterialRecordsSubmitPresenter.this.getView().submitFailed(bapResultEntityBAP5CommonEntity.msg);
                             }
                         })
         );

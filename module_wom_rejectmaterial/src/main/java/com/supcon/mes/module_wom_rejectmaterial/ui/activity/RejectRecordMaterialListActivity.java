@@ -80,18 +80,8 @@ public class RejectRecordMaterialListActivity extends BaseFragmentActivity {
         super.initListener();
         RxView.clicks(leftBtn)
                 .throttleFirst(200, TimeUnit.MILLISECONDS)
-                .subscribe(new Consumer<Object>() {
-                    @Override
-                    public void accept(Object o) throws Exception {
-                        back();
-                    }
-                });
-        customTab.setOnTabChangeListener(new CustomTab.OnTabChangeListener() {
-            @Override
-            public void onTabChanged(int current) {
-                viewPager.setCurrentItem(current);
-            }
-        });
+                .subscribe(o -> back());
+        customTab.setOnTabChangeListener(current -> viewPager.setCurrentItem(current));
         viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int i, float v, int i1) {
@@ -115,7 +105,7 @@ public class RejectRecordMaterialListActivity extends BaseFragmentActivity {
 
     private class InnerFragmentPagerAdapter extends FragmentPagerAdapter {
 
-        public InnerFragmentPagerAdapter(FragmentManager fm) {
+        InnerFragmentPagerAdapter(FragmentManager fm) {
             super(fm);
         }
 

@@ -10,8 +10,6 @@ import com.app.annotation.BindByTag;
 import com.app.annotation.Presenter;
 import com.supcon.common.view.base.adapter.IListAdapter;
 import com.supcon.common.view.base.fragment.BaseRefreshRecyclerFragment;
-import com.supcon.common.view.listener.OnRefreshPageListener;
-import com.supcon.common.view.ptr.PtrFrameLayout;
 import com.supcon.common.view.util.DisplayUtil;
 import com.supcon.common.view.util.ToastUtils;
 import com.supcon.mes.mbap.utils.GsonUtil;
@@ -49,13 +47,11 @@ public class BatchMaterialInstructionFragment extends BaseRefreshRecyclerFragmen
     @BindByTag("contentView")
     RecyclerView contentView;
 
-    private BatchMaterialInstructionListAdapter mBatchMaterialInstructionListAdapter;
     Map<String, Object> queryParams = new HashMap<>(); // 快速查询
 
     @Override
     protected IListAdapter<BatchMaterilEntity> createAdapter() {
-        mBatchMaterialInstructionListAdapter = new BatchMaterialInstructionListAdapter(context);
-        return mBatchMaterialInstructionListAdapter;
+        return new BatchMaterialInstructionListAdapter(context);
     }
 
     @Override
@@ -88,12 +84,9 @@ public class BatchMaterialInstructionFragment extends BaseRefreshRecyclerFragmen
     @Override
     protected void initListener() {
         super.initListener();
-        refreshListController.setOnRefreshPageListener(new OnRefreshPageListener() {
-            @Override
-            public void onRefresh(int pageIndex) {
-                queryParams.put(Constant.BAPQuery.PRODUCE_BATCH_NUM, ((BatchMaterialListActivity)context).getSearch());
-                presenterRouter.create(CommonListAPI.class).list(pageIndex,null,queryParams, BmConstant.URL.BATCH_MATERIAL_INSTRUCTION_PENDING_LIST_URL,"batchMateril");
-            }
+        refreshListController.setOnRefreshPageListener(pageIndex -> {
+            queryParams.put(Constant.BAPQuery.PRODUCE_BATCH_NUM, ((BatchMaterialListActivity)context).getSearch());
+            presenterRouter.create(CommonListAPI.class).list(pageIndex,null,queryParams, BmConstant.URL.BATCH_MATERIAL_INSTRUCTION_PENDING_LIST_URL,"batchMateril");
         });
     }
 

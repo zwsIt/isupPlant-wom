@@ -2,22 +2,18 @@ package com.supcon.mes.module_wom_batchmaterial.ui.adapter;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.view.View;
 import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.TextView;
 
 import com.app.annotation.BindByTag;
 import com.jakewharton.rxbinding2.view.RxView;
 import com.supcon.common.view.base.adapter.BaseListDataRecyclerViewAdapter;
 import com.supcon.common.view.base.adapter.viewholder.BaseRecyclerViewHolder;
-import com.supcon.common.view.util.LogUtil;
 import com.supcon.mes.mbap.view.CustomContentTextDialog;
 import com.supcon.mes.mbap.view.CustomTextView;
 import com.supcon.mes.module_wom_batchmaterial.R;
 import com.supcon.mes.module_wom_batchmaterial.ui.activity.BatchMaterialListActivity;
 import com.supcon.mes.module_wom_batchmaterial.ui.activity.BatchMaterialRecordsRecallListActivity;
-import com.supcon.mes.module_wom_batchmaterial.ui.fragment.BatchMaterialRecordsFragment;
 import com.supcon.mes.module_wom_producetask.model.bean.BatchMaterialPartEntity;
 
 import java.util.concurrent.TimeUnit;
@@ -74,19 +70,12 @@ public class BatchMaterialRecordsListAdapter extends BaseListDataRecyclerViewAda
         protected void initListener() {
             super.initListener();
             RxView.clicks(itemView).throttleFirst(200,TimeUnit.MILLISECONDS)
-                    .subscribe(o -> {
-                        checkBox.performClick();
-                    });
+                    .subscribe(o -> checkBox.performClick());
             materialNameTv.setOnLongClickListener(v -> {
                 CustomContentTextDialog.showContent(context, getItem(getAdapterPosition()).getMaterialId().getName());
                 return true;
             });
-            checkBox.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    onItemChildViewClick(checkBox,getAdapterPosition(),getItem(getAdapterPosition()));
-                }
-            });
+            checkBox.setOnClickListener(v -> onItemChildViewClick(checkBox,getAdapterPosition(),getItem(getAdapterPosition())));
 
 //            checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
 //                @Override

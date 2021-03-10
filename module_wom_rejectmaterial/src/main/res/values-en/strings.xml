@@ -17,4 +17,5 @@
     <string name="wom_please_write_reject_reason">】项请填写退料原因</string>
     <string name="wom_prepare_reject_records">备料退料记录</string>
     <string name="wom_batch_reject_records">配料退料记录</string>
+    <string name="wom_back_apply_staff">退料申请人</string>
 </resources>

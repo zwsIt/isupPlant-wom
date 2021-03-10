@@ -19,13 +19,9 @@ import com.app.annotation.BindByTag;
 import com.app.annotation.Controller;
 import com.app.annotation.Presenter;
 import com.app.annotation.apt.Router;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.jakewharton.rxbinding2.view.RxView;
 import com.supcon.common.view.base.activity.BaseRefreshRecyclerActivity;
 import com.supcon.common.view.base.adapter.IListAdapter;
-import com.supcon.common.view.listener.OnItemChildViewClickListener;
-import com.supcon.common.view.listener.OnRefreshListener;
 import com.supcon.common.view.util.DisplayUtil;
 import com.supcon.common.view.util.StatusBarUtils;
 import com.supcon.common.view.util.ToastUtils;
@@ -47,7 +43,6 @@ import com.supcon.mes.middleware.model.bean.wom.StoreSetEntity;
 import com.supcon.mes.middleware.model.bean.wom.WarehouseEntity;
 import com.supcon.mes.middleware.model.event.RefreshEvent;
 import com.supcon.mes.middleware.model.event.SelectDataEvent;
-import com.supcon.mes.middleware.model.inter.PowerCode;
 import com.supcon.mes.middleware.util.ErrorMsgHelper;
 import com.supcon.mes.module_wom_batchmaterial.IntentRouter;
 import com.supcon.mes.module_wom_batchmaterial.R;
@@ -74,7 +69,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
-import io.reactivex.functions.Consumer;
 
 /**
  * ClassName
@@ -207,13 +201,8 @@ public class BatchMaterialInstructionEditActivity extends BaseRefreshRecyclerAct
         super.initListener();
         leftBtn.setOnClickListener(v -> finish());
         rightBtn.setOnClickListener(v -> ToastUtils.show(context, context.getResources().getString(R.string.middleware_stay_realization)));
-        refreshListController.setOnRefreshListener(new OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                presenterRouter.create(CommonListAPI.class).list(1, customCondition, queryParams,
-                        BmConstant.URL.BATCH_MATERIAL_INSTRUCTION_DG_LIST_URL + "&id=" + mBatchMaterialEntity.getId(), "");
-            }
-        });
+        refreshListController.setOnRefreshListener(() -> presenterRouter.create(CommonListAPI.class).list(1, customCondition, queryParams,
+                BmConstant.URL.BATCH_MATERIAL_INSTRUCTION_DG_LIST_URL + "&id=" + mBatchMaterialEntity.getId(), ""));
         customListWidgetAdd.setOnClickListener(v -> {
             BatchMaterialPartEntity batchMaterialPartEntity = new BatchMaterialPartEntity();
             batchMaterialPartEntity.setMaterialId(mBatchMaterialEntity.getProductId()); // 物料
@@ -234,44 +223,36 @@ public class BatchMaterialInstructionEditActivity extends BaseRefreshRecyclerAct
             contentView.smoothScrollToPosition(0);
 
         });
-        mBatchMaterialRecordsEditAdapter.setOnItemChildViewClickListener(new OnItemChildViewClickListener() {
-            @Override
-            public void onItemChildViewClick(View childView, int position, int action, Object obj) {
-                mCurrentPosition = position;
-                mBatchMaterialPartEntity = (BatchMaterialPartEntity) obj;
-                switch (childView.getTag().toString()) {
-                    case "warehouseTv":
-                        IntentRouter.go(context, Constant.Router.WAREHOUSE_LIST_REF);
+        mBatchMaterialRecordsEditAdapter.setOnItemChildViewClickListener((childView, position, action, obj) -> {
+            mCurrentPosition = position;
+            mBatchMaterialPartEntity = (BatchMaterialPartEntity) obj;
+            switch (childView.getTag().toString()) {
+                case "warehouseTv":
+                    IntentRouter.go(context, Constant.Router.WAREHOUSE_LIST_REF);
+                    break;
+                case "storeSetTv":
+                    if (mBatchMaterialPartEntity.getWareId() == null) {
+                        ToastUtils.show(context, context.getResources().getString(R.string.wom_please_select_ware));
                         break;
-                    case "storeSetTv":
-                        if (mBatchMaterialPartEntity.getWareId() == null) {
-                            ToastUtils.show(context, context.getResources().getString(R.string.wom_please_select_ware));
-                            break;
-                        }
-                        Bundle bundle = new Bundle();
-                        bundle.putLong(Constant.IntentKey.WARE_ID, mBatchMaterialPartEntity.getWareId().getId());
-                        IntentRouter.go(context, Constant.Router.STORE_SET_LIST_REF, bundle);
-                        break;
-                    case "itemViewDelBtn":
-                        mBatchMaterialRecordsEditAdapter.getList().remove(obj);
-                        mBatchMaterialRecordsEditAdapter.notifyItemRangeRemoved(position, 1);
-                        mBatchMaterialRecordsEditAdapter.notifyItemRangeChanged(position, mBatchMaterialRecordsEditAdapter.getItemCount()-position);
-                        if (mBatchMaterialPartEntity.getId() != null) {
-                            dgDeletedIds += mBatchMaterialPartEntity.getId() + ",";
-                        }
-                        break;
-                    default:
-                }
+                    }
+                    Bundle bundle = new Bundle();
+                    bundle.putLong(Constant.IntentKey.WARE_ID, mBatchMaterialPartEntity.getWareId().getId());
+                    IntentRouter.go(context, Constant.Router.STORE_SET_LIST_REF, bundle);
+                    break;
+                case "itemViewDelBtn":
+                    mBatchMaterialRecordsEditAdapter.getList().remove(obj);
+                    mBatchMaterialRecordsEditAdapter.notifyItemRangeRemoved(position, 1);
+                    mBatchMaterialRecordsEditAdapter.notifyItemRangeChanged(position, mBatchMaterialRecordsEditAdapter.getItemCount()-position);
+                    if (mBatchMaterialPartEntity.getId() != null) {
+                        dgDeletedIds += mBatchMaterialPartEntity.getId() + ",";
+                    }
+                    break;
+                default:
             }
         });
         RxView.clicks(submitBtn)
                 .throttleFirst(200, TimeUnit.MILLISECONDS)
-                .subscribe(new Consumer<Object>() {
-                    @Override
-                    public void accept(Object o) throws Exception {
-                        submitReport();
-                    }
-                });
+                .subscribe(o -> submitReport());
     }
 
     /**

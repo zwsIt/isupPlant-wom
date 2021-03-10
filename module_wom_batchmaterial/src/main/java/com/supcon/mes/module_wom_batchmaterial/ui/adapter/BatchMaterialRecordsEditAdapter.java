@@ -102,31 +102,24 @@ public class BatchMaterialRecordsEditAdapter extends BaseListDataRecyclerViewAda
         @Override
         protected void initListener() {
             super.initListener();
-            itemViewDelBtn.setOnClickListener(v -> {
-                onItemChildViewClick(itemViewDelBtn, getAdapterPosition(), getItem(getAdapterPosition()));
-            });
+            itemViewDelBtn.setOnClickListener(v -> onItemChildViewClick(itemViewDelBtn, getAdapterPosition(), getItem(getAdapterPosition())));
             RxTextView.textChanges(batchNum.editText())
                     .skipInitialValue()
                     .subscribe(charSequence -> getItem(getAdapterPosition()).setMaterialBatchNum(charSequence.toString().trim()));
             RxTextView.textChanges(numEt.editText())
                     .skipInitialValue()
-                    .filter(new Predicate<CharSequence>() {
-                        @Override
-                        public boolean test(CharSequence charSequence) throws Exception {
-                            if (TextUtils.isEmpty(charSequence.toString())){
-                                getItem(getAdapterPosition()).setOfferNum(null);
-                                return false;
-                            }
-                            if(charSequence.toString().startsWith(".")){
-                                numEt.editText().setText("0.");
-                                return false;
-                            }
-                            return true;
+                    .filter(charSequence -> {
+                        if (TextUtils.isEmpty(charSequence.toString())){
+                            getItem(getAdapterPosition()).setOfferNum(null);
+                            return false;
                         }
+                        if(charSequence.toString().startsWith(".")){
+                            numEt.editText().setText("0.");
+                            return false;
+                        }
+                        return true;
                     })
-                    .subscribe(charSequence -> {
-                        getItem(getAdapterPosition()).setOfferNum(new BigDecimal(charSequence.toString().trim()));
-                    });
+                    .subscribe(charSequence -> getItem(getAdapterPosition()).setOfferNum(new BigDecimal(charSequence.toString().trim())));
             warehouseTv.setOnChildViewClickListener((childView, action, obj) -> {
                 if (action == -1){
                     getItem(getAdapterPosition()).setWareId(null);

@@ -7,15 +7,12 @@ import com.supcon.mes.middleware.model.bean.JoinSubcondEntity;
 import com.supcon.mes.middleware.util.BAPQueryParamsHelper;
 import com.supcon.mes.middleware.util.HttpErrorReturnUtil;
 import com.supcon.mes.middleware.util.ListRequestParamUtil;
-import com.supcon.mes.module_wom_batchmaterial.model.contract.BatchMaterialRecordsSubmitContract;
 import com.supcon.mes.module_wom_producetask.model.contract.CommonListContract;
 import com.supcon.mes.module_wom_producetask.model.network.WomHttpClient;
 
 import java.util.ArrayList;
 import java.util.Map;
 
-import io.reactivex.functions.Consumer;
-import io.reactivex.functions.Function;
 
 /**
  * ClassName

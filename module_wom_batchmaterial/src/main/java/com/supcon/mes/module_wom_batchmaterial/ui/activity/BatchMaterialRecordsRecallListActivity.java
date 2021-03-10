@@ -24,18 +24,13 @@ import com.supcon.common.view.base.adapter.IListAdapter;
 import com.supcon.common.view.util.DisplayUtil;
 import com.supcon.common.view.util.StatusBarUtils;
 import com.supcon.common.view.util.ToastUtils;
-import com.supcon.common.view.view.picker.SinglePicker;
 import com.supcon.mes.mbap.utils.GsonUtil;
-import com.supcon.mes.mbap.utils.controllers.SinglePickController;
 import com.supcon.mes.mbap.view.CustomDialog;
 import com.supcon.mes.mbap.view.CustomHorizontalSearchTitleBar;
-import com.supcon.mes.middleware.SupPlantApplication;
 import com.supcon.mes.middleware.constant.Constant;
 import com.supcon.mes.middleware.model.bean.BAP5CommonEntity;
 import com.supcon.mes.middleware.model.bean.CommonBAPListEntity;
 import com.supcon.mes.middleware.model.bean.MaterialQRCodeEntity;
-import com.supcon.mes.middleware.model.bean.SystemCodeEntity;
-import com.supcon.mes.middleware.model.bean.SystemCodeEntityDao;
 import com.supcon.mes.middleware.model.event.RefreshEvent;
 import com.supcon.mes.middleware.model.listener.OnAPIResultListener;
 import com.supcon.mes.middleware.util.EmptyAdapterHelper;
@@ -45,9 +40,7 @@ import com.supcon.mes.module_scan.model.event.CodeResultEvent;
 import com.supcon.mes.module_wom_batchmaterial.R;
 import com.supcon.mes.module_wom_batchmaterial.constant.BmConstant;
 import com.supcon.mes.module_wom_batchmaterial.controller.BatchMaterialRecordsSubmitController;
-import com.supcon.mes.module_wom_batchmaterial.model.dto.BatchMaterialRecordsSignSubmitDTO;
 import com.supcon.mes.module_wom_batchmaterial.presenter.batchMaterialRecordsPresenter;
-import com.supcon.mes.module_wom_batchmaterial.ui.adapter.BatchMaterialRecordsAbandonListAdapter;
 import com.supcon.mes.module_wom_batchmaterial.ui.adapter.BatchMaterialRecordsListAdapter;
 import com.supcon.mes.module_wom_producetask.model.api.CommonListAPI;
 import com.supcon.mes.module_wom_producetask.model.bean.BatchMaterialPartEntity;
@@ -145,12 +138,7 @@ public class BatchMaterialRecordsRecallListActivity extends BaseRefreshRecyclerA
     protected void initListener() {
         super.initListener();
         searchTitleBar.leftBtn().setOnClickListener(v -> finish());
-        searchTitleBar.rightBtn().setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                getController(CommonScanController.class).openCameraScan(context.getClass().getSimpleName());
-            }
-        });
+        searchTitleBar.rightBtn().setOnClickListener(view -> getController(CommonScanController.class).openCameraScan(context.getClass().getSimpleName()));
         searchTitleBar.setOnExpandListener(isExpand -> {
             if (isExpand) {
 //                    searchTitleBar.searchView().setInputTextColor(R.color.black);
@@ -162,9 +150,7 @@ public class BatchMaterialRecordsRecallListActivity extends BaseRefreshRecyclerA
                 .debounce(500, TimeUnit.MILLISECONDS)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(charSequence -> {
-                    search(charSequence.toString().trim());
-                });
+                .subscribe(charSequence -> search(charSequence.toString().trim()));
         refreshListController.setOnRefreshPageListener(pageIndex -> {
             if (pageIndex == 1){
                 allChooseCheckBox.setChecked(false);
@@ -182,24 +168,16 @@ public class BatchMaterialRecordsRecallListActivity extends BaseRefreshRecyclerA
             }
 
         });
-        allChooseCheckBox.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (mBatchMaterialRecordsListAdapter.getList() != null) {
-                    for (BatchMaterialPartEntity entity : mBatchMaterialRecordsListAdapter.getList()) {
-                        entity.setChecked(!entity.isChecked());
-                    }
-                    mBatchMaterialRecordsListAdapter.notifyDataSetChanged();
+        allChooseCheckBox.setOnClickListener(v -> {
+            if (mBatchMaterialRecordsListAdapter.getList() != null) {
+                for (BatchMaterialPartEntity entity : mBatchMaterialRecordsListAdapter.getList()) {
+                    entity.setChecked(!entity.isChecked());
                 }
+                mBatchMaterialRecordsListAdapter.notifyDataSetChanged();
             }
         });
         RxView.clicks(submitBtn).throttleFirst(300, TimeUnit.MILLISECONDS)
-                .subscribe(new Consumer<Object>() {
-                    @Override
-                    public void accept(Object o) throws Exception {
-                        doRecallSubmit();
-                    }
-                });
+                .subscribe(o -> doRecallSubmit());
 
     }
 
@@ -232,15 +210,12 @@ public class BatchMaterialRecordsRecallListActivity extends BaseRefreshRecyclerA
         customDialog.getDialog().getWindow().setBackgroundDrawableResource(R.color.transparent);
         customDialog.bindView(R.id.tipContentTv,getString(R.string.wom_confirm_batch_material_operate)+getString(R.string.wom_recall)+getString(R.string.wom_middle_right_brackets))
                 .bindClickListener(R.id.cancelTv,null,true)
-                .bindClickListener(R.id.confirmTv, new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        onLoading(getString(R.string.wom_dealing));
-                        Map<String,Object> paramsMap = new ArrayMap<>();
-                        paramsMap.put("ids",ids.substring(0,ids.length()-1));
-                        paramsMap.put("status","recall");
-                        getController(BatchMaterialRecordsSubmitController.class).submit(paramsMap,null,false);
-                    }
+                .bindClickListener(R.id.confirmTv, v -> {
+                    onLoading(getString(R.string.wom_dealing));
+                    Map<String,Object> paramsMap = new ArrayMap<>();
+                    paramsMap.put("ids",ids.substring(0,ids.length()-1));
+                    paramsMap.put("status","recall");
+                    getController(BatchMaterialRecordsSubmitController.class).submit(paramsMap,null,false);
                 }, true)
                 .show();
     }

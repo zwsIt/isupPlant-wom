@@ -44,7 +44,6 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
 
 /**
@@ -65,8 +64,8 @@ public class PrepareMaterialRejectRefListActivity extends BaseRefreshRecyclerAct
     @BindByTag("submitBtn")
     Button submitBtn;
 
-    Map<String, Object> queryParams = new HashMap<>();
-    Map<String, Object> customCondition = new HashMap<>();
+    private Map<String, Object> queryParams = new HashMap<>();
+    private Map<String, Object> customCondition = new HashMap<>();
     private PrepareMaterialRecordsRefListAdapter mPrepareMaterialRecordsRefListAdapter;
     private List<PrepareMaterialPartEntity> chooseList = new ArrayList<>();
 
@@ -131,40 +130,34 @@ public class PrepareMaterialRejectRefListActivity extends BaseRefreshRecyclerAct
                     refreshListController.refreshBegin();
                 });
 
-        allChooseCheckBox.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (mPrepareMaterialRecordsRefListAdapter.getList() != null){
-                    for (PrepareMaterialPartEntity entity : mPrepareMaterialRecordsRefListAdapter.getList()){
-                        entity.setChecked(!entity.isChecked());
-                    }
-                    mPrepareMaterialRecordsRefListAdapter.notifyDataSetChanged();
+        allChooseCheckBox.setOnClickListener(v -> {
+            if (mPrepareMaterialRecordsRefListAdapter.getList() != null){
+                for (PrepareMaterialPartEntity entity : mPrepareMaterialRecordsRefListAdapter.getList()){
+                    entity.setChecked(!entity.isChecked());
                 }
+                mPrepareMaterialRecordsRefListAdapter.notifyDataSetChanged();
             }
         });
         RxView.clicks(submitBtn).throttleFirst(200,TimeUnit.MILLISECONDS)
-                .subscribe(new Consumer<Object>() {
-                    @Override
-                    public void accept(Object o) throws Exception {
-                        if (mPrepareMaterialRecordsRefListAdapter.getList() == null || mPrepareMaterialRecordsRefListAdapter.getList().size() <= 0){
-                            ToastUtils.show(context, context.getResources().getString(R.string.wom_no_data_operate));
-                            return;
-                        }
-                        // do全选
-                        for (PrepareMaterialPartEntity entity : mPrepareMaterialRecordsRefListAdapter.getList()){
-                            if (entity.isChecked()){
-                                chooseList.add(entity);
-                            }
-                        }
-                        if (chooseList.size() <= 0){
-                            ToastUtils.show(context, context.getResources().getString(R.string.wom_select_material));
-                            return;
-                        }
-                        SelectDataEvent dataEvent = new SelectDataEvent(chooseList,"prepareMaterial");
-                        EventBus.getDefault().post(dataEvent);
-                        finish();
-
+                .subscribe(o -> {
+                    if (mPrepareMaterialRecordsRefListAdapter.getList() == null || mPrepareMaterialRecordsRefListAdapter.getList().size() <= 0){
+                        ToastUtils.show(context, context.getResources().getString(R.string.wom_no_data_operate));
+                        return;
                     }
+                    // do全选
+                    for (PrepareMaterialPartEntity entity : mPrepareMaterialRecordsRefListAdapter.getList()){
+                        if (entity.isChecked()){
+                            chooseList.add(entity);
+                        }
+                    }
+                    if (chooseList.size() <= 0){
+                        ToastUtils.show(context, context.getResources().getString(R.string.wom_select_material));
+                        return;
+                    }
+                    SelectDataEvent dataEvent = new SelectDataEvent(chooseList,"prepareMaterial");
+                    EventBus.getDefault().post(dataEvent);
+                    finish();
+
                 });
         mPrepareMaterialRecordsRefListAdapter.setOnItemChildViewClickListener((childView, position, action, obj) -> {
             PrepareMaterialPartEntity batchMaterialPartEntity = (PrepareMaterialPartEntity) obj;
@@ -185,11 +178,6 @@ public class PrepareMaterialRejectRefListActivity extends BaseRefreshRecyclerAct
             }
 
         });
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
     }
 
     @Override

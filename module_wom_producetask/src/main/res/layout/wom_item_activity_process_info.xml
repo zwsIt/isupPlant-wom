@@ -103,7 +103,7 @@
             android:id="@+id/dealTime"
             android:paddingTop="@dimen/dp_5"
             android:tag="dealTime"
-            android:text="时间"
+            tools:text="@string/wom_time"
             android:textColor="@color/textColorlightblack"
             android:textSize="@dimen/fontSize_12sp" />
     </LinearLayout>

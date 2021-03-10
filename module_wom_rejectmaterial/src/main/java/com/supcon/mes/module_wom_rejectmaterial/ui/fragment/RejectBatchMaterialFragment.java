@@ -48,13 +48,11 @@ public class RejectBatchMaterialFragment extends BaseRefreshRecyclerFragment<Rej
     @BindByTag("contentView")
     RecyclerView contentView;
 
-    private RejectBatchMaterialListAdapter mRejectBatchMaterialListAdapter;
-    Map<String, Object> queryParams = new HashMap<>(); // 快速查询
+    private Map<String, Object> queryParams = new HashMap<>(); // 快速查询
 
     @Override
     protected IListAdapter<RejectMaterialEntity> createAdapter() {
-        mRejectBatchMaterialListAdapter = new RejectBatchMaterialListAdapter(context);
-        return mRejectBatchMaterialListAdapter;
+        return new RejectBatchMaterialListAdapter(context);
     }
 
     @Override
@@ -95,19 +93,11 @@ public class RejectBatchMaterialFragment extends BaseRefreshRecyclerFragment<Rej
     }
 
     @Override
-    protected void initView() {
-        super.initView();
-    }
-
-    @Override
     protected void initListener() {
         super.initListener();
-        refreshListController.setOnRefreshPageListener(new OnRefreshPageListener() {
-            @Override
-            public void onRefresh(int pageIndex) {
-                queryParams.put(Constant.BAPQuery.TABLE_NO, ((RejectMaterialListActivity)context).getSearch());
-                presenterRouter.create(CommonListAPI.class).list(pageIndex,null,queryParams, getArguments() == null? "" : getArguments().getString(Constant.IntentKey.URL),"rejectMaterial");
-            }
+        refreshListController.setOnRefreshPageListener(pageIndex -> {
+            queryParams.put(Constant.BAPQuery.TABLE_NO, ((RejectMaterialListActivity)context).getSearch());
+            presenterRouter.create(CommonListAPI.class).list(pageIndex,null,queryParams, getArguments() == null? "" : getArguments().getString(Constant.IntentKey.URL),"rejectMaterial");
         });
     }
 

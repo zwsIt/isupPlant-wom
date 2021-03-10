@@ -12,44 +12,29 @@ import android.widget.TextView;
 import com.app.annotation.BindByTag;
 import com.app.annotation.Presenter;
 import com.app.annotation.apt.Router;
-import com.jakewharton.rxbinding2.widget.RxTextView;
 import com.supcon.common.view.base.activity.BaseRefreshRecyclerActivity;
 import com.supcon.common.view.base.adapter.IListAdapter;
 import com.supcon.common.view.listener.OnRefreshListener;
 import com.supcon.common.view.util.DisplayUtil;
 import com.supcon.common.view.util.StatusBarUtils;
 import com.supcon.common.view.util.ToastUtils;
-import com.supcon.mes.mbap.utils.GsonUtil;
-import com.supcon.mes.mbap.view.CustomHorizontalSearchTitleBar;
 import com.supcon.mes.middleware.constant.Constant;
 import com.supcon.mes.middleware.model.bean.BAP5CommonEntity;
 import com.supcon.mes.middleware.model.bean.CommonBAPListEntity;
-import com.supcon.mes.middleware.model.bean.wom.WarehouseEntity;
-import com.supcon.mes.middleware.model.event.SelectDataEvent;
 import com.supcon.mes.middleware.util.EmptyAdapterHelper;
 import com.supcon.mes.middleware.util.ErrorMsgHelper;
 import com.supcon.mes.module_wom_producetask.R;
-import com.supcon.mes.module_wom_producetask.constant.WomConstant;
-import com.supcon.mes.module_wom_producetask.model.api.CommonListAPI;
 import com.supcon.mes.module_wom_producetask.model.api.ListAllActivityAPI;
 import com.supcon.mes.module_wom_producetask.model.bean.TaskActiveEntity;
 import com.supcon.mes.module_wom_producetask.model.bean.WaitPutinRecordEntity;
-import com.supcon.mes.module_wom_producetask.model.contract.CommonListContract;
 import com.supcon.mes.module_wom_producetask.model.contract.ListAllActivityContract;
 import com.supcon.mes.module_wom_producetask.presenter.ActivityProcessListPresenter;
-import com.supcon.mes.module_wom_producetask.presenter.CommonListPresenter;
 import com.supcon.mes.module_wom_producetask.ui.adapter.ActivityProcessInfoAdapter;
-import com.supcon.mes.module_wom_producetask.ui.adapter.WarehouseListAdapter;
 
-import org.greenrobot.eventbus.EventBus;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
 
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.schedulers.Schedulers;
 
 /**
  * ClassName
@@ -71,12 +56,10 @@ public class ActivityProcessListActivity extends BaseRefreshRecyclerActivity<Tas
 
     Map<String, Object> queryParams = new HashMap<>();
     Map<String, Object> customCondition = new HashMap<>();
-    private ActivityProcessInfoAdapter mActivityProcessInfoAdapter;
 
     @Override
     protected IListAdapter<TaskActiveEntity> createAdapter() {
-        mActivityProcessInfoAdapter = new ActivityProcessInfoAdapter(context);
-        return mActivityProcessInfoAdapter;
+        return new ActivityProcessInfoAdapter(context);
     }
 
     @Override

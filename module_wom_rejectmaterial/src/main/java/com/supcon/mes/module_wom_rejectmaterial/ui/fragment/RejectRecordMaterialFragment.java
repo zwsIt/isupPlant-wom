@@ -25,7 +25,6 @@ import com.supcon.mes.module_wom_producetask.model.contract.CommonListContract;
 import com.supcon.mes.module_wom_producetask.presenter.CommonListPresenter;
 import com.supcon.mes.module_wom_rejectmaterial.R;
 import com.supcon.mes.module_wom_rejectmaterial.model.bean.RejectMaterialPartEntity;
-import com.supcon.mes.module_wom_rejectmaterial.model.bean.RejectRecordMaterialEntity;
 import com.supcon.mes.module_wom_rejectmaterial.ui.adapter.RejectRecordMaterialAdapter;
 
 import java.util.HashMap;
@@ -43,13 +42,11 @@ public class RejectRecordMaterialFragment extends BaseRefreshRecyclerFragment<Re
     @BindByTag("contentView")
     RecyclerView contentView;
 
-    private RejectRecordMaterialAdapter rejectRecordMaterialAdapter;
-    Map<String, Object> queryParams = new HashMap<>(); // 快速查询
+//    Map<String, Object> queryParams = new HashMap<>(); // 快速查询
 
     @Override
     protected IListAdapter<RejectMaterialPartEntity> createAdapter() {
-        rejectRecordMaterialAdapter = new RejectRecordMaterialAdapter(context);
-        return rejectRecordMaterialAdapter;
+        return new RejectRecordMaterialAdapter(context);
     }
 
     @Override
@@ -82,19 +79,9 @@ public class RejectRecordMaterialFragment extends BaseRefreshRecyclerFragment<Re
     }
 
     @Override
-    protected void initView() {
-        super.initView();
-    }
-
-    @Override
     protected void initListener() {
         super.initListener();
-        refreshListController.setOnRefreshPageListener(new OnRefreshPageListener() {
-            @Override
-            public void onRefresh(int pageIndex) {
-                presenterRouter.create(CommonListAPI.class).list(pageIndex,null,queryParams, getArguments() == null? "" : getArguments().getString(Constant.IntentKey.URL),"rejctMatalPart");
-            }
-        });
+        refreshListController.setOnRefreshPageListener(pageIndex -> presenterRouter.create(CommonListAPI.class).list(pageIndex,null,new HashMap<>(1), getArguments() == null? "" : getArguments().getString(Constant.IntentKey.URL),"rejctMatalPart"));
     }
 
     @Override

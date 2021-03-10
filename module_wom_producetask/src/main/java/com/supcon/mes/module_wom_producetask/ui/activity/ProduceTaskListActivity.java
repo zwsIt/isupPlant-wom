@@ -136,9 +136,7 @@ public class ProduceTaskListActivity extends BaseMultiFragmentActivity {
                     }
                 });
         searchTitleBar.setOnExpandListener(isExpand -> {
-            if (isExpand) {
-//                    searchTitleBar.searchView().setInputTextColor(R.color.black);
-            } else {
+            if (!isExpand) {
                 searchTitleBar.searchView().setInputTextColor(R.color.black);
             }
         });

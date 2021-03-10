@@ -17,7 +17,7 @@ public interface OutputReportAPI {
     /**
      * @author zhangwenshuai1 2020/3/25
      * @param
-     * @param batchPutIn
+     * @param outputDetailDTO 产出明细DTO
      * @return
      * @description 报工提交
      *

@@ -32,4 +32,5 @@
     <string name="wom_no_scan_material_info">未能扫描到物料信息</string>
     <string name="wom_please_write_batchmaterial_num">】项请填写配料数量</string>
     <string name="wom_please_write">】项请填写</string>
+    <string name="wom_material_status">物料状态</string>
 </resources>

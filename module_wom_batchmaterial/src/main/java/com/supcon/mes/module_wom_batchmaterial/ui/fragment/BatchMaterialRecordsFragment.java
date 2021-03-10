@@ -8,7 +8,6 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.util.ArrayMap;
-import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -24,7 +23,6 @@ import com.jakewharton.rxbinding2.view.RxView;
 import com.supcon.common.view.base.adapter.IListAdapter;
 import com.supcon.common.view.base.fragment.BaseRefreshRecyclerFragment;
 import com.supcon.common.view.util.DisplayUtil;
-import com.supcon.common.view.util.LogUtil;
 import com.supcon.common.view.util.ToastUtils;
 import com.supcon.mes.mbap.utils.GsonUtil;
 import com.supcon.mes.mbap.view.CustomDialog;
@@ -45,10 +43,7 @@ import com.supcon.mes.module_wom_batchmaterial.IntentRouter;
 import com.supcon.mes.module_wom_batchmaterial.R;
 import com.supcon.mes.module_wom_batchmaterial.constant.BmConstant;
 import com.supcon.mes.module_wom_batchmaterial.controller.BatchMaterialRecordsSubmitController;
-import com.supcon.mes.module_wom_batchmaterial.model.api.BatchMaterialRecordsSubmitAPI;
-import com.supcon.mes.module_wom_batchmaterial.model.contract.BatchMaterialRecordsSubmitContract;
 import com.supcon.mes.module_wom_batchmaterial.model.dto.BatchMaterialRecordsSignSubmitDTO;
-import com.supcon.mes.module_wom_batchmaterial.presenter.BatchMaterialRecordsSubmitPresenter;
 import com.supcon.mes.module_wom_batchmaterial.presenter.batchMaterialRecordsPresenter;
 import com.supcon.mes.module_wom_batchmaterial.ui.activity.BatchMaterialListActivity;
 import com.supcon.mes.module_wom_batchmaterial.ui.adapter.BatchMaterialRecordsListAdapter;
@@ -193,31 +188,18 @@ public class BatchMaterialRecordsFragment extends BaseRefreshRecyclerFragment<Ba
             }
 
         });
-        allChooseCheckBox.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (mBatchMaterialRecordsListAdapter.getList() != null) {
-                    for (BatchMaterialPartEntity entity : mBatchMaterialRecordsListAdapter.getList()) {
-                        entity.setChecked(!entity.isChecked());
-                    }
-                    mBatchMaterialRecordsListAdapter.notifyDataSetChanged();
+        allChooseCheckBox.setOnClickListener(v -> {
+            if (mBatchMaterialRecordsListAdapter.getList() != null) {
+                for (BatchMaterialPartEntity entity : mBatchMaterialRecordsListAdapter.getList()) {
+                    entity.setChecked(!entity.isChecked());
                 }
+                mBatchMaterialRecordsListAdapter.notifyDataSetChanged();
             }
         });
         RxView.clicks(submitBtn).throttleFirst(300, TimeUnit.MILLISECONDS)
-                .subscribe(new Consumer<Object>() {
-                    @Override
-                    public void accept(Object o) throws Exception {
-                        switchSubmit(1);
-                    }
-                });
+                .subscribe(o -> switchSubmit(1));
         RxView.clicks(rejectBtn).throttleFirst(300, TimeUnit.MILLISECONDS)
-                .subscribe(new Consumer<Object>() {
-                    @Override
-                    public void accept(Object o) throws Exception {
-                        switchSubmit(0);
-                    }
-                });
+                .subscribe(o -> switchSubmit(0));
 
     }
 
@@ -299,14 +281,11 @@ public class BatchMaterialRecordsFragment extends BaseRefreshRecyclerFragment<Ba
             customDialog.getDialog().getWindow().setBackgroundDrawableResource(R.color.transparent);
             customDialog.bindView(R.id.tipContentTv,getString(R.string.wom_confirm_batch_material_operate)+getString(R.string.wom_sign)+getString(R.string.wom_middle_right_brackets))
                     .bindClickListener(R.id.cancelTv,null,true)
-                    .bindClickListener(R.id.confirmTv, new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            onLoading(getString(R.string.wom_dealing));
-                            BatchMaterialRecordsSignSubmitDTO dto = new BatchMaterialRecordsSignSubmitDTO();
-                            dto.setDetails(chooseList.toString()/*GsonUtil.gsonString(chooseList)*/);
-                            getController(BatchMaterialRecordsSubmitController.class).submit(null,dto,true);
-                        }
+                    .bindClickListener(R.id.confirmTv, v -> {
+                        onLoading(getString(R.string.wom_dealing));
+                        BatchMaterialRecordsSignSubmitDTO dto = new BatchMaterialRecordsSignSubmitDTO();
+                        dto.setDetails(chooseList.toString()/*GsonUtil.gsonString(chooseList)*/);
+                        getController(BatchMaterialRecordsSubmitController.class).submit(null,dto,true);
                     }, true)
                     .show();
         }
@@ -324,15 +303,12 @@ public class BatchMaterialRecordsFragment extends BaseRefreshRecyclerFragment<Ba
         customDialog.getDialog().getWindow().setBackgroundDrawableResource(R.color.transparent);
         customDialog.bindView(R.id.tipContentTv,getString(R.string.wom_confirm_batch_material_operate)+stringList.get(0)+getString(R.string.wom_middle_right_brackets))
                 .bindClickListener(R.id.cancelTv,null,true)
-                .bindClickListener(R.id.confirmTv, new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        onLoading(getString(R.string.wom_dealing));
-                        Map<String,Object> paramsMap = new ArrayMap<>();
-                        paramsMap.put("ids",ids.substring(0,ids.length()-1));
-                        paramsMap.put("status",stringList.get(1));
-                        getController(BatchMaterialRecordsSubmitController.class).submit(paramsMap,null,false);
-                    }
+                .bindClickListener(R.id.confirmTv, v -> {
+                    onLoading(getString(R.string.wom_dealing));
+                    Map<String,Object> paramsMap = new ArrayMap<>();
+                    paramsMap.put("ids",ids.substring(0,ids.length()-1));
+                    paramsMap.put("status",stringList.get(1));
+                    getController(BatchMaterialRecordsSubmitController.class).submit(paramsMap,null,false);
                 }, true)
                 .show();
     }

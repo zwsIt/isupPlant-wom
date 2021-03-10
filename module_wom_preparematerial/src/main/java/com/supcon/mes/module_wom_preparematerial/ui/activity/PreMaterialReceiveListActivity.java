@@ -8,7 +8,6 @@ import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.app.annotation.BindByTag;
@@ -19,23 +18,16 @@ import com.jakewharton.rxbinding2.view.RxView;
 import com.jakewharton.rxbinding2.widget.RxTextView;
 import com.supcon.common.view.base.activity.BaseRefreshRecyclerActivity;
 import com.supcon.common.view.base.adapter.IListAdapter;
-import com.supcon.common.view.listener.OnItemChildViewClickListener;
-import com.supcon.common.view.listener.OnRefreshPageListener;
 import com.supcon.common.view.util.DisplayUtil;
-import com.supcon.common.view.util.LogUtil;
 import com.supcon.common.view.util.StatusBarUtils;
 import com.supcon.common.view.util.ToastUtils;
-import com.supcon.mes.mbap.utils.GsonUtil;
 import com.supcon.mes.mbap.utils.SpaceItemDecoration;
-import com.supcon.mes.mbap.utils.ViewUtil;
 import com.supcon.mes.mbap.view.CustomDialog;
 import com.supcon.mes.mbap.view.CustomHorizontalSearchTitleBar;
 import com.supcon.mes.mbap.view.CustomSearchView;
 import com.supcon.mes.middleware.IntentRouter;
 import com.supcon.mes.middleware.constant.Constant;
-import com.supcon.mes.middleware.controller.SystemCodeController;
 import com.supcon.mes.middleware.controller.SystemCodeJsonController;
-import com.supcon.mes.middleware.model.bean.BAP5CommonEntity;
 import com.supcon.mes.middleware.model.bean.CommonBAPListEntity;
 import com.supcon.mes.middleware.model.bean.ContactEntity;
 import com.supcon.mes.middleware.model.bean.MaterialQRCodeEntity;
@@ -54,7 +46,6 @@ import com.supcon.mes.module_wom_preparematerial.R;
 import com.supcon.mes.module_wom_preparematerial.model.api.PreMaterialReceiveListAPI;
 import com.supcon.mes.module_wom_preparematerial.model.api.PreMaterialReceiveSubmitAPI;
 import com.supcon.mes.module_wom_preparematerial.model.bean.PreMaterialEntity;
-import com.supcon.mes.module_wom_preparematerial.model.bean.PreMaterialSubmitEntity;
 import com.supcon.mes.module_wom_preparematerial.model.bean.PreResultEntity;
 import com.supcon.mes.module_wom_preparematerial.model.contract.PreMaterialReceiveListContract;
 import com.supcon.mes.module_wom_preparematerial.model.contract.PreMaterialReceiveSubmitContract;
@@ -67,17 +58,14 @@ import com.supcon.mes.module_wom_producetask.util.MaterQRUtil;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
-import org.greenrobot.greendao.annotation.ToOne;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.functions.Consumer;
 
 /**
  * Created by wangshizhan on 2020/6/24
@@ -211,31 +199,28 @@ public class PreMaterialReceiveListActivity extends BaseRefreshRecyclerActivity<
                     refreshListController.refreshBegin();
                 });
 
-        mPreMaterialReceiveListAdapter.setOnItemChildViewClickListener(new OnItemChildViewClickListener() {
-            @Override
-            public void onItemChildViewClick(View childView, int position, int action, Object object) {
-                Bundle bundle = new Bundle();
-                String tag = (String) childView.getTag();
-                mPreMaterialEntity = (PreMaterialEntity) object;
-                actionPosition = position;
-                switch (tag) {
-                    case "itemPreMaterialReceiveStaff":
+        mPreMaterialReceiveListAdapter.setOnItemChildViewClickListener((childView, position, action, object) -> {
+            Bundle bundle = new Bundle();
+            String tag = (String) childView.getTag();
+            mPreMaterialEntity = (PreMaterialEntity) object;
+            actionPosition = position;
+            switch (tag) {
+                case "itemPreMaterialReceiveStaff":
 
-                        bundle.putBoolean(Constant.IntentKey.IS_MULTI, false);
-                        bundle.putBoolean(Constant.IntentKey.IS_SELECT, true);
-                        bundle.putString(Constant.IntentKey.SELECT_TAG, "itemPreMaterialReceiveStaff");
-                        IntentRouter.go(context, Constant.Router.CONTACT_SELECT, bundle);
-                        break;
-                    case "itemPreMaterialReceiveStoreLocation":
-                        if (action == 0) {
-                            mPreMaterialEntity.toStoreId = null;
-                        }
-                        bundle.putLong(Constant.IntentKey.WARE_ID, mPreMaterialEntity.toWareId.getId());
-                        IntentRouter.go(context, Constant.Router.STORE_SET_LIST_REF, bundle);
-                        break;
-                    default:
+                    bundle.putBoolean(Constant.IntentKey.IS_MULTI, false);
+                    bundle.putBoolean(Constant.IntentKey.IS_SELECT, true);
+                    bundle.putString(Constant.IntentKey.SELECT_TAG, "itemPreMaterialReceiveStaff");
+                    IntentRouter.go(context, Constant.Router.CONTACT_SELECT, bundle);
+                    break;
+                case "itemPreMaterialReceiveStoreLocation":
+                    if (action == 0) {
+                        mPreMaterialEntity.toStoreId = null;
+                    }
+                    bundle.putLong(Constant.IntentKey.WARE_ID, mPreMaterialEntity.toWareId.getId());
+                    IntentRouter.go(context, Constant.Router.STORE_SET_LIST_REF, bundle);
+                    break;
+                default:
 
-                }
             }
         });
     }
@@ -301,7 +286,7 @@ public class PreMaterialReceiveListActivity extends BaseRefreshRecyclerActivity<
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onDataSelect(SelectDataEvent event) {
-        if (event.getSelectTag().equals("itemPreMaterialReceiveStaff")) {
+        if ("itemPreMaterialReceiveStaff".equals(event.getSelectTag())) {
             ContactEntity selectContactEntity = (ContactEntity) event.getEntity();
             ObjectEntity objectEntity = new ObjectEntity(selectContactEntity.staffId);
             objectEntity.name = selectContactEntity.name;
@@ -379,11 +364,6 @@ public class PreMaterialReceiveListActivity extends BaseRefreshRecyclerActivity<
     }
 
     @Override
-    protected void initData() {
-        super.initData();
-    }
-
-    @Override
     public void getPreMaterialReceiveListSuccess(CommonBAPListEntity entity) {
 
         if (entity == null || entity.result == null) {
@@ -399,9 +379,8 @@ public class PreMaterialReceiveListActivity extends BaseRefreshRecyclerActivity<
                 submitBtn.setVisibility(View.VISIBLE);
             }
             Map<String, String> rejectReasons = getController(SystemCodeJsonController.class).getCodeMap(WomConstant.SystemCode.WOM_rejectReason);
-            List<String> rejectReasonList = new ArrayList<>();
             if (rejectReasons != null && rejectReasons.size() != 0) {
-                rejectReasonList.addAll(rejectReasons.values());
+                List<String> rejectReasonList = new ArrayList<>(rejectReasons.values());
                 mPreMaterialReceiveListAdapter.setRejectReasons(rejectReasonList);
             }
 

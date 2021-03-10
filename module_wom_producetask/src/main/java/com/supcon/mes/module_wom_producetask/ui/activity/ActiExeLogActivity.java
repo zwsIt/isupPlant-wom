@@ -17,7 +17,6 @@ import com.supcon.common.view.listener.OnRefreshPageListener;
 import com.supcon.common.view.ptr.PtrFrameLayout;
 import com.supcon.common.view.util.DisplayUtil;
 import com.supcon.common.view.util.ToastUtils;
-import com.supcon.mes.mbap.utils.SpaceItemDecoration;
 import com.supcon.mes.mbap.utils.StatusBarUtils;
 import com.supcon.mes.mbap.view.CustomImageButton;
 import com.supcon.mes.middleware.constant.Constant;
@@ -59,6 +58,7 @@ public class ActiExeLogActivity extends BaseRefreshRecyclerActivity<ActiExelogEn
     PtrFrameLayout refreshFrameLayout;
 
     private WaitPutinRecordEntity waitPutinRecordEntity;
+    private ActiExeLogAdapter mActiExeLogAdapter;
 
     @Override
     protected void onInit() {
@@ -67,7 +67,6 @@ public class ActiExeLogActivity extends BaseRefreshRecyclerActivity<ActiExelogEn
         waitPutinRecordEntity = (WaitPutinRecordEntity) getIntent().getSerializableExtra(Constant.IntentKey.WAIT_PUT_RECORD);
         StatusBarUtils.setWindowStatusBarColor(this, R.color.themeColor);
         contentView.setLayoutManager(new LinearLayoutManager(this));
-//        contentView.addItemDecoration(new SpaceItemDecoration(10));
         refreshListController.setAutoPullDownRefresh(true);
         refreshListController.setPullDownRefreshEnabled(true);
 
@@ -82,8 +81,7 @@ public class ActiExeLogActivity extends BaseRefreshRecyclerActivity<ActiExelogEn
 
     @Override
     protected IListAdapter<ActiExelogEntity> createAdapter() {
-        ActiExeLogAdapter actiExeLogAdapter = new ActiExeLogAdapter(context);
-        return actiExeLogAdapter;
+        return new ActiExeLogAdapter(context);
     }
 
     @Override

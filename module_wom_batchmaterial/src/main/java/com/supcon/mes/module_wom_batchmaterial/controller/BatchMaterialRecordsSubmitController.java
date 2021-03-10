@@ -8,9 +8,7 @@ import com.supcon.mes.module_wom_batchmaterial.model.api.BatchMaterialRecordsSub
 import com.supcon.mes.module_wom_batchmaterial.model.contract.BatchMaterialRecordsSubmitContract;
 import com.supcon.mes.module_wom_batchmaterial.model.dto.BatchMaterialRecordsSignSubmitDTO;
 import com.supcon.mes.module_wom_batchmaterial.presenter.BatchMaterialRecordsSubmitPresenter;
-import com.supcon.mes.module_wom_producetask.model.bean.BatchMaterialPartEntity;
 
-import java.util.List;
 import java.util.Map;
 
 /**

@@ -14,7 +14,7 @@ import com.supcon.mes.module_wom_producetask.model.dto.ProCheckDetailDTO;
 public interface CheckItemReportAPI {
     /**
      * @author zhangwenshuai1 2020/3/25
-     * @param submitParamsMap：待办记录ID
+     * @param proCheckDetailDTO：检查明细提交DTO
      * @return
      * @description 报工提交
      *

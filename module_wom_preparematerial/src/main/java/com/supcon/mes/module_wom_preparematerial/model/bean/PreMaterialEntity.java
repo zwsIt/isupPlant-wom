@@ -3,16 +3,13 @@ package com.supcon.mes.module_wom_preparematerial.model.bean;
 import com.google.gson.annotations.Expose;
 import com.supcon.common.com_http.BaseEntity;
 import com.supcon.mes.middleware.model.bean.ObjectEntity;
-import com.supcon.mes.middleware.model.bean.PendingEntity;
 import com.supcon.mes.middleware.model.bean.StaffEntity;
 import com.supcon.mes.middleware.model.bean.SystemCodeEntity;
 import com.supcon.mes.middleware.model.bean.wom.MaterialEntity;
 import com.supcon.mes.middleware.model.bean.wom.StoreSetEntity;
 import com.supcon.mes.middleware.model.bean.wom.WarehouseEntity;
 
-import java.math.BigDecimal;
 
-import retrofit2.http.PUT;
 
 /**
  * ClassName

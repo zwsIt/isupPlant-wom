@@ -14,8 +14,6 @@ import com.supcon.mes.module_wom_preparematerial.model.network.WomHttpClient;
 import java.util.HashMap;
 import java.util.Map;
 
-import io.reactivex.functions.Consumer;
-import io.reactivex.functions.Function;
 
 /**
  * Created by wangshizhan on 2020/6/24
@@ -34,30 +32,23 @@ public class PreMaterialReceiveListPresenter extends PreMaterialReceiveListContr
         pageQueryParam.put("fastQueryCond", GsonUtil.gsonString(fastQueryCondEntity));
         mCompositeSubscription.add(
                 WomHttpClient.getPreMaterialReceiveList(pageQueryParam)
-                        .onErrorReturn(new Function<Throwable, BAP5CommonEntity<CommonBAPListEntity<PreMaterialEntity>>>() {
-                            @Override
-                            public BAP5CommonEntity<CommonBAPListEntity<PreMaterialEntity>> apply(Throwable throwable) throws Exception {
-                                BAP5CommonEntity bap5CommonEntity = new BAP5CommonEntity();
-                                bap5CommonEntity.success = false;
-                                bap5CommonEntity.msg = HttpErrorReturnUtil.getErrorInfo(throwable);
-                                return bap5CommonEntity;
-                            }
+                        .onErrorReturn(throwable -> {
+                            BAP5CommonEntity<CommonBAPListEntity<PreMaterialEntity>> bap5CommonEntity = new BAP5CommonEntity();
+                            bap5CommonEntity.success = false;
+                            bap5CommonEntity.msg = HttpErrorReturnUtil.getErrorInfo(throwable);
+                            return bap5CommonEntity;
                         })
-                        .subscribe(new Consumer<BAP5CommonEntity<CommonBAPListEntity<PreMaterialEntity>>>() {
-                            @Override
-                            public void accept(BAP5CommonEntity<CommonBAPListEntity<PreMaterialEntity>> commonBAPListEntityBAP5CommonEntity) throws Exception {
-                                if (commonBAPListEntityBAP5CommonEntity.success) {
+                        .subscribe((BAP5CommonEntity<CommonBAPListEntity<PreMaterialEntity>> commonBAPListEntityBAP5CommonEntity) -> {
+                            if (commonBAPListEntityBAP5CommonEntity.success) {
 
-                                    for (PreMaterialEntity preMaterialEntity : commonBAPListEntityBAP5CommonEntity.data.result){
-                                        preMaterialEntity.receiveState = SystemCodeManager.getInstance().getSystemCodeEntity("WOM_receiveState/receive");
-                                    }
-
-
-                                    getView().getPreMaterialReceiveListSuccess(commonBAPListEntityBAP5CommonEntity.data);
+                                for (PreMaterialEntity preMaterialEntity : commonBAPListEntityBAP5CommonEntity.data.result) {
+                                    preMaterialEntity.receiveState = SystemCodeManager.getInstance().getSystemCodeEntity("WOM_receiveState/receive");
                                 }
-                                else{
-                                    getView().getPreMaterialReceiveListFailed(commonBAPListEntityBAP5CommonEntity.msg);
-                                }
+
+
+                                PreMaterialReceiveListPresenter.this.getView().getPreMaterialReceiveListSuccess(commonBAPListEntityBAP5CommonEntity.data);
+                            } else {
+                                PreMaterialReceiveListPresenter.this.getView().getPreMaterialReceiveListFailed(commonBAPListEntityBAP5CommonEntity.msg);
                             }
                         }));
     }

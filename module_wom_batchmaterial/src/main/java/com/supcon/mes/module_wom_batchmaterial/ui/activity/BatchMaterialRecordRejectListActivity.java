@@ -41,12 +41,9 @@ import com.supcon.mes.module_wom_producetask.model.bean.BatchMaterialPartEntity;
 import org.greenrobot.eventbus.EventBus;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
-import io.reactivex.functions.Consumer;
 
 /**
  * ClassName
@@ -127,23 +124,20 @@ public class BatchMaterialRecordRejectListActivity extends BaseRefreshRecyclerAc
         super.initListener();
         leftBtn.setOnClickListener(v -> finish());
         RxView.clicks(submitBtn).throttleFirst(200,TimeUnit.MILLISECONDS)
-                .subscribe(new Consumer<Object>() {
-                    @Override
-                    public void accept(Object o) throws Exception {
-                        for (BatchMaterialPartEntity entity : mBatchMaterialRecordsRejectListAdapter.getList()){
-                            if (entity.getRejectReason() == null){
-                                ToastUtils.show(context, context.getResources().getString(R.string.wom_di) + (mBatchMaterialRecordsRejectListAdapter.getList().indexOf(entity) + 1) + context.getResources().getString(R.string.wom_please_write) + getString(R.string.wom_reject_reason));
-                                return;
-                            }
-                            SystemCodeEntity systemCodeEntity = new SystemCodeEntity();
-                            systemCodeEntity.id = BmConstant.SystemCode.RECEIVE_STATE_REJECT;
-                            entity.setReceiveState(systemCodeEntity);
+                .subscribe(o -> {
+                    for (BatchMaterialPartEntity entity : mBatchMaterialRecordsRejectListAdapter.getList()){
+                        if (entity.getRejectReason() == null){
+                            ToastUtils.show(context, context.getResources().getString(R.string.wom_di) + (mBatchMaterialRecordsRejectListAdapter.getList().indexOf(entity) + 1) + context.getResources().getString(R.string.wom_please_write) + getString(R.string.wom_reject_reason));
+                            return;
                         }
-                        onLoading(getString(R.string.wom_dealing));
-                        BatchMaterialRecordsSignSubmitDTO dto = new BatchMaterialRecordsSignSubmitDTO();
-                        dto.setDetails(GsonUtil.gsonString(mBatchMaterialRecordsRejectListAdapter.getList()));
-                        getController(BatchMaterialRecordsSubmitController.class).submit(null,dto,true);
+                        SystemCodeEntity systemCodeEntity = new SystemCodeEntity();
+                        systemCodeEntity.id = BmConstant.SystemCode.RECEIVE_STATE_REJECT;
+                        entity.setReceiveState(systemCodeEntity);
                     }
+                    onLoading(getString(R.string.wom_dealing));
+                    BatchMaterialRecordsSignSubmitDTO dto = new BatchMaterialRecordsSignSubmitDTO();
+                    dto.setDetails(GsonUtil.gsonString(mBatchMaterialRecordsRejectListAdapter.getList()));
+                    getController(BatchMaterialRecordsSubmitController.class).submit(null,dto,true);
                 });
         mBatchMaterialRecordsRejectListAdapter.setOnItemChildViewClickListener((childView, position, action, obj) -> {
             BatchMaterialPartEntity batchMaterialPartEntity = (BatchMaterialPartEntity) obj;
@@ -154,12 +148,9 @@ public class BatchMaterialRecordRejectListActivity extends BaseRefreshRecyclerAc
                 }
                 new SinglePickController<String>(this)
                         .list(rejectReason)
-                        .listener(new SinglePicker.OnItemPickListener() {
-                            @Override
-                            public void onItemPicked(int index, Object item) {
-                                batchMaterialPartEntity.setRejectReason(mSystemCodeEntities.get(index));
-                                mBatchMaterialRecordsRejectListAdapter.notifyItemRangeChanged(position,1);
-                            }
+                        .listener((index, item) -> {
+                            batchMaterialPartEntity.setRejectReason(mSystemCodeEntities.get(index));
+                            mBatchMaterialRecordsRejectListAdapter.notifyItemRangeChanged(position,1);
                         })
                         .show();
             }
@@ -179,12 +170,9 @@ public class BatchMaterialRecordRejectListActivity extends BaseRefreshRecyclerAc
 
     @Override
     public void onSuccess(Object result) {
-        onLoadSuccessAndExit(getString(R.string.wom_dealt_success), new OnLoaderFinishListener() {
-            @Override
-            public void onLoaderFinished() {
-                EventBus.getDefault().post(new RefreshEvent());
-                finish();
-            }
+        onLoadSuccessAndExit(getString(R.string.wom_dealt_success), () -> {
+            EventBus.getDefault().post(new RefreshEvent());
+            finish();
         });
     }
 }

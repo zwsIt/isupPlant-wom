@@ -1,8 +1,6 @@
 package com.supcon.mes.module_wom_batchmaterial.model.dto;
 
-import com.supcon.mes.module_wom_producetask.model.bean.BatchMaterialPartEntity;
 
-import java.util.List;
 
 /**
  * ClassName

@@ -10,7 +10,6 @@ import com.supcon.common.view.base.adapter.viewholder.BaseRecyclerViewHolder;
 import com.supcon.mes.mbap.view.CustomTextView;
 import com.supcon.mes.module_wom_rejectmaterial.R;
 import com.supcon.mes.module_wom_rejectmaterial.model.bean.RejectMaterialPartEntity;
-import com.supcon.mes.module_wom_rejectmaterial.model.bean.RejectRecordMaterialEntity;
 
 /**
  * Author by fengjun1,

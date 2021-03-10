@@ -19,7 +19,7 @@
 	<string name="wom_stop">stop</string>
 	<string name="wom_title_tip">Tip</string>
 	<string name="wom_confirm">determine</string>
-	<string name="wom_cancel">cancel</string>
+	<string name="wom_cancel">Cancel</string>
 	<string name="wom_process_name">Process</string>
 	<string name="wom_equipment_name">Unit of work</string>
 	<string name="wom_process_sequence">Step sequence</string>
@@ -153,4 +153,6 @@
     <string name="wom_activity_process">活动执行流程</string>
     <string name="wom_check_result">检验结果</string>
     <string name="wom_query_workshop_warehouse">车间仓查询中...</string>
+    <string name="wom_active_type">活动类型</string>
+    <string name="wom_work_unit_set">工作单元设置</string>
 </resources>

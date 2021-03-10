@@ -20,4 +20,6 @@
     <string name="wom_confirm_prepare_material_scan_receive">确认接收当前物料：</string>
     <string name="wom_receive_num_smaller_than_preparenum">“接收数量”应小于“备料数量”</string>
     <string name="wom_part_receive_num_not_zero">部分接收时，“接收数量”不应为0</string>
+    <string name="wom_batch_num">批号</string>
+    <string name="wom_reject_reason">拒收原因</string>
 </resources>

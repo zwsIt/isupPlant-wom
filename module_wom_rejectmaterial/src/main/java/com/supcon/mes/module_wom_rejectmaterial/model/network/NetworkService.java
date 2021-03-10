@@ -21,7 +21,7 @@ import retrofit2.http.Query;
 public interface NetworkService {
     /**
      * 退料编辑提交
-     * @return
+     *
      */
     @POST("{path}/submit")
     Flowable<BAP5CommonEntity<BapResultEntity>> submit(@Path(value = "path",encoded = true) String path, @Query("id") Long id, @Query("__pc__") String __pc__, @Body RejectMaterialDTO dto);

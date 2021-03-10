@@ -11,7 +11,6 @@ import com.app.annotation.apt.Router;
 import com.jakewharton.rxbinding2.view.RxView;
 import com.jakewharton.rxbinding2.widget.RxTextView;
 import com.supcon.common.view.base.activity.BaseFragmentActivity;
-import com.supcon.common.view.base.activity.BaseMultiFragmentActivity;
 import com.supcon.common.view.util.StatusBarUtils;
 import com.supcon.mes.mbap.view.CustomHorizontalSearchTitleBar;
 import com.supcon.mes.mbap.view.CustomTab;
@@ -91,12 +90,7 @@ public class BatchMaterialListActivity extends BaseFragmentActivity {
         super.initListener();
         searchTitleBar.leftBtn().setOnClickListener(v -> finish());
         RxView.clicks(searchTitleBar.rightBtn()).throttleFirst(500,TimeUnit.MILLISECONDS)
-                .subscribe(new Consumer<Object>() {
-                    @Override
-                    public void accept(Object o) throws Exception {
-                        mBatchMaterialRecordsFragment.scan();
-                    }
-                });
+                .subscribe(o -> mBatchMaterialRecordsFragment.scan());
         searchTitleBar.setOnExpandListener(isExpand -> {
             if (isExpand) {
 //                    searchTitleBar.searchView().setInputTextColor(R.color.black);
@@ -115,12 +109,7 @@ public class BatchMaterialListActivity extends BaseFragmentActivity {
                         mBatchMaterialRecordsFragment.search(charSequence.toString().trim());
                     }
                 });
-        customTab.setOnTabChangeListener(new CustomTab.OnTabChangeListener() {
-            @Override
-            public void onTabChanged(int current) {
-                viewPager.setCurrentItem(current);
-            }
-        });
+        customTab.setOnTabChangeListener(current -> viewPager.setCurrentItem(current));
         viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int i, float v, int i1) {

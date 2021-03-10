@@ -2,19 +2,15 @@ package com.supcon.mes.module_wom_batchmaterial.ui.activity;
 
 import android.annotation.SuppressLint;
 import android.graphics.Rect;
-import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
-import android.util.ArrayMap;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.LinearLayout;
-import android.widget.RadioGroup;
-import android.widget.TextView;
 
 import com.app.annotation.BindByTag;
 import com.app.annotation.Controller;
@@ -24,12 +20,9 @@ import com.jakewharton.rxbinding2.view.RxView;
 import com.jakewharton.rxbinding2.widget.RxTextView;
 import com.supcon.common.view.base.activity.BaseRefreshRecyclerActivity;
 import com.supcon.common.view.base.adapter.IListAdapter;
-import com.supcon.common.view.base.fragment.BaseRefreshRecyclerFragment;
-import com.supcon.common.view.ptr.PtrFrameLayout;
 import com.supcon.common.view.util.DisplayUtil;
 import com.supcon.common.view.util.StatusBarUtils;
 import com.supcon.common.view.util.ToastUtils;
-import com.supcon.common.view.view.picker.SinglePicker;
 import com.supcon.mes.mbap.utils.GsonUtil;
 import com.supcon.mes.mbap.utils.controllers.SinglePickController;
 import com.supcon.mes.mbap.view.CustomDialog;
@@ -39,7 +32,6 @@ import com.supcon.mes.middleware.constant.Constant;
 import com.supcon.mes.middleware.model.bean.BAP5CommonEntity;
 import com.supcon.mes.middleware.model.bean.CommonBAPListEntity;
 import com.supcon.mes.middleware.model.bean.MaterialQRCodeEntity;
-import com.supcon.mes.middleware.model.bean.StaffEntity;
 import com.supcon.mes.middleware.model.bean.SystemCodeEntity;
 import com.supcon.mes.middleware.model.bean.SystemCodeEntityDao;
 import com.supcon.mes.middleware.model.event.RefreshEvent;
@@ -48,14 +40,12 @@ import com.supcon.mes.middleware.util.EmptyAdapterHelper;
 import com.supcon.mes.middleware.util.ErrorMsgHelper;
 import com.supcon.mes.module_scan.controller.CommonScanController;
 import com.supcon.mes.module_scan.model.event.CodeResultEvent;
-import com.supcon.mes.module_wom_batchmaterial.IntentRouter;
 import com.supcon.mes.module_wom_batchmaterial.R;
 import com.supcon.mes.module_wom_batchmaterial.constant.BmConstant;
 import com.supcon.mes.module_wom_batchmaterial.controller.BatchMaterialRecordsSubmitController;
 import com.supcon.mes.module_wom_batchmaterial.model.dto.BatchMaterialRecordsSignSubmitDTO;
 import com.supcon.mes.module_wom_batchmaterial.presenter.batchMaterialRecordsPresenter;
 import com.supcon.mes.module_wom_batchmaterial.ui.adapter.BatchMaterialRecordsAbandonListAdapter;
-import com.supcon.mes.module_wom_batchmaterial.ui.adapter.BatchMaterialRecordsListAdapter;
 import com.supcon.mes.module_wom_producetask.model.api.CommonListAPI;
 import com.supcon.mes.module_wom_producetask.model.bean.BatchMaterialPartEntity;
 import com.supcon.mes.module_wom_producetask.model.contract.CommonListContract;
@@ -160,12 +150,7 @@ public class BatchMaterialRecordsRecallAbandonListActivity extends BaseRefreshRe
     protected void initListener() {
         super.initListener();
         searchTitleBar.leftBtn().setOnClickListener(v -> finish());
-        searchTitleBar.rightBtn().setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                getController(CommonScanController.class).openCameraScan(context.getClass().getSimpleName());
-            }
-        });
+        searchTitleBar.rightBtn().setOnClickListener(view -> getController(CommonScanController.class).openCameraScan(context.getClass().getSimpleName()));
         searchTitleBar.setOnExpandListener(isExpand -> {
             if (isExpand) {
 //                    searchTitleBar.searchView().setInputTextColor(R.color.black);
@@ -177,9 +162,7 @@ public class BatchMaterialRecordsRecallAbandonListActivity extends BaseRefreshRe
                 .debounce(500, TimeUnit.MILLISECONDS)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(charSequence -> {
-                    search(charSequence.toString().trim());
-                });
+                .subscribe(charSequence -> search(charSequence.toString().trim()));
         refreshListController.setOnRefreshPageListener(pageIndex -> {
             if (pageIndex == 1){
                 allChooseCheckBox.setChecked(false);
@@ -201,35 +184,24 @@ public class BatchMaterialRecordsRecallAbandonListActivity extends BaseRefreshRe
                 }
                 new SinglePickController<String>(this)
                         .list(abandonReason)
-                        .listener(new SinglePicker.OnItemPickListener() {
-                            @Override
-                            public void onItemPicked(int index, Object item) {
-                                batchMaterialPartEntity.setRetirementState(mSystemCodeEntities.get(index));
-                                mBatchMaterialRecordsAbandonListAdapter.notifyItemRangeChanged(position,1);
-                            }
+                        .listener((index, item) -> {
+                            batchMaterialPartEntity.setRetirementState(mSystemCodeEntities.get(index));
+                            mBatchMaterialRecordsAbandonListAdapter.notifyItemRangeChanged(position,1);
                         })
                         .show();
             }
 
         });
-        allChooseCheckBox.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (mBatchMaterialRecordsAbandonListAdapter.getList() != null) {
-                    for (BatchMaterialPartEntity entity : mBatchMaterialRecordsAbandonListAdapter.getList()) {
-                        entity.setChecked(!entity.isChecked());
-                    }
-                    mBatchMaterialRecordsAbandonListAdapter.notifyDataSetChanged();
+        allChooseCheckBox.setOnClickListener(v -> {
+            if (mBatchMaterialRecordsAbandonListAdapter.getList() != null) {
+                for (BatchMaterialPartEntity entity : mBatchMaterialRecordsAbandonListAdapter.getList()) {
+                    entity.setChecked(!entity.isChecked());
                 }
+                mBatchMaterialRecordsAbandonListAdapter.notifyDataSetChanged();
             }
         });
         RxView.clicks(submitBtn).throttleFirst(300, TimeUnit.MILLISECONDS)
-                .subscribe(new Consumer<Object>() {
-                    @Override
-                    public void accept(Object o) throws Exception {
-                        doAbandonSubmit();
-                    }
-                });
+                .subscribe(o -> doAbandonSubmit());
 
     }
 
@@ -262,14 +234,11 @@ public class BatchMaterialRecordsRecallAbandonListActivity extends BaseRefreshRe
         customDialog.getDialog().getWindow().setBackgroundDrawableResource(R.color.transparent);
         customDialog.bindView(R.id.tipContentTv,getString(R.string.wom_confirm_batch_material_operate)+getString(R.string.wom_recall_back)+getString(R.string.wom_middle_right_brackets))
                 .bindClickListener(R.id.cancelTv,null,true)
-                .bindClickListener(R.id.confirmTv, new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        onLoading(getString(R.string.wom_dealing));
-                        BatchMaterialRecordsSignSubmitDTO dto = new BatchMaterialRecordsSignSubmitDTO();
-                        dto.setDetails(GsonUtil.gsonString(chooseList));
-                        getController(BatchMaterialRecordsSubmitController.class).submit(null,dto,false);
-                    }
+                .bindClickListener(R.id.confirmTv, v -> {
+                    onLoading(getString(R.string.wom_dealing));
+                    BatchMaterialRecordsSignSubmitDTO dto = new BatchMaterialRecordsSignSubmitDTO();
+                    dto.setDetails(GsonUtil.gsonString(chooseList));
+                    getController(BatchMaterialRecordsSubmitController.class).submit(null,dto,false);
                 }, true)
                 .show();
     }

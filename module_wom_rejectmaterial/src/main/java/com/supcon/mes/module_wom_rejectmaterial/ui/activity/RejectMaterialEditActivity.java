@@ -111,8 +111,8 @@ public class RejectMaterialEditActivity extends BaseRefreshRecyclerActivity<Reje
     CustomWorkFlowView workFlowView;
 
     private RejectMaterialEntity mRejectMaterialEntity;
-    Map<String, Object> queryParams = new HashMap<>();
-    Map<String, Object> customCondition = new HashMap<>();
+    private Map<String, Object> queryParams = new HashMap<>();
+    private Map<String, Object> customCondition = new HashMap<>();
     private RejectMaterialRecordsEditAdapter mRejectMaterialRecordsEditAdapter;
     private int mCurrentPosition;
     private String dgUrl = "";
@@ -193,13 +193,8 @@ public class RejectMaterialEditActivity extends BaseRefreshRecyclerActivity<Reje
         super.initListener();
         leftBtn.setOnClickListener(v -> finish());
         rightBtn.setOnClickListener(v -> ToastUtils.show(context, context.getResources().getString(R.string.middleware_stay_realization)));
-        refreshListController.setOnRefreshListener(new OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                presenterRouter.create(CommonListAPI.class).list(1, customCondition, queryParams,
-                        dgUrl + "&id=" + mRejectMaterialEntity.getId(), "");
-            }
-        });
+        refreshListController.setOnRefreshListener(() -> presenterRouter.create(CommonListAPI.class).list(1, customCondition, queryParams,
+                dgUrl + "&id=" + mRejectMaterialEntity.getId(), ""));
         customListWidgetAdd.setOnClickListener(v -> {
             if (RmConstant.SystemCode.REJECT_TYPE_BATCH.equals(mRejectMaterialEntity.getRejectType().id)) {
                 // 退料配料记录参照lsit
@@ -211,71 +206,65 @@ public class RejectMaterialEditActivity extends BaseRefreshRecyclerActivity<Reje
 
 
         });
-        mRejectMaterialRecordsEditAdapter.setOnItemChildViewClickListener(new OnItemChildViewClickListener() {
-            @Override
-            public void onItemChildViewClick(View childView, int position, int action, Object obj) {
-                mCurrentPosition = position;
-                mRejectMaterialPartEntity = (RejectMaterialPartEntity) obj;
-                switch (childView.getTag().toString()) {
-                    case "warehouseTv":
-                        IntentRouter.go(context, Constant.Router.WAREHOUSE_LIST_REF);
+        mRejectMaterialRecordsEditAdapter.setOnItemChildViewClickListener((childView, position, action, obj) -> {
+            mCurrentPosition = position;
+            mRejectMaterialPartEntity = (RejectMaterialPartEntity) obj;
+            switch (childView.getTag().toString()) {
+                case "warehouseTv":
+                    IntentRouter.go(context, Constant.Router.WAREHOUSE_LIST_REF);
+                    break;
+                case "storeSetTv":
+                    if (mRejectMaterialPartEntity.getWareId() == null) {
+                        ToastUtils.show(context, context.getResources().getString(R.string.wom_please_select_ware));
                         break;
-                    case "storeSetTv":
-                        if (mRejectMaterialPartEntity.getWareId() == null) {
-                            ToastUtils.show(context, context.getResources().getString(R.string.wom_please_select_ware));
-                            break;
-                        }
-                        Bundle bundle = new Bundle();
-                        bundle.putLong(Constant.IntentKey.WARE_ID, mRejectMaterialPartEntity.getWareId().getId());
-                        IntentRouter.go(context, Constant.Router.STORE_SET_LIST_REF, bundle);
-                        break;
-                    case "rejectReason":
-                        if (mSystemCodeEntities == null || mSystemCodeEntities.size() <= 0) {
-                            ToastUtils.show(context, getString(R.string.wom_null_systemcode));
-                            return;
-                        }
-                        mStringSinglePickController
-                                .list(rejectReason)
-                                .listener(new SinglePicker.OnItemPickListener() {
-                                    @Override
-                                    public void onItemPicked(int index, Object item) {
-                                        mRejectMaterialPartEntity.setRejectReason(mSystemCodeEntities.get(index));
-                                        mRejectMaterialRecordsEditAdapter.notifyItemRangeChanged(position, 1);
-                                    }
-                                })
-                                .show();
-                        break;
-                    case "itemViewDelBtn":
-                        mRejectMaterialRecordsEditAdapter.getList().remove(obj);
-                        mRejectMaterialRecordsEditAdapter.notifyItemRangeRemoved(position, 1);
-                        mRejectMaterialRecordsEditAdapter.notifyItemRangeChanged(position, mRejectMaterialRecordsEditAdapter.getItemCount() - position);
-                        if (mRejectMaterialPartEntity.getId() != null) {
-                            dgDeletedIds += mRejectMaterialPartEntity.getId() + ",";
-                        }
-                        break;
-                    default:
-                }
+                    }
+                    Bundle bundle = new Bundle();
+                    bundle.putLong(Constant.IntentKey.WARE_ID, mRejectMaterialPartEntity.getWareId().getId());
+                    IntentRouter.go(context, Constant.Router.STORE_SET_LIST_REF, bundle);
+                    break;
+                case "rejectReason":
+                    if (mSystemCodeEntities == null || mSystemCodeEntities.size() <= 0) {
+                        ToastUtils.show(context, getString(R.string.wom_null_systemcode));
+                        return;
+                    }
+                    mStringSinglePickController
+                            .list(rejectReason)
+                            .listener(new SinglePicker.OnItemPickListener() {
+                                @Override
+                                public void onItemPicked(int index, Object item) {
+                                    mRejectMaterialPartEntity.setRejectReason(mSystemCodeEntities.get(index));
+                                    mRejectMaterialRecordsEditAdapter.notifyItemRangeChanged(position, 1);
+                                }
+                            })
+                            .show();
+                    break;
+                case "itemViewDelBtn":
+                    mRejectMaterialRecordsEditAdapter.getList().remove(obj);
+                    mRejectMaterialRecordsEditAdapter.notifyItemRangeRemoved(position, 1);
+                    mRejectMaterialRecordsEditAdapter.notifyItemRangeChanged(position, mRejectMaterialRecordsEditAdapter.getItemCount() - position);
+                    if (mRejectMaterialPartEntity.getId() != null) {
+                        dgDeletedIds += mRejectMaterialPartEntity.getId() + ",";
+                    }
+                    break;
+                default:
             }
         });
 
-        workFlowView.setOnChildViewClickListener(new OnChildViewClickListener() {
-            @Override
-            public void onChildViewClick(View childView, int action, Object obj) {
-                WorkFlowVar workFlowVar = (WorkFlowVar) obj;
-                switch (action) {
-                    case 4:
-                        Bundle bundle = new Bundle();
-                        bundle.putBoolean(Constant.IntentKey.IS_MULTI, false);
-                        bundle.putBoolean(Constant.IntentKey.IS_SELECT, true);
-                        bundle.putString(Constant.IntentKey.SELECT_TAG, childView.getTag().toString());
-                        IntentRouter.go(context, Constant.Router.CONTACT_SELECT);
-                        break;
-                    default:
-                        doSubmit(workFlowVar, action);
-                        break;
-                }
-
+        workFlowView.setOnChildViewClickListener((childView, action, obj) -> {
+            WorkFlowVar workFlowVar = (WorkFlowVar) obj;
+            switch (action) {
+                case 4:
+                    Bundle bundle = new Bundle();
+                    bundle.putBoolean(Constant.IntentKey.IS_MULTI, false);
+                    bundle.putBoolean(Constant.IntentKey.IS_SELECT, true);
+                    bundle.putString(Constant.IntentKey.SELECT_TAG, childView.getTag().toString());
+                    IntentRouter.go(context, Constant.Router.CONTACT_SELECT);
+                    break;
+                default:
+                    doSubmit(workFlowVar, action);
+                    break;
             }
+
         });
 
     }

@@ -54,11 +54,6 @@ public class RejectMaterialListActivity extends BaseFragmentActivity {
     }
 
     @Override
-    protected void onInit() {
-        super.onInit();
-    }
-
-    @Override
     protected void initView() {
         super.initView();
         StatusBarUtils.setWindowStatusBarColor(this, R.color.themeColor);
@@ -82,31 +77,19 @@ public class RejectMaterialListActivity extends BaseFragmentActivity {
         viewPager.setCurrentItem(0);
     }
 
-    @Override
-    protected void initData() {
-        super.initData();
-    }
-
     @SuppressLint("CheckResult")
     @Override
     protected void initListener() {
         super.initListener();
         searchTitleBar.leftBtn().setOnClickListener(v -> finish());
         searchTitleBar.setOnExpandListener(isExpand -> {
-            if (isExpand) {
-//                    searchTitleBar.searchView().setInputTextColor(R.color.black);
-            } else {
+            if (!isExpand) {
                 searchTitleBar.searchView().setInputTextColor(R.color.black);
             }
         });
         RxView.clicks(btnTitleNotes)
                 .throttleFirst(200, TimeUnit.MILLISECONDS)
-                .subscribe(new Consumer<Object>() {
-                    @Override
-                    public void accept(Object o) throws Exception {
-                        IntentRouter.go(context,Constant.Router.REJECT_RECORD_METERIAL);
-                    }
-                });
+                .subscribe(o -> IntentRouter.go(context,Constant.Router.REJECT_RECORD_METERIAL));
         RxTextView.textChanges(searchTitleBar.editText()).skipInitialValue()
                 .debounce(500, TimeUnit.MILLISECONDS)
                 .subscribeOn(Schedulers.io())
@@ -118,12 +101,7 @@ public class RejectMaterialListActivity extends BaseFragmentActivity {
                         mRejectPrepareMaterialFragment.search(charSequence.toString().trim());
                     }
                 });
-        customTab.setOnTabChangeListener(new CustomTab.OnTabChangeListener() {
-            @Override
-            public void onTabChanged(int current) {
-                viewPager.setCurrentItem(current);
-            }
-        });
+        customTab.setOnTabChangeListener(current -> viewPager.setCurrentItem(current));
         viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int i, float v, int i1) {
@@ -158,7 +136,7 @@ public class RejectMaterialListActivity extends BaseFragmentActivity {
 
     private class InnerFragmentPagerAdapter extends FragmentPagerAdapter {
 
-        public InnerFragmentPagerAdapter(FragmentManager fm) {
+        InnerFragmentPagerAdapter(FragmentManager fm) {
             super(fm);
         }
 

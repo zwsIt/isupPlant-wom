@@ -2,7 +2,6 @@ package com.supcon.mes.module_wom_preparematerial.model.api;
 
 import com.app.annotation.apt.ContractFactory;
 import com.supcon.mes.module_wom_preparematerial.model.bean.PreMaterialEntity;
-import com.supcon.mes.module_wom_preparematerial.model.bean.PreMaterialSubmitEntity;
 import com.supcon.mes.module_wom_preparematerial.model.bean.PreResultEntity;
 
 import java.util.List;

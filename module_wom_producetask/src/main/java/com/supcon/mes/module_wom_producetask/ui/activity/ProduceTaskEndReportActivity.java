@@ -223,7 +223,7 @@ public class ProduceTaskEndReportActivity extends BaseRefreshRecyclerActivity<Ou
             }
 
             if(materialQRCodeEntity.isRequest()){
-
+                // TODO...
             }else {
                 OutputDetailEntity outputDetailEntity = new OutputDetailEntity();
                 outputDetailEntity.setProduct(mWaitPutinRecordEntity.getProductId()); // 产品

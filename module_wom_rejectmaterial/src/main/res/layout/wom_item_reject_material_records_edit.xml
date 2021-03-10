@@ -6,6 +6,7 @@
     android:background="@color/white"
     android:orientation="vertical"
     android:paddingEnd="@dimen/dp_5"
+    android:paddingStart="0dp"
     android:elevation="@dimen/dp_2">
     <LinearLayout
         android:layout_width="match_parent"
@@ -51,6 +52,7 @@
                 android:layout_gravity="center_vertical"
                 android:gravity="center_vertical"
                 android:paddingStart="@dimen/dp_10"
+                android:paddingEnd="0dp"
                 android:text="@string/wom_material_batch_num"
                 android:textColor="@color/titleTextColor"
                 android:textSize="@dimen/fontSize_13sp"
@@ -134,6 +136,7 @@
                 android:layout_gravity="center_vertical"
                 android:gravity="center_vertical"
                 android:paddingStart="@dimen/dp_10"
+                android:paddingEnd="0dp"
                 android:text="@string/wom_reject_num"
                 android:textColor="@color/titleTextColor"
                 android:textSize="@dimen/fontSize_13sp"

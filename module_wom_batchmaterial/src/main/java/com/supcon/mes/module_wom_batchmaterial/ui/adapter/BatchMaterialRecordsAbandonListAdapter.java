@@ -9,10 +9,8 @@ import android.widget.TextView;
 import com.app.annotation.BindByTag;
 import com.supcon.common.view.base.adapter.BaseListDataRecyclerViewAdapter;
 import com.supcon.common.view.base.adapter.viewholder.BaseRecyclerViewHolder;
-import com.supcon.common.view.listener.OnChildViewClickListener;
 import com.supcon.mes.mbap.view.CustomTextView;
 import com.supcon.mes.module_wom_batchmaterial.R;
-import com.supcon.mes.module_wom_batchmaterial.ui.activity.BatchMaterialListActivity;
 import com.supcon.mes.module_wom_batchmaterial.ui.activity.BatchMaterialRecordsRecallAbandonListActivity;
 import com.supcon.mes.module_wom_producetask.model.bean.BatchMaterialPartEntity;
 
@@ -76,23 +74,15 @@ public class BatchMaterialRecordsAbandonListAdapter extends BaseListDataRecycler
         protected void initListener() {
             super.initListener();
 
-            rejectReason.setOnChildViewClickListener(new OnChildViewClickListener() {
-                @Override
-                public void onChildViewClick(View childView, int action, Object obj) {
-                    if (action == -1){
-                        getItem(getAdapterPosition()).setRetirementState(null);
-                    }else {
-                        onItemChildViewClick(rejectReason,getAdapterPosition(),getItem(getAdapterPosition()));
-                    }
+            rejectReason.setOnChildViewClickListener((childView, action, obj) -> {
+                if (action == -1){
+                    getItem(getAdapterPosition()).setRetirementState(null);
+                }else {
+                    onItemChildViewClick(rejectReason,getAdapterPosition(),getItem(getAdapterPosition()));
+                }
 
-                }
             });
-            checkBox.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    onItemChildViewClick(checkBox,getAdapterPosition(),getItem(getAdapterPosition()));
-                }
-            });
+            checkBox.setOnClickListener(v -> onItemChildViewClick(checkBox,getAdapterPosition(),getItem(getAdapterPosition())));
         }
 
         @Override

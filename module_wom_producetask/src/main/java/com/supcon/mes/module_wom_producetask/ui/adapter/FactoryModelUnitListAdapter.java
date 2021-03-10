@@ -2,24 +2,15 @@ package com.supcon.mes.module_wom_producetask.ui.adapter;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.view.View;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.app.annotation.BindByTag;
 import com.jakewharton.rxbinding2.view.RxView;
 import com.supcon.common.view.base.adapter.BaseListDataRecyclerViewAdapter;
 import com.supcon.common.view.base.adapter.viewholder.BaseRecyclerViewHolder;
-import com.supcon.mes.mbap.utils.DateUtil;
-import com.supcon.mes.mbap.view.CustomContentTextDialog;
-import com.supcon.mes.mbap.view.CustomTextView;
 import com.supcon.mes.middleware.model.bean.wom.FactoryModelEntity;
 import com.supcon.mes.module_wom_producetask.R;
-import com.supcon.mes.module_wom_producetask.constant.WomConstant;
-import com.supcon.mes.module_wom_producetask.model.bean.WaitPutinRecordEntity;
 
-import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 /**

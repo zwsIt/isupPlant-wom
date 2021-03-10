@@ -3,7 +3,6 @@ package com.supcon.mes.module_wom_producetask.presenter;
 
 import android.text.TextUtils;
 
-import com.supcon.mes.middleware.constant.Constant;
 import com.supcon.mes.middleware.model.bean.BAP5CommonEntity;
 import com.supcon.mes.middleware.model.bean.FastQueryCondEntity;
 import com.supcon.mes.middleware.util.BAPQueryParamsHelper;
@@ -15,7 +14,6 @@ import com.supcon.mes.module_wom_producetask.model.network.WomHttpClient;
 import java.util.Map;
 
 import io.reactivex.functions.Consumer;
-import io.reactivex.functions.Function;
 
 /**
  * ClassName

@@ -3,7 +3,6 @@ package com.supcon.mes.module_wom_batchmaterial.model.api;
 import com.app.annotation.apt.ContractFactory;
 import com.supcon.mes.middleware.model.bean.BAP5CommonEntity;
 import com.supcon.mes.module_wom_batchmaterial.model.dto.BatchMaterialInstructionDTO;
-import com.supcon.mes.module_wom_producetask.model.dto.OutputDetailDTO;
 
 /**
  * ClassName

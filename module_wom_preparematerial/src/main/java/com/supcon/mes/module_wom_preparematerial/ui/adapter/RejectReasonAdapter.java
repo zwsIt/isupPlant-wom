@@ -17,14 +17,14 @@ import java.util.List;
  * Email:wangshizhan@supcon.com
  */
 
-public class RejectReasonAdapter extends BaseListDataRecyclerViewAdapter<String> {
+class RejectReasonAdapter extends BaseListDataRecyclerViewAdapter<String> {
 
     private int textSize;
     private int textColor;
     private int position;
     private boolean isGrid = true;
 
-    public RejectReasonAdapter(Context context) {
+    private RejectReasonAdapter(Context context) {
         super(context);
 
     }
@@ -70,7 +70,7 @@ public class RejectReasonAdapter extends BaseListDataRecyclerViewAdapter<String>
         @BindByTag("rejectReasonName")
         TextView rejectReasonName;
 
-        public FilterViewHolder(Context context) {
+        FilterViewHolder(Context context) {
             super(context);
         }
 

@@ -1,7 +1,6 @@
 package com.supcon.mes.module_wom_producetask.model.bean;
 
 import com.supcon.common.com_http.BaseEntity;
-import com.supcon.mes.middleware.model.bean.BaseIdValueEntity;
 import com.supcon.mes.middleware.model.bean.SystemCodeEntity;
 import com.supcon.mes.middleware.model.bean.wom.MaterialEntity;
 

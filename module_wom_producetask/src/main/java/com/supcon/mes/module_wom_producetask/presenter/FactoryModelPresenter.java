@@ -1,7 +1,6 @@
 package com.supcon.mes.module_wom_producetask.presenter;
 
 
-import com.supcon.mes.mbap.utils.GsonUtil;
 import com.supcon.mes.middleware.model.bean.BAP5CommonEntity;
 import com.supcon.mes.middleware.model.bean.CommonBAPListEntity;
 import com.supcon.mes.middleware.model.bean.FastQueryCondEntity;

@@ -54,7 +54,7 @@ public class PrepareMaterialRecordsRefListAdapter extends BaseListDataRecyclerVi
         @BindByTag("checkBox")
         CheckBox checkBox;
 
-        public RecordsViewHolder(Context context) {
+        RecordsViewHolder(Context context) {
             super(context,parent);
         }
 
@@ -71,12 +71,7 @@ public class PrepareMaterialRecordsRefListAdapter extends BaseListDataRecyclerVi
                     .subscribe(o -> {
                         checkBox.performClick();
                     });
-            checkBox.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    onItemChildViewClick(checkBox,getAdapterPosition(),getItem(getAdapterPosition()));
-                }
-            });
+            checkBox.setOnClickListener(v -> onItemChildViewClick(checkBox,getAdapterPosition(),getItem(getAdapterPosition())));
         }
 
         @Override

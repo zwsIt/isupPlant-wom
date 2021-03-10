@@ -149,7 +149,6 @@ public class CheckItemListAdapter extends BaseListDataRecyclerViewAdapter<ProChe
                     entity.setIsPass(NumComputeUtil.double2Ueq(entity.getReportValue(),standard));
                 }else if (standard.contains("(") && standard.contains("]")){
                     entity.setIsPass(NumComputeUtil.leftUeqRightEq(entity.getReportValue(),standard));
-                }else {
                 }
             }
             passSwitch.setChecked(entity.isIsPass());

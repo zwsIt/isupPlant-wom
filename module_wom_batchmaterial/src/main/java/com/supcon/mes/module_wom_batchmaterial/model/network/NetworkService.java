@@ -6,16 +6,13 @@ import com.supcon.mes.middleware.model.bean.BapResultEntity;
 import com.supcon.mes.module_wom_batchmaterial.model.dto.BatchMaterialInstructionDTO;
 import com.supcon.mes.module_wom_batchmaterial.model.dto.BatchMaterialRecordsSignSubmitDTO;
 import com.supcon.mes.module_wom_producetask.model.bean.BatchMaterialPartEntity;
-import com.supcon.mes.module_wom_producetask.model.dto.OutputDetailDTO;
 
 import java.util.List;
 import java.util.Map;
 
 import io.reactivex.Flowable;
 import retrofit2.http.Body;
-import retrofit2.http.Multipart;
 import retrofit2.http.POST;
-import retrofit2.http.PartMap;
 import retrofit2.http.Query;
 import retrofit2.http.QueryMap;
 

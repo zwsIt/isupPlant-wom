@@ -3,24 +3,17 @@ package com.supcon.mes.module_wom_rejectmaterial.ui.adapter;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.text.InputType;
-import android.text.TextUtils;
 import android.view.View;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.app.annotation.BindByTag;
-import com.jakewharton.rxbinding2.widget.RxTextView;
 import com.supcon.common.view.base.adapter.BaseListDataRecyclerViewAdapter;
 import com.supcon.common.view.base.adapter.viewholder.BaseRecyclerViewHolder;
 import com.supcon.common.view.listener.OnChildViewClickListener;
-import com.supcon.mes.mbap.view.CustomEditText;
 import com.supcon.mes.mbap.view.CustomTextView;
 import com.supcon.mes.module_wom_rejectmaterial.R;
 import com.supcon.mes.module_wom_rejectmaterial.model.bean.RejectMaterialPartEntity;
 
-import java.math.BigDecimal;
-
-import io.reactivex.functions.Predicate;
 
 /**
  * ClassName
@@ -115,16 +108,13 @@ public class RejectMaterialRecordsEditAdapter extends BaseListDataRecyclerViewAd
                     onItemChildViewClick(childView, getAdapterPosition(), getItem(getAdapterPosition()));
                 }
             });
-            rejectReason.setOnChildViewClickListener(new OnChildViewClickListener() {
-                @Override
-                public void onChildViewClick(View childView, int action, Object obj) {
-                    if (action == -1){
-                        getItem(getAdapterPosition()).setRejectReason(null);
-                    }else {
-                        onItemChildViewClick(rejectReason,getAdapterPosition(),getItem(getAdapterPosition()));
-                    }
-
+            rejectReason.setOnChildViewClickListener((childView, action, obj) -> {
+                if (action == -1){
+                    getItem(getAdapterPosition()).setRejectReason(null);
+                }else {
+                    onItemChildViewClick(rejectReason,getAdapterPosition(),getItem(getAdapterPosition()));
                 }
+
             });
         }
 
@@ -139,7 +129,7 @@ public class RejectMaterialRecordsEditAdapter extends BaseListDataRecyclerViewAd
         }
     }
 
-  /*  *//**
+    /**
      * ReportViewHolder
      * created by zhangwenshuai1 2020/4/10
      * desc 退料查看Item

@@ -12,8 +12,6 @@ import com.supcon.mes.module_wom_producetask.model.network.WomHttpClient;
 import java.util.ArrayList;
 import java.util.Map;
 
-import io.reactivex.functions.Consumer;
-import io.reactivex.functions.Function;
 
 /**
  * ClassName
@@ -33,23 +31,17 @@ public class PrepareMaterialRecordsRefPresenter extends CommonListContract.Prese
         Map<String, Object> requestParamsMap = ListRequestParamUtil.getQueryParam(pageNo,20,true,fastQueryCondEntity,customCondition);
         mCompositeSubscription.add(
                 WomHttpClient.list(url, requestParamsMap)
-                        .onErrorReturn(new Function<Throwable, BAP5CommonEntity<Object>>() {
-                            @Override
-                            public BAP5CommonEntity<Object> apply(Throwable throwable) throws Exception {
-                                BAP5CommonEntity<Object> bap5CommonEntity = new BAP5CommonEntity<>();
-                                bap5CommonEntity.msg = throwable.toString();
-                                bap5CommonEntity.success = false;
-                                return bap5CommonEntity;
-                            }
+                        .onErrorReturn(throwable -> {
+                            BAP5CommonEntity<Object> bap5CommonEntity = new BAP5CommonEntity<>();
+                            bap5CommonEntity.msg = throwable.toString();
+                            bap5CommonEntity.success = false;
+                            return bap5CommonEntity;
                         })
-                        .subscribe(new Consumer<BAP5CommonEntity<Object>>() {
-                            @Override
-                            public void accept(BAP5CommonEntity<Object> objectBAP5CommonEntity) throws Exception {
-                                if (objectBAP5CommonEntity.success){
-                                    getView().listSuccess(objectBAP5CommonEntity);
-                                }else {
-                                    getView().listFailed(objectBAP5CommonEntity.msg);
-                                }
+                        .subscribe(objectBAP5CommonEntity -> {
+                            if (objectBAP5CommonEntity.success){
+                                getView().listSuccess(objectBAP5CommonEntity);
+                            }else {
+                                getView().listFailed(objectBAP5CommonEntity.msg);
                             }
                         })
         );
