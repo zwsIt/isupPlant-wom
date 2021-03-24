@@ -64,6 +64,8 @@ public class OutputReportDetailAdapter extends BaseListDataRecyclerViewAdapter<O
         CustomTextView warehouseTv;
         @BindByTag("storeSetTv")
         CustomTextView storeSetTv;
+        @BindByTag("warehouseIcon")
+        TextView warehouseIcon;
         @BindByTag("numEt")
         CustomEditText numEt;
         @BindByTag("remainderNumEt")
@@ -99,6 +101,8 @@ public class OutputReportDetailAdapter extends BaseListDataRecyclerViewAdapter<O
                 remainderNumEtLl.setVisibility(View.GONE);
             }
             remainderNumEt.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
+            // 仓库货位非必填
+            warehouseIcon.setCompoundDrawablesWithIntrinsicBounds(R.drawable.wom_ic_stock,0,0,0);
         }
 
         @SuppressLint("CheckResult")

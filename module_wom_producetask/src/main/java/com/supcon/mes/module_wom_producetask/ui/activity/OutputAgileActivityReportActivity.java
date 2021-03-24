@@ -312,14 +312,14 @@ public class OutputAgileActivityReportActivity extends BaseRefreshRecyclerActivi
                 ToastUtils.show(context, context.getResources().getString(R.string.wom_di) + (list.indexOf(outputDetailEntity) + 1) + context.getResources().getString(R.string.wom_please_write_material_batch));
                 return true;
             }
-            if (outputDetailEntity.getWareId() == null) {
-                ToastUtils.show(context, context.getResources().getString(R.string.wom_di) + (list.indexOf(outputDetailEntity) + 1) + context.getResources().getString(R.string.wom_please_write_ware));
-                return true;
-            }
-            if (outputDetailEntity.getWareId() != null && outputDetailEntity.getWareId().getStoreSetState() && outputDetailEntity.getStoreId() == null) {
-                ToastUtils.show(context, context.getResources().getString(R.string.wom_di) + (list.indexOf(outputDetailEntity) + 1) + context.getResources().getString(R.string.wom_warehouse_enable_please_write_storage));
-                return true;
-            }
+//            if (outputDetailEntity.getWareId() == null) {
+//                ToastUtils.show(context, context.getResources().getString(R.string.wom_di) + (list.indexOf(outputDetailEntity) + 1) + context.getResources().getString(R.string.wom_please_write_ware));
+//                return true;
+//            }
+//            if (outputDetailEntity.getWareId() != null && outputDetailEntity.getWareId().getStoreSetState() && outputDetailEntity.getStoreId() == null) {
+//                ToastUtils.show(context, context.getResources().getString(R.string.wom_di) + (list.indexOf(outputDetailEntity) + 1) + context.getResources().getString(R.string.wom_warehouse_enable_please_write_storage));
+//                return true;
+//            }
             if (outputDetailEntity.getOutputNum() == null) {
                 ToastUtils.show(context, context.getResources().getString(R.string.wom_di) + (list.indexOf(outputDetailEntity) + 1) + context.getResources().getString(R.string.wom_please_write_output));
                 return true;

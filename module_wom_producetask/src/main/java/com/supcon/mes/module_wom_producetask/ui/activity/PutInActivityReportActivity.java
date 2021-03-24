@@ -11,6 +11,7 @@ import android.text.TextUtils;
 import android.text.style.AbsoluteSizeSpan;
 import android.text.style.ForegroundColorSpan;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -33,6 +34,7 @@ import com.supcon.common.view.util.ToastUtils;
 import com.supcon.common.view.view.CustomSwipeLayout;
 import com.supcon.mes.mbap.beans.WorkFlowVar;
 import com.supcon.mes.mbap.utils.GsonUtil;
+import com.supcon.mes.mbap.view.CustomDialog;
 import com.supcon.mes.mbap.view.CustomImageButton;
 import com.supcon.mes.mbap.view.CustomTextView;
 import com.supcon.mes.middleware.constant.Constant;
@@ -77,10 +79,12 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 import io.reactivex.functions.Consumer;
@@ -173,7 +177,7 @@ public class PutInActivityReportActivity extends BaseRefreshRecyclerActivity<Put
         if (!WomConstant.SystemCode.MATERIAL_BATCH_02.equals(mWaitPutinRecordEntity.getTaskActiveId().getMaterialId().getIsBatch().id)) {
             mPutInReportDetailAdapter.setNoMaterialBatchNo(true);
         }
-        if (WomConstant.SystemCode.RM_activeType_PIPE_PUTIN.equals(mWaitPutinRecordEntity.getTaskActiveId().getActiveType().id)){
+        if (WomConstant.SystemCode.RM_activeType_PIPE_PUTIN.equals(mWaitPutinRecordEntity.getTaskActiveId().getActiveType().id)) {
             mPutInReportDetailAdapter.setPipe(true);
         }
     }
@@ -187,7 +191,7 @@ public class PutInActivityReportActivity extends BaseRefreshRecyclerActivity<Put
         rightBtn.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_top_scan));
         customListWidgetName.setText(context.getResources().getString(R.string.wom_material_report_detail));
 
-        if (WomConstant.SystemCode.RM_activeType_PUTIN.equals(mWaitPutinRecordEntity.getTaskActiveId().getActiveType().id)){
+        if (WomConstant.SystemCode.RM_activeType_PUTIN.equals(mWaitPutinRecordEntity.getTaskActiveId().getActiveType().id)) {
             customWidgetEditLl.setVisibility(View.VISIBLE);
             customListWidgetEdit.setImageResource(R.drawable.ic_wxgd_reference);
             customWidgetRightName.setText(context.getResources().getString(R.string.wom_remain_material_refence));
@@ -284,7 +288,6 @@ public class PutInActivityReportActivity extends BaseRefreshRecyclerActivity<Put
     }
 
 
-
     /**
      * 扫描功能：红外、摄像头扫描监听事件
      *
@@ -292,16 +295,16 @@ public class PutInActivityReportActivity extends BaseRefreshRecyclerActivity<Put
      */
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onCodeReceiver(CodeResultEvent codeResultEvent) {
-        if (context.getClass().getSimpleName().equals(codeResultEvent.scanTag)){
+        if (context.getClass().getSimpleName().equals(codeResultEvent.scanTag)) {
             MaterialQRCodeEntity materialQRCodeEntity = MaterQRUtil.materialQRCode(context, codeResultEvent.scanResult);
             if (materialQRCodeEntity == null) return;
             if (materialQRCodeEntity.isRequest()) {
-                if ("remain".equals(materialQRCodeEntity.getType())){ // 尾料
+                if ("remain".equals(materialQRCodeEntity.getType())) { // 尾料
                     onLoading(context.getResources().getString(R.string.loading));
                     presenterRouter.create(RemainQRCodeAPI.class).getMaterialByQR(materialQRCodeEntity.getPK());
-                }else {
+                } else {
                     //TODO...
-                    ToastUtils.show(context,context.getResources().getString(R.string.wom_no_realize));
+                    ToastUtils.show(context, context.getResources().getString(R.string.wom_no_realize));
                 }
             } else {
                 if (checkMaterial(materialQRCodeEntity)) {
@@ -333,6 +336,7 @@ public class PutInActivityReportActivity extends BaseRefreshRecyclerActivity<Put
             putInDetailEntity.setWareId(remainMaterialEntity.getWareId());
             putInDetailEntity.setStoreId(remainMaterialEntity.getStoreId());
 
+            addItem(putInDetailEntity);
         } else {
             if (materialQRCodeEntity != null) { // 扫描物料
                 putInDetailEntity.setMaterialBatchNum(materialQRCodeEntity.getMaterialBatchNo());
@@ -340,9 +344,35 @@ public class PutInActivityReportActivity extends BaseRefreshRecyclerActivity<Put
                 putInDetailEntity.setSpecificationNum(materialQRCodeEntity.getNum());
                 putInDetailEntity.setWareId(materialQRCodeEntity.getFromWare());
                 putInDetailEntity.setStoreId(materialQRCodeEntity.getFromStore());
+
+                BigDecimal totalNum = new BigDecimal(0);
+                for (PutInDetailEntity detailEntity : mPutInReportDetailAdapter.getList()) {
+                    if (detailEntity.getPutinNum() != null) {
+                        totalNum = totalNum.add(detailEntity.getPutinNum());
+                    }
+                }
+                if (totalNum.compareTo(mWaitPutinRecordEntity.getPlanNum() == null ? new BigDecimal(0) : mWaitPutinRecordEntity.getPlanNum()) > 0) {
+                    CustomDialog customDialog = new CustomDialog(context)
+                            .layout(R.layout.wom_dialog_confirm, DisplayUtil.getScreenWidth(context) * 4 / 5, ViewGroup.LayoutParams.WRAP_CONTENT);
+                    Objects.requireNonNull(customDialog.getDialog().getWindow()).setBackgroundDrawableResource(R.color.transparent);
+                    customDialog.bindView(R.id.tipContentTv, context.getResources().getString(R.string.wom_total_num_greater_plan_num))
+                            .bindClickListener(R.id.cancelTv, null, true)
+                            .bindClickListener(R.id.confirmTv, v -> addItem(putInDetailEntity), true)
+                            .show();
+                } else {
+                    addItem(putInDetailEntity);
+                }
             }
         }
+    }
 
+    /**
+     * @param
+     * @return
+     * @author zhangwenshuai1 2021/3/23
+     * @description 执行添加
+     */
+    private void addItem(PutInDetailEntity putInDetailEntity) {
         mPutInReportDetailAdapter.addData(putInDetailEntity);
         mPutInReportDetailAdapter.notifyItemRangeInserted(mPutInReportDetailAdapter.getItemCount() - 1, 1);
         mPutInReportDetailAdapter.notifyItemRangeChanged(mPutInReportDetailAdapter.getItemCount() - 1, 1);
@@ -403,14 +433,14 @@ public class PutInActivityReportActivity extends BaseRefreshRecyclerActivity<Put
                 ToastUtils.show(context, context.getResources().getString(R.string.wom_di) + (list.indexOf(putInDetailEntity) + 1) + context.getResources().getString(R.string.wom_please_write_material_batch));
                 return true;
             }
-            if (putInDetailEntity.getWareId() == null) {
-                ToastUtils.show(context, context.getResources().getString(R.string.wom_di) + (list.indexOf(putInDetailEntity) + 1) + context.getResources().getString(R.string.wom_please_write_ware));
-                return true;
-            }
-            if (putInDetailEntity.getWareId() != null && putInDetailEntity.getWareId().getStoreSetState() && putInDetailEntity.getStoreId() == null) {
-                ToastUtils.show(context, context.getResources().getString(R.string.wom_di) + (list.indexOf(putInDetailEntity) + 1) + context.getResources().getString(R.string.wom_warehouse_enable_please_write_storage));
-                return true;
-            }
+//            if (putInDetailEntity.getWareId() == null) {
+//                ToastUtils.show(context, context.getResources().getString(R.string.wom_di) + (list.indexOf(putInDetailEntity) + 1) + context.getResources().getString(R.string.wom_please_write_ware));
+//                return true;
+//            }
+//            if (putInDetailEntity.getWareId() != null && putInDetailEntity.getWareId().getStoreSetState() && putInDetailEntity.getStoreId() == null) {
+//                ToastUtils.show(context, context.getResources().getString(R.string.wom_di) + (list.indexOf(putInDetailEntity) + 1) + context.getResources().getString(R.string.wom_warehouse_enable_please_write_storage));
+//                return true;
+//            }
             if (putInDetailEntity.getPutinNum() == null) {
                 ToastUtils.show(context, context.getResources().getString(R.string.wom_di) + (list.indexOf(putInDetailEntity) + 1) + context.getResources().getString(R.string.wom_please_write_material_num));
                 return true;
@@ -459,7 +489,7 @@ public class PutInActivityReportActivity extends BaseRefreshRecyclerActivity<Put
         Object object = selectDataEvent.getEntity();
         if (object instanceof WarehouseEntity) {
             WarehouseEntity warehouseEntity = (WarehouseEntity) selectDataEvent.getEntity();
-            if (mPutInDetailEntity.getWareId() != null && !warehouseEntity.getId().equals(mPutInDetailEntity.getWareId().getId())){
+            if (mPutInDetailEntity.getWareId() != null && !warehouseEntity.getId().equals(mPutInDetailEntity.getWareId().getId())) {
                 mPutInDetailEntity.setStoreId(null);
             }
             mPutInDetailEntity.setWareId(warehouseEntity);
@@ -483,7 +513,7 @@ public class PutInActivityReportActivity extends BaseRefreshRecyclerActivity<Put
         MaterialQRCodeEntity materialQRCodeEntity = (MaterialQRCodeEntity) entity.data;
         if (checkMaterial(materialQRCodeEntity)) return;
 
-        if ("remain".equals(materialQRCodeEntity.getType())){
+        if ("remain".equals(materialQRCodeEntity.getType())) {
             RemainMaterialEntity remainMaterialEntity = new RemainMaterialEntity();
             remainMaterialEntity.setId(materialQRCodeEntity.getPK());
             remainMaterialEntity.setMaterial(materialQRCodeEntity.getMaterial());
@@ -492,7 +522,7 @@ public class PutInActivityReportActivity extends BaseRefreshRecyclerActivity<Put
             remainMaterialEntity.setWareId(materialQRCodeEntity.getFromWare());
             remainMaterialEntity.setStoreId(materialQRCodeEntity.getFromStore());
 
-            addMaterialReport(null,remainMaterialEntity);
+            addMaterialReport(null, remainMaterialEntity);
         }
     }
 
@@ -526,7 +556,6 @@ public class PutInActivityReportActivity extends BaseRefreshRecyclerActivity<Put
     @Override
     public void getWareByRemainIdFailed(String errorMsg) {
         onLoadFailed(errorMsg);
-        LogUtil.e(errorMsg);
         addMaterialReport(null, mRemainMaterialEntity);
     }
 }

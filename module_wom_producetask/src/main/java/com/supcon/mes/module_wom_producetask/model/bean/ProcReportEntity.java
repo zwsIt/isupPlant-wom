@@ -19,7 +19,18 @@ public class ProcReportEntity extends BaseEntity {
     private MaterialEntity materialId;          // 物料
     private Boolean isFinish;                   // 是否完成
     private Boolean detailsIsNull;              // 检查表体是否为空
+    /**
+     * 保存且完成
+     */
+    private Boolean isSaveAndComplete;
 
+    public Boolean isSaveAndComplete() {
+        return isSaveAndComplete;
+    }
+
+    public void setSaveAndComplete(Boolean saveAndComplete) {
+        isSaveAndComplete = saveAndComplete;
+    }
     public Long getId() {
         return id;
     }

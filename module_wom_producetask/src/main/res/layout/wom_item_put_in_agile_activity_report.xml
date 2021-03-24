@@ -88,7 +88,6 @@
                 android:textColor="@color/titleTextColor"
                 android:textSize="@dimen/fontSize_13sp"
                 android:drawableStart="@drawable/wom_ic_stock"
-                android:drawableEnd="@drawable/ic_necessary"
                 android:drawablePadding="@dimen/dp_5"/>
             <com.supcon.mes.mbap.view.CustomTextView
                 android:layout_width="match_parent"

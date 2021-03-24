@@ -50,6 +50,8 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
                 android:gravity="center_vertical"
+                android:id="@+id/warehouseIcon"
+                android:tag="warehouseIcon"
                 android:paddingStart="@dimen/dp_10"
                 android:paddingEnd="@dimen/dp_10"
                 android:text="@string/wom_warehouse"

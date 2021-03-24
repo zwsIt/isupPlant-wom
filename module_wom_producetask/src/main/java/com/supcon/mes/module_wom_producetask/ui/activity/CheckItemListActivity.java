@@ -7,6 +7,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
@@ -22,6 +23,7 @@ import com.supcon.common.view.util.StatusBarUtils;
 import com.supcon.common.view.util.ToastUtils;
 import com.supcon.mes.mbap.beans.WorkFlowVar;
 import com.supcon.mes.mbap.utils.GsonUtil;
+import com.supcon.mes.mbap.view.CustomDialog;
 import com.supcon.mes.mbap.view.CustomImageButton;
 import com.supcon.mes.middleware.constant.Constant;
 import com.supcon.mes.middleware.controller.GetPowerCodeController;
@@ -47,9 +49,11 @@ import com.supcon.mes.module_wom_producetask.ui.adapter.CheckItemListAdapter;
 
 import org.greenrobot.eventbus.EventBus;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 import io.reactivex.functions.Consumer;
@@ -74,6 +78,8 @@ public class CheckItemListActivity extends BaseRefreshRecyclerActivity<ProCheckD
     public RecyclerView contentView;
     @BindByTag("submitBtn")
     Button submitBtn;
+    @BindByTag("finishBtn")
+    Button finishBtn;
 
     Map<String, Object> queryParams = new HashMap<>();
     Map<String, Object> customCondition = new HashMap<>();
@@ -88,7 +94,7 @@ public class CheckItemListActivity extends BaseRefreshRecyclerActivity<ProCheckD
 
     @Override
     protected int getLayoutID() {
-        return R.layout.wom_ac_list;
+        return R.layout.wom_ac_check_list;
     }
 
     @Override
@@ -105,7 +111,7 @@ public class CheckItemListActivity extends BaseRefreshRecyclerActivity<ProCheckD
             @Override
             public void getItemOffsets(@NonNull Rect outRect, @NonNull View view, @NonNull RecyclerView parent, @NonNull RecyclerView.State state) {
                 super.getItemOffsets(outRect, view, parent, state);
-                outRect.set(DisplayUtil.dip2px(10,context),DisplayUtil.dip2px(10,context),DisplayUtil.dip2px(10,context),0);
+                outRect.set(DisplayUtil.dip2px(10, context), DisplayUtil.dip2px(10, context), DisplayUtil.dip2px(10, context), 0);
             }
         });
     }
@@ -115,7 +121,6 @@ public class CheckItemListActivity extends BaseRefreshRecyclerActivity<ProCheckD
         super.initView();
         StatusBarUtils.setWindowStatusBarColor(this, R.color.themeColor);
         titleText.setText(context.getResources().getString(R.string.wom_check_item_list));
-        submitBtn.setVisibility(View.VISIBLE);
     }
 
     @SuppressLint("CheckResult")
@@ -124,64 +129,84 @@ public class CheckItemListActivity extends BaseRefreshRecyclerActivity<ProCheckD
         super.initListener();
         leftBtn.setOnClickListener(v -> finish());
         refreshListController.setOnRefreshListener(() -> presenterRouter.create(CommonListAPI.class).list(0, customCondition, queryParams,
-                WomConstant.URL.CHECK_ITEM_REPORT_LIST_URL + "&id=" + (mWaitPutinRecordEntity.getProcReportId().getId() == null ? -1 : mWaitPutinRecordEntity.getProcReportId().getId()),""));
+                WomConstant.URL.CHECK_ITEM_REPORT_LIST_URL + "&id=" + (mWaitPutinRecordEntity.getProcReportId().getId() == null ? -1 : mWaitPutinRecordEntity.getProcReportId().getId()), ""));
 
         RxView.clicks(submitBtn)
-                .throttleFirst(200,TimeUnit.MILLISECONDS)
+                .throttleFirst(200, TimeUnit.MILLISECONDS)
                 .subscribe(new Consumer<Object>() {
                     @Override
                     public void accept(Object o) throws Exception {
-                        doSubmit();
+                        doSubmit(false);
+                    }
+                });
+        RxView.clicks(finishBtn)
+                .throttleFirst(200, TimeUnit.MILLISECONDS)
+                .subscribe(new Consumer<Object>() {
+                    @Override
+                    public void accept(Object o) throws Exception {
+                        doSubmit(true);
                     }
                 });
         mCheckItemListAdapter.setOnItemChildViewClickListener((childView, position, action, obj) -> {
-            SelectDataEvent<ProCheckDetailEntity> dataEvent = new SelectDataEvent<>((ProCheckDetailEntity) obj,"");
+            SelectDataEvent<ProCheckDetailEntity> dataEvent = new SelectDataEvent<>((ProCheckDetailEntity) obj, "");
 
         });
     }
 
     /**
+     * @param
+     * @param b
+     * @return
      * @author zhangwenshuai1 2020/4/8
-     * @param 
-     * @return 
      * @description 检查活动报工提交
-     *
      */
-    private void doSubmit() {
-        if (checkSubmit()){
+    private void doSubmit(boolean b) {
+        if (checkSubmit()) {
             return;
         }
+
+        if (b){
+            CustomDialog customDialog = new CustomDialog(context)
+                    .layout(R.layout.wom_dialog_confirm, DisplayUtil.getScreenWidth(context) * 4 / 5, ViewGroup.LayoutParams.WRAP_CONTENT);
+            Objects.requireNonNull(customDialog.getDialog().getWindow()).setBackgroundDrawableResource(R.color.transparent);
+            customDialog.bindView(R.id.tipContentTv, context.getResources().getString(R.string.wom_check_submit_tip))
+                    .bindClickListener(R.id.cancelTv, null, true)
+                    .bindClickListener(R.id.confirmTv, v -> submit(true), true)
+                    .show();
+        }else {
+            submit(false);
+        }
+    }
+
+    private void submit(boolean b) {
         onLoading(getString(R.string.wom_dealing));
-//        Map<String ,Object> submitParamsMap = new HashMap<>();
-//        submitParamsMap.put("operateType","save");
-//        submitParamsMap.put("procReport",mWaitPutinRecordEntity.getProcReportId());
-//        submitParamsMap.put("dgList",mWaitPutinRecordEntity.getTaskProcessId());
-//        submitParamsMap.put("ids2del","");
-//        submitParamsMap.put("viewCode","WOM_1.0.0_procReport_checkFeedBackEdit");
-//        submitParamsMap.put("workFlowVar",new WorkFlowVarDTO());
 
         ProCheckDetailDTO proCheckDetailDTO = new ProCheckDetailDTO();
         proCheckDetailDTO.setOperateType("save");
         proCheckDetailDTO.setIds2del("");
         proCheckDetailDTO.setViewCode("WOM_1.0.0_procReport_checkFeedBackEdit");
-        proCheckDetailDTO.setWorkFlowVar(new WorkFlowVar());
+//        proCheckDetailDTO.setWorkFlowVar(new WorkFlowVar());
+        mWaitPutinRecordEntity.getProcReportId().setSaveAndComplete(b);
+        mWaitPutinRecordEntity.getProcReportId().setTaskId(mWaitPutinRecordEntity.getTaskId());
+        mWaitPutinRecordEntity.getProcReportId().setTaskActiveId(mWaitPutinRecordEntity.getTaskActiveId());
+        mWaitPutinRecordEntity.getProcReportId().setTaskProcessId(mWaitPutinRecordEntity.getTaskProcessId());
+
         proCheckDetailDTO.setProcReport(mWaitPutinRecordEntity.getProcReportId());
 
         ProCheckDetailDTO.DgListEntity dgListEntity = new ProCheckDetailDTO.DgListEntity();
         dgListEntity.setDg(GsonUtil.gsonString(mCheckItemListAdapter.getList()));
         proCheckDetailDTO.setDgList(dgListEntity);
 
-
-        presenterRouter.create(CheckItemReportAPI.class).submit(mWaitPutinRecordEntity.getProcReportId().getId(),getController(GetPowerCodeController.class).getPowerCodeResult(),proCheckDetailDTO);
+        presenterRouter.create(CheckItemReportAPI.class).submit(mWaitPutinRecordEntity.getProcReportId().getId(), getController(GetPowerCodeController.class).getPowerCodeResult(), proCheckDetailDTO);
     }
 
     private boolean checkSubmit() {
-        if (mCheckItemListAdapter.getList() == null || mCheckItemListAdapter.getList().size() <= 0){
-            ToastUtils.show(context,context.getResources().getString(R.string.wom_no_data_operate));
+        if (mCheckItemListAdapter.getList() == null || mCheckItemListAdapter.getList().size() <= 0) {
+            ToastUtils.show(context, context.getResources().getString(R.string.wom_no_data_operate));
             return true;
         }
-        for (ProCheckDetailEntity proCheckDetailEntity : mCheckItemListAdapter.getList()){
-            if (!TextUtils.isEmpty(proCheckDetailEntity.getStandard()) && TextUtils.isEmpty(proCheckDetailEntity.getReportValue())){
+        for (ProCheckDetailEntity proCheckDetailEntity : mCheckItemListAdapter.getList()) {
+            if (!TextUtils.isEmpty(proCheckDetailEntity.getStandard()) && TextUtils.isEmpty(proCheckDetailEntity.getReportValue())) {
                 ToastUtils.show(context, context.getResources().getString(R.string.wom_di) + (mCheckItemListAdapter.getList().indexOf(proCheckDetailEntity) + 1) + context.getResources().getString(R.string.wom_please_write_value));
                 return true;
             }
@@ -196,7 +221,7 @@ public class CheckItemListActivity extends BaseRefreshRecyclerActivity<ProCheckD
 
     @Override
     public void listSuccess(BAP5CommonEntity entity) {
-        CommonBAPListEntity commonBAPListEntity = GsonUtil.gsonToBean(GsonUtil.gsonString(entity.data),CommonBAPListEntity.class);
+        CommonBAPListEntity commonBAPListEntity = GsonUtil.gsonToBean(GsonUtil.gsonString(entity.data), CommonBAPListEntity.class);
         List<ProCheckDetailEntity> proCheckDetailEntityList = GsonUtil.jsonToList(GsonUtil.gsonString((Object) commonBAPListEntity.result), ProCheckDetailEntity.class);
         refreshListController.refreshComplete(proCheckDetailEntityList);
     }

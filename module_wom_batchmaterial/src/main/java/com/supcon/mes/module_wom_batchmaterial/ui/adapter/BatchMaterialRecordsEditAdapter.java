@@ -94,7 +94,7 @@ public class BatchMaterialRecordsEditAdapter extends BaseListDataRecyclerViewAda
             super.initView();
             numEt.setInputType(InputType.TYPE_CLASS_NUMBER|InputType.TYPE_NUMBER_FLAG_DECIMAL);
             if (materialBatchNo){
-                materialBatchNumTv.setCompoundDrawablesWithIntrinsicBounds(com.supcon.mes.module_wom_producetask.R.drawable.ic_batch_number,0,0,0);
+                materialBatchNumTv.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_batch_number,0,0,0);
             }
         }
 
