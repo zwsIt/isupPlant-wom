@@ -58,7 +58,6 @@ public class ActiExeLogActivity extends BaseRefreshRecyclerActivity<ActiExelogEn
     PtrFrameLayout refreshFrameLayout;
 
     private WaitPutinRecordEntity waitPutinRecordEntity;
-    private ActiExeLogAdapter mActiExeLogAdapter;
 
     @Override
     protected void onInit() {

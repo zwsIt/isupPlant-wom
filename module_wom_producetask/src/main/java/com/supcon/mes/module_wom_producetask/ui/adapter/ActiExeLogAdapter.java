@@ -64,29 +64,6 @@ public class ActiExeLogAdapter extends BaseListDataRecyclerViewAdapter<ActiExelo
         @BindByTag("taskProcessNameLl")
         LinearLayout taskProcessNameLl;
 
-        /*@BindByTag("activeType")
-        TextView activeType;
-        @BindByTag("dataSourceTv")
-        TextView dataSourceTv;
-        @BindByTag("activityName")
-        CustomTextView activityName;
-        @BindByTag("taskState")
-        TextView taskState;
-        @BindByTag("materialName")
-        CustomTextView materialName;
-        @BindByTag("materialCode")
-        CustomTextView materialCode;
-        @BindByTag("materialBatchNum")
-        CustomTextView materialBatchNum;
-        @BindByTag("checkResult")
-        CustomTextView checkResult;
-        @BindByTag("taskProcessName")
-        CustomTextView taskProcessName;
-        @BindByTag("time")
-        CustomTextView time;
-        @BindByTag("materialRl")
-        RelativeLayout materialRl;*/
-
         public ViewHolder(Context context) {
             super(context);
         }
@@ -99,16 +76,6 @@ public class ActiExeLogAdapter extends BaseListDataRecyclerViewAdapter<ActiExelo
         @Override
         protected void update(ActiExelogEntity data) {
             activeType.setText(data.activeType.value);
-//            dataSourceTv.setText(data.exeSystem == null ? "--" : data.exeSystem.value);
-//            if (data.exeSystem != null && WomConstant.SystemCode.EXE_SYSTEM_BATCH.equals(data.exeSystem.id)){
-//                activeType.setBackgroundResource(R.drawable.sh_actilog_batch_bg);
-//                dataSourceTv.setBackgroundResource(R.drawable.sh_datasource_batch_bg);
-//                dataSourceTv.setTextColor(context.getResources().getColor(R.color.active_log_batch_start));
-//            }else {
-//                activeType.setBackgroundResource(R.drawable.sh_actilog_mes_bg);
-//                dataSourceTv.setBackgroundResource(R.drawable.sh_datasource_mes_bg);
-//                dataSourceTv.setTextColor(context.getResources().getColor(R.color.active_log_mes_start));
-//            }
             activityName.setText(TextUtils.isEmpty(data.name) ? "--" : data.name);
             if (WomConstant.SystemCode.EXE_STATE_ING.equals(data.getRunState().id)){
                 taskState.setText(data.getRunState().value);

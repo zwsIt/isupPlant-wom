@@ -277,14 +277,14 @@ public class ProduceTaskEndReportActivity extends BaseRefreshRecyclerActivity<Ou
                 ToastUtils.show(context, context.getResources().getString(R.string.wom_di) + (list.indexOf(entity) + 1) + context.getResources().getString(R.string.wom_please_write_into_ware_batch));
                 return true;
             }
-            if (entity.getWareId() == null) {
-                ToastUtils.show(context, context.getResources().getString(R.string.wom_di) + (list.indexOf(entity) + 1) + context.getResources().getString(R.string.wom_select_ware));
-                return true;
-            }
-            if (entity.getWareId() != null && entity.getWareId().getStoreSetState() && entity.getStoreId() == null) {
-                ToastUtils.show(context, context.getResources().getString(R.string.wom_di) + (list.indexOf(entity) + 1) + context.getResources().getString(R.string.wom_warehouse_enable_please_write_storage));
-                return true;
-            }
+//            if (entity.getWareId() == null) {
+//                ToastUtils.show(context, context.getResources().getString(R.string.wom_di) + (list.indexOf(entity) + 1) + context.getResources().getString(R.string.wom_select_ware));
+//                return true;
+//            }
+//            if (entity.getWareId() != null && entity.getWareId().getStoreSetState() && entity.getStoreId() == null) {
+//                ToastUtils.show(context, context.getResources().getString(R.string.wom_di) + (list.indexOf(entity) + 1) + context.getResources().getString(R.string.wom_warehouse_enable_please_write_storage));
+//                return true;
+//            }
             if (entity.getOutputNum() == null) {
                 ToastUtils.show(context, context.getResources().getString(R.string.wom_di) + (list.indexOf(entity) + 1) + context.getResources().getString(R.string.wom_pleasr_write_num));
                 return true;

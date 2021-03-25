@@ -362,6 +362,8 @@ public class PutInActivityReportActivity extends BaseRefreshRecyclerActivity<Put
                 } else {
                     addItem(putInDetailEntity);
                 }
+            }else {
+                addItem(putInDetailEntity);
             }
         }
     }
