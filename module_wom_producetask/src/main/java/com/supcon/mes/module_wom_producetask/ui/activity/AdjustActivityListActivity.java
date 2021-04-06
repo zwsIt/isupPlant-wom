@@ -117,9 +117,9 @@ public class AdjustActivityListActivity extends BaseRefreshRecyclerActivity<Wait
 
         mWaitPutinRecordParam = (WaitPutinRecordEntity)getIntent().getSerializableExtra(Constant.IntentKey.WAIT_PUT_RECORD);
         queryParams.put(Constant.BAPQuery.PRODUCE_BATCH_NUM,mWaitPutinRecordParam.getProduceBatchNum()); // 当前生产批
-        if (WomConstant.SystemCode.RECORD_TYPE_PROCESS.equals(mWaitPutinRecordParam.getRecordType().id)){
+//        if (WomConstant.SystemCode.RECORD_TYPE_PROCESS.equals(mWaitPutinRecordParam.getRecordType().id)){
             queryParams.put(Constant.BAPQuery.TASK_PROCESS_ID,mWaitPutinRecordParam.getTaskProcessId().getId()); // 当前工序
-        }
+//        }
 
     }
 

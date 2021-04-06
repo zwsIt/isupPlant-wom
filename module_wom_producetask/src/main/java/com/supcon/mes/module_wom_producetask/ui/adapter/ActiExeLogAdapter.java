@@ -49,6 +49,8 @@ public class ActiExeLogAdapter extends BaseListDataRecyclerViewAdapter<ActiExelo
         CustomTextView checkResult;
         @BindByTag("taskProcessName")
         CustomTextView taskProcessName;
+        @BindByTag("timeTv")
+        TextView timeTv;
         @BindByTag("time")
         CustomTextView time;
         @BindByTag("taskState")
@@ -81,14 +83,14 @@ public class ActiExeLogAdapter extends BaseListDataRecyclerViewAdapter<ActiExelo
                 taskState.setText(data.getRunState().value);
                 taskState.setTextColor(context.getResources().getColor(R.color.lubricateBg));
 //                taskState.setBackgroundResource(R.drawable.sh_status);
-                time.setKey(context.getResources().getString(R.string.middleware_start_time));
-                time.setContent(DateUtil.dateTimeFormat(data.getActStartTime()));
+                timeTv.setText(context.getResources().getString(R.string.middleware_start_time));
+                time.setContent(data.getActStartTime() == null ? "--" : DateUtil.dateTimeFormat(data.getActStartTime()));
             }else {
                 taskState.setText(data.getRunState().value);
                 taskState.setTextColor(context.getResources().getColor(R.color.listview_divider));
 //                taskState.setBackgroundResource(R.drawable.sh_status);
-                time.setKey(context.getResources().getString(R.string.middleware_end_time));
-                time.setContent(DateUtil.dateTimeFormat(data.getActEndTime()));
+                timeTv.setText(context.getResources().getString(R.string.middleware_end_time));
+                time.setContent(data.getActEndTime() == null ? "--" : DateUtil.dateTimeFormat(data.getActEndTime()));
             }
             if (data.getMaterialId() == null || data.getMaterialId().getId() == null /* && data.getMaterialBatchNum() != null*/) {
                 materialNameLl.setVisibility(View.GONE);

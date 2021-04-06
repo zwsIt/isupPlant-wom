@@ -57,6 +57,9 @@ public class ActivityProcessListActivity extends BaseRefreshRecyclerActivity<Tas
     Map<String, Object> queryParams = new HashMap<>();
     Map<String, Object> customCondition = new HashMap<>();
 
+    private OnRefreshListener mOnRefreshListener;
+    private RecyclerView.ItemDecoration mItemDecoration;
+
     @Override
     protected IListAdapter<TaskActiveEntity> createAdapter() {
         return new ActivityProcessInfoAdapter(context);
@@ -80,14 +83,18 @@ public class ActivityProcessListActivity extends BaseRefreshRecyclerActivity<Tas
         customCondition.put("pageNo", 1);
         customCondition.put("pageSize", 65535);
 
-        contentView.setLayoutManager(new LinearLayoutManager(context));
-        contentView.addItemDecoration(new RecyclerView.ItemDecoration() {
+        mItemDecoration = new RecyclerView.ItemDecoration() {
             @Override
             public void getItemOffsets(@NonNull Rect outRect, @NonNull View view, @NonNull RecyclerView parent, @NonNull RecyclerView.State state) {
                 super.getItemOffsets(outRect, view, parent, state);
                 outRect.set(DisplayUtil.dip2px(10,context),0,DisplayUtil.dip2px(10,context),0);
             }
-        });
+        };
+
+        contentView.setLayoutManager(new LinearLayoutManager(context));
+        contentView.addItemDecoration(mItemDecoration);
+
+        mOnRefreshListener = () -> presenterRouter.create(ListAllActivityAPI.class).listActivities(customCondition, queryParams);
     }
 
     @Override
@@ -102,17 +109,15 @@ public class ActivityProcessListActivity extends BaseRefreshRecyclerActivity<Tas
     protected void initListener() {
         super.initListener();
         leftBtn.setOnClickListener(v -> finish());
-        refreshListController.setOnRefreshListener(new OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                presenterRouter.create(ListAllActivityAPI.class).listActivities(customCondition, queryParams);
-            }
-        });
+
+        refreshListController.setOnRefreshListener(mOnRefreshListener);
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        mOnRefreshListener = null;
+        mItemDecoration = null;
     }
 
     @Override
