@@ -55,6 +55,8 @@ public class ProduceTaskEndReportDetailAdapter extends BaseListDataRecyclerViewA
         CustomTextView storeSetTv;
         @BindByTag("itemViewDelBtn")
         TextView itemViewDelBtn;
+        @BindByTag("preNumTv")
+        TextView preNumTv;
 
         public ReportViewHolder(Context context) {
             super(context,parent);
@@ -68,6 +70,7 @@ public class ProduceTaskEndReportDetailAdapter extends BaseListDataRecyclerViewA
         @Override
         protected void initView() {
             super.initView();
+            preNumTv.setText(context.getResources().getString(R.string.wom_output_num));
             numEt.setInputType(InputType.TYPE_CLASS_NUMBER|InputType.TYPE_NUMBER_FLAG_DECIMAL);
             remainderNumEt.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
         }

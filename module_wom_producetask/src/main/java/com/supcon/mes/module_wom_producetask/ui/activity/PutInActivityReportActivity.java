@@ -345,7 +345,7 @@ public class PutInActivityReportActivity extends BaseRefreshRecyclerActivity<Put
                 putInDetailEntity.setWareId(materialQRCodeEntity.getFromWare());
                 putInDetailEntity.setStoreId(materialQRCodeEntity.getFromStore());
 
-                BigDecimal totalNum = new BigDecimal(0);
+                BigDecimal totalNum = materialQRCodeEntity.getNum();
                 for (PutInDetailEntity detailEntity : mPutInReportDetailAdapter.getList()) {
                     if (detailEntity.getPutinNum() != null) {
                         totalNum = totalNum.add(detailEntity.getPutinNum());

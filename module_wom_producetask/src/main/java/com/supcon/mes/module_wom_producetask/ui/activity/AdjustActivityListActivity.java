@@ -66,7 +66,7 @@ import io.reactivex.functions.Consumer;
  */
 @Router(value = Constant.Router.WOM_ADJUST_ACTIVITY_LIST)
 @Presenter(value = {StartQualityPresenter.class, WaitPutinRecordPresenter.class, ActivityOperatePresenter.class})
-public class AdjustActivityListActivity extends BaseRefreshRecyclerActivity<WaitPutinRecordEntity> implements WaitPutinRecordsListContract.View, StartQualityContract.View,ActivityOperateContract.View{
+public class AdjustActivityListActivity extends BaseRefreshRecyclerActivity<WaitPutinRecordEntity> implements WaitPutinRecordsListContract.View, StartQualityContract.View, ActivityOperateContract.View {
 
     @BindByTag("contentView")
     RecyclerView contentView;
@@ -115,10 +115,10 @@ public class AdjustActivityListActivity extends BaseRefreshRecyclerActivity<Wait
 //        queryParams.put(Constant.BAPQuery.IS_MORE_OTHER, true); // 其他活动
         queryParams.put(Constant.BAPQuery.IS_FOR_ADJUST, true); // 调整活动
 
-        mWaitPutinRecordParam = (WaitPutinRecordEntity)getIntent().getSerializableExtra(Constant.IntentKey.WAIT_PUT_RECORD);
-        queryParams.put(Constant.BAPQuery.PRODUCE_BATCH_NUM,mWaitPutinRecordParam.getProduceBatchNum()); // 当前生产批
+        mWaitPutinRecordParam = (WaitPutinRecordEntity) getIntent().getSerializableExtra(Constant.IntentKey.WAIT_PUT_RECORD);
+        queryParams.put(Constant.BAPQuery.PRODUCE_BATCH_NUM, mWaitPutinRecordParam.getProduceBatchNum()); // 当前生产批
 //        if (WomConstant.SystemCode.RECORD_TYPE_PROCESS.equals(mWaitPutinRecordParam.getRecordType().id)){
-            queryParams.put(Constant.BAPQuery.TASK_PROCESS_ID,mWaitPutinRecordParam.getTaskProcessId().getId()); // 当前工序
+        queryParams.put(Constant.BAPQuery.TASK_PROCESS_ID, mWaitPutinRecordParam.getTaskProcessId().getId()); // 当前工序
 //        }
 
     }
@@ -126,13 +126,14 @@ public class AdjustActivityListActivity extends BaseRefreshRecyclerActivity<Wait
     @Override
     protected void initView() {
         super.initView();
-        StatusBarUtils.setWindowStatusBarColor(this,R.color.themeColor);
+        StatusBarUtils.setWindowStatusBarColor(this, R.color.themeColor);
         titleText.setText(getResources().getString(R.string.wom_adjust_activity));
         rightBtn.setVisibility(View.VISIBLE);
         rightBtn.setImageResource(R.drawable.ic_wts_reference_white);
         submitBtn.setText(getResources().getString(R.string.wom_start_quality));
-//        submitBtn.setVisibility(View.VISIBLE);
+        submitBtn.setVisibility(View.VISIBLE);
     }
+
     @Override
     protected void initData() {
         super.initData();
@@ -145,13 +146,13 @@ public class AdjustActivityListActivity extends BaseRefreshRecyclerActivity<Wait
         leftBtn.setOnClickListener(v -> onBackPressed());
         RxView.clicks(rightBtn)
                 .throttleFirst(2000, TimeUnit.MILLISECONDS)
-                .subscribe(o->{
-                    Bundle bundle=new Bundle();
-                    bundle.putSerializable(Constant.IntentKey.WAIT_PUT_RECORD,mWaitPutinRecordParam);
-                    IntentRouter.go(context,Constant.Router.ACTIVITY_EXEREDS_LIST,bundle);
+                .subscribe(o -> {
+                    Bundle bundle = new Bundle();
+                    bundle.putSerializable(Constant.IntentKey.WAIT_PUT_RECORD, mWaitPutinRecordParam);
+                    IntentRouter.go(context, Constant.Router.ACTIVITY_EXEREDS_LIST, bundle);
                 });
         refreshListController.setOnRefreshPageListener(pageIndex -> {
-            presenterRouter.create(WaitPutinRecordsListAPI.class).listWaitPutinRecords(pageIndex, 20,queryParams,false);
+            presenterRouter.create(WaitPutinRecordsListAPI.class).listWaitPutinRecords(pageIndex, 20, queryParams, false);
         });
 
         mTemporaryActivityListAdapter.setOnItemChildViewClickListener((childView, position, action, obj) -> {
@@ -162,12 +163,13 @@ public class AdjustActivityListActivity extends BaseRefreshRecyclerActivity<Wait
                 case "putInStartTv":
                     showOperateConfirmDialog(mWaitPutinRecordEntity.getTaskActiveId().getCheckTip());
                     break;
+                default:
             }
 
         });
 
         RxView.clicks(submitBtn)
-                .throttleFirst(300,TimeUnit.MILLISECONDS)
+                .throttleFirst(300, TimeUnit.MILLISECONDS)
                 .subscribe(new Consumer<Object>() {
                     @Override
                     public void accept(Object o) throws Exception {
@@ -179,23 +181,22 @@ public class AdjustActivityListActivity extends BaseRefreshRecyclerActivity<Wait
     }
 
     /**
-     * @author zhangwenshuai1 2020/8/29
      * @param
      * @return
+     * @author zhangwenshuai1 2020/8/29
      * @description 再次发起请检
-     *
      */
     private void doStartQuality() {
         // 是否存在执行中活动
         List<WaitPutinRecordEntity> waitPutinRecordEntityList = mTemporaryActivityListAdapter.getList();
-        for (WaitPutinRecordEntity entity : waitPutinRecordEntityList){
-            if (WomConstant.SystemCode.EXE_STATE_ING.equals(entity.getExeState().id)){
+        for (WaitPutinRecordEntity entity : waitPutinRecordEntityList) {
+            if (WomConstant.SystemCode.EXE_STATE_ING.equals(entity.getExeState().id)) {
                 ToastUtils.show(context, context.getResources().getString(R.string.wom_exist_running_activity));
                 return;
             }
         }
 
-        CustomDialog customDialog = new CustomDialog(context).layout(R.layout.wom_dialog_confirm,DisplayUtil.getScreenWidth(context) * 4/5, ViewGroup.LayoutParams.WRAP_CONTENT);
+        CustomDialog customDialog = new CustomDialog(context).layout(R.layout.wom_dialog_confirm, DisplayUtil.getScreenWidth(context) * 4 / 5, ViewGroup.LayoutParams.WRAP_CONTENT);
         Objects.requireNonNull(customDialog.getDialog().getWindow()).setBackgroundDrawableResource(R.color.transparent);
         customDialog.bindView(R.id.tipContentTv, context.getResources().getString(R.string.wom_start_quality_operate))
                 .bindClickListener(R.id.cancelTv, null, true)
@@ -222,7 +223,7 @@ public class AdjustActivityListActivity extends BaseRefreshRecyclerActivity<Wait
                     .bindClickListener(R.id.cancelTv, null, true)
                     .bindClickListener(R.id.confirmTv, v -> {
                         onLoading(context.getResources().getString(R.string.wom_dealing));
-                        presenterRouter.create(ActivityOperateAPI.class).operateActivity(mWaitPutinRecordEntity.getId(),mWaitPutinRecordParam.getTaskActiveId().getId(),  false);
+                        presenterRouter.create(ActivityOperateAPI.class).operateActivity(mWaitPutinRecordEntity.getId(), mWaitPutinRecordParam.getTaskActiveId().getId(), false);
                     }, true)
                     .show();
         } else {
@@ -253,9 +254,10 @@ public class AdjustActivityListActivity extends BaseRefreshRecyclerActivity<Wait
     public void refresh(RefreshEvent refreshEvent) {
         refreshListController.refreshBegin();
     }
+
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void getSelectDataEvent(SelectDataEvent selectDataEvent) {
-        if (selectDataEvent.getEntity() instanceof FactoryModelEntity){
+        if (selectDataEvent.getEntity() instanceof FactoryModelEntity) {
             mWaitPutinRecordEntity.setEuqId((FactoryModelEntity) selectDataEvent.getEntity());
             mWaitPutinRecordEntity.getTaskProcessId().setEquipmentId((FactoryModelEntity) selectDataEvent.getEntity());
         }
@@ -263,11 +265,11 @@ public class AdjustActivityListActivity extends BaseRefreshRecyclerActivity<Wait
 
     @Override
     public void listWaitPutinRecordsSuccess(CommonBAPListEntity entity) {
-        if (entity.pageNo == 1 && entity.result.size() == 0){
-            submitBtn.setVisibility(View.GONE);
-        }else {
-            submitBtn.setVisibility(View.VISIBLE);
-        }
+//        if (entity.pageNo == 1 && entity.result.size() == 0) {
+//            submitBtn.setVisibility(View.GONE);
+//        } else {
+//            submitBtn.setVisibility(View.VISIBLE);
+//        }
         refreshListController.refreshComplete(entity.result);
     }
 
