@@ -146,7 +146,7 @@ public class ProduceTaskEndReportActivity extends BaseRefreshRecyclerActivity<Ou
 
         productName.setContent(mWaitPutinRecordEntity.getProductId().getName());
         productCode.setContent(mWaitPutinRecordEntity.getProductId().getCode());
-        planNum.setContent(String.valueOf(mWaitPutinRecordEntity.getTaskId().getPlanNum()));
+        planNum.setContent(String.valueOf(mWaitPutinRecordEntity.getTaskId().getActualPlanNum()));
 
         customListWidgetName.setText(context.getResources().getString(R.string.wom_produce_task_report_detail));
         customListWidgetEdit.setVisibility(View.GONE);
@@ -165,7 +165,7 @@ public class ProduceTaskEndReportActivity extends BaseRefreshRecyclerActivity<Ou
             OutputDetailEntity outputDetailEntity = new OutputDetailEntity();
             outputDetailEntity.setProduct(mWaitPutinRecordEntity.getProductId()); // 产品
             outputDetailEntity.setMaterialBatchNum(mWaitPutinRecordEntity.getProduceBatchNum()); // 生产批默认入库批号
-            outputDetailEntity.setOutputNum(mWaitPutinRecordEntity.getTaskId().getPlanNum());  // 默认入库数量为计划数量
+            outputDetailEntity.setOutputNum(mWaitPutinRecordEntity.getTaskId().getActualPlanNum());  // 默认入库数量为回掺计划数量
             outputDetailEntity.setPutinTime(System.currentTimeMillis());  // 报工时间
             mProduceTaskEndReportDetailAdapter.addData(outputDetailEntity);
             mProduceTaskEndReportDetailAdapter.notifyItemRangeInserted(mProduceTaskEndReportDetailAdapter.getItemCount() - 1, 1);

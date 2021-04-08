@@ -32,6 +32,15 @@ public class ProduceTaskEntity extends BaseEntity {
     private Boolean advanceCharge;      // 允许提前放料
     private Boolean isAdvanced;         // 是否提前放料
     private String feedCondition;       // 放料条件
+    private BigDecimal actualPlanNum;   // 回掺后计划总量
+
+    public BigDecimal getActualPlanNum() {
+        return actualPlanNum;
+    }
+
+    public void setActualPlanNum(BigDecimal actualPlanNum) {
+        this.actualPlanNum = actualPlanNum;
+    }
 
     public String getFeedCondition() {
         return feedCondition;
