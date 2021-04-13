@@ -97,11 +97,6 @@ public class BatchMaterialInstructionEditActivity extends BaseRefreshRecyclerAct
     CustomTextView materialName;
     @BindByTag("batchMode")
     CustomTextView batchMode;
-
-    //    @BindByTag("materialCode")
-//    CustomTextView materialCode;
-//    @BindByTag("planNum")
-//    CustomTextView planNum;
     @BindByTag("sumNumTv")
     TextView sumNumTv;
     @BindByTag("planNumTv")
@@ -151,7 +146,7 @@ public class BatchMaterialInstructionEditActivity extends BaseRefreshRecyclerAct
         });
         contentView.addOnItemTouchListener(new CustomSwipeLayout.OnSwipeItemTouchListener(context));
 
-        if (!WomConstant.SystemCode.MATERIAL_BATCH_02.equals(mBatchMaterialEntity.getProductId().getIsBatch().id)){
+        if (!WomConstant.SystemCode.MATERIAL_BATCH_02.equals(mBatchMaterialEntity.getProductId().getIsBatch().id)) {
             mBatchMaterialRecordsEditAdapter.setMaterialBatchNo(true);
         }
     }
@@ -213,10 +208,10 @@ public class BatchMaterialInstructionEditActivity extends BaseRefreshRecyclerAct
             batchMaterialPartEntity.setExeStaff(exeStaff); // 配料操作人
             batchMaterialPartEntity.setBatRecordState(new SystemCodeEntity(BmConstant.SystemCode.RECORD_STATE_BATCH, "", getString(R.string.wom_no_material_state), "", ""));
 
-            if (mBatchMaterialRecordsEditAdapter.getItemCount() <= 0){
+            if (mBatchMaterialRecordsEditAdapter.getItemCount() <= 0) {
                 mBatchMaterialRecordsEditAdapter.addData(batchMaterialPartEntity);
-            }else {
-                mBatchMaterialRecordsEditAdapter.getList().add(0,batchMaterialPartEntity);
+            } else {
+                mBatchMaterialRecordsEditAdapter.getList().add(0, batchMaterialPartEntity);
             }
             mBatchMaterialRecordsEditAdapter.notifyItemRangeInserted(0, 1);
             mBatchMaterialRecordsEditAdapter.notifyItemRangeChanged(0, 1);
@@ -242,7 +237,7 @@ public class BatchMaterialInstructionEditActivity extends BaseRefreshRecyclerAct
                 case "itemViewDelBtn":
                     mBatchMaterialRecordsEditAdapter.getList().remove(obj);
                     mBatchMaterialRecordsEditAdapter.notifyItemRangeRemoved(position, 1);
-                    mBatchMaterialRecordsEditAdapter.notifyItemRangeChanged(position, mBatchMaterialRecordsEditAdapter.getItemCount()-position);
+                    mBatchMaterialRecordsEditAdapter.notifyItemRangeChanged(position, mBatchMaterialRecordsEditAdapter.getItemCount() - position);
                     if (mBatchMaterialPartEntity.getId() != null) {
                         dgDeletedIds += mBatchMaterialPartEntity.getId() + ",";
                     }
@@ -290,7 +285,7 @@ public class BatchMaterialInstructionEditActivity extends BaseRefreshRecyclerAct
 
     }
 
-    private WorkFlowVarDTO getWorkFlowVar(){
+    private WorkFlowVarDTO getWorkFlowVar() {
         WorkFlowVarDTO workFlowVarDTO = new WorkFlowVarDTO();
 //        getController(WorkFlowViewController.class).getLinkEntities();
         workFlowVarDTO.setComment("");
@@ -298,7 +293,6 @@ public class BatchMaterialInstructionEditActivity extends BaseRefreshRecyclerAct
         workFlowVarDTO.setActivityType(mBatchMaterialEntity.getPending().activityType);
         return workFlowVarDTO;
     }
-
 
 
     private boolean checkSubmit() {
@@ -313,6 +307,10 @@ public class BatchMaterialInstructionEditActivity extends BaseRefreshRecyclerAct
             }
             if (batchMaterialPartEntity.getWareId() == null) {
                 ToastUtils.show(context, context.getResources().getString(R.string.wom_di) + (mBatchMaterialRecordsEditAdapter.getList().indexOf(batchMaterialPartEntity) + 1) + context.getResources().getString(R.string.wom_please_write_ware));
+                return true;
+            }
+            if (batchMaterialPartEntity.getWareId() != null && batchMaterialPartEntity.getWareId().getStoreSetState() && batchMaterialPartEntity.getStoreId() == null) {
+                ToastUtils.show(context, context.getResources().getString(R.string.wom_di) + (mBatchMaterialRecordsEditAdapter.getList().indexOf(batchMaterialPartEntity) + 1) + context.getResources().getString(R.string.wom_warehouse_enable_please_write_storage));
                 return true;
             }
             if (batchMaterialPartEntity.getOfferNum() == null) {
