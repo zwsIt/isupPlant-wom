@@ -53,7 +53,7 @@ import java.util.Objects;
 @Presenter(value = {WaitPutinRecordPresenter.class, ActivityOperatePresenter.class})
 //@Controller(value = {GetPowerCodeController.class})
 //@PowerCode(entityCode = WomConstant.PowerCode.PRODUCE_TASK_LIST)
-public class FormulaActivityListFragment extends BaseRefreshRecyclerFragment<WaitPutinRecordEntity> implements WaitPutinRecordsListContract.View, ActivityOperateContract.View{
+public class FormulaActivityListFragment extends BaseRefreshRecyclerFragment<WaitPutinRecordEntity> implements WaitPutinRecordsListContract.View, ActivityOperateContract.View {
 
     @BindByTag("contentView")
     RecyclerView contentView;
@@ -95,12 +95,13 @@ public class FormulaActivityListFragment extends BaseRefreshRecyclerFragment<Wai
         super.initView();
         queryParams.put(Constant.BAPQuery.RECORD_TYPE, WomConstant.SystemCode.RECORD_TYPE_ACTIVE); // 默认活动查询
         queryParams.put(Constant.BAPQuery.IS_MORE_OTHER, false); // 非其他活动
-        WaitPutinRecordEntity waitPutinRecordEntity = (WaitPutinRecordEntity)getActivity().getIntent().getSerializableExtra(Constant.IntentKey.WAIT_PUT_RECORD);
-        queryParams.put(Constant.BAPQuery.PRODUCE_BATCH_NUM,waitPutinRecordEntity.getProduceBatchNum()); // 当前生产批
-        if (WomConstant.SystemCode.RECORD_TYPE_PROCESS.equals(waitPutinRecordEntity.getRecordType().id)){
-            queryParams.put(Constant.BAPQuery.TASK_PROCESS_ID,waitPutinRecordEntity.getTaskProcessId().getId()); // 当前工序
+        WaitPutinRecordEntity waitPutinRecordEntity = (WaitPutinRecordEntity) getActivity().getIntent().getSerializableExtra(Constant.IntentKey.WAIT_PUT_RECORD);
+        queryParams.put(Constant.BAPQuery.PRODUCE_BATCH_NUM, waitPutinRecordEntity.getProduceBatchNum()); // 当前生产批
+        if (WomConstant.SystemCode.RECORD_TYPE_PROCESS.equals(waitPutinRecordEntity.getRecordType().id)) {
+            queryParams.put(Constant.BAPQuery.TASK_PROCESS_ID, waitPutinRecordEntity.getTaskProcessId().getId()); // 当前工序
         }
     }
+
     @Override
     protected void initData() {
         super.initData();
@@ -111,7 +112,7 @@ public class FormulaActivityListFragment extends BaseRefreshRecyclerFragment<Wai
     protected void initListener() {
         super.initListener();
         refreshListController.setOnRefreshPageListener(pageIndex -> {
-            presenterRouter.create(WaitPutinRecordsListAPI.class).listWaitPutinRecords(pageIndex,20, queryParams,false);
+            presenterRouter.create(WaitPutinRecordsListAPI.class).listWaitPutinRecords(pageIndex, 20, queryParams, false);
         });
 
         mFormulaActivityListAdapter.setOnItemChildViewClickListener((childView, position, action, obj) -> {
@@ -124,6 +125,7 @@ public class FormulaActivityListFragment extends BaseRefreshRecyclerFragment<Wai
                 case "qualityStartTv":
                     showOperateConfirmDialog(mWaitPutinRecordEntity.getTaskActiveId().getCheckTip());
                     break;
+                default:
             }
 
         });
@@ -146,13 +148,13 @@ public class FormulaActivityListFragment extends BaseRefreshRecyclerFragment<Wai
                     .bindClickListener(R.id.cancelTv, null, true)
                     .bindClickListener(R.id.confirmTv, v -> {
                         onLoading(context.getResources().getString(R.string.wom_dealing));
-                        presenterRouter.create(ActivityOperateAPI.class).operateActivity(mWaitPutinRecordEntity.getId(),null,  false);
+                        presenterRouter.create(ActivityOperateAPI.class).operateActivity(mWaitPutinRecordEntity.getId(), null, false);
                     }, true)
                     .show();
         } else {
-            if (WomConstant.SystemCode.RM_activeType_QUALITY.equals(mWaitPutinRecordEntity.getTaskActiveId().getActiveType().id)){
-                customDialog.bindView(R.id.tipContentTv, TextUtils.isEmpty(checkTip) ? context.getResources().getString(R.string.wom_advance_release_sure) : checkTip);
-            }else {
+            if (WomConstant.SystemCode.RM_activeType_QUALITY.equals(mWaitPutinRecordEntity.getTaskActiveId().getActiveType().id)) {
+                customDialog.bindView(R.id.tipContentTv, TextUtils.isEmpty(mWaitPutinRecordEntity.getTaskActiveId().getReleaseConditions()) ? context.getResources().getString(R.string.wom_advance_release_sure) : mWaitPutinRecordEntity.getTaskActiveId().getReleaseConditions());
+            } else {
                 customDialog.bindView(R.id.tipContentTv, TextUtils.isEmpty(checkTip) ? context.getResources().getString(R.string.wom_end_activity_operate) : checkTip);
             }
             customDialog.bindClickListener(R.id.cancelTv, null, true)
@@ -180,9 +182,10 @@ public class FormulaActivityListFragment extends BaseRefreshRecyclerFragment<Wai
     public void refresh(RefreshEvent refreshEvent) {
         refreshListController.refreshBegin();
     }
+
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void getSelectDataEvent(SelectDataEvent selectDataEvent) {
-        if (selectDataEvent.getEntity() instanceof FactoryModelEntity){
+        if (selectDataEvent.getEntity() instanceof FactoryModelEntity) {
             mWaitPutinRecordEntity.setEuqId((FactoryModelEntity) selectDataEvent.getEntity());
             mWaitPutinRecordEntity.getTaskProcessId().setEquipmentId((FactoryModelEntity) selectDataEvent.getEntity());
         }
