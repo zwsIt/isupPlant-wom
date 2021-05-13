@@ -12,9 +12,9 @@ import java.math.BigDecimal;
  * @author Created by zhangwenshuai1
  * @date on 2021/5/11
  * @email zhangwenshuai1@supcon.com
- * Desc 补料通知实体
+ * Desc 补料单实体
  */
-public class ReplenishMaterialNotifyEntity extends BaseEntity {
+public class ReplenishMaterialTableEntity extends BaseEntity {
     private Long id;
     /**
      * 物料

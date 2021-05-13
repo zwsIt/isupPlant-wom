@@ -2,7 +2,6 @@ package com.supcon.mes.module_wom_replenishmaterial.ui.adapter;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.util.TimeUtils;
 import android.view.View;
 import android.widget.TextView;
 
@@ -14,7 +13,7 @@ import com.supcon.mes.mbap.utils.DateUtil;
 import com.supcon.mes.mbap.view.CustomContentTextDialog;
 import com.supcon.mes.mbap.view.CustomTextView;
 import com.supcon.mes.module_wom_replenishmaterial.R;
-import com.supcon.mes.module_wom_replenishmaterial.model.bean.ReplenishMaterialNotifyEntity;
+import com.supcon.mes.module_wom_replenishmaterial.model.bean.ReplenishMaterialTableEntity;
 
 import java.util.concurrent.TimeUnit;
 
@@ -27,17 +26,17 @@ import io.reactivex.functions.Consumer;
  * Email zhangwenshuai1@supcon.com
  * Desc
  */
-public class ReplenishMaterialNotifyAdapter extends BaseListDataRecyclerViewAdapter<ReplenishMaterialNotifyEntity> {
-    public ReplenishMaterialNotifyAdapter(Context context) {
+public class ReplenishMaterialTableEditAdapter extends BaseListDataRecyclerViewAdapter<ReplenishMaterialTableEntity> {
+    public ReplenishMaterialTableEditAdapter(Context context) {
         super(context);
     }
 
     @Override
-    protected BaseRecyclerViewHolder<ReplenishMaterialNotifyEntity> getViewHolder(int viewType) {
+    protected BaseRecyclerViewHolder<ReplenishMaterialTableEntity> getViewHolder(int viewType) {
         return new ViewHolder(context);
     }
 
-    private class ViewHolder extends BaseRecyclerViewHolder<ReplenishMaterialNotifyEntity> {
+    private class ViewHolder extends BaseRecyclerViewHolder<ReplenishMaterialTableEntity> {
 
         @BindByTag("produceBatchNumTv")
         TextView produceBatchNumTv;
@@ -62,7 +61,7 @@ public class ReplenishMaterialNotifyAdapter extends BaseListDataRecyclerViewAdap
 
         @Override
         protected int layoutId() {
-            return R.layout.wom_item_replenish_notify_list;
+            return R.layout.wom_item_replenish_table;
         }
 
         @SuppressLint("CheckResult")
@@ -86,9 +85,9 @@ public class ReplenishMaterialNotifyAdapter extends BaseListDataRecyclerViewAdap
         }
 
         @Override
-        protected void update(ReplenishMaterialNotifyEntity data) {
+        protected void update(ReplenishMaterialTableEntity data) {
             produceBatchNumTv.setText(data.getCode());
-            statusTv.setText(data.getEquipment().getFeedStockType().value);
+            statusTv.setText("状态"/*data.*/);
             productNameTv.setText(data.getMaterial().name);
             materialCode.setContent(data.getMaterial().code);
             numCustomTv.setContent(data.getActualNumber() == null ? "0" : data.getActualNumber().toString() + "/" + data.getPlanNumber().toString());

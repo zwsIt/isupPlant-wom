@@ -9,22 +9,17 @@ import com.supcon.mes.module_wom_replenishmaterial.model.bean.ReplenishMaterialN
 
 
 /**
- * @desc ReplenishMaterialNotifyListAPI 补料通知API
+ * @desc ReplenishMaterialNotifyListAPI 补料单PI
  * @author created by zhangwenshuai1 
  * @date 2021/5/11
  */
-@ContractFactory(entites = {CommonBAP5ListEntity.class, BAP5CommonEntity.class})
-public interface ReplenishMaterialNotifyListAPI {
+@ContractFactory(entites = {CommonBAP5ListEntity.class})
+public interface ReplenishMaterialTableListAPI {
     /**
-     * 根据生产批号获取活动执行记录
+     * 获取补料单
      * @param pageIndex
      * @param queryMap
      */
-    void listReplenishMaterialNotifies(int pageIndex, ArrayMap<String,Object> queryMap);
+    void listReplenishMaterialTables(int pageIndex,String url, ArrayMap<String,Object> queryMap);
 
-    /**
-     * 创建补料单
-     * @param replenishMaterialNotifyEntity
-     */
-    void submit(ReplenishMaterialNotifyEntity replenishMaterialNotifyEntity);
 }

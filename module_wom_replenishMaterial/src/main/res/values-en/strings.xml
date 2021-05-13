@@ -1,4 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="replenishNotify">补料单通知</string>
+    <string name="please_input_eam_name">请输入设备名称</string>
+    <string name="eam_point">节点</string>
+    <string name="wom_create">创建补料单</string>
+    <string name="wom_please_input_plan_num">请填写计划数量！</string>
+    <string name="replenish_material_edit">补料编辑</string>
+    <string name="replenish_material_scan">扫码补料</string>
+    <string name="replenish_material_table">补料单</string>
 </resources>

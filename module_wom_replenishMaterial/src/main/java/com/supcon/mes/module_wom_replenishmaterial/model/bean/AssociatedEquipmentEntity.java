@@ -1,7 +1,6 @@
 package com.supcon.mes.module_wom_replenishmaterial.model.bean;
 
 import com.supcon.common.com_http.BaseEntity;
-import com.supcon.mes.middleware.model.bean.Good;
 import com.supcon.mes.middleware.model.bean.SystemCodeEntity;
 
 /**
@@ -12,7 +11,7 @@ import com.supcon.mes.middleware.model.bean.SystemCodeEntity;
  * @email zhangwenshuai1@supcon.com
  * Desc 关联设备（层次模型---工厂架构）
  */
-class AssociatedEquipmentEntity extends BaseEntity {
+public class AssociatedEquipmentEntity extends BaseEntity {
     private Long id;
     private String name;
     private String code;

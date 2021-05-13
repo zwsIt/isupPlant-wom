@@ -1,4 +1,4 @@
-package com.supcon.mes.module_wom_replenishmaterial;
+package com.supcon.mes.module_wom_replenishmateria;
 
 import org.junit.Test;
 

@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/wom_sh_white_bg"
+    android:padding="@dimen/dp_10">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/dp_30"
+        android:text="@string/wom_create"
+        android:textStyle="bold"
+        android:gravity="center"
+        android:textColor="@color/black"/>
+    <com.supcon.mes.mbap.view.CustomTextView
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/dp_40"
+        android:id="@+id/material"
+        android:tag="material"
+        app:key="@string/wom_material"
+        app:editable="false"/>
+    <com.supcon.mes.mbap.view.CustomTextView
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/dp_40"
+        android:id="@+id/eamPoint"
+        android:tag="eamPoint"
+        app:key="@string/eam_point"
+        app:editable="false"/>
+    <com.supcon.mes.mbap.view.CustomEditText
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/dp_40"
+        android:id="@+id/planNum"
+        android:tag="planNum"
+        app:key="@string/wom_plan_num"
+        app:edit_hint="@string/wom_please_input_plan_num"
+        app:editable="true"/>
+    <include layout="@layout/ly_line_light"/>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingTop="@dimen/dp_5">
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="@dimen/dp_30"
+            android:layout_weight="1"
+            android:background="@drawable/sl_press_no_stroke"
+            android:id="@+id/cancelTv"
+            android:tag="cancelTv"
+            android:text="@string/wom_cancel"
+            android:textColor="@color/black"
+            android:gravity="center"/>
+        <include layout="@layout/ly_vertical_line"/>
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="@dimen/dp_30"
+            android:layout_weight="1"
+            android:background="@drawable/sl_press_no_stroke"
+            android:id="@+id/confirmTv"
+            android:tag="confirmTv"
+            android:text="@string/wom_confirm"
+            android:textColor="@color/themeColor"
+            android:gravity="center"/>
+    </LinearLayout>
+
+</LinearLayout>

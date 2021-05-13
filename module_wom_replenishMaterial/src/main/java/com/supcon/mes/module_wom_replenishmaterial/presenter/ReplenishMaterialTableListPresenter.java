@@ -1,21 +1,24 @@
 package com.supcon.mes.module_wom_replenishmaterial.presenter;
 
-import android.annotation.SuppressLint;
+
+import android.text.TextUtils;
 import android.util.ArrayMap;
 
 import com.supcon.mes.middleware.constant.Constant;
 import com.supcon.mes.middleware.model.bean.BAP5CommonEntity;
-import com.supcon.mes.middleware.model.bean.BapResultEntity;
 import com.supcon.mes.middleware.model.bean.CommonBAP5ListEntity;
 import com.supcon.mes.middleware.model.bean.FastQueryCondEntity;
 import com.supcon.mes.middleware.model.bean.JoinSubcondEntity;
 import com.supcon.mes.middleware.util.BAPQueryParamsHelper;
 import com.supcon.mes.middleware.util.HttpErrorReturnUtil;
+import com.supcon.mes.middleware.util.ListRequestParamUtil;
+import com.supcon.mes.module_wom_producetask.model.contract.CommonListContract;
+import com.supcon.mes.module_wom_producetask.model.network.WomHttpClient;
 import com.supcon.mes.module_wom_replenishmaterial.model.bean.ReplenishMaterialNotifyEntity;
-import com.supcon.mes.module_wom_replenishmaterial.model.contract.ReplenishMaterialNotifyListContract;
+import com.supcon.mes.module_wom_replenishmaterial.model.bean.ReplenishMaterialTableEntity;
+import com.supcon.mes.module_wom_replenishmaterial.model.contract.ReplenishMaterialTableListContract;
 import com.supcon.mes.module_wom_replenishmaterial.model.network.HttpClient;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -25,14 +28,14 @@ import io.reactivex.functions.Function;
 
 /**
  * ClassName
- * Created by zhangwenshuai1 on 2019/8/3
+ * Created by zhangwenshuai1 on 2021/5/12
  * Email zhangwenshuai1@supcon.com
  * Desc
  */
-public class ReplenishMaterialNotifyListPresenter extends ReplenishMaterialNotifyListContract.Presenter {
+public class ReplenishMaterialTableListPresenter extends ReplenishMaterialTableListContract.Presenter {
 
     @Override
-    public void listReplenishMaterialNotifies(int pageIndex, ArrayMap<String, Object> queryMap) {
+    public void listReplenishMaterialTables(int pageIndex, String url, ArrayMap<String, Object> queryMap) {
         Map<String, Object> pageQueryParams = new HashMap<>();
         pageQueryParams.put("pageNo",pageIndex);
         pageQueryParams.put("pageSize",20);
@@ -46,51 +49,27 @@ public class ReplenishMaterialNotifyListPresenter extends ReplenishMaterialNotif
         queryMap.remove(Constant.BAPQuery.NOTICE_STATE);
         JoinSubcondEntity joinSubcondEntity = BAPQueryParamsHelper.crateJoinSubcondEntity(queryMap,"HM_FTY_EQUIPMENTS,ID,WOM_FMN_NOTICES,EQUIPMENT");
         fastQueryCondEntity.subconds.add(joinSubcondEntity);
-        fastQueryCondEntity.modelAlias = "fmnNotice";
-        fastQueryCondEntity.viewCode="WOM_1.0.0_fillMaterialNotice_fmnNoticeList";
+        fastQueryCondEntity.modelAlias = "fmBill";
+        fastQueryCondEntity.viewCode="WOM_1.0.0_fillMaterial_fmBillList";
 
 
         pageQueryParams.put("fastQueryCond", fastQueryCondEntity.toString());
         mCompositeSubscription.add(
-                HttpClient.listReplenishMaterialNotifies(pageQueryParams)
+                HttpClient.listReplenishMaterialTables(url,pageQueryParams)
                         .onErrorReturn(throwable -> {
-                            CommonBAP5ListEntity<ReplenishMaterialNotifyEntity> commonBAP5ListEntity = new CommonBAP5ListEntity<>();
+                            CommonBAP5ListEntity<ReplenishMaterialTableEntity> commonBAP5ListEntity = new CommonBAP5ListEntity<>();
                             commonBAP5ListEntity.msg = HttpErrorReturnUtil.getErrorInfo(throwable);
                             commonBAP5ListEntity.success = false;
                             return commonBAP5ListEntity;
                         })
                         .subscribe(replenishMaterialNotifyEntityCommonBAP5ListEntity -> {
                             if (replenishMaterialNotifyEntityCommonBAP5ListEntity.success ){
-                                getView().listReplenishMaterialNotifiesSuccess(replenishMaterialNotifyEntityCommonBAP5ListEntity);
+                                getView().listReplenishMaterialTablesSuccess(replenishMaterialNotifyEntityCommonBAP5ListEntity);
                             }else {
-                                getView().listReplenishMaterialNotifiesFailed(replenishMaterialNotifyEntityCommonBAP5ListEntity.msg);
+                                getView().listReplenishMaterialTablesFailed(replenishMaterialNotifyEntityCommonBAP5ListEntity.msg);
                             }
                         })
         );
     }
 
-    @SuppressLint("CheckResult")
-    @Override
-    public void submit(ReplenishMaterialNotifyEntity replenishMaterialNotifyEntity) {
-        HttpClient.submit(replenishMaterialNotifyEntity)
-                .onErrorReturn(new Function<Throwable, BAP5CommonEntity<BapResultEntity>>() {
-                    @Override
-                    public BAP5CommonEntity<BapResultEntity> apply(@NonNull Throwable throwable) throws Exception {
-                        BAP5CommonEntity<BapResultEntity> bap5CommonEntity = new BAP5CommonEntity<>();
-                        bap5CommonEntity.success = false;
-                        bap5CommonEntity.msg = HttpErrorReturnUtil.getErrorInfo(throwable);
-                        return bap5CommonEntity;
-                    }
-                })
-                .subscribe(new Consumer<BAP5CommonEntity<BapResultEntity>>() {
-                    @Override
-                    public void accept(BAP5CommonEntity<BapResultEntity> bapResultEntityBAP5CommonEntity) throws Exception {
-                        if (bapResultEntityBAP5CommonEntity.success){
-                            getView().submitSuccess(bapResultEntityBAP5CommonEntity);
-                        }else {
-                            getView().submitFailed(bapResultEntityBAP5CommonEntity.msg);
-                        }
-                    }
-                });
-    }
 }

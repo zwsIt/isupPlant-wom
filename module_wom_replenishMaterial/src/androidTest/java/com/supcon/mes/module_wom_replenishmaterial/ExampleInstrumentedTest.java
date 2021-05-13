@@ -1,4 +1,4 @@
-package com.supcon.mes.module_wom_replenishmaterial;
+package com.supcon.mes.module_wom_replenishmateria;
 
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;
@@ -20,6 +20,6 @@ public class ExampleInstrumentedTest {
     public void useAppContext() {
         // Context of the app under test.
         Context appContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
-        assertEquals("com.supcon.mes.module_wom_replenishmaterial.test", appContext.getPackageName());
+        assertEquals("com.supcon.mes.module_wom_replenishmateria.test", appContext.getPackageName());
     }
 }
