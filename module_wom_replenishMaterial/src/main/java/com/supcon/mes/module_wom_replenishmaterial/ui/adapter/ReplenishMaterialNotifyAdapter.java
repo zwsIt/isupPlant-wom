@@ -73,7 +73,7 @@ public class ReplenishMaterialNotifyAdapter extends BaseListDataRecyclerViewAdap
                 @Override
                 public boolean onLongClick(View v) {
                     CustomContentTextDialog.showContent(context,productNameTv.getText().toString());
-                    return false;
+                    return true;
                 }
             });
             RxView.clicks(startTv).throttleFirst(300, TimeUnit.MILLISECONDS)
@@ -91,7 +91,7 @@ public class ReplenishMaterialNotifyAdapter extends BaseListDataRecyclerViewAdap
             statusTv.setText(data.getEquipment().getFeedStockType().value);
             productNameTv.setText(data.getMaterial().name);
             materialCode.setContent(data.getMaterial().code);
-            numCustomTv.setContent(data.getActualNumber() == null ? "0" : data.getActualNumber().toString() + "/" + data.getPlanNumber().toString());
+            numCustomTv.setContent((data.getActualNumber() == null ? 0 : data.getActualNumber().toString()) + "/" + (data.getPlanNumber() == null ? 0 : data.getPlanNumber().toString()));
             eamPoint.setContent(data.getEquipment().getName() + "("+data.getEquipment().getCode()+")");
             time.setContent(data.getCreateTime() == null ? "--" : DateUtil.dateTimeFormat(data.getCreateTime()));
         }

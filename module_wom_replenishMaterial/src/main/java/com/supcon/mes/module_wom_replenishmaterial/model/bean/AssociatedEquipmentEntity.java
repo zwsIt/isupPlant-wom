@@ -1,6 +1,10 @@
 package com.supcon.mes.module_wom_replenishmaterial.model.bean;
 
 import com.supcon.common.com_http.BaseEntity;
+import com.supcon.mes.middleware.model.bean.EamType;
+import com.supcon.mes.middleware.model.bean.EamTypeEntity;
+import com.supcon.mes.middleware.model.bean.Good;
+import com.supcon.mes.middleware.model.bean.ObjectEntity;
 import com.supcon.mes.middleware.model.bean.SystemCodeEntity;
 
 /**
@@ -19,6 +23,42 @@ public class AssociatedEquipmentEntity extends BaseEntity {
      * 进料方式
      */
     private SystemCodeEntity feedStockType;
+    /**
+     * 物料
+     */
+    private Good productId;
+    /**
+     * 补料模式
+     */
+    private SystemCodeEntity runModel;
+    /**
+     * 设备
+     */
+    private ObjectEntity objEqu;
+
+    public Good getProductId() {
+        return productId;
+    }
+
+    public void setProductId(Good productId) {
+        this.productId = productId;
+    }
+
+    public SystemCodeEntity getRunModel() {
+        return runModel;
+    }
+
+    public void setRunModel(SystemCodeEntity runModel) {
+        this.runModel = runModel;
+    }
+
+    public ObjectEntity getObjEqu() {
+        return objEqu;
+    }
+
+    public void setObjEqu(ObjectEntity objEqu) {
+        this.objEqu = objEqu;
+    }
 
     public Long getId() {
         return id;

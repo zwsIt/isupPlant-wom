@@ -6,12 +6,15 @@ import com.supcon.mes.middleware.model.bean.BapResultEntity;
 import com.supcon.mes.middleware.model.bean.CommonBAP5ListEntity;
 import com.supcon.mes.module_wom_replenishmaterial.model.bean.ReplenishMaterialNotifyEntity;
 import com.supcon.mes.module_wom_replenishmaterial.model.bean.ReplenishMaterialTableEntity;
+import com.supcon.mes.module_wom_replenishmaterial.model.dto.ReplenishMaterialNotifyDTO;
+import com.supcon.mes.module_wom_replenishmaterial.model.dto.ReplenishMaterialTableDTO;
 
 import java.util.Map;
 
 import io.reactivex.Flowable;
 import retrofit2.http.Body;
 import retrofit2.http.POST;
+import retrofit2.http.Query;
 import retrofit2.http.Url;
 
 /**
@@ -37,8 +40,8 @@ interface NetworkService {
      * @param dto
      * @return
      */
-    @POST("")
-    Flowable<BAP5CommonEntity<BapResultEntity>> submit(@Body ReplenishMaterialNotifyEntity dto);
+    @POST("/msService/WOM/fillMaterial/fmBill/createTask")
+    Flowable<BAP5CommonEntity<BapResultEntity>> submit(@Body ReplenishMaterialNotifyDTO[] dto);
 
     /**
      * 获取补料通知列表
@@ -47,5 +50,11 @@ interface NetworkService {
      */
     @POST()
     Flowable<CommonBAP5ListEntity<ReplenishMaterialTableEntity>> listReplenishMaterialTables(@Url String url, @Body Map<String, Object> paramMap);
+    /**
+     * 补料编辑提交
+     * @return
+     */
+    @POST("/msService/WOM/fillMaterial/fmBill/fmBillEdit/submit")
+    Flowable<BAP5CommonEntity<BapResultEntity>> replenishMaterialEditSubmit(@Query("id") Long id, @Query("__pc__") String __pc__, @Body ReplenishMaterialTableDTO replenishMaterialTableDTO);
 
 }

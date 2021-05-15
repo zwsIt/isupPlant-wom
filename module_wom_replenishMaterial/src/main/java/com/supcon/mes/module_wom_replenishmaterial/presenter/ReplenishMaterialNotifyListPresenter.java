@@ -12,11 +12,14 @@ import com.supcon.mes.middleware.model.bean.JoinSubcondEntity;
 import com.supcon.mes.middleware.util.BAPQueryParamsHelper;
 import com.supcon.mes.middleware.util.HttpErrorReturnUtil;
 import com.supcon.mes.module_wom_replenishmaterial.model.bean.ReplenishMaterialNotifyEntity;
+import com.supcon.mes.module_wom_replenishmaterial.model.bean.ReplenishMaterialTableEntity;
 import com.supcon.mes.module_wom_replenishmaterial.model.contract.ReplenishMaterialNotifyListContract;
+import com.supcon.mes.module_wom_replenishmaterial.model.dto.ReplenishMaterialNotifyDTO;
 import com.supcon.mes.module_wom_replenishmaterial.model.network.HttpClient;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import io.reactivex.annotations.NonNull;
@@ -71,8 +74,10 @@ public class ReplenishMaterialNotifyListPresenter extends ReplenishMaterialNotif
 
     @SuppressLint("CheckResult")
     @Override
-    public void submit(ReplenishMaterialNotifyEntity replenishMaterialNotifyEntity) {
-        HttpClient.submit(replenishMaterialNotifyEntity)
+    public void submit(List<ReplenishMaterialNotifyDTO> dtoList) {
+        ReplenishMaterialNotifyDTO dto[] = new ReplenishMaterialNotifyDTO[dtoList.size()];
+        dtoList.toArray(dto);
+        HttpClient.submit(dto)
                 .onErrorReturn(new Function<Throwable, BAP5CommonEntity<BapResultEntity>>() {
                     @Override
                     public BAP5CommonEntity<BapResultEntity> apply(@NonNull Throwable throwable) throws Exception {

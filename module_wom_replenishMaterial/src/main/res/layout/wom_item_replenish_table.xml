@@ -6,36 +6,51 @@
     android:background="@color/white"
     android:orientation="vertical"
     android:elevation="@dimen/dp_2">
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="@dimen/dp_10">
-        <TextView
-            android:layout_width="0dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:gravity="center_vertical"
-            android:layout_marginEnd="@dimen/dp_10"
-            android:textStyle="bold"
-            android:textColor="@color/dark_text"
-            android:id="@+id/produceBatchNumTv"
-            android:tag="produceBatchNumTv"/>
-        <TextView
-            android:id="@+id/statusTv"
+            android:padding="@dimen/dp_10">
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center_vertical"
+                android:layout_marginEnd="@dimen/dp_10"
+                android:textStyle="bold"
+                android:textColor="@color/dark_text"
+                android:id="@+id/produceBatchNumTv"
+                android:tag="produceBatchNumTv"/>
+            <TextView
+                android:id="@+id/statusTv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/sh_status"
+                android:maxWidth="@dimen/dp_120"
+                android:maxLines="1"
+                android:paddingStart="12dp"
+                android:paddingTop="3dp"
+                android:paddingEnd="12dp"
+                android:paddingBottom="3dp"
+                android:tag="statusTv"
+                android:textColor="@color/wom_tv_status_color"
+                android:textSize="14sp"
+                android:text="@string/wom_executing" />
+        </LinearLayout>
+        <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@drawable/sh_status"
-            android:maxWidth="@dimen/dp_120"
-            android:maxLines="1"
-            android:paddingStart="12dp"
-            android:paddingTop="3dp"
-            android:paddingEnd="12dp"
-            android:paddingBottom="3dp"
-            android:tag="statusTv"
-            android:textColor="@color/wom_tv_status_color"
-            android:textSize="14sp"
-            android:text="@string/wom_executing" />
-    </LinearLayout>
+            android:layout_alignParentEnd="true"
+            android:id="@+id/replenishModelIv"
+            android:tag="replenishModelIv"
+            android:src="@drawable/wom_ic_batch"
+            android:visibility="visible"/>
+    </RelativeLayout>
+
     <include layout="@layout/ly_line_light"/>
     <LinearLayout
         android:layout_width="match_parent"
@@ -140,34 +155,20 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
                     android:gravity="center_vertical"
-                    android:text="@string/wom_time"
+                    android:text="@string/replenish_vessel"
                     android:textColor="@color/titleTextColor"
-                    android:drawableStart="@drawable/ic_time"
+                    android:drawableStart="@drawable/ic_factory_model_unit"
                     android:drawablePadding="@dimen/dp_5"/>
                 <com.supcon.mes.mbap.view.CustomTextView
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/dp_36"
-                    android:id="@+id/time"
-                    android:tag="time"
+                    android:id="@+id/vessel"
+                    android:tag="vessel"
                     app:key_width="0dp"
                     app:content_size="15"
                     app:content_color="@color/dark_text"/>
             </LinearLayout>
         </LinearLayout>
     </LinearLayout>
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="@dimen/dp_25"
-        android:id="@+id/startTv"
-        style="@style/operateBtnStyle"
-        android:background="@drawable/wom_sh_start_bg"
-        android:tag="startTv"
-        android:text="@string/wom_create"
-        android:gravity="center"
-        android:layout_gravity="end"
-        android:paddingStart="@dimen/dp_10"
-        android:paddingEnd="@dimen/dp_10"
-        android:layout_marginBottom="@dimen/dp_10"
-        android:layout_marginEnd="@dimen/dp_10"/>
 
 </LinearLayout>

@@ -48,10 +48,16 @@ import com.supcon.mes.module_wom_replenishmaterial.R;
 import com.supcon.mes.module_wom_replenishmaterial.constant.ReplenishConstant;
 import com.supcon.mes.module_wom_replenishmaterial.model.api.ReplenishMaterialNotifyListAPI;
 import com.supcon.mes.module_wom_replenishmaterial.model.bean.ReplenishMaterialNotifyEntity;
+import com.supcon.mes.module_wom_replenishmaterial.model.bean.ReplenishMaterialTableEntity;
 import com.supcon.mes.module_wom_replenishmaterial.model.contract.ReplenishMaterialNotifyListContract;
+import com.supcon.mes.module_wom_replenishmaterial.model.dto.ReplenishMaterialNotifyDTO;
 import com.supcon.mes.module_wom_replenishmaterial.presenter.ReplenishMaterialNotifyListPresenter;
 import com.supcon.mes.module_wom_replenishmaterial.ui.adapter.ReplenishMaterialNotifyAdapter;
 
+import java.lang.reflect.Array;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import io.reactivex.functions.Consumer;
@@ -70,8 +76,6 @@ public class ReplenishMaterialNotifyListActivity extends BaseRefreshRecyclerActi
     CustomHorizontalSearchTitleBar searchTitleBar;
     @BindByTag("contentView")
     RecyclerView contentView;
-    @BindByTag("refreshFrameLayout")
-    PtrFrameLayout refreshFrameLayout;
     @BindByTag("submitBtn")
     Button submitBtn;
     private ArrayMap<String, Object> queryMap = new ArrayMap<>();
@@ -136,13 +140,12 @@ public class ReplenishMaterialNotifyListActivity extends BaseRefreshRecyclerActi
                 searchTitleBar.searchView().setInputTextColor(R.color.black);
             }
         });
-        RxTextView.textChanges(searchTitleBar.editText()).skipInitialValue()
+        RxTextView.textChanges(searchTitleBar.editText())
+                .skipInitialValue()
                 .debounce(300, TimeUnit.MILLISECONDS)
-                .subscribe(new Consumer<CharSequence>() {
-                    @Override
-                    public void accept(CharSequence charSequence) throws Exception {
-                        queryMap.put(Constant.BAPQuery.NAME,charSequence.toString());
-                    }
+                .subscribe(charSequence -> {
+                    queryMap.put(Constant.BAPQuery.NAME,charSequence.toString());
+                    refreshListController.refreshBegin();
                 });
         mReplenishMaterialNotifyAdapter.setOnItemChildViewClickListener(new OnItemChildViewClickListener() {
             @Override
@@ -183,7 +186,14 @@ public class ReplenishMaterialNotifyListActivity extends BaseRefreshRecyclerActi
                         }
                         customDialog.dismiss();
                         onLoading(getString(R.string.wom_dealing));
-                        presenterRouter.create(ReplenishMaterialNotifyListAPI.class).submit(replenishMaterialNotifyEntity);
+
+                        List<ReplenishMaterialNotifyDTO> dtoList = new ArrayList<>();
+                        ReplenishMaterialNotifyDTO dtoElement = new ReplenishMaterialNotifyDTO();
+                        dtoElement.setFmnNotice(replenishMaterialNotifyEntity);
+                        dtoElement.setPlanNumber(new BigDecimal(planNum.getContent()));
+                        dtoList.add(dtoElement);
+
+                        presenterRouter.create(ReplenishMaterialNotifyListAPI.class).submit(dtoList);
                     }
                 }, false)
                 .show();

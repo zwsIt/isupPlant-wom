@@ -60,7 +60,7 @@
             android:background="@drawable/sl_press_no_stroke"
             android:id="@+id/confirmTv"
             android:tag="confirmTv"
-            android:text="@string/wom_confirm"
+            android:text="@string/replenish_create"
             android:textColor="@color/themeColor"
             android:gravity="center"/>
     </LinearLayout>

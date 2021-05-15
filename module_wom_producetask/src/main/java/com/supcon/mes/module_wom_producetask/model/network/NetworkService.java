@@ -1,6 +1,7 @@
 package com.supcon.mes.module_wom_producetask.model.network;
 
 import com.app.annotation.apt.ApiFactory;
+import com.supcon.mes.middleware.model.CommonSelectListEntity;
 import com.supcon.mes.middleware.model.bean.BAP5CommonEntity;
 import com.supcon.mes.middleware.model.bean.BAP5CommonListEntity;
 import com.supcon.mes.middleware.model.bean.BapResultEntity;
@@ -105,6 +106,13 @@ public interface NetworkService {
      */
     @POST()
     Flowable<BAP5CommonEntity<Object>> list(@Url String url, @Body Map<String, Object> paramMap);
+    /**
+     * 通用list
+     * @param paramMap
+     * @return
+     */
+    @POST()
+    Flowable<CommonSelectListEntity> listCommon(@Url String url, @Body Map<String, Object> paramMap);
 
     /**
      * @author zhangwenshuai1 2020/4/8

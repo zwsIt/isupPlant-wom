@@ -2,6 +2,7 @@ package com.supcon.mes.module_wom_replenishmaterial.ui.adapter;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
 
@@ -12,7 +13,11 @@ import com.supcon.common.view.base.adapter.viewholder.BaseRecyclerViewHolder;
 import com.supcon.mes.mbap.utils.DateUtil;
 import com.supcon.mes.mbap.view.CustomContentTextDialog;
 import com.supcon.mes.mbap.view.CustomTextView;
+import com.supcon.mes.middleware.constant.Constant;
+import com.supcon.mes.middleware.util.UrlUtil;
+import com.supcon.mes.module_wom_replenishmaterial.IntentRouter;
 import com.supcon.mes.module_wom_replenishmaterial.R;
+import com.supcon.mes.module_wom_replenishmaterial.constant.ReplenishConstant;
 import com.supcon.mes.module_wom_replenishmaterial.model.bean.ReplenishMaterialTableEntity;
 
 import java.util.concurrent.TimeUnit;
@@ -26,8 +31,8 @@ import io.reactivex.functions.Consumer;
  * Email zhangwenshuai1@supcon.com
  * Desc
  */
-public class ReplenishMaterialTableEditAdapter extends BaseListDataRecyclerViewAdapter<ReplenishMaterialTableEntity> {
-    public ReplenishMaterialTableEditAdapter(Context context) {
+public class ReplenishMaterialTableEditListAdapter extends BaseListDataRecyclerViewAdapter<ReplenishMaterialTableEntity> {
+    public ReplenishMaterialTableEditListAdapter(Context context) {
         super(context);
     }
 
@@ -50,10 +55,8 @@ public class ReplenishMaterialTableEditAdapter extends BaseListDataRecyclerViewA
         CustomTextView numCustomTv;
         @BindByTag("eamPoint")
         CustomTextView eamPoint;
-        @BindByTag("time")
-        CustomTextView time;
-        @BindByTag("startTv")
-        TextView startTv;
+        @BindByTag("vessel")
+        CustomTextView vessel;
 
         public ViewHolder(Context context) {
             super(context,parent);
@@ -68,31 +71,31 @@ public class ReplenishMaterialTableEditAdapter extends BaseListDataRecyclerViewA
         @Override
         protected void initListener() {
             super.initListener();
-            productNameTv.setOnLongClickListener(new View.OnLongClickListener() {
-                @Override
-                public boolean onLongClick(View v) {
-                    CustomContentTextDialog.showContent(context,productNameTv.getText().toString());
-                    return false;
-                }
+            productNameTv.setOnLongClickListener(v -> {
+                CustomContentTextDialog.showContent(context, productNameTv.getText().toString());
+                return true;
             });
-            RxView.clicks(startTv).throttleFirst(300, TimeUnit.MILLISECONDS)
+            RxView.clicks(itemView)
+                    .throttleFirst(300,TimeUnit.MILLISECONDS)
                     .subscribe(new Consumer<Object>() {
                         @Override
                         public void accept(Object o) throws Exception {
-                            onItemChildViewClick(startTv,0,getItem(getAdapterPosition()));
+                            Bundle bundle = new Bundle();
+                            bundle.putSerializable(ReplenishConstant.IntentKey.REPLENISH_MATERIAL_TABLE,getItem(getAdapterPosition()));
+                            IntentRouter.go(context, UrlUtil.getPendingViewCode(getItem(getAdapterPosition()).getPending().openUrl),bundle);
                         }
                     });
         }
 
         @Override
         protected void update(ReplenishMaterialTableEntity data) {
-            produceBatchNumTv.setText(data.getCode());
-            statusTv.setText("状态"/*data.*/);
+            produceBatchNumTv.setText(data.getTableNo());
+            statusTv.setText(data.getFmState() == null ? "--" : data.getFmState().getValue());
             productNameTv.setText(data.getMaterial().name);
             materialCode.setContent(data.getMaterial().code);
-            numCustomTv.setContent(data.getActualNumber() == null ? "0" : data.getActualNumber().toString() + "/" + data.getPlanNumber().toString());
+            numCustomTv.setContent((data.getActualNumber() == null ? 0 : data.getActualNumber().toString()) + "/" + (data.getPlanNumber() == null ? 0 : data.getPlanNumber().toString()));
             eamPoint.setContent(data.getEquipment().getName() + "("+data.getEquipment().getCode()+")");
-            time.setContent(data.getCreateTime() == null ? "--" : DateUtil.dateTimeFormat(data.getCreateTime()));
+            vessel.setContent(data.getVessel() == null ? "--" : data.getVessel().getCode());
         }
     }
 

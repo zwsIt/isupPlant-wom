@@ -1,10 +1,17 @@
 package com.supcon.mes.module_wom_replenishmaterial.model.bean;
 
+import android.util.Log;
+
 import com.supcon.common.com_http.BaseEntity;
 import com.supcon.mes.middleware.model.bean.Good;
+import com.supcon.mes.middleware.model.bean.PendingEntity;
+import com.supcon.mes.middleware.model.bean.StaffEntity;
 import com.supcon.mes.middleware.model.bean.SystemCodeEntity;
+import com.supcon.mes.module_wom_replenishmaterial.constant.ReplenishConstant;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
 
 /**
  * ClassName
@@ -15,19 +22,27 @@ import java.math.BigDecimal;
  * Desc 补料单实体
  */
 public class ReplenishMaterialTableEntity extends BaseEntity {
-    private Long id;
-    /**
-     * 物料
-     */
-    private Good material;
+
     /**
      * 实际数量
      */
     private BigDecimal actualNumber;
     /**
-     * 单据编号
+     * attrMap
      */
-    private String code;
+    private Object attrMap;
+    /**
+     * cid
+     */
+    private Long cid;
+    /**
+     * createStaff
+     */
+    private StaffEntity createStaff;
+    /**
+     * createTime
+     */
+    private Long createTime;
     /**
      * 节点设备
      */
@@ -35,15 +50,95 @@ public class ReplenishMaterialTableEntity extends BaseEntity {
     /**
      * 状态
      */
-    private SystemCodeEntity noticeState;
+    private SystemCodeEntity fmState;
     /**
-     * 计划数量
+     * 补料通知单
+     */
+    private ReplenishMaterialNotifyEntity fmnNotice;
+    /**
+     * id
+     */
+    private Long id;
+    /**
+     * 物料
+     */
+    private Good material;
+    /**
+     * pending
+     */
+    private PendingEntity pending;
+    /**
+     * 计划补料数量
      */
     private BigDecimal planNumber;
     /**
-     * 创建时间
+     * status
      */
-    private Long createTime;
+    private Integer status;
+    /**
+     * tableInfoId
+     */
+    private Long tableInfoId;
+    /**
+     * tableNo
+     */
+    private String tableNo;
+    /**
+     * valid
+     */
+    private Boolean valid = true;
+    /**
+     * version
+     */
+    private Integer version;
+    /**
+     * 容器
+     */
+    private VesselEntity vessel;
+    /**
+     * 操作人
+     */
+    private StaffEntity operator;
+
+    public StaffEntity getOperator() {
+        return operator;
+    }
+
+    public void setOperator(StaffEntity operator) {
+        this.operator = operator;
+    }
+
+    public BigDecimal getActualNumber() {
+        return actualNumber;
+    }
+
+    public void setActualNumber(BigDecimal actualNumber) {
+        this.actualNumber = actualNumber;
+    }
+
+    public Object getAttrMap() {
+        return attrMap;
+    }
+
+    public void setAttrMap(Object attrMap) {
+        this.attrMap = attrMap;
+    }
+
+    public Long getCid() {
+        return cid;
+    }
+
+    public void setCid(Long cid) {
+        this.cid = cid;
+    }
+
+    public StaffEntity getCreateStaff() {
+        return createStaff;
+    }
+
+    public void setCreateStaff(StaffEntity createStaff) {
+        this.createStaff = createStaff;
+    }
 
     public Long getCreateTime() {
         return createTime;
@@ -51,6 +146,30 @@ public class ReplenishMaterialTableEntity extends BaseEntity {
 
     public void setCreateTime(Long createTime) {
         this.createTime = createTime;
+    }
+
+    public AssociatedEquipmentEntity getEquipment() {
+        return equipment;
+    }
+
+    public void setEquipment(AssociatedEquipmentEntity equipment) {
+        this.equipment = equipment;
+    }
+
+    public SystemCodeEntity getFmState() {
+        return fmState;
+    }
+
+    public void setFmState(SystemCodeEntity fmState) {
+        this.fmState = fmState;
+    }
+
+    public ReplenishMaterialNotifyEntity getFmnNotice() {
+        return fmnNotice;
+    }
+
+    public void setFmnNotice(ReplenishMaterialNotifyEntity fmnNotice) {
+        this.fmnNotice = fmnNotice;
     }
 
     public Long getId() {
@@ -69,36 +188,12 @@ public class ReplenishMaterialTableEntity extends BaseEntity {
         this.material = material;
     }
 
-    public BigDecimal getActualNumber() {
-        return actualNumber;
+    public PendingEntity getPending() {
+        return pending;
     }
 
-    public void setActualNumber(BigDecimal actualNumber) {
-        this.actualNumber = actualNumber;
-    }
-
-    public String getCode() {
-        return code;
-    }
-
-    public void setCode(String code) {
-        this.code = code;
-    }
-
-    public AssociatedEquipmentEntity getEquipment() {
-        return equipment;
-    }
-
-    public void setEquipment(AssociatedEquipmentEntity equipment) {
-        this.equipment = equipment;
-    }
-
-    public SystemCodeEntity getNoticeState() {
-        return noticeState;
-    }
-
-    public void setNoticeState(SystemCodeEntity noticeState) {
-        this.noticeState = noticeState;
+    public void setPending(PendingEntity pending) {
+        this.pending = pending;
     }
 
     public BigDecimal getPlanNumber() {
@@ -107,5 +202,53 @@ public class ReplenishMaterialTableEntity extends BaseEntity {
 
     public void setPlanNumber(BigDecimal planNumber) {
         this.planNumber = planNumber;
+    }
+
+    public Integer getStatus() {
+        return status;
+    }
+
+    public void setStatus(Integer status) {
+        this.status = status;
+    }
+
+    public Long getTableInfoId() {
+        return tableInfoId;
+    }
+
+    public void setTableInfoId(Long tableInfoId) {
+        this.tableInfoId = tableInfoId;
+    }
+
+    public String getTableNo() {
+        return tableNo;
+    }
+
+    public void setTableNo(String tableNo) {
+        this.tableNo = tableNo;
+    }
+
+    public Boolean getValid() {
+        return valid;
+    }
+
+    public void setValid(Boolean valid) {
+        this.valid = valid;
+    }
+
+    public Integer getVersion() {
+        return version;
+    }
+
+    public void setVersion(Integer version) {
+        this.version = version;
+    }
+
+    public VesselEntity getVessel() {
+        return vessel;
+    }
+
+    public void setVessel(VesselEntity vessel) {
+        this.vessel = vessel;
     }
 }

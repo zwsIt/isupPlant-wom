@@ -20,6 +20,6 @@ public interface ReplenishMaterialTableListAPI {
      * @param pageIndex
      * @param queryMap
      */
-    void listReplenishMaterialTables(int pageIndex,String url, ArrayMap<String,Object> queryMap);
+    void listReplenishMaterialTables(int pageIndex,String url, boolean pending, ArrayMap<String,Object> queryMap);
 
 }

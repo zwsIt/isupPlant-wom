@@ -1,24 +1,30 @@
 package com.supcon.mes.module_wom_replenishmaterial.ui.activity;
 
 import android.annotation.SuppressLint;
+import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 
 import com.app.annotation.BindByTag;
+import com.app.annotation.Controller;
 import com.app.annotation.apt.Router;
 import com.jakewharton.rxbinding2.view.RxView;
 import com.jakewharton.rxbinding2.widget.RxTextView;
+import com.supcon.common.view.base.activity.BaseControllerActivity;
 import com.supcon.common.view.base.activity.BaseFragmentActivity;
 import com.supcon.common.view.util.StatusBarUtils;
 import com.supcon.mes.mbap.view.CustomHorizontalSearchTitleBar;
 import com.supcon.mes.mbap.view.CustomTab;
 import com.supcon.mes.mbap.view.NoScrollViewPager;
 import com.supcon.mes.middleware.constant.Constant;
+import com.supcon.mes.middleware.controller.WorkFlowButtonInfoController;
+import com.supcon.mes.middleware.model.bean.WorkFlowButtonInfo;
 import com.supcon.mes.module_wom_replenishmaterial.IntentRouter;
 import com.supcon.mes.module_wom_replenishmaterial.R;
 import com.supcon.mes.module_wom_replenishmaterial.constant.ReplenishConstant;
+import com.supcon.mes.module_wom_replenishmaterial.model.bean.ReplenishMaterialTableEntity;
 import com.supcon.mes.module_wom_replenishmaterial.ui.fragment.ReplenishMaterialTableEditFragment;
 import com.supcon.mes.module_wom_replenishmaterial.ui.fragment.ReplenishMaterialTableScanFragment;
 
@@ -35,7 +41,8 @@ import io.reactivex.schedulers.Schedulers;
  * Desc 补料单编辑list
  */
 @Router(Constant.AppCode.WOM_ReplenishMaterial_Table)
-public class ReplenishMaterialTableListActivity extends BaseFragmentActivity {
+@Controller(value = {WorkFlowButtonInfoController.class})
+public class ReplenishMaterialTableListActivity extends BaseControllerActivity {
 
     @BindByTag("searchTitleBar")
     CustomHorizontalSearchTitleBar searchTitleBar;
@@ -61,7 +68,13 @@ public class ReplenishMaterialTableListActivity extends BaseFragmentActivity {
         super.initView();
         StatusBarUtils.setWindowStatusBarColor(this, R.color.themeColor);
         searchTitleBar.title().setText(R.string.replenish_material_table);
-        searchTitleBar.editText().setHint(context.getResources().getString(R.string.wom_input_produce_batch_num));
+        searchTitleBar.editText().setHint(context.getResources().getString(R.string.please_input_eam_name));
+
+        getController(WorkFlowButtonInfoController.class).checkWorkFlowButtonStatus("WOM_1.0.0_fillMaterial_fmBillList", "WOM_1.0.0_fillMaterial", isHas -> {
+            if (!isHas){
+                searchTitleBar.disableRightBtn();
+            }
+        });
 
         initTab();
         initViewPager();
@@ -95,7 +108,16 @@ public class ReplenishMaterialTableListActivity extends BaseFragmentActivity {
                     @Override
                     public void accept(Object o) throws Exception {
                         if (viewPager.getCurrentItem() == 0){
-                            IntentRouter.go(context, ReplenishConstant.Router.REPLENISH_MATERIAL_EDIT);
+                            getController(WorkFlowButtonInfoController.class).getWorkFlowEntity(new WorkFlowButtonInfoController.WorkFlowButtonEntityListener() {
+                                @Override
+                                public void onChooseWorkFlowEntity(WorkFlowButtonInfo info) {
+                                    ReplenishMaterialTableEntity replenishMaterialTableEntity = new ReplenishMaterialTableEntity();
+                                    Bundle bundle = new Bundle();
+                                    bundle.putSerializable(ReplenishConstant.IntentKey.REPLENISH_MATERIAL_TABLE,replenishMaterialTableEntity);
+                                    bundle.putSerializable(ReplenishConstant.IntentKey.WORK_FLOW_BTN_INFO,info);
+                                    IntentRouter.go(context, ReplenishConstant.Router.REPLENISH_MATERIAL_EDIT,bundle);
+                                }
+                            });
                         }else if (viewPager.getCurrentItem() == 1){
                             mReplenishMaterialTableScanFragment.scan();
                         }
@@ -148,6 +170,12 @@ public class ReplenishMaterialTableListActivity extends BaseFragmentActivity {
 
     public String getSearch(){
         return searchTitleBar.editText().getText().toString();
+    }
+
+    public void disableAdd(boolean isHas) {
+        if (!isHas){
+            searchTitleBar.disableRightBtn();
+        }
     }
 
     private class InnerFragmentPagerAdapter extends FragmentPagerAdapter {

@@ -6,6 +6,11 @@ import com.app.annotation.apt.ContractFactory;
 import com.supcon.mes.middleware.model.bean.BAP5CommonEntity;
 import com.supcon.mes.middleware.model.bean.CommonBAP5ListEntity;
 import com.supcon.mes.module_wom_replenishmaterial.model.bean.ReplenishMaterialNotifyEntity;
+import com.supcon.mes.module_wom_replenishmaterial.model.bean.ReplenishMaterialTableEntity;
+import com.supcon.mes.module_wom_replenishmaterial.model.dto.ReplenishMaterialNotifyDTO;
+
+import java.util.ArrayList;
+import java.util.List;
 
 
 /**
@@ -24,7 +29,7 @@ public interface ReplenishMaterialNotifyListAPI {
 
     /**
      * 创建补料单
-     * @param replenishMaterialNotifyEntity
+     * @param dtoList
      */
-    void submit(ReplenishMaterialNotifyEntity replenishMaterialNotifyEntity);
+    void submit(List<ReplenishMaterialNotifyDTO> dtoList);
 }

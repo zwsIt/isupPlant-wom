@@ -3,47 +3,26 @@ package com.supcon.mes.module_wom_replenishmaterial.ui.fragment;
 
 import android.annotation.SuppressLint;
 import android.graphics.Rect;
-import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.text.TextUtils;
 import android.util.ArrayMap;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.CheckBox;
-import android.widget.LinearLayout;
-import android.widget.RadioGroup;
-import android.widget.TextView;
 
 import com.app.annotation.BindByTag;
 import com.app.annotation.Controller;
 import com.app.annotation.Presenter;
-import com.jakewharton.rxbinding2.view.RxView;
 import com.supcon.common.view.base.adapter.IListAdapter;
 import com.supcon.common.view.base.fragment.BaseRefreshRecyclerFragment;
 import com.supcon.common.view.util.DisplayUtil;
 import com.supcon.common.view.util.ToastUtils;
-import com.supcon.mes.mbap.utils.GsonUtil;
-import com.supcon.mes.mbap.view.CustomDialog;
-import com.supcon.mes.middleware.SupPlantApplication;
 import com.supcon.mes.middleware.constant.Constant;
-import com.supcon.mes.middleware.model.bean.BAP5CommonEntity;
 import com.supcon.mes.middleware.model.bean.CommonBAP5ListEntity;
-import com.supcon.mes.middleware.model.bean.CommonBAPListEntity;
 import com.supcon.mes.middleware.model.bean.MaterialQRCodeEntity;
-import com.supcon.mes.middleware.model.bean.StaffEntity;
-import com.supcon.mes.middleware.model.bean.SystemCodeEntity;
 import com.supcon.mes.middleware.model.event.RefreshEvent;
-import com.supcon.mes.middleware.model.listener.OnAPIResultListener;
 import com.supcon.mes.middleware.util.EmptyAdapterHelper;
-import com.supcon.mes.middleware.util.ErrorMsgHelper;
 import com.supcon.mes.module_scan.controller.CommonScanController;
 import com.supcon.mes.module_scan.model.event.CodeResultEvent;
-import com.supcon.mes.module_wom_producetask.model.api.CommonListAPI;
-import com.supcon.mes.module_wom_producetask.model.bean.BatchMaterialPartEntity;
-import com.supcon.mes.module_wom_producetask.model.contract.CommonListContract;
 import com.supcon.mes.module_wom_producetask.util.MaterQRUtil;
 import com.supcon.mes.module_wom_replenishmaterial.R;
 import com.supcon.mes.module_wom_replenishmaterial.constant.ReplenishConstant;
@@ -52,17 +31,11 @@ import com.supcon.mes.module_wom_replenishmaterial.model.bean.ReplenishMaterialT
 import com.supcon.mes.module_wom_replenishmaterial.model.contract.ReplenishMaterialTableListContract;
 import com.supcon.mes.module_wom_replenishmaterial.presenter.ReplenishMaterialTableListPresenter;
 import com.supcon.mes.module_wom_replenishmaterial.ui.activity.ReplenishMaterialTableListActivity;
-import com.supcon.mes.module_wom_replenishmaterial.ui.adapter.ReplenishMaterialTableEditAdapter;
+import com.supcon.mes.module_wom_replenishmaterial.ui.adapter.ReplenishMaterialTableEditListAdapter;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.TimeUnit;
 
 
 /**
@@ -81,11 +54,11 @@ public class ReplenishMaterialTableScanFragment extends BaseRefreshRecyclerFragm
 
     ArrayMap<String, Object> queryParams = new ArrayMap<>(); // 快速查询
 
-    private ReplenishMaterialTableEditAdapter mReplenishMaterialTableEditAdapter;
+    private ReplenishMaterialTableEditListAdapter mReplenishMaterialTableEditListAdapter;
 
     @Override
     protected IListAdapter<ReplenishMaterialTableEntity> createAdapter() {
-        return new ReplenishMaterialTableEditAdapter(context);
+        return new ReplenishMaterialTableEditListAdapter(context);
     }
 
     @Override
@@ -94,6 +67,9 @@ public class ReplenishMaterialTableScanFragment extends BaseRefreshRecyclerFragm
         EventBus.getDefault().register(this);
         refreshListController.setAutoPullDownRefresh(true);
         refreshListController.setPullDownRefreshEnabled(true);
+
+        queryParams.put(Constant.BAPQuery.NAME, ((ReplenishMaterialTableListActivity) context).getSearch());
+
         refreshListController.setEmpterAdapter(EmptyAdapterHelper.getRecyclerEmptyAdapter(context, getString(R.string.wom_no_data_operate)));
         contentView.setLayoutManager(new LinearLayoutManager(context));
         contentView.addItemDecoration(new RecyclerView.ItemDecoration() {
@@ -121,8 +97,8 @@ public class ReplenishMaterialTableScanFragment extends BaseRefreshRecyclerFragm
     protected void initListener() {
         super.initListener();
         refreshListController.setOnRefreshPageListener(pageIndex -> {
-            queryParams.put(Constant.BAPQuery.PRODUCE_BATCH_NUM, ((ReplenishMaterialTableListActivity) context).getSearch());
-            presenterRouter.create(ReplenishMaterialTableListAPI.class).listReplenishMaterialTables(pageIndex, ReplenishConstant.URL.REPLENISH_MATERIAL_SCAN_LIST_URL, queryParams);
+            queryParams.put(Constant.BAPQuery.NAME, ((ReplenishMaterialTableListActivity) context).getSearch());
+            presenterRouter.create(ReplenishMaterialTableListAPI.class).listReplenishMaterialTables(pageIndex, ReplenishConstant.URL.REPLENISH_MATERIAL_SCAN_LIST_URL,false, queryParams);
         });
     }
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -143,7 +119,7 @@ public class ReplenishMaterialTableScanFragment extends BaseRefreshRecyclerFragm
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onCodeReceiver(CodeResultEvent codeResultEvent) {
         if (context.getClass().getSimpleName().equals(codeResultEvent.scanTag)){
-            if (mReplenishMaterialTableEditAdapter.getList().size() == 0){
+            if (mReplenishMaterialTableEditListAdapter.getList().size() == 0){
                 ToastUtils.show(context,getResources().getString(R.string.middleware_no_data));
                 return;
             }
