@@ -24,4 +24,8 @@
     <string name="replenish_material_table_scan">补料单扫描</string>
     <string name="replenish_start_operate_open_valve">确认【开始】补料操作？确认将会打开设备阀门</string>
     <string name="replenish_end_operate">确认【结束】补料操作？</string>
+    <string name="replenish_camera_scan">摄像头扫码</string>
+    <string name="replenish_red_scan">设备红外扫码</string>
+    <string name="replenish_quick_scan_bucket">快速扫桶补料</string>
+    <string name="replenish_no_match_bucket">未能匹配桶号，请再次确认！</string>
 </resources>

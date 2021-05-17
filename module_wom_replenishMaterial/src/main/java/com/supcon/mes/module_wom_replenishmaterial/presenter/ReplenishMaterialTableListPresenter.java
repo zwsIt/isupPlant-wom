@@ -53,13 +53,22 @@ public class ReplenishMaterialTableListPresenter extends ReplenishMaterialTableL
 //        queryMap.remove(Constant.BAPQuery.NOTICE_STATE);
         FastQueryCondEntity fastQueryCondEntity = new FastQueryCondEntity();
         fastQueryCondEntity.subconds = new ArrayList<>();
+
+        if (queryMap.containsKey(Constant.BAPQuery.CODE)){
+            BAPQueryParamsHelper.setLike(false);
+            JoinSubcondEntity joinSubcondEntityBucket = BAPQueryParamsHelper.crateJoinSubcondEntity(queryMap, "WOM_VESSELS,ID,WOM_FM_BILLS,VESSEL");
+            fastQueryCondEntity.subconds.add(joinSubcondEntityBucket);
+            queryMap.remove(Constant.BAPQuery.CODE);
+        }
+
         JoinSubcondEntity joinSubcondEntity = BAPQueryParamsHelper.crateJoinSubcondEntity(queryMap, "HM_FTY_EQUIPMENTS,ID,WOM_FMN_NOTICES,EQUIPMENT");
         fastQueryCondEntity.subconds.add(joinSubcondEntity);
+
+
         fastQueryCondEntity.modelAlias = "fmBill";
         fastQueryCondEntity.viewCode = "WOM_1.0.0_fillMaterial_fmBillList";
-
-
         pageQueryParams.put("fastQueryCond", fastQueryCondEntity.toString());
+
         mCompositeSubscription.add(
                 HttpClient.listReplenishMaterialTables(url, pageQueryParams)
                         .onErrorReturn(throwable -> {

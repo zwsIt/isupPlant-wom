@@ -45,7 +45,7 @@ interface NetworkService {
     Flowable<BAP5CommonEntity<BapResultEntity>> submit(@Body ReplenishMaterialNotifyDTO[] dto);
 
     /**
-     * 获取补料通知列表
+     * 获取补料单列表
      * @param paramMap
      * @return
      */

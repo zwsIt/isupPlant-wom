@@ -134,7 +134,9 @@
             android:tag="startBtn"
             android:text="@string/wom_start"
             android:textColor="@color/white"
-            android:textSize="@dimen/fontSize_16sp"/>
+            android:textSize="@dimen/fontSize_16sp"
+            android:enabled="false"
+            android:alpha="0.35"/>
         <Button
             android:layout_width="0dp"
             android:layout_height="@dimen/dp_40"
@@ -148,7 +150,9 @@
             android:tag="endBtn"
             android:text="@string/wom_end"
             android:textColor="@color/white"
-            android:textSize="@dimen/fontSize_16sp"/>
+            android:textSize="@dimen/fontSize_16sp"
+            android:enabled="false"
+            android:alpha="0.35"/>
     </LinearLayout>
 
 </RelativeLayout>
