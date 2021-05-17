@@ -100,6 +100,31 @@ public class ReplenishMaterialTableEntity extends BaseEntity {
      */
     private StaffEntity operator;
 
+    /**
+     *节点设备扫描标识
+     */
+    private boolean eqScanFlag;
+    /**
+     *容器扫描标识
+     */
+    private boolean vesselScanFlag;
+
+    public boolean isEqScanFlag() {
+        return eqScanFlag;
+    }
+
+    public void setEqScanFlag(boolean eqScanFlag) {
+        this.eqScanFlag = eqScanFlag;
+    }
+
+    public boolean isVesselScanFlag() {
+        return vesselScanFlag;
+    }
+
+    public void setVesselScanFlag(boolean vesselScanFlag) {
+        this.vesselScanFlag = vesselScanFlag;
+    }
+
     public StaffEntity getOperator() {
         return operator;
     }

@@ -67,7 +67,7 @@ public class ReplenishMaterialTablePartEntity extends BaseEntity {
      * 扫描标识
      */
     @Expose
-    private Boolean scanFlag;
+    private boolean scanFlag;
 
     public Object getAttrMap() {
         return attrMap;
@@ -141,11 +141,11 @@ public class ReplenishMaterialTablePartEntity extends BaseEntity {
         this.version = version;
     }
 
-    public Boolean getScanFlag() {
+    public boolean getScanFlag() {
         return scanFlag;
     }
 
-    public void setScanFlag(Boolean scanFlag) {
+    public void setScanFlag(boolean scanFlag) {
         this.scanFlag = scanFlag;
     }
 }

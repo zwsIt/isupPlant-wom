@@ -12,9 +12,11 @@ public interface ReplenishConstant {
     interface Router {
         String REPLENISH_MATERIAL_EDIT = "REPLENISH_MATERIAL_EDIT"; // 补料编辑
         String ASSOCIATION_EQUIPMENT_LIST_REF = "ASSOCIATION_EQUIPMENT_LIST_REF"; // 关联设备参照
+        String REPLENISH_MATERIAL_SCAN = "REPLENISH_MATERIAL_SCAN"; // 补料扫码
     }
 
     interface SystemCode {
+        // 通知单状态
         String NOTIFY_INSTRUCTION = "WOM_fmNoticState/issue"; // 下达
 
         // 补料单状态
@@ -22,10 +24,16 @@ public interface ReplenishConstant {
         String TABLE_STATE_ING = "WOM_fmBillState/executing"; // 补料中
         String TABLE_STATE_COMPLETE = "WOM_fmBillState/complete"; // 补料完成
 
-
         // 补料模式
         String MODEL_MANUAL = "HierarchicalMod_runModelCode1/activeExecution"; // 主动执行
         String MODEL_NOTIFY = "HierarchicalMod_runModelCode1/noticeExecution"; // 通知执行
+        // 进料模式
+        String MODEL_AIR = "HierarchicalMod_feedStockTypeCode1/feedingAtAirOutlet"; // 风送口补料
+        String MODEL_BUCKET_AIR = "HierarchicalMod_feedStockTypeCode1/feedingAtSiloEntrance"; // 转运桶风送口补料
+        String MODEL_BUCKET_SILO = "HierarchicalMod_feedStockTypeCode1/feedingPointReplenishment"; // 转运桶料仓补料
+        String MODEL_BUCKET_POINT = "HierarchicalMod_feedStockTypeCode1/rackPoint"; // 转运桶上料点补料
+//        String MODEL_NOTIFY = "HierarchicalMod_runModelCode1/feedingAtSiloEntrance"; // 转运桶风送口补料
+
     }
 
     interface URL {

@@ -81,8 +81,14 @@ public class ReplenishMaterialTableEditListAdapter extends BaseListDataRecyclerV
                         @Override
                         public void accept(Object o) throws Exception {
                             Bundle bundle = new Bundle();
-                            bundle.putSerializable(ReplenishConstant.IntentKey.REPLENISH_MATERIAL_TABLE,getItem(getAdapterPosition()));
-                            IntentRouter.go(context, UrlUtil.getPendingViewCode(getItem(getAdapterPosition()).getPending().openUrl),bundle);
+                            ReplenishMaterialTableEntity replenishMaterialTableEntity = getItem(getAdapterPosition());
+                            bundle.putSerializable(ReplenishConstant.IntentKey.REPLENISH_MATERIAL_TABLE,replenishMaterialTableEntity);
+                            if (replenishMaterialTableEntity.getPending() != null){
+                                IntentRouter.go(context, UrlUtil.getPendingViewCode(replenishMaterialTableEntity.getPending().openUrl),bundle);
+                            }else {
+                                IntentRouter.go(context, ReplenishConstant.Router.REPLENISH_MATERIAL_SCAN,bundle);
+                            }
+
                         }
                     });
         }

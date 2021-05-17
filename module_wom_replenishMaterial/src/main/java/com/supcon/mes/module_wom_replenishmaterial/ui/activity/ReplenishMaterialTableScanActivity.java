@@ -3,12 +3,13 @@ package com.supcon.mes.module_wom_replenishmaterial.ui.activity;
 import android.annotation.SuppressLint;
 import android.graphics.Rect;
 import android.os.Bundle;
-import android.support.annotation.MainThread;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.text.InputType;
 import android.text.TextUtils;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -18,6 +19,7 @@ import com.app.annotation.Presenter;
 import com.app.annotation.apt.Router;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.jakewharton.rxbinding2.view.RxView;
 import com.jakewharton.rxbinding2.widget.RxTextView;
 import com.supcon.common.view.base.activity.BaseRefreshRecyclerActivity;
 import com.supcon.common.view.base.adapter.IListAdapter;
@@ -28,6 +30,7 @@ import com.supcon.common.view.util.ToastUtils;
 import com.supcon.common.view.view.CustomSwipeLayout;
 import com.supcon.mes.mbap.beans.WorkFlowVar;
 import com.supcon.mes.mbap.utils.GsonUtil;
+import com.supcon.mes.mbap.view.CustomDialog;
 import com.supcon.mes.mbap.view.CustomEditText;
 import com.supcon.mes.mbap.view.CustomImageButton;
 import com.supcon.mes.mbap.view.CustomTextView;
@@ -41,6 +44,7 @@ import com.supcon.mes.middleware.model.bean.BAP5CommonEntity;
 import com.supcon.mes.middleware.model.bean.CommonBAPListEntity;
 import com.supcon.mes.middleware.model.bean.DeploymentEntity;
 import com.supcon.mes.middleware.model.bean.Good;
+import com.supcon.mes.middleware.model.bean.QrCodeEntity;
 import com.supcon.mes.middleware.model.bean.StaffEntity;
 import com.supcon.mes.middleware.model.bean.SystemCodeEntity;
 import com.supcon.mes.middleware.model.bean.WorkFlowButtonInfo;
@@ -49,46 +53,58 @@ import com.supcon.mes.middleware.model.event.RefreshEvent;
 import com.supcon.mes.middleware.model.event.SelectDataEvent;
 import com.supcon.mes.middleware.util.ErrorMsgHelper;
 import com.supcon.mes.module_scan.controller.CommonScanController;
-import com.supcon.mes.module_scan.model.bean.CodeResultEntity;
 import com.supcon.mes.module_scan.model.event.CodeResultEvent;
 import com.supcon.mes.module_wom_producetask.model.api.CommonListAPI;
 import com.supcon.mes.module_wom_producetask.model.contract.CommonListContract;
 import com.supcon.mes.module_wom_producetask.presenter.CommonListPresenter;
+import com.supcon.mes.module_wom_producetask.util.MaterQRUtil;
 import com.supcon.mes.module_wom_producetask.util.SmoothScrollLayoutManager;
 import com.supcon.mes.module_wom_replenishmaterial.IntentRouter;
 import com.supcon.mes.module_wom_replenishmaterial.R;
 import com.supcon.mes.module_wom_replenishmaterial.constant.ReplenishConstant;
+import com.supcon.mes.module_wom_replenishmaterial.model.api.ReplenishMaterialNotifyListAPI;
 import com.supcon.mes.module_wom_replenishmaterial.model.api.ReplenishMaterialTableEditAPI;
+import com.supcon.mes.module_wom_replenishmaterial.model.api.ReplenishMaterialTableScanAPI;
 import com.supcon.mes.module_wom_replenishmaterial.model.bean.AssociatedEquipmentEntity;
+import com.supcon.mes.module_wom_replenishmaterial.model.bean.ReplenishMaterialNotifyEntity;
 import com.supcon.mes.module_wom_replenishmaterial.model.bean.ReplenishMaterialTableEntity;
 import com.supcon.mes.module_wom_replenishmaterial.model.bean.ReplenishMaterialTablePartEntity;
 import com.supcon.mes.module_wom_replenishmaterial.model.bean.VesselEntity;
 import com.supcon.mes.module_wom_replenishmaterial.model.contract.ReplenishMaterialTableEditContract;
+import com.supcon.mes.module_wom_replenishmaterial.model.contract.ReplenishMaterialTableScanContract;
+import com.supcon.mes.module_wom_replenishmaterial.model.dto.ReplenishMaterialNotifyDTO;
+import com.supcon.mes.module_wom_replenishmaterial.model.dto.ReplenishMaterialScanDTO;
 import com.supcon.mes.module_wom_replenishmaterial.model.dto.ReplenishMaterialTableDTO;
 import com.supcon.mes.module_wom_replenishmaterial.presenter.ReplenishMaterialTableEditPresenter;
+import com.supcon.mes.module_wom_replenishmaterial.presenter.ReplenishMaterialTableScanPresenter;
 import com.supcon.mes.module_wom_replenishmaterial.ui.adapter.ReplenishMaterialRecordsEditAdapter;
-import com.supcon.mes.sb2.model.event.BarcodeEvent;
+import com.supcon.mes.module_wom_replenishmaterial.ui.adapter.ReplenishMaterialRecordsScanAdapter;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
+
+import io.reactivex.functions.Consumer;
 
 
 /**
  * ClassName
  * Created by zhangwenshuai1 on 2021/05/13
  * Email zhangwenshuai1@supcon.com
- * Desc 补料编辑
+ * Desc 补料扫码
  */
-@Router(value = ReplenishConstant.Router.REPLENISH_MATERIAL_EDIT, viewCode = ReplenishConstant.ViewCode.REPLENISH_MATERIAL_EDIT)
-@Presenter(value = {CommonListPresenter.class, ReplenishMaterialTableEditPresenter.class})
+@Router(value = ReplenishConstant.Router.REPLENISH_MATERIAL_SCAN/*, viewCode = ReplenishConstant.ViewCode.REPLENISH_MATERIAL_EDIT*/)
+@Presenter(value = {CommonListPresenter.class, ReplenishMaterialTableScanPresenter.class})
 //@PowerCode(entityCode = BmConstant.PowerCode.BM_INSTRUCTION_EDIT)
-@Controller(value = {WorkFlowViewController.class, GetPowerCodeController.class, CommonScanController.class})
-public class ReplenishMaterialTableEditActivity extends BaseRefreshRecyclerActivity<ReplenishMaterialTablePartEntity> implements CommonListContract.View, ReplenishMaterialTableEditContract.View {
+@Controller(value = {WorkFlowViewController.class, GetPowerCodeController.class,CommonScanController.class})
+public class ReplenishMaterialTableScanActivity extends BaseRefreshRecyclerActivity<ReplenishMaterialTablePartEntity> implements CommonListContract.View, ReplenishMaterialTableScanContract.View {
     @BindByTag("leftBtn")
     CustomImageButton leftBtn;
     @BindByTag("titleText")
@@ -103,8 +119,10 @@ public class ReplenishMaterialTableEditActivity extends BaseRefreshRecyclerActiv
     ImageView customListWidgetAdd;
     @BindByTag("contentView")
     RecyclerView contentView;
-    @BindByTag("workFlowView")
-    CustomWorkFlowView workFlowView;
+    @BindByTag("startBtn")
+    Button startBtn;
+    @BindByTag("endBtn")
+    Button endBtn;
     @BindByTag("eamPoint")
     CustomTextView eamPoint;
     @BindByTag("material")
@@ -117,11 +135,15 @@ public class ReplenishMaterialTableEditActivity extends BaseRefreshRecyclerActiv
     CustomTextView bucket;
     @BindByTag("customListWidgetIc")
     ImageView customListWidgetIc;
+    @BindByTag("eamPassIv")
+    ImageView eamPassIv;
+    @BindByTag("bucketPassIv")
+    ImageView bucketPassIv;
 
     private ReplenishMaterialTableEntity mReplenishMaterialTableEntity;
     Map<String, Object> queryParams = new HashMap<>();
     Map<String, Object> customCondition = new HashMap<>();
-    private ReplenishMaterialRecordsEditAdapter mReplenishMaterialRecordsEditAdapter;
+    private ReplenishMaterialRecordsScanAdapter mReplenishMaterialRecordsScanAdapter;
     private int mCurrentPosition;
     private ReplenishMaterialTablePartEntity mReplenishMaterialTablePartEntity;
     private String dgDeletedIds = "";
@@ -129,13 +151,13 @@ public class ReplenishMaterialTableEditActivity extends BaseRefreshRecyclerActiv
 
     @Override
     protected IListAdapter<ReplenishMaterialTablePartEntity> createAdapter() {
-        mReplenishMaterialRecordsEditAdapter = new ReplenishMaterialRecordsEditAdapter(context);
-        return mReplenishMaterialRecordsEditAdapter;
+        mReplenishMaterialRecordsScanAdapter = new ReplenishMaterialRecordsScanAdapter(context);
+        return mReplenishMaterialRecordsScanAdapter;
     }
 
     @Override
     protected int getLayoutID() {
-        return R.layout.replenish_ac_replenish_material_table_edit;
+        return R.layout.replenish_ac_replenish_material_table_scan;
     }
 
     @Override
@@ -144,13 +166,8 @@ public class ReplenishMaterialTableEditActivity extends BaseRefreshRecyclerActiv
         EventBus.getDefault().register(this);
         mReplenishMaterialTableEntity = (ReplenishMaterialTableEntity) getIntent().getSerializableExtra(ReplenishConstant.IntentKey.REPLENISH_MATERIAL_TABLE);
         mWorkFlowButtonInfo = (WorkFlowButtonInfo) getIntent().getSerializableExtra(ReplenishConstant.IntentKey.WORK_FLOW_BTN_INFO);
-        if (mReplenishMaterialTableEntity.getId() != null){
-            refreshListController.setPullDownRefreshEnabled(true);
-            refreshListController.setAutoPullDownRefresh(true);
-        }else {
-            refreshListController.setPullDownRefreshEnabled(false);
-            refreshListController.setAutoPullDownRefresh(false);
-        }
+        refreshListController.setPullDownRefreshEnabled(true);
+        refreshListController.setAutoPullDownRefresh(true);
         contentView.setLayoutManager(new SmoothScrollLayoutManager(context));
         contentView.addItemDecoration(new RecyclerView.ItemDecoration() {
             @Override
@@ -167,44 +184,30 @@ public class ReplenishMaterialTableEditActivity extends BaseRefreshRecyclerActiv
     protected void initView() {
         super.initView();
         StatusBarUtils.setWindowStatusBarColor(this, R.color.themeColor);
-        titleText.setText(context.getResources().getString(R.string.replenish_material_table_edit));
+        titleText.setText(context.getResources().getString(R.string.replenish_material_table_scan));
         rightBtn.setVisibility(View.VISIBLE);
         rightBtn.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_top_scan));
 
         planNum.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
         actualNum.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
-
         if (mReplenishMaterialTableEntity.getEquipment() != null && mReplenishMaterialTableEntity.getEquipment().getFeedStockType() != null
                 && ReplenishConstant.SystemCode.MODEL_AIR.equals(mReplenishMaterialTableEntity.getEquipment().getFeedStockType().id)){
             bucket.setVisibility(View.GONE);
         }
-
-        if (mReplenishMaterialTableEntity.getEquipment() != null && mReplenishMaterialTableEntity.getEquipment().getRunModel() != null
-                && ReplenishConstant.SystemCode.MODEL_NOTIFY.equals(mReplenishMaterialTableEntity.getEquipment().getRunModel().id)){
-            eamPoint.setEditable(false);
-            material.setEditable(false);
-            planNum.setEditable(false);
-        }
+        eamPoint.setEditable(false);
+        material.setEditable(false);
+        planNum.setEditable(false);
+        bucket.setEditable(false);
 
         customListWidgetName.setText(context.getResources().getString(R.string.replenish_material_records));
+        customListWidgetAdd.setVisibility(View.GONE);
         customListWidgetEdit.setVisibility(View.GONE);
 
-        if (mReplenishMaterialTableEntity.getOperator() == null || TextUtils.isEmpty(mReplenishMaterialTableEntity.getOperator().code)) {
-            // 操作人
-            StaffEntity exeStaff = new StaffEntity();
-            exeStaff.id = SupPlantApplication.getAccountInfo().staffId;
-            exeStaff.name = SupPlantApplication.getAccountInfo().staffName;
-            mReplenishMaterialTableEntity.setOperator(exeStaff);
-        }
-
-        if (mReplenishMaterialTableEntity.getId() == null) {
-            getController(WorkFlowViewController.class).initStartWorkFlowView(workFlowView, mWorkFlowButtonInfo.getDeploymentId());
-            getController(GetPowerCodeController.class).initPowerCode(mWorkFlowButtonInfo.getCode());
-        } else {
-            getController(WorkFlowViewController.class).initPendingWorkFlowView(workFlowView, mReplenishMaterialTableEntity.getPending().id);
-            getController(GetPowerCodeController.class).initPowerCode(mReplenishMaterialTableEntity.getPending().activityName);
-        }
-
+        // 默认不可操作
+        startBtn.setEnabled(false);
+        startBtn.getBackground().setAlpha(100);
+        endBtn.setEnabled(false);
+        endBtn.getBackground().setAlpha(100);
     }
 
     @Override
@@ -226,11 +229,6 @@ public class ReplenishMaterialTableEditActivity extends BaseRefreshRecyclerActiv
             bucket.setContent(mReplenishMaterialTableEntity.getVessel().getName() + "(" + mReplenishMaterialTableEntity.getVessel().getCode() + ")");
         }
 
-        // 新增单据:状态
-        SystemCodeEntity state = new SystemCodeEntity();
-        state.id = ReplenishConstant.SystemCode.TABLE_STATE_NEW;
-        mReplenishMaterialTableEntity.setFmState(state);
-
     }
 
     @SuppressLint("CheckResult")
@@ -238,11 +236,8 @@ public class ReplenishMaterialTableEditActivity extends BaseRefreshRecyclerActiv
     protected void initListener() {
         super.initListener();
         leftBtn.setOnClickListener(v -> finish());
-        rightBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                getController(CommonScanController.class).openCameraScan(this.getClass().getSimpleName());
-            }
+        rightBtn.setOnClickListener(v -> {
+            getController(CommonScanController.class).openCameraScan(this.getClass().getSimpleName());
         });
 
         refreshListController.setOnRefreshListener(() -> presenterRouter.create(CommonListAPI.class).list(1, customCondition, queryParams,
@@ -281,7 +276,12 @@ public class ReplenishMaterialTableEditActivity extends BaseRefreshRecyclerActiv
                     }
                     return true;
                 })
-                .subscribe(charSequence -> mReplenishMaterialTableEntity.setActualNumber(new BigDecimal(charSequence.toString())));
+                .subscribe(new Consumer<CharSequence>() {
+                    @Override
+                    public void accept(CharSequence charSequence) throws Exception {
+                        mReplenishMaterialTableEntity.setActualNumber(new BigDecimal(charSequence.toString()));
+                    }
+                });
         bucket.setOnChildViewClickListener((childView, action, obj) -> {
             Bundle bundle = new Bundle();
             bundle.putString(Constant.IntentKey.URL, "/msService/WOM/vesselMg/vessel/vesselRef-query");
@@ -293,24 +293,24 @@ public class ReplenishMaterialTableEditActivity extends BaseRefreshRecyclerActiv
 //            replenishMaterialTablePartEntity.setMaterialId(mReplenishMaterialTableEntity.getMaterial()); // 物料
             replenishMaterialTablePartEntity.setFmTime(System.currentTimeMillis());
 
-            if (mReplenishMaterialRecordsEditAdapter.getItemCount() <= 0) {
-                mReplenishMaterialRecordsEditAdapter.addData(replenishMaterialTablePartEntity);
+            if (mReplenishMaterialRecordsScanAdapter.getItemCount() <= 0) {
+                mReplenishMaterialRecordsScanAdapter.addData(replenishMaterialTablePartEntity);
             } else {
-                mReplenishMaterialRecordsEditAdapter.getList().add(0, replenishMaterialTablePartEntity);
+                mReplenishMaterialRecordsScanAdapter.getList().add(0, replenishMaterialTablePartEntity);
             }
-            mReplenishMaterialRecordsEditAdapter.notifyItemRangeInserted(0, 1);
-            mReplenishMaterialRecordsEditAdapter.notifyItemRangeChanged(0, 1);
+            mReplenishMaterialRecordsScanAdapter.notifyItemRangeInserted(0, 1);
+            mReplenishMaterialRecordsScanAdapter.notifyItemRangeChanged(0, 1);
             contentView.smoothScrollToPosition(0);
 
         });
-        mReplenishMaterialRecordsEditAdapter.setOnItemChildViewClickListener((childView, position, action, obj) -> {
+        mReplenishMaterialRecordsScanAdapter.setOnItemChildViewClickListener((childView, position, action, obj) -> {
             mCurrentPosition = position;
             mReplenishMaterialTablePartEntity = (ReplenishMaterialTablePartEntity) obj;
             switch (childView.getTag().toString()) {
                 case "itemViewDelBtn":
-                    mReplenishMaterialRecordsEditAdapter.getList().remove(obj);
-                    mReplenishMaterialRecordsEditAdapter.notifyItemRangeRemoved(position, 1);
-                    mReplenishMaterialRecordsEditAdapter.notifyItemRangeChanged(position, mReplenishMaterialRecordsEditAdapter.getItemCount() - position);
+                    mReplenishMaterialRecordsScanAdapter.getList().remove(obj);
+                    mReplenishMaterialRecordsScanAdapter.notifyItemRangeRemoved(position, 1);
+                    mReplenishMaterialRecordsScanAdapter.notifyItemRangeChanged(position, mReplenishMaterialRecordsScanAdapter.getItemCount() - position);
                     if (mReplenishMaterialTablePartEntity.getId() != null) {
                         dgDeletedIds += mReplenishMaterialTablePartEntity.getId() + ",";
                     }
@@ -318,27 +318,58 @@ public class ReplenishMaterialTableEditActivity extends BaseRefreshRecyclerActiv
                 default:
             }
         });
+        RxView.clicks(startBtn).throttleFirst(300, TimeUnit.MILLISECONDS)
+                .subscribe(new Consumer<Object>() {
+                    @Override
+                    public void accept(Object o) throws Exception {
+                        showDialogOperate(0);
+                    }
+                });
+        RxView.clicks(endBtn).throttleFirst(300, TimeUnit.MILLISECONDS)
+                .subscribe(new Consumer<Object>() {
+                    @Override
+                    public void accept(Object o) throws Exception {
+                        showDialogOperate(1);
+                    }
+                });
 
-        workFlowView.setOnChildViewClickListener(new OnChildViewClickListener() {
-            @Override
-            public void onChildViewClick(View childView, int action, Object obj) {
-                WorkFlowVar workFlowVar = (WorkFlowVar) obj;
-                switch (action) {
-                    case 0:
-                        submitReport(workFlowVar, Constant.OperateType.SAVE);
-                        break;
-                    case 1:
-                    case 2:
-                        submitReport(workFlowVar, Constant.OperateType.SUBMIT);
-                        break;
-                    case 4:
-                        break;
-                    default:
+    }
+    /**
+     * @param
+     * @return
+     * @author zhangwenshuai1 2021/5/12
+     * @description 配料单扫描开始结束
+     */
+    private void showDialogOperate(int i) {
+        CustomDialog customDialog = new CustomDialog(context)
+                .layout(R.layout.wom_dialog_confirm, DisplayUtil.getScreenWidth(context) * 4 / 5, ViewGroup.LayoutParams.WRAP_CONTENT);
+        if (i == 0){
+            customDialog.bindView(R.id.tipContentTv,getString(R.string.replenish_start_operate_open_valve));
+        }else {
+            customDialog.bindView(R.id.tipContentTv,getString(R.string.replenish_end_operate));
+        }
+        customDialog.getDialog().getWindow().setBackgroundDrawableResource(R.color.transparent);
 
-                }
-            }
-        });
+        customDialog.bindClickListener(R.id.cancelTv, null, true)
+                .bindClickListener(R.id.confirmTv, v -> {
+                    ReplenishMaterialScanDTO replenishMaterialScanDTO = new ReplenishMaterialScanDTO();
+                    ReplenishMaterialTableEntity replenishMaterialTableEntity = new ReplenishMaterialTableEntity();
+                    replenishMaterialTableEntity.setId(mReplenishMaterialTableEntity.getId());
+                    replenishMaterialTableEntity.setEqScanFlag(true);
+                    replenishMaterialTableEntity.setVesselScanFlag(true);
+                    replenishMaterialScanDTO.setFmBill(replenishMaterialTableEntity);
+                    if (i == 0){
+                        replenishMaterialScanDTO.setState("start");
+                    }else {
+                        replenishMaterialScanDTO.setState("complete");
+                    }
+                    List<ReplenishMaterialTablePartEntity> list = new ArrayList<>();
+                    list.addAll(mReplenishMaterialRecordsScanAdapter.getList());
+                    replenishMaterialScanDTO.setFmBillDetais(list);
 
+                    presenterRouter.create(ReplenishMaterialTableScanAPI.class).submit(replenishMaterialScanDTO);
+                }, true)
+                .show();
     }
 
     /**
@@ -361,22 +392,22 @@ public class ReplenishMaterialTableEditActivity extends BaseRefreshRecyclerActiv
         replenishMaterialTableDTO.setFmBill(mReplenishMaterialTableEntity);
 
         ReplenishMaterialTableDTO.DgListEntity dgListEntity = new ReplenishMaterialTableDTO.DgListEntity();
-//        if (mReplenishMaterialRecordsEditAdapter.getList() != null){
-//            for (ReplenishMaterialTablePartEntity partEntity :  mReplenishMaterialRecordsEditAdapter.getList()){
+//        if (mReplenishMaterialRecordsScanAdapter.getList() != null){
+//            for (ReplenishMaterialTablePartEntity partEntity :  mReplenishMaterialRecordsScanAdapter.getList()){
 //                partEntity.setFmBill(null);
 //            }
 //        }
 
         Gson gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
-        dgListEntity.setDg(mReplenishMaterialRecordsEditAdapter.getList() == null ? null : gson.toJson(mReplenishMaterialRecordsEditAdapter.getList()));
-//        dgListEntity.setDg(mReplenishMaterialRecordsEditAdapter.getList() == null ? null : GsonUtil.gsonStringSerializeNulls(mReplenishMaterialRecordsEditAdapter.getList()));
+        dgListEntity.setDg(mReplenishMaterialRecordsScanAdapter.getList() == null ? null : gson.toJson(mReplenishMaterialRecordsScanAdapter.getList()));
+//        dgListEntity.setDg(mReplenishMaterialRecordsScanAdapter.getList() == null ? null : GsonUtil.gsonStringSerializeNulls(mReplenishMaterialRecordsScanAdapter.getList()));
         replenishMaterialTableDTO.setDgList(dgListEntity);
         ReplenishMaterialTableDTO.DgListEntity dgDeletedIdsList = new ReplenishMaterialTableDTO.DgListEntity();
         dgDeletedIdsList.setDg(TextUtils.isEmpty(dgDeletedIds) ? null : dgDeletedIds);
         replenishMaterialTableDTO.setDgDeletedIds(dgDeletedIdsList);
 
 
-        replenishMaterialTableDTO.setWorkFlowVar(getWorkFlowVar(workFlowVar, Constant.OperateType.SUBMIT.equals(operate)));
+//        replenishMaterialTableDTO.setWorkFlowVar(getWorkFlowVar(workFlowVar, Constant.OperateType.SUBMIT.equals(operate)));
         replenishMaterialTableDTO.setOperateType(operate);
 
         DeploymentEntity deploymentEntity = getController(WorkFlowViewController.class).getDeploymentEntity();
@@ -394,18 +425,18 @@ public class ReplenishMaterialTableEditActivity extends BaseRefreshRecyclerActiv
 
     }
 
-    private WorkFlowVarDTO getWorkFlowVar(WorkFlowVar workFlowVar, boolean submit) {
-        WorkFlowVarDTO workFlowVarDTO = new WorkFlowVarDTO();
-        if (submit) {
-            workFlowVarDTO.setOutcomeMapJson(workFlowVar.outcomeMapJson.toString());
-            workFlowVarDTO.setOutcome(workFlowVar.outCome);
-            workFlowVarDTO.setOutcomeType(workFlowVar.type);
-        }
-        workFlowVarDTO.setComment(workFlowView.getComment());
-//        workFlowVarDTO.setActivityName(mReplenishMaterialTableEntity.getPending().activityName);
-//        workFlowVarDTO.setActivityType(mReplenishMaterialTableEntity.getPending().activityType);
-        return workFlowVarDTO;
-    }
+//    private WorkFlowVarDTO getWorkFlowVar(WorkFlowVar workFlowVar, boolean submit) {
+//        WorkFlowVarDTO workFlowVarDTO = new WorkFlowVarDTO();
+//        if (submit) {
+//            workFlowVarDTO.setOutcomeMapJson(workFlowVar.outcomeMapJson.toString());
+//            workFlowVarDTO.setOutcome(workFlowVar.outCome);
+//            workFlowVarDTO.setOutcomeType(workFlowVar.type);
+//        }
+//        workFlowVarDTO.setComment(workFlowView.getComment());
+////        workFlowVarDTO.setActivityName(mReplenishMaterialTableEntity.getPending().activityName);
+////        workFlowVarDTO.setActivityType(mReplenishMaterialTableEntity.getPending().activityType);
+//        return workFlowVarDTO;
+//    }
 
 
     private boolean checkSubmit() {
@@ -426,24 +457,21 @@ public class ReplenishMaterialTableEditActivity extends BaseRefreshRecyclerActiv
             ToastUtils.show(context, context.getResources().getString(R.string.wom_please_input_actual_num));
             return true;
         }
-        if (mReplenishMaterialTableEntity.getEquipment() != null && mReplenishMaterialTableEntity.getEquipment().getFeedStockType() != null
-                && !ReplenishConstant.SystemCode.MODEL_AIR.equals(mReplenishMaterialTableEntity.getEquipment().getFeedStockType().id)){
-            if (mReplenishMaterialTableEntity.getVessel() == null || TextUtils.isEmpty(mReplenishMaterialTableEntity.getVessel().getCode())) {
-                ToastUtils.show(context, context.getResources().getString(R.string.replenish_choose_or_scan_bucket));
-                return true;
-            }
+        if (mReplenishMaterialTableEntity.getVessel() == null || TextUtils.isEmpty(mReplenishMaterialTableEntity.getVessel().getCode())) {
+            ToastUtils.show(context, context.getResources().getString(R.string.replenish_choose_or_scan_bucket));
+            return true;
         }
-        if (mReplenishMaterialRecordsEditAdapter.getList() == null || mReplenishMaterialRecordsEditAdapter.getList().size() <= 0) {
+        if (mReplenishMaterialRecordsScanAdapter.getList() == null || mReplenishMaterialRecordsScanAdapter.getList().size() <= 0) {
             ToastUtils.show(context, context.getResources().getString(R.string.wom_no_data_operate));
             return true;
         }
-        for (ReplenishMaterialTablePartEntity replenishMaterialTablePartEntity : mReplenishMaterialRecordsEditAdapter.getList()) {
+        for (ReplenishMaterialTablePartEntity replenishMaterialTablePartEntity : mReplenishMaterialRecordsScanAdapter.getList()) {
             if (TextUtils.isEmpty(replenishMaterialTablePartEntity.getBatch())) {
-                ToastUtils.show(context, context.getResources().getString(R.string.wom_di) + (mReplenishMaterialRecordsEditAdapter.getList().indexOf(replenishMaterialTablePartEntity) + 1) + context.getResources().getString(R.string.wom_please_write_material_batch));
+                ToastUtils.show(context, context.getResources().getString(R.string.wom_di) + (mReplenishMaterialRecordsScanAdapter.getList().indexOf(replenishMaterialTablePartEntity) + 1) + context.getResources().getString(R.string.wom_please_write_material_batch));
                 return true;
             }
             if (replenishMaterialTablePartEntity.getFmNumber() == null) {
-                ToastUtils.show(context, context.getResources().getString(R.string.wom_di) + (mReplenishMaterialRecordsEditAdapter.getList().indexOf(replenishMaterialTablePartEntity) + 1) + context.getResources().getString(R.string.wom_pleasr_write_num));
+                ToastUtils.show(context, context.getResources().getString(R.string.wom_di) + (mReplenishMaterialRecordsScanAdapter.getList().indexOf(replenishMaterialTablePartEntity) + 1) + context.getResources().getString(R.string.wom_pleasr_write_num));
                 return true;
             }
         }
@@ -477,7 +505,8 @@ public class ReplenishMaterialTableEditActivity extends BaseRefreshRecyclerActiv
 
     @Override
     public void submitFailed(String errorMsg) {
-        onLoadFailed(ErrorMsgHelper.msgParse(errorMsg));
+        onLoadFailed(errorMsg);
+        ToastUtils.show(context,errorMsg);
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -490,13 +519,6 @@ public class ReplenishMaterialTableEditActivity extends BaseRefreshRecyclerActiv
             if (associatedEquipmentEntity.getProductId() != null && !TextUtils.isEmpty(associatedEquipmentEntity.getProductId().code)) {
                 material.setContent(associatedEquipmentEntity.getProductId().name + "(" + associatedEquipmentEntity.getProductId().code + ")");
                 mReplenishMaterialTableEntity.setMaterial(associatedEquipmentEntity.getProductId());
-            }
-            // 是否不需要绑桶
-            if (mReplenishMaterialTableEntity.getEquipment() != null && mReplenishMaterialTableEntity.getEquipment().getFeedStockType() != null
-                    && ReplenishConstant.SystemCode.MODEL_AIR.equals(mReplenishMaterialTableEntity.getEquipment().getFeedStockType().id)){
-                bucket.setVisibility(View.GONE);
-            }else {
-                bucket.setVisibility(View.VISIBLE);
             }
         } else if (selectDataEvent.getEntity() instanceof Good) {
             Good good = (Good) selectDataEvent.getEntity();
@@ -516,8 +538,46 @@ public class ReplenishMaterialTableEditActivity extends BaseRefreshRecyclerActiv
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void getScanResult(CodeResultEvent codeResultEvent){
         if (this.getClass().getSimpleName().equals(codeResultEvent.scanTag)){
-            // 扫描桶
-            // 扫描物料
+
+            QrCodeEntity qrCodeEntity = MaterQRUtil.getQRCode(context,codeResultEvent.scanResult);
+
+            if (qrCodeEntity != null){
+                switch (qrCodeEntity.getType()){
+                    // 扫描设备
+                    case 0:
+                        if (qrCodeEntity.getCode().equals(mReplenishMaterialTableEntity.getEquipment().getCode())){
+                            mReplenishMaterialTableEntity.setEqScanFlag(true);
+                            eamPassIv.setImageResource(R.drawable.replenish_ic_pass);
+                            // 是否桶已经校验
+                            if (mReplenishMaterialTableEntity.isVesselScanFlag()){
+                                startBtn.setEnabled(true);
+                                startBtn.getBackground().setAlpha(255);
+                            }
+                        }else {
+                            ToastUtils.show(context,"未能匹配设备，请再次确认！");
+                        }
+                        break;
+                    // 扫描桶
+                    case 1:
+                        if (qrCodeEntity.getCode().equals(mReplenishMaterialTableEntity.getVessel().getCode())){
+                            mReplenishMaterialTableEntity.setVesselScanFlag(true);
+                            bucketPassIv.setImageResource(R.drawable.replenish_ic_pass);
+                            // 是否设备已经校验
+                            if (mReplenishMaterialTableEntity.isEqScanFlag()){
+                                startBtn.setEnabled(true);
+                                startBtn.getBackground().setAlpha(255);
+                            }
+                        }else {
+                            ToastUtils.show(context,"未能匹配桶号，请再次确认！");
+                        }
+                        break;
+                    // 扫描物料
+                    case 2:
+                        break;
+                    default:
+                }
+            }
+
         }
     }
 

@@ -21,4 +21,7 @@
     <string name="wom_please_input_actual_num">请填写实际数量</string>
     <string name="common_choose_ref">参照选择</string>
     <string name="please_input_name">请输入名称</string>
+    <string name="replenish_material_table_scan">补料单扫描</string>
+    <string name="replenish_start_operate_open_valve">确认【开始】补料操作？确认将会打开设备阀门</string>
+    <string name="replenish_end_operate">确认【结束】补料操作？</string>
 </resources>
