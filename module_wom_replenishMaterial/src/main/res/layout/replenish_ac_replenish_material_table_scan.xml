@@ -85,7 +85,9 @@
         <include layout="@layout/ly_line_light"/>
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:id="@+id/bucketRl"
+            android:tag="bucketRl">
             <com.supcon.mes.mbap.view.CustomTextView
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/dp_40"
@@ -136,7 +138,7 @@
             android:textColor="@color/white"
             android:textSize="@dimen/fontSize_16sp"
             android:enabled="false"
-            android:alpha="0.35"/>
+            android:alpha="0.3"/>
         <Button
             android:layout_width="0dp"
             android:layout_height="@dimen/dp_40"
@@ -152,7 +154,7 @@
             android:textColor="@color/white"
             android:textSize="@dimen/fontSize_16sp"
             android:enabled="false"
-            android:alpha="0.35"/>
+            android:alpha="0.3"/>
     </LinearLayout>
 
 </RelativeLayout>

@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.app.annotation.BindByTag;
@@ -139,6 +140,8 @@ public class ReplenishMaterialTableScanActivity extends BaseRefreshRecyclerActiv
     ImageView eamPassIv;
     @BindByTag("bucketPassIv")
     ImageView bucketPassIv;
+    @BindByTag("bucketRl")
+    RelativeLayout bucketRl;
 
     private ReplenishMaterialTableEntity mReplenishMaterialTableEntity;
     Map<String, Object> queryParams = new HashMap<>();
@@ -192,7 +195,7 @@ public class ReplenishMaterialTableScanActivity extends BaseRefreshRecyclerActiv
         actualNum.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
         if (mReplenishMaterialTableEntity.getEquipment() != null && mReplenishMaterialTableEntity.getEquipment().getFeedStockType() != null
                 && ReplenishConstant.SystemCode.MODEL_AIR.equals(mReplenishMaterialTableEntity.getEquipment().getFeedStockType().id)) {
-            bucket.setVisibility(View.GONE);
+            bucketRl.setVisibility(View.GONE);
         }
         eamPoint.setEditable(false);
         material.setEditable(false);

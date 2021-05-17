@@ -75,7 +75,7 @@ public class ScanReplenishActivity extends BaseControllerActivity implements Rep
         super.onInit();
         titleText.setText(context.getResources().getString(R.string.replenish_quick_scan_bucket));
         rightBtn.setVisibility(View.VISIBLE);
-        rightBtn.setImageResource(R.drawable.ic_scan33);
+        rightBtn.setImageResource(R.drawable.ic_scan);
         StatusBarUtils.setWindowStatusBarColor(this, R.color.themeColor);
 
         EventBus.getDefault().register(this);
