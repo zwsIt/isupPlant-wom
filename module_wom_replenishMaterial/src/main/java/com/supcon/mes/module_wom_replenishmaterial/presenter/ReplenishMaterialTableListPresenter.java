@@ -55,12 +55,14 @@ public class ReplenishMaterialTableListPresenter extends ReplenishMaterialTableL
         fastQueryCondEntity.subconds = new ArrayList<>();
 
         if (queryMap.containsKey(Constant.BAPQuery.CODE)){
+            // 桶编码
             BAPQueryParamsHelper.setLike(false);
             JoinSubcondEntity joinSubcondEntityBucket = BAPQueryParamsHelper.crateJoinSubcondEntity(queryMap, "WOM_VESSELS,ID,WOM_FM_BILLS,VESSEL");
             fastQueryCondEntity.subconds.add(joinSubcondEntityBucket);
             queryMap.remove(Constant.BAPQuery.CODE);
         }
 
+        // 设备
         JoinSubcondEntity joinSubcondEntity = BAPQueryParamsHelper.crateJoinSubcondEntity(queryMap, "HM_FTY_EQUIPMENTS,ID,WOM_FMN_NOTICES,EQUIPMENT");
         fastQueryCondEntity.subconds.add(joinSubcondEntity);
 

@@ -41,6 +41,7 @@ import com.supcon.mes.middleware.model.bean.BAP5CommonEntity;
 import com.supcon.mes.middleware.model.bean.CommonBAPListEntity;
 import com.supcon.mes.middleware.model.bean.DeploymentEntity;
 import com.supcon.mes.middleware.model.bean.Good;
+import com.supcon.mes.middleware.model.bean.QrCodeEntity;
 import com.supcon.mes.middleware.model.bean.StaffEntity;
 import com.supcon.mes.middleware.model.bean.SystemCodeEntity;
 import com.supcon.mes.middleware.model.bean.WorkFlowButtonInfo;
@@ -54,6 +55,7 @@ import com.supcon.mes.module_scan.model.event.CodeResultEvent;
 import com.supcon.mes.module_wom_producetask.model.api.CommonListAPI;
 import com.supcon.mes.module_wom_producetask.model.contract.CommonListContract;
 import com.supcon.mes.module_wom_producetask.presenter.CommonListPresenter;
+import com.supcon.mes.module_wom_producetask.util.MaterQRUtil;
 import com.supcon.mes.module_wom_producetask.util.SmoothScrollLayoutManager;
 import com.supcon.mes.module_wom_replenishmaterial.IntentRouter;
 import com.supcon.mes.module_wom_replenishmaterial.R;
@@ -144,10 +146,10 @@ public class ReplenishMaterialTableEditActivity extends BaseRefreshRecyclerActiv
         EventBus.getDefault().register(this);
         mReplenishMaterialTableEntity = (ReplenishMaterialTableEntity) getIntent().getSerializableExtra(ReplenishConstant.IntentKey.REPLENISH_MATERIAL_TABLE);
         mWorkFlowButtonInfo = (WorkFlowButtonInfo) getIntent().getSerializableExtra(ReplenishConstant.IntentKey.WORK_FLOW_BTN_INFO);
-        if (mReplenishMaterialTableEntity.getId() != null){
+        if (mReplenishMaterialTableEntity.getId() != null) {
             refreshListController.setPullDownRefreshEnabled(true);
             refreshListController.setAutoPullDownRefresh(true);
-        }else {
+        } else {
             refreshListController.setPullDownRefreshEnabled(false);
             refreshListController.setAutoPullDownRefresh(false);
         }
@@ -175,12 +177,12 @@ public class ReplenishMaterialTableEditActivity extends BaseRefreshRecyclerActiv
         actualNum.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
 
         if (mReplenishMaterialTableEntity.getEquipment() != null && mReplenishMaterialTableEntity.getEquipment().getFeedStockType() != null
-                && ReplenishConstant.SystemCode.MODEL_AIR.equals(mReplenishMaterialTableEntity.getEquipment().getFeedStockType().id)){
+                && ReplenishConstant.SystemCode.MODEL_AIR.equals(mReplenishMaterialTableEntity.getEquipment().getFeedStockType().id)) {
             bucket.setVisibility(View.GONE);
         }
 
         if (mReplenishMaterialTableEntity.getEquipment() != null && mReplenishMaterialTableEntity.getEquipment().getRunModel() != null
-                && ReplenishConstant.SystemCode.MODEL_NOTIFY.equals(mReplenishMaterialTableEntity.getEquipment().getRunModel().id)){
+                && ReplenishConstant.SystemCode.MODEL_NOTIFY.equals(mReplenishMaterialTableEntity.getEquipment().getRunModel().id)) {
             eamPoint.setEditable(false);
             material.setEditable(false);
             planNum.setEditable(false);
@@ -257,11 +259,11 @@ public class ReplenishMaterialTableEditActivity extends BaseRefreshRecyclerActiv
         RxTextView.textChanges(planNum.editText())
                 .skipInitialValue()
                 .filter(charSequence -> {
-                    if (TextUtils.isEmpty(charSequence.toString())){
+                    if (TextUtils.isEmpty(charSequence.toString())) {
                         mReplenishMaterialTableEntity.setPlanNumber(null);
                         return false;
                     }
-                    if(charSequence.toString().startsWith(".")){
+                    if (charSequence.toString().startsWith(".")) {
                         planNum.editText().setText("0.");
                         return false;
                     }
@@ -271,11 +273,11 @@ public class ReplenishMaterialTableEditActivity extends BaseRefreshRecyclerActiv
         RxTextView.textChanges(actualNum.editText())
                 .skipInitialValue()
                 .filter(charSequence -> {
-                    if (TextUtils.isEmpty(charSequence.toString())){
+                    if (TextUtils.isEmpty(charSequence.toString())) {
                         mReplenishMaterialTableEntity.setActualNumber(null);
                         return false;
                     }
-                    if(charSequence.toString().startsWith(".")){
+                    if (charSequence.toString().startsWith(".")) {
                         actualNum.editText().setText("0.");
                         return false;
                     }
@@ -289,19 +291,7 @@ public class ReplenishMaterialTableEditActivity extends BaseRefreshRecyclerActiv
             IntentRouter.go(context, Constant.Router.COMMON_LIST_REF, bundle);
         });
         customListWidgetAdd.setOnClickListener(v -> {
-            ReplenishMaterialTablePartEntity replenishMaterialTablePartEntity = new ReplenishMaterialTablePartEntity();
-//            replenishMaterialTablePartEntity.setMaterialId(mReplenishMaterialTableEntity.getMaterial()); // 物料
-            replenishMaterialTablePartEntity.setFmTime(System.currentTimeMillis());
-
-            if (mReplenishMaterialRecordsEditAdapter.getItemCount() <= 0) {
-                mReplenishMaterialRecordsEditAdapter.addData(replenishMaterialTablePartEntity);
-            } else {
-                mReplenishMaterialRecordsEditAdapter.getList().add(0, replenishMaterialTablePartEntity);
-            }
-            mReplenishMaterialRecordsEditAdapter.notifyItemRangeInserted(0, 1);
-            mReplenishMaterialRecordsEditAdapter.notifyItemRangeChanged(0, 1);
-            contentView.smoothScrollToPosition(0);
-
+            addItem(null);
         });
         mReplenishMaterialRecordsEditAdapter.setOnItemChildViewClickListener((childView, position, action, obj) -> {
             mCurrentPosition = position;
@@ -339,6 +329,24 @@ public class ReplenishMaterialTableEditActivity extends BaseRefreshRecyclerActiv
             }
         });
 
+    }
+
+    private void addItem(QrCodeEntity qrCodeEntity) {
+        ReplenishMaterialTablePartEntity replenishMaterialTablePartEntity = new ReplenishMaterialTablePartEntity();
+        if (qrCodeEntity != null){
+            replenishMaterialTablePartEntity.setBatch(qrCodeEntity.getBatch());
+            replenishMaterialTablePartEntity.setFmNumber(qrCodeEntity.getNum());
+        }
+        replenishMaterialTablePartEntity.setFmTime(System.currentTimeMillis());
+
+        if (mReplenishMaterialRecordsEditAdapter.getItemCount() <= 0) {
+            mReplenishMaterialRecordsEditAdapter.addData(replenishMaterialTablePartEntity);
+        } else {
+            mReplenishMaterialRecordsEditAdapter.getList().add(0, replenishMaterialTablePartEntity);
+        }
+        mReplenishMaterialRecordsEditAdapter.notifyItemRangeInserted(0, 1);
+        mReplenishMaterialRecordsEditAdapter.notifyItemRangeChanged(0, 1);
+        contentView.smoothScrollToPosition(0);
     }
 
     /**
@@ -427,7 +435,7 @@ public class ReplenishMaterialTableEditActivity extends BaseRefreshRecyclerActiv
             return true;
         }
         if (mReplenishMaterialTableEntity.getEquipment() != null && mReplenishMaterialTableEntity.getEquipment().getFeedStockType() != null
-                && !ReplenishConstant.SystemCode.MODEL_AIR.equals(mReplenishMaterialTableEntity.getEquipment().getFeedStockType().id)){
+                && !ReplenishConstant.SystemCode.MODEL_AIR.equals(mReplenishMaterialTableEntity.getEquipment().getFeedStockType().id)) {
             if (mReplenishMaterialTableEntity.getVessel() == null || TextUtils.isEmpty(mReplenishMaterialTableEntity.getVessel().getCode())) {
                 ToastUtils.show(context, context.getResources().getString(R.string.replenish_choose_or_scan_bucket));
                 return true;
@@ -493,9 +501,9 @@ public class ReplenishMaterialTableEditActivity extends BaseRefreshRecyclerActiv
             }
             // 是否不需要绑桶
             if (mReplenishMaterialTableEntity.getEquipment() != null && mReplenishMaterialTableEntity.getEquipment().getFeedStockType() != null
-                    && ReplenishConstant.SystemCode.MODEL_AIR.equals(mReplenishMaterialTableEntity.getEquipment().getFeedStockType().id)){
+                    && ReplenishConstant.SystemCode.MODEL_AIR.equals(mReplenishMaterialTableEntity.getEquipment().getFeedStockType().id)) {
                 bucket.setVisibility(View.GONE);
-            }else {
+            } else {
                 bucket.setVisibility(View.VISIBLE);
             }
         } else if (selectDataEvent.getEntity() instanceof Good) {
@@ -513,12 +521,39 @@ public class ReplenishMaterialTableEditActivity extends BaseRefreshRecyclerActiv
             mReplenishMaterialTableEntity.setVessel(vesselEntity);
         }
     }
+
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void getScanResult(CodeResultEvent codeResultEvent){
-        if (this.getClass().getSimpleName().equals(codeResultEvent.scanTag)){
-            // 扫描桶
-            // 扫描物料
+    public void getScanResult(CodeResultEvent codeResultEvent) {
+        if (this.getClass().getSimpleName().equals(codeResultEvent.scanTag)) {
+            QrCodeEntity qrCodeEntity = MaterQRUtil.getQRCode(context, codeResultEvent.scanResult);
+            if (qrCodeEntity != null) {
+                switch (qrCodeEntity.getType()) {
+                    // 扫描设备
+                    case 0:
+                        AssociatedEquipmentEntity associatedEquipmentEntity = new AssociatedEquipmentEntity();
+                        associatedEquipmentEntity.setId(qrCodeEntity.getId());
+                        associatedEquipmentEntity.setCode(qrCodeEntity.getCode());
+                        associatedEquipmentEntity.setName(qrCodeEntity.getName());
+                        eamPoint.setContent(associatedEquipmentEntity.getName() + "(" + associatedEquipmentEntity.getCode() + ")");
+                        mReplenishMaterialTableEntity.setEquipment(associatedEquipmentEntity);
+                        break;
+                    // 扫描桶
+                    case 1:
+                        VesselEntity vesselEntity = new VesselEntity();
+                        vesselEntity.setId(qrCodeEntity.getId());
+                        vesselEntity.setCode(qrCodeEntity.getCode());
+                        vesselEntity.setName(qrCodeEntity.getName());
+                        bucket.setContent(qrCodeEntity.getName() + "(" + qrCodeEntity.getCode() + ")");
+                        mReplenishMaterialTableEntity.setVessel(vesselEntity);
+                        break;
+                    // 扫描物料
+                    case 2:
+                        // 目前暂时按照MES产品定义格式
+                        addItem(qrCodeEntity);
+                        break;
+                    default:
+                }
+            }
         }
     }
-
 }

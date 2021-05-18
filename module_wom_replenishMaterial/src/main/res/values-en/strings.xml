@@ -28,4 +28,5 @@
     <string name="replenish_red_scan">设备红外扫码</string>
     <string name="replenish_quick_scan_bucket">快速扫桶补料</string>
     <string name="replenish_no_match_bucket">未能匹配桶号，请再次确认！</string>
+    <string name="replenish_check_failed_please_check_material_right">校验失败，请核对物料编码或者批号是否正确！</string>
 </resources>

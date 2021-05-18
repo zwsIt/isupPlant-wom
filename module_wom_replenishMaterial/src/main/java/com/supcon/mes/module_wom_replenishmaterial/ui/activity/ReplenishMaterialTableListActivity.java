@@ -172,10 +172,8 @@ public class ReplenishMaterialTableListActivity extends BaseControllerActivity {
         return searchTitleBar.editText().getText().toString();
     }
 
-    public void disableAdd(boolean isHas) {
-        if (!isHas){
-            searchTitleBar.disableRightBtn();
-        }
+    public void setSearch(String code) {
+        searchTitleBar.searchView().setInput(code);
     }
 
     private class InnerFragmentPagerAdapter extends FragmentPagerAdapter {

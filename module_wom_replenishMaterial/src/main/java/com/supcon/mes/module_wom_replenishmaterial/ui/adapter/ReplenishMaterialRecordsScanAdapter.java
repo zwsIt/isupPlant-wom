@@ -5,6 +5,7 @@ import android.content.Context;
 import android.text.InputType;
 import android.text.TextUtils;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.app.annotation.BindByTag;
@@ -25,6 +26,9 @@ import java.math.BigDecimal;
  * Desc 补料记录扫描Adapter
  */
 public class ReplenishMaterialRecordsScanAdapter extends BaseListDataRecyclerViewAdapter<ReplenishMaterialTablePartEntity> {
+
+    private boolean isBucket = true;
+
     public ReplenishMaterialRecordsScanAdapter(Context context) {
         super(context);
     }
@@ -47,6 +51,10 @@ public class ReplenishMaterialRecordsScanAdapter extends BaseListDataRecyclerVie
 //        }
     }
 
+    public void setBucket(boolean isBucket) {
+        this.isBucket = isBucket;
+    }
+
     /**
      * RecordsEditViewHolder
      * created by zhangwenshuai1 2020/4/10
@@ -60,6 +68,8 @@ public class ReplenishMaterialRecordsScanAdapter extends BaseListDataRecyclerVie
         CustomEditText numEt;
         @BindByTag("itemViewDelBtn")
         TextView itemViewDelBtn;
+        @BindByTag("materialRecordStateTv")
+        ImageView materialRecordStateTv;
 
         public RecordsEditViewHolder(Context context) {
             super(context,parent);
@@ -77,6 +87,9 @@ public class ReplenishMaterialRecordsScanAdapter extends BaseListDataRecyclerVie
             numEt.setEditable(false);
             numEt.setInputType(InputType.TYPE_CLASS_NUMBER|InputType.TYPE_NUMBER_FLAG_DECIMAL);
             itemViewDelBtn.setVisibility(View.GONE);
+            if (!isBucket){
+                materialRecordStateTv.setVisibility(View.VISIBLE);
+            }
         }
 
         @SuppressLint("CheckResult")
@@ -88,14 +101,6 @@ public class ReplenishMaterialRecordsScanAdapter extends BaseListDataRecyclerVie
                     .skipInitialValue()
                     .subscribe(charSequence -> getItem(getAdapterPosition()).setBatch(charSequence.toString()));
 
-//            RxTextView.textChanges(numEt.editText())
-//                    .skipInitialValue()
-//                    .subscribe(new Consumer<CharSequence>() {
-//                        @Override
-//                        public void accept(CharSequence charSequence) throws Exception {
-//                            getItem(getAdapterPosition()).setFmNumber(new BigDecimal(charSequence.toString()));
-//                        }
-//                    });
             RxTextView.textChanges(numEt.editText())
                     .skipInitialValue()
                     .filter(charSequence -> {
@@ -117,6 +122,14 @@ public class ReplenishMaterialRecordsScanAdapter extends BaseListDataRecyclerVie
         protected void update(ReplenishMaterialTablePartEntity data) {
             batchNum.setContent(data.getBatch());
             numEt.setContent(data.getFmNumber() == null ? "" : String.valueOf(data.getFmNumber()));
+            if (!isBucket){
+                if (data.getScanFlag()){
+                    materialRecordStateTv.setImageResource(R.drawable.replenish_ic_pass);
+                }else {
+                    materialRecordStateTv.setImageResource(R.drawable.replenish_ic_no_pass);
+                }
+            }
+
         }
     }
 

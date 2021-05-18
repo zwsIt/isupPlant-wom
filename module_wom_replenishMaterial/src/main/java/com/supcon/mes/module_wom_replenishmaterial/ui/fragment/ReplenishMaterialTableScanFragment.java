@@ -3,6 +3,7 @@ package com.supcon.mes.module_wom_replenishmaterial.ui.fragment;
 
 import android.annotation.SuppressLint;
 import android.graphics.Rect;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -19,11 +20,13 @@ import com.supcon.common.view.util.ToastUtils;
 import com.supcon.mes.middleware.constant.Constant;
 import com.supcon.mes.middleware.model.bean.CommonBAP5ListEntity;
 import com.supcon.mes.middleware.model.bean.MaterialQRCodeEntity;
+import com.supcon.mes.middleware.model.bean.QrCodeEntity;
 import com.supcon.mes.middleware.model.event.RefreshEvent;
 import com.supcon.mes.middleware.util.EmptyAdapterHelper;
 import com.supcon.mes.module_scan.controller.CommonScanController;
 import com.supcon.mes.module_scan.model.event.CodeResultEvent;
 import com.supcon.mes.module_wom_producetask.util.MaterQRUtil;
+import com.supcon.mes.module_wom_replenishmaterial.IntentRouter;
 import com.supcon.mes.module_wom_replenishmaterial.R;
 import com.supcon.mes.module_wom_replenishmaterial.constant.ReplenishConstant;
 import com.supcon.mes.module_wom_replenishmaterial.model.api.ReplenishMaterialTableListAPI;
@@ -55,10 +58,12 @@ public class ReplenishMaterialTableScanFragment extends BaseRefreshRecyclerFragm
     ArrayMap<String, Object> queryParams = new ArrayMap<>(); // 快速查询
 
     private ReplenishMaterialTableEditListAdapter mReplenishMaterialTableEditListAdapter;
+    private boolean mScanEam;
+    private boolean mScanBucket;
 
     @Override
     protected IListAdapter<ReplenishMaterialTableEntity> createAdapter() {
-        return new ReplenishMaterialTableEditListAdapter(context);
+        return mReplenishMaterialTableEditListAdapter = new ReplenishMaterialTableEditListAdapter(context);
     }
 
     @Override
@@ -124,7 +129,26 @@ public class ReplenishMaterialTableScanFragment extends BaseRefreshRecyclerFragm
                 return;
             }
 
-            MaterialQRCodeEntity materialQRCodeEntity = MaterQRUtil.materialQRCode(context,codeResultEvent.scanResult);
+            QrCodeEntity qrCodeEntity = MaterQRUtil.getQRCode(context,codeResultEvent.scanResult);
+            if (qrCodeEntity != null) {
+                switch (qrCodeEntity.getType()){
+                    // 扫描设备
+                    case 0:
+                        mScanEam = true;
+                        ((ReplenishMaterialTableListActivity) context).setSearch(qrCodeEntity.getName());
+                        refreshListController.refreshBegin();
+                        break;
+                    // 扫描桶
+                    case 1:
+                        mScanBucket = true;
+                        queryParams.put(Constant.BAPQuery.CODE,qrCodeEntity.getCode());
+                        refreshListController.refreshBegin();
+                        break;
+                    case 2:
+                        break;
+                    default:
+                }
+            }
 //            if (materialQRCodeEntity == null)return;
 
 //            if (materialQRCodeEntity.isIsRequest()){
@@ -181,12 +205,32 @@ public class ReplenishMaterialTableScanFragment extends BaseRefreshRecyclerFragm
     @Override
     public void listReplenishMaterialTablesSuccess(CommonBAP5ListEntity entity) {
         refreshListController.refreshComplete(entity.data.result);
+        if (mScanBucket && entity.data.result.size() == 1){
+            ReplenishMaterialTableEntity replenishMaterialTableEntity = (ReplenishMaterialTableEntity) entity.data.result.get(0);
+            replenishMaterialTableEntity.setVesselScanFlag(true);
+            goReplenishScanActivity(replenishMaterialTableEntity);
+        }
+        if (mScanEam && entity.data.result.size() == 1){
+            ReplenishMaterialTableEntity replenishMaterialTableEntity = (ReplenishMaterialTableEntity) entity.data.result.get(0);
+            replenishMaterialTableEntity.setEqScanFlag(true);
+            goReplenishScanActivity(replenishMaterialTableEntity);
+        }
+    }
+
+    private void goReplenishScanActivity(ReplenishMaterialTableEntity replenishMaterialTableEntity) {
+        mScanEam = false;
+        mScanBucket = false;
+        Bundle bundle = new Bundle();
+        bundle.putSerializable(ReplenishConstant.IntentKey.REPLENISH_MATERIAL_TABLE,replenishMaterialTableEntity);
+        IntentRouter.go(context, ReplenishConstant.Router.REPLENISH_MATERIAL_SCAN,bundle);
     }
 
     @Override
     public void listReplenishMaterialTablesFailed(String errorMsg) {
         refreshListController.refreshComplete();
         ToastUtils.show(context, errorMsg);
+        mScanEam = false;
+        mScanBucket = false;
     }
 
 }
