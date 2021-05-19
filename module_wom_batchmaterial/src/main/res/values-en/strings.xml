@@ -33,4 +33,14 @@
     <string name="wom_please_write_batchmaterial_num">】项请填写配料数量</string>
     <string name="wom_please_write">】项请填写</string>
     <string name="wom_material_status">物料状态</string>
+    <string name="batch_material_area">配料区</string>
+    <string name="batch_material_instruction_set">配料指令集</string>
+    <string name="batch_please_input_bucket_code">请输入桶编码</string>
+    <string name="batch_material_executing">配料执行</string>
+    <string name="batch_bind_bucket">绑桶</string>
+    <string name="batch_bucket_code">桶编码</string>
+    <string name="batch_current_area">当前配料区</string>
+    <string name="batch_current_workline">当前配料线</string>
+    <string name="batch_next_area">下游区</string>
+    <string name="batch_no_bind_bucket">未绑桶</string>
 </resources>

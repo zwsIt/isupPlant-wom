@@ -1,17 +1,13 @@
 package com.supcon.mes.module_wom_replenishmaterial.model.bean;
 
-import android.util.Log;
-
 import com.supcon.common.com_http.BaseEntity;
 import com.supcon.mes.middleware.model.bean.Good;
 import com.supcon.mes.middleware.model.bean.PendingEntity;
 import com.supcon.mes.middleware.model.bean.StaffEntity;
 import com.supcon.mes.middleware.model.bean.SystemCodeEntity;
-import com.supcon.mes.module_wom_replenishmaterial.constant.ReplenishConstant;
+import com.supcon.mes.middleware.model.bean.wom.VesselEntity;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
 
 /**
  * ClassName

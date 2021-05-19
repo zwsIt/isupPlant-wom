@@ -71,4 +71,7 @@ public interface BmConstant {
         String BATCH_MATERIAL_EDIT = "/msService/WOM/batchMaterial/batchMateril/batchMaterialOrder"; // 配料指令编辑
     }
 
+    interface Router {
+        String BATCH_MATERIAL_INSTRUCTION_LIST = "BATCH_MATERIAL_INSTRUCTION_LIST"; // 指令列表
+    }
 }

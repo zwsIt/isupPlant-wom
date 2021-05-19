@@ -3,6 +3,8 @@ package com.supcon.mes.module_wom_batchmaterial.model.network;
 import com.app.annotation.apt.ApiFactory;
 import com.supcon.mes.middleware.model.bean.BAP5CommonEntity;
 import com.supcon.mes.middleware.model.bean.BapResultEntity;
+import com.supcon.mes.middleware.model.bean.CommonBAP5ListEntity;
+import com.supcon.mes.module_wom_batchmaterial.model.bean.BatchMaterialSetEntity;
 import com.supcon.mes.module_wom_batchmaterial.model.dto.BatchMaterialInstructionDTO;
 import com.supcon.mes.module_wom_batchmaterial.model.dto.BatchMaterialRecordsSignSubmitDTO;
 import com.supcon.mes.module_wom_producetask.model.bean.BatchMaterialPartEntity;
@@ -15,6 +17,7 @@ import retrofit2.http.Body;
 import retrofit2.http.POST;
 import retrofit2.http.Query;
 import retrofit2.http.QueryMap;
+import retrofit2.http.Url;
 
 /**
  * ClassName
@@ -52,5 +55,13 @@ public interface NetworkService {
      */
     @POST("/msService/WOM/batchMaterial/batMaterilPart/retirement")
     Flowable<BAP5CommonEntity<Object>> batchMaterialRecordsRetirement(@Body  List<BatchMaterialPartEntity> list /*BatchMaterialRecordsSignSubmitDTO dto*/);
+
+    /**
+     * 获取配料指令集列表
+     * @param paramMap
+     * @return
+     */
+    @POST("/msService/WOM/batchMaterialSet/bmSet/bmSetList-query")
+    Flowable<CommonBAP5ListEntity<BatchMaterialSetEntity>> listBatchMaterialSets(@Body Map<String, Object> paramMap);
 
 }
