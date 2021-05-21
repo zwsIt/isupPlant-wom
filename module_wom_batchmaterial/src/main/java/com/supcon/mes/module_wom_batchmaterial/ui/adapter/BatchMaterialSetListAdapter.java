@@ -2,7 +2,10 @@ package com.supcon.mes.module_wom_batchmaterial.ui.adapter;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.app.annotation.BindByTag;
@@ -12,9 +15,12 @@ import com.supcon.common.view.base.adapter.viewholder.BaseRecyclerViewHolder;
 import com.supcon.mes.mbap.utils.DateUtil;
 import com.supcon.mes.mbap.view.CustomContentTextDialog;
 import com.supcon.mes.mbap.view.CustomTextView;
+import com.supcon.mes.module_wom_batchmaterial.IntentRouter;
 import com.supcon.mes.module_wom_batchmaterial.R;
+import com.supcon.mes.module_wom_batchmaterial.constant.BmConstant;
 import com.supcon.mes.module_wom_batchmaterial.model.bean.BatchMaterialSetEntity;
 
+import java.util.TreeMap;
 import java.util.concurrent.TimeUnit;
 
 import io.reactivex.functions.Consumer;
@@ -24,7 +30,7 @@ import io.reactivex.functions.Consumer;
  * ClassName
  * Created by zhangwenshuai1 on 2019/8/3
  * Email zhangwenshuai1@supcon.com
- * Desc
+ * Desc 配料指令集
  */
 public class BatchMaterialSetListAdapter extends BaseListDataRecyclerViewAdapter<BatchMaterialSetEntity> {
     public BatchMaterialSetListAdapter(Context context) {
@@ -42,6 +48,8 @@ public class BatchMaterialSetListAdapter extends BaseListDataRecyclerViewAdapter
         TextView activityNameTv;
         @BindByTag("statusTv")
         TextView statusTv;
+        @BindByTag("autoBatchIv")
+        ImageView autoBatchIv;
         @BindByTag("bucketCodeTv")
         TextView bucketCodeTv;
         @BindByTag("batchCurrentArea")
@@ -68,12 +76,24 @@ public class BatchMaterialSetListAdapter extends BaseListDataRecyclerViewAdapter
         @Override
         protected void initListener() {
             super.initListener();
-            bucketCodeTv.setOnLongClickListener(new View.OnLongClickListener() {
-                @Override
-                public boolean onLongClick(View v) {
-                    CustomContentTextDialog.showContent(context,bucketCodeTv.getText().toString());
-                    return true;
-                }
+            RxView.clicks(itemView)
+//                    .throttleFirst(300,TimeUnit.MILLISECONDS)
+                    .subscribe(new Consumer<Object>() {
+                        @Override
+                        public void accept(Object o) throws Exception {
+                            BatchMaterialSetEntity batchMaterialSetEntity = getItem(getAdapterPosition());
+                            if (BmConstant.SystemCode.TASK_BATCH.equals(batchMaterialSetEntity.getFmTask().id)){
+                                Bundle bundle = new Bundle();
+                                bundle.putSerializable(BmConstant.IntentKey.BATCH_MATERIAL_SET,batchMaterialSetEntity);
+                                IntentRouter.go(context,BmConstant.Router.BATCH_MATERIAL_INSTRUCTION_LIST,bundle);
+                            }else if (BmConstant.SystemCode.TASK_TRANSPORT.equals(batchMaterialSetEntity.getFmTask().id)){
+
+                            }
+                        }
+                    });
+            bucketCodeTv.setOnLongClickListener(v -> {
+                CustomContentTextDialog.showContent(context,bucketCodeTv.getText().toString());
+                return true;
             });
             RxView.clicks(bindBucket).throttleFirst(300, TimeUnit.MILLISECONDS)
                     .subscribe(new Consumer<Object>() {
@@ -88,11 +108,21 @@ public class BatchMaterialSetListAdapter extends BaseListDataRecyclerViewAdapter
         protected void update(BatchMaterialSetEntity data) {
             activityNameTv.setText(data.getFormulaActiveId().getName());
             statusTv.setText(data.getFmState() == null ? "--" : data.getFmState().value);
-            bucketCodeTv.setText(data.getVessel() == null ? context.getResources().getString(R.string.batch_no_bind_bucket) : data.getVessel().getCode());
+            bucketCodeTv.setText(data.getVessel() == null || TextUtils.isEmpty(data.getVessel().getCode()) ? context.getResources().getString(R.string.batch_no_bind_bucket) : data.getVessel().getCode());
             batchCurrentArea.setContent(data.getCurrentBurendManage().getAreaId().getName() + "("+data.getCurrentBurendManage().getAreaId().getCode()+")");
             batchCurrentWorkLine.setContent(data.getCurrentBurendManage().getName() + "("+data.getCurrentBurendManage().getCode()+")");
-            batchNextArea.setContent(data.getCurrentBurendManage().getAreaId().getFactory().getName() + "("+data.getCurrentBurendManage().getAreaId().getFactory().getCode()+")");
+            batchNextArea.setContent(data.getCurrentBurendManage().getAreaId().getNextArea().getName() + "("+data.getCurrentBurendManage().getAreaId().getNextArea().getCode()+")");
             time.setContent(data.getStartTime() == null ? "--" : DateUtil.dateTimeFormat(data.getStartTime()));
+            if (data.getCurrentBurendManage().getAreaId().isAutoBurden()){
+                autoBatchIv.setImageResource(R.drawable.wom_ic_batch);
+            }else {
+                autoBatchIv.setImageResource(R.drawable.wom_ic_batch);
+            }
+            if (data.getVessel() != null && data.getVessel().getId() != null){
+                bindBucket.setVisibility(View.GONE);
+            }else {
+                bindBucket.setVisibility(View.VISIBLE);
+            }
         }
     }
 

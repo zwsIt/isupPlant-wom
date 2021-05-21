@@ -36,21 +36,28 @@ import com.supcon.mes.middleware.controller.GetPowerCodeController;
 import com.supcon.mes.middleware.controller.WorkFlowViewController;
 import com.supcon.mes.middleware.model.bean.BAP5CommonEntity;
 import com.supcon.mes.middleware.model.bean.CommonBAPListEntity;
+import com.supcon.mes.middleware.model.bean.QrCodeEntity;
 import com.supcon.mes.middleware.model.bean.StaffEntity;
 import com.supcon.mes.middleware.model.bean.SystemCodeEntity;
 import com.supcon.mes.middleware.model.bean.WorkFlowVarDTO;
 import com.supcon.mes.middleware.model.bean.wom.StoreSetEntity;
+import com.supcon.mes.middleware.model.bean.wom.VesselEntity;
 import com.supcon.mes.middleware.model.bean.wom.WarehouseEntity;
 import com.supcon.mes.middleware.model.event.RefreshEvent;
 import com.supcon.mes.middleware.model.event.SelectDataEvent;
 import com.supcon.mes.middleware.util.ErrorMsgHelper;
+import com.supcon.mes.module_scan.controller.CommonScanController;
+import com.supcon.mes.module_scan.model.event.CodeResultEvent;
 import com.supcon.mes.module_wom_batchmaterial.IntentRouter;
 import com.supcon.mes.module_wom_batchmaterial.R;
 import com.supcon.mes.module_wom_batchmaterial.constant.BmConstant;
 import com.supcon.mes.module_wom_batchmaterial.model.api.BatchMaterialInstructionEditAPI;
+import com.supcon.mes.module_wom_batchmaterial.model.bean.BatchInstructionEntity;
+import com.supcon.mes.module_wom_batchmaterial.model.bean.BatchInstructionPartEntity;
 import com.supcon.mes.module_wom_batchmaterial.model.contract.BatchMaterialInstructionEditContract;
 import com.supcon.mes.module_wom_batchmaterial.model.dto.BatchMaterialInstructionDTO;
 import com.supcon.mes.module_wom_batchmaterial.presenter.BatchMaterialInstructionEditPresenter;
+import com.supcon.mes.module_wom_batchmaterial.ui.adapter.BatchInstructionPartsAdapter;
 import com.supcon.mes.module_wom_batchmaterial.ui.adapter.BatchMaterialRecordsEditAdapter;
 import com.supcon.mes.module_wom_producetask.constant.WomConstant;
 import com.supcon.mes.module_wom_producetask.model.api.CommonListAPI;
@@ -58,12 +65,14 @@ import com.supcon.mes.module_wom_producetask.model.bean.BatchMaterialPartEntity;
 import com.supcon.mes.module_wom_producetask.model.bean.BatchMaterilEntity;
 import com.supcon.mes.module_wom_producetask.model.contract.CommonListContract;
 import com.supcon.mes.module_wom_producetask.presenter.CommonListPresenter;
+import com.supcon.mes.module_wom_producetask.util.MaterQRUtil;
 import com.supcon.mes.module_wom_producetask.util.SmoothScrollLayoutManager;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -79,8 +88,8 @@ import java.util.concurrent.TimeUnit;
 @Router(Constant.Router.BATCH_MATERIAL_INSTRUCTION_EDIT)
 @Presenter(value = {CommonListPresenter.class, BatchMaterialInstructionEditPresenter.class})
 //@PowerCode(entityCode = BmConstant.PowerCode.BM_INSTRUCTION_EDIT)
-@Controller(value = {GetPowerCodeController.class, WorkFlowViewController.class})
-public class BatchMaterialInstructionEditActivity extends BaseRefreshRecyclerActivity<BatchMaterialPartEntity> implements CommonListContract.View, BatchMaterialInstructionEditContract.View {
+@Controller(value = {GetPowerCodeController.class, WorkFlowViewController.class,CommonScanController.class})
+public class BatchMaterialInstructionEditActivity extends BaseRefreshRecyclerActivity<BatchInstructionPartEntity> implements CommonListContract.View, BatchMaterialInstructionEditContract.View {
     @BindByTag("leftBtn")
     CustomImageButton leftBtn;
     @BindByTag("titleText")
@@ -95,8 +104,8 @@ public class BatchMaterialInstructionEditActivity extends BaseRefreshRecyclerAct
     ImageView customListWidgetAdd;
     @BindByTag("materialName")
     CustomTextView materialName;
-    @BindByTag("batchMode")
-    CustomTextView batchMode;
+    @BindByTag("bucketCode")
+    CustomTextView bucketCode;
     @BindByTag("sumNumTv")
     TextView sumNumTv;
     @BindByTag("planNumTv")
@@ -110,18 +119,17 @@ public class BatchMaterialInstructionEditActivity extends BaseRefreshRecyclerAct
     @BindByTag("workFlowView")
     CustomWorkFlowView workFlowView;
 
-    private BatchMaterilEntity mBatchMaterialEntity;
+    private BatchInstructionEntity mBatchInstructionEntity;
     Map<String, Object> queryParams = new HashMap<>();
     Map<String, Object> customCondition = new HashMap<>();
-    private BatchMaterialRecordsEditAdapter mBatchMaterialRecordsEditAdapter;
-    private int mCurrentPosition;
-    private BatchMaterialPartEntity mBatchMaterialPartEntity;
+    private BatchInstructionPartsAdapter mBatchInstructionPartsAdapter;
+    private BatchInstructionPartEntity mBatchMaterialPartEntity;
     private String dgDeletedIds = "";
 
     @Override
-    protected IListAdapter<BatchMaterialPartEntity> createAdapter() {
-        mBatchMaterialRecordsEditAdapter = new BatchMaterialRecordsEditAdapter(context);
-        return mBatchMaterialRecordsEditAdapter;
+    protected IListAdapter<BatchInstructionPartEntity> createAdapter() {
+        mBatchInstructionPartsAdapter = new BatchInstructionPartsAdapter(context);
+        return mBatchInstructionPartsAdapter;
     }
 
     @Override
@@ -135,7 +143,7 @@ public class BatchMaterialInstructionEditActivity extends BaseRefreshRecyclerAct
         EventBus.getDefault().register(this);
         refreshListController.setPullDownRefreshEnabled(false);
         refreshListController.setAutoPullDownRefresh(true);
-        mBatchMaterialEntity = (BatchMaterilEntity) getIntent().getSerializableExtra(Constant.IntentKey.BATCH_MATERIAL_INSTRUCTION);
+        mBatchInstructionEntity = (BatchInstructionEntity) getIntent().getSerializableExtra(Constant.IntentKey.BATCH_MATERIAL_INSTRUCTION);
         contentView.setLayoutManager(new SmoothScrollLayoutManager(context));
         contentView.addItemDecoration(new RecyclerView.ItemDecoration() {
             @Override
@@ -146,9 +154,9 @@ public class BatchMaterialInstructionEditActivity extends BaseRefreshRecyclerAct
         });
         contentView.addOnItemTouchListener(new CustomSwipeLayout.OnSwipeItemTouchListener(context));
 
-        if (!WomConstant.SystemCode.MATERIAL_BATCH_02.equals(mBatchMaterialEntity.getProductId().getIsBatch().id)) {
-            mBatchMaterialRecordsEditAdapter.setMaterialBatchNo(true);
-        }
+//        if (!WomConstant.SystemCode.MATERIAL_BATCH_02.equals(mBatchInstructionEntity.getProductId().getIsBatch().id)) {
+//            mBatchInstructionPartsAdapter.setMaterialBatchNo(true);
+//        }
     }
 
     @Override
@@ -161,32 +169,36 @@ public class BatchMaterialInstructionEditActivity extends BaseRefreshRecyclerAct
         customListWidgetName.setText(context.getResources().getString(R.string.wom_batch_material_records));
         customListWidgetEdit.setVisibility(View.GONE);
 
-        materialName.setContent(String.format("%s(%s)", mBatchMaterialEntity.getProductId().getName(), mBatchMaterialEntity.getProductId().getCode()));
-        batchMode.setContent(mBatchMaterialEntity.getBatchType().value);
+        if (mBatchInstructionEntity.getActualNumber() == null){
+            mBatchInstructionEntity.setActualNumber(new BigDecimal(0));
+        }
 
-        SpannableString planNumSpan = new SpannableString(context.getResources().getString(R.string.wom_need) + "\n\n" + mBatchMaterialEntity.getNeedNum());
+        materialName.setContent(String.format("%s(%s)", mBatchInstructionEntity.getMaterial().getName(), mBatchInstructionEntity.getMaterial().getCode()));
+        bucketCode.setContent(getIntent().getStringExtra(BmConstant.IntentKey.BUCKET_CODE));
+
+        SpannableString planNumSpan = new SpannableString(context.getResources().getString(R.string.wom_need) + "\n\n" + mBatchInstructionEntity.getPlanNumber());
         planNumSpan.setSpan(new ForegroundColorSpan(context.getResources().getColor(R.color.dark_blue)), 4, planNumSpan.length(), Spanned.SPAN_INCLUSIVE_INCLUSIVE);
         planNumSpan.setSpan(new AbsoluteSizeSpan(DisplayUtil.dip2px(18, context)), 4, planNumSpan.length(), Spanned.SPAN_INCLUSIVE_INCLUSIVE);
         planNumTv.setText(planNumSpan);
 
-        SpannableString sumNumSpan = new SpannableString(getString(R.string.wom_offer) + "\n\n" + mBatchMaterialEntity.getOfferNum());
+        SpannableString sumNumSpan = new SpannableString(getString(R.string.wom_offer) + "\n\n" + mBatchInstructionEntity.getActualNumber());
         sumNumSpan.setSpan(new ForegroundColorSpan(context.getResources().getColor(R.color.dark_green)), 4, sumNumSpan.length(), Spanned.SPAN_INCLUSIVE_INCLUSIVE);
         sumNumSpan.setSpan(new AbsoluteSizeSpan(DisplayUtil.dip2px(18, context)), 4, sumNumSpan.length(), Spanned.SPAN_INCLUSIVE_INCLUSIVE);
         sumNumTv.setText(sumNumSpan);
 
         SpannableString remainderNumSpan;
-        if (mBatchMaterialEntity.getNeedNum() == null) {
+        if (mBatchInstructionEntity.getPlanNumber() == null) {
             remainderNumSpan = new SpannableString(getString(R.string.wom_remainder) + "\n\n" + 0);
         } else {
-            remainderNumSpan = new SpannableString(getString(R.string.wom_remainder) + "\n\n" + mBatchMaterialEntity.getNeedNum().subtract(mBatchMaterialEntity.getOfferNum()));
+            remainderNumSpan = new SpannableString(getString(R.string.wom_remainder) + "\n\n" + mBatchInstructionEntity.getPlanNumber().subtract(mBatchInstructionEntity.getActualNumber()));
         }
         remainderNumSpan.setSpan(new ForegroundColorSpan(context.getResources().getColor(R.color.dark_yellow)), 4, remainderNumSpan.length(), Spanned.SPAN_INCLUSIVE_INCLUSIVE);
         remainderNumSpan.setSpan(new AbsoluteSizeSpan(DisplayUtil.dip2px(18, context)), 4, remainderNumSpan.length(), Spanned.SPAN_INCLUSIVE_INCLUSIVE);
         remainderNumTv.setText(remainderNumSpan);
 
-        getController(WorkFlowViewController.class).initPendingWorkFlowView(workFlowView, mBatchMaterialEntity.getPending().id);
+//        getController(WorkFlowViewController.class).initPendingWorkFlowView(workFlowView, mBatchInstructionEntity.getPending().id);
 
-        getController(GetPowerCodeController.class).initPowerCode(mBatchMaterialEntity.getPending().activityName);
+//        getController(GetPowerCodeController.class).initPowerCode(mBatchInstructionEntity.getPending().activityName);
 
     }
 
@@ -195,49 +207,31 @@ public class BatchMaterialInstructionEditActivity extends BaseRefreshRecyclerAct
     protected void initListener() {
         super.initListener();
         leftBtn.setOnClickListener(v -> finish());
-        rightBtn.setOnClickListener(v -> ToastUtils.show(context, context.getResources().getString(R.string.middleware_stay_realization)));
+        rightBtn.setOnClickListener(v -> getController(CommonScanController.class).openCameraScan(context.getClass().getSimpleName()));
         refreshListController.setOnRefreshListener(() -> presenterRouter.create(CommonListAPI.class).list(1, customCondition, queryParams,
-                BmConstant.URL.BATCH_MATERIAL_INSTRUCTION_DG_LIST_URL + "&id=" + mBatchMaterialEntity.getId(), ""));
+                BmConstant.URL.BATCH_MATERIAL_INSTRUCTION_DG_LIST_URL + "&id=" + mBatchInstructionEntity.getId(), ""));
         customListWidgetAdd.setOnClickListener(v -> {
-            BatchMaterialPartEntity batchMaterialPartEntity = new BatchMaterialPartEntity();
-            batchMaterialPartEntity.setMaterialId(mBatchMaterialEntity.getProductId()); // 物料
-            batchMaterialPartEntity.setBatchDate(new Date().getTime());  // 配料时间
-            StaffEntity exeStaff = new StaffEntity();
-            exeStaff.id = SupPlantApplication.getAccountInfo().staffId;
-            exeStaff.name = SupPlantApplication.getAccountInfo().staffName;
-            batchMaterialPartEntity.setExeStaff(exeStaff); // 配料操作人
-            batchMaterialPartEntity.setBatRecordState(new SystemCodeEntity(BmConstant.SystemCode.RECORD_STATE_BATCH, "", getString(R.string.wom_no_material_state), "", ""));
-
-            if (mBatchMaterialRecordsEditAdapter.getItemCount() <= 0) {
-                mBatchMaterialRecordsEditAdapter.addData(batchMaterialPartEntity);
-            } else {
-                mBatchMaterialRecordsEditAdapter.getList().add(0, batchMaterialPartEntity);
-            }
-            mBatchMaterialRecordsEditAdapter.notifyItemRangeInserted(0, 1);
-            mBatchMaterialRecordsEditAdapter.notifyItemRangeChanged(0, 1);
-            contentView.smoothScrollToPosition(0);
-
+            addItem(null);
         });
-        mBatchMaterialRecordsEditAdapter.setOnItemChildViewClickListener((childView, position, action, obj) -> {
-            mCurrentPosition = position;
-            mBatchMaterialPartEntity = (BatchMaterialPartEntity) obj;
+        mBatchInstructionPartsAdapter.setOnItemChildViewClickListener((childView, position, action, obj) -> {
+            mBatchMaterialPartEntity = (BatchInstructionPartEntity) obj;
             switch (childView.getTag().toString()) {
-                case "warehouseTv":
-                    IntentRouter.go(context, Constant.Router.WAREHOUSE_LIST_REF);
-                    break;
-                case "storeSetTv":
-                    if (mBatchMaterialPartEntity.getWareId() == null) {
-                        ToastUtils.show(context, context.getResources().getString(R.string.wom_please_select_ware));
-                        break;
-                    }
-                    Bundle bundle = new Bundle();
-                    bundle.putLong(Constant.IntentKey.WARE_ID, mBatchMaterialPartEntity.getWareId().getId());
-                    IntentRouter.go(context, Constant.Router.STORE_SET_LIST_REF, bundle);
-                    break;
+//                case "warehouseTv":
+//                    IntentRouter.go(context, Constant.Router.WAREHOUSE_LIST_REF);
+//                    break;
+//                case "storeSetTv":
+//                    if (mBatchMaterialPartEntity.getWareId() == null) {
+//                        ToastUtils.show(context, context.getResources().getString(R.string.wom_please_select_ware));
+//                        break;
+//                    }
+//                    Bundle bundle = new Bundle();
+//                    bundle.putLong(Constant.IntentKey.WARE_ID, mBatchMaterialPartEntity.getWareId().getId());
+//                    IntentRouter.go(context, Constant.Router.STORE_SET_LIST_REF, bundle);
+//                    break;
                 case "itemViewDelBtn":
-                    mBatchMaterialRecordsEditAdapter.getList().remove(obj);
-                    mBatchMaterialRecordsEditAdapter.notifyItemRangeRemoved(position, 1);
-                    mBatchMaterialRecordsEditAdapter.notifyItemRangeChanged(position, mBatchMaterialRecordsEditAdapter.getItemCount() - position);
+                    mBatchInstructionPartsAdapter.getList().remove(obj);
+                    mBatchInstructionPartsAdapter.notifyItemRangeRemoved(position, 1);
+                    mBatchInstructionPartsAdapter.notifyItemRangeChanged(position, mBatchInstructionPartsAdapter.getItemCount() - position);
                     if (mBatchMaterialPartEntity.getId() != null) {
                         dgDeletedIds += mBatchMaterialPartEntity.getId() + ",";
                     }
@@ -248,6 +242,25 @@ public class BatchMaterialInstructionEditActivity extends BaseRefreshRecyclerAct
         RxView.clicks(submitBtn)
                 .throttleFirst(200, TimeUnit.MILLISECONDS)
                 .subscribe(o -> submitReport());
+    }
+
+    private void addItem(QrCodeEntity qrCodeEntity) {
+        BatchInstructionPartEntity batchInstructionPartEntity = new BatchInstructionPartEntity();
+        if (qrCodeEntity != null){
+            batchInstructionPartEntity.setBatch(qrCodeEntity.getBatch());
+            batchInstructionPartEntity.setFmNumber(qrCodeEntity.getNum());
+        }
+        batchInstructionPartEntity.setBmTime(System.currentTimeMillis());
+        batchInstructionPartEntity.setBatchInstructionEntity(mBatchInstructionEntity);
+
+        if (mBatchInstructionPartsAdapter.getItemCount() <= 0) {
+            mBatchInstructionPartsAdapter.addData(batchInstructionPartEntity);
+        } else {
+            mBatchInstructionPartsAdapter.getList().add(0, batchInstructionPartEntity);
+        }
+        mBatchInstructionPartsAdapter.notifyItemRangeInserted(0, 1);
+        mBatchInstructionPartsAdapter.notifyItemRangeChanged(0, 1);
+        contentView.smoothScrollToPosition(0);
     }
 
     /**
@@ -262,59 +275,51 @@ public class BatchMaterialInstructionEditActivity extends BaseRefreshRecyclerAct
         }
         onLoading(context.getResources().getString(R.string.wom_dealing));
         BatchMaterialInstructionDTO batchMaterialInstructionDTO = new BatchMaterialInstructionDTO();
-        batchMaterialInstructionDTO.setWorkFlowVarDTO(getWorkFlowVar());
-        batchMaterialInstructionDTO.setOperateType("save");
-        batchMaterialInstructionDTO.setDeploymentId(String.valueOf(mBatchMaterialEntity.getPending().deploymentId));
-        batchMaterialInstructionDTO.setActivityName(mBatchMaterialEntity.getPending().activityName);
-        batchMaterialInstructionDTO.setTaskDescription(mBatchMaterialEntity.getPending().taskDescription);
-        batchMaterialInstructionDTO.setPendingId(String.valueOf(mBatchMaterialEntity.getPending().id));
-        BatchMaterialInstructionDTO.DgListEntity dgListEntity = new BatchMaterialInstructionDTO.DgListEntity();
-        dgListEntity.setDg(GsonUtil.gsonStringSerializeNulls(mBatchMaterialRecordsEditAdapter.getList()));
-        batchMaterialInstructionDTO.setDgList(dgListEntity);
-
-        BatchMaterialInstructionDTO.DgListEntity dgDeletedIdsList = new BatchMaterialInstructionDTO.DgListEntity();
-        dgDeletedIdsList.setDg(TextUtils.isEmpty(dgDeletedIds) ? null : dgDeletedIds);
-        batchMaterialInstructionDTO.setDgDeletedIds(dgDeletedIdsList);
-
-        // bap 6.0  传输会单据异常
-        mBatchMaterialEntity.setPending(null);
-        batchMaterialInstructionDTO.setBatchMateril(mBatchMaterialEntity);
-        batchMaterialInstructionDTO.setIds2del("");
-        batchMaterialInstructionDTO.setViewCode("WOM_1.0.0_batchMaterial_batchMaterialOrder");
-        presenterRouter.create(BatchMaterialInstructionEditAPI.class).submit(mBatchMaterialEntity.getId(), getController(GetPowerCodeController.class).getPowerCodeResult(), batchMaterialInstructionDTO);
+//        batchMaterialInstructionDTO.setWorkFlowVarDTO(getWorkFlowVar());
+//        batchMaterialInstructionDTO.setOperateType("save");
+//        batchMaterialInstructionDTO.setDeploymentId(String.valueOf(mBatchMaterialEntity.getPending().deploymentId));
+//        batchMaterialInstructionDTO.setActivityName(mBatchMaterialEntity.getPending().activityName);
+//        batchMaterialInstructionDTO.setTaskDescription(mBatchMaterialEntity.getPending().taskDescription);
+//        batchMaterialInstructionDTO.setPendingId(String.valueOf(mBatchMaterialEntity.getPending().id));
+//        BatchMaterialInstructionDTO.DgListEntity dgListEntity = new BatchMaterialInstructionDTO.DgListEntity();
+//        dgListEntity.setDg(GsonUtil.gsonStringSerializeNulls(mBatchInstructionPartsAdapter.getList()));
+//        batchMaterialInstructionDTO.setDgList(dgListEntity);
+//
+//        BatchMaterialInstructionDTO.DgListEntity dgDeletedIdsList = new BatchMaterialInstructionDTO.DgListEntity();
+//        dgDeletedIdsList.setDg(TextUtils.isEmpty(dgDeletedIds) ? null : dgDeletedIds);
+//        batchMaterialInstructionDTO.setDgDeletedIds(dgDeletedIdsList);
+//
+//        // bap 6.0  传输会单据异常
+//        mBatchMaterialEntity.setPending(null);
+//        batchMaterialInstructionDTO.setBatchMateril(mBatchMaterialEntity);
+//        batchMaterialInstructionDTO.setIds2del("");
+//        batchMaterialInstructionDTO.setViewCode("WOM_1.0.0_batchMaterial_batchMaterialOrder");
+        presenterRouter.create(BatchMaterialInstructionEditAPI.class).submit(mBatchInstructionEntity.getId(),  batchMaterialInstructionDTO);
 
     }
 
     private WorkFlowVarDTO getWorkFlowVar() {
         WorkFlowVarDTO workFlowVarDTO = new WorkFlowVarDTO();
 //        getController(WorkFlowViewController.class).getLinkEntities();
-        workFlowVarDTO.setComment("");
-        workFlowVarDTO.setActivityName(mBatchMaterialEntity.getPending().activityName);
-        workFlowVarDTO.setActivityType(mBatchMaterialEntity.getPending().activityType);
+//        workFlowVarDTO.setComment("");
+//        workFlowVarDTO.setActivityName(mBatchMaterialEntity.getPending().activityName);
+//        workFlowVarDTO.setActivityType(mBatchMaterialEntity.getPending().activityType);
         return workFlowVarDTO;
     }
 
 
     private boolean checkSubmit() {
-        if (mBatchMaterialRecordsEditAdapter.getList() == null || mBatchMaterialRecordsEditAdapter.getList().size() <= 0) {
+        if (mBatchInstructionPartsAdapter.getList() == null || mBatchInstructionPartsAdapter.getList().size() <= 0) {
             ToastUtils.show(context, context.getResources().getString(R.string.wom_no_data_operate));
             return true;
         }
-        for (BatchMaterialPartEntity batchMaterialPartEntity : mBatchMaterialRecordsEditAdapter.getList()) {
-            if (WomConstant.SystemCode.MATERIAL_BATCH_02.equals(mBatchMaterialEntity.getProductId().getIsBatch().id) && TextUtils.isEmpty(batchMaterialPartEntity.getMaterialBatchNum())) {
-                ToastUtils.show(context, context.getResources().getString(R.string.wom_di) + (mBatchMaterialRecordsEditAdapter.getList().indexOf(batchMaterialPartEntity) + 1) + context.getResources().getString(R.string.wom_please_write_material_batch));
+        for (BatchInstructionPartEntity batchInstructionPartEntity : mBatchInstructionPartsAdapter.getList()) {
+            if (TextUtils.isEmpty(batchInstructionPartEntity.getBatch())) {
+                ToastUtils.show(context, context.getResources().getString(R.string.wom_di) + (mBatchInstructionPartsAdapter.getList().indexOf(batchInstructionPartEntity) + 1) + context.getResources().getString(R.string.wom_please_write_material_batch));
                 return true;
             }
-            if (batchMaterialPartEntity.getWareId() == null) {
-                ToastUtils.show(context, context.getResources().getString(R.string.wom_di) + (mBatchMaterialRecordsEditAdapter.getList().indexOf(batchMaterialPartEntity) + 1) + context.getResources().getString(R.string.wom_please_write_ware));
-                return true;
-            }
-            if (batchMaterialPartEntity.getWareId() != null && batchMaterialPartEntity.getWareId().getStoreSetState() && batchMaterialPartEntity.getStoreId() == null) {
-                ToastUtils.show(context, context.getResources().getString(R.string.wom_di) + (mBatchMaterialRecordsEditAdapter.getList().indexOf(batchMaterialPartEntity) + 1) + context.getResources().getString(R.string.wom_warehouse_enable_please_write_storage));
-                return true;
-            }
-            if (batchMaterialPartEntity.getOfferNum() == null) {
-                ToastUtils.show(context, context.getResources().getString(R.string.wom_di) + (mBatchMaterialRecordsEditAdapter.getList().indexOf(batchMaterialPartEntity) + 1) + context.getResources().getString(R.string.wom_please_write_batchmaterial_num));
+            if (batchInstructionPartEntity.getFmNumber() == null) {
+                ToastUtils.show(context, context.getResources().getString(R.string.wom_di) + (mBatchInstructionPartsAdapter.getList().indexOf(batchInstructionPartEntity) + 1) + context.getResources().getString(R.string.wom_pleasr_write_num));
                 return true;
             }
         }
@@ -330,11 +335,24 @@ public class BatchMaterialInstructionEditActivity extends BaseRefreshRecyclerAct
     @Override
     public void listSuccess(BAP5CommonEntity entity) {
         CommonBAPListEntity commonBAPListEntity = GsonUtil.gsonToBean(GsonUtil.gsonString(entity.data), CommonBAPListEntity.class);
-        refreshListController.refreshComplete(GsonUtil.jsonToList(GsonUtil.gsonString((Object) commonBAPListEntity.result), BatchMaterialPartEntity.class));
+        refreshListController.refreshComplete(GsonUtil.jsonToList(GsonUtil.gsonString((Object) commonBAPListEntity.result), BatchInstructionPartEntity.class));
     }
 
     @Override
     public void listFailed(String errorMsg) {
+        refreshListController.refreshComplete();
+        ToastUtils.show(context, ErrorMsgHelper.msgParse(errorMsg));
+    }
+
+    @Override
+    public void listBatchPartsSuccess(CommonBAPListEntity entity) {
+        refreshListController.refreshComplete(entity.result);
+//        CommonBAPListEntity commonBAPListEntity = GsonUtil.gsonToBean(GsonUtil.gsonString(entity.data), CommonBAPListEntity.class);
+//        refreshListController.refreshComplete(GsonUtil.jsonToList(GsonUtil.gsonString((Object) commonBAPListEntity.result), BatchInstructionPartEntity.class));
+    }
+
+    @Override
+    public void listBatchPartsFailed(String errorMsg) {
         refreshListController.refreshComplete();
         ToastUtils.show(context, ErrorMsgHelper.msgParse(errorMsg));
     }
@@ -352,13 +370,48 @@ public class BatchMaterialInstructionEditActivity extends BaseRefreshRecyclerAct
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void getEventPost(SelectDataEvent selectDataEvent) {
-        if (selectDataEvent.getEntity() instanceof WarehouseEntity) {
-            mBatchMaterialPartEntity.setWareId((WarehouseEntity) selectDataEvent.getEntity());
-        } else if (selectDataEvent.getEntity() instanceof StoreSetEntity) {
-            mBatchMaterialPartEntity.setStoreId((StoreSetEntity) selectDataEvent.getEntity());
+    public void getScanResult(CodeResultEvent codeResultEvent) {
+        if (context.getClass().getSimpleName().equals(codeResultEvent.scanTag)) {
+            QrCodeEntity qrCodeEntity = MaterQRUtil.getQRCode(context, codeResultEvent.scanResult);
+            if (qrCodeEntity != null) {
+                switch (qrCodeEntity.getType()) {
+                    // 扫描设备
+                    case 0:
+//                        AssociatedEquipmentEntity associatedEquipmentEntity = new AssociatedEquipmentEntity();
+//                        associatedEquipmentEntity.setId(qrCodeEntity.getId());
+//                        associatedEquipmentEntity.setCode(qrCodeEntity.getCode());
+//                        associatedEquipmentEntity.setName(qrCodeEntity.getName());
+//                        eamPoint.setContent(associatedEquipmentEntity.getName() + "(" + associatedEquipmentEntity.getCode() + ")");
+//                        mReplenishMaterialTableEntity.setEquipment(associatedEquipmentEntity);
+                        break;
+                    // 扫描桶
+                    case 1:
+//                        VesselEntity vesselEntity = new VesselEntity();
+//                        vesselEntity.setId(qrCodeEntity.getId());
+//                        vesselEntity.setCode(qrCodeEntity.getCode());
+//                        vesselEntity.setName(qrCodeEntity.getName());
+//                        bucket.setContent(qrCodeEntity.getName() + "(" + qrCodeEntity.getCode() + ")");
+//                        mReplenishMaterialTableEntity.setVessel(vesselEntity);
+                        break;
+                    // 扫描物料
+                    case 2:
+                        // 目前暂时按照MES产品定义格式
+                        addItem(qrCodeEntity);
+                        break;
+                    default:
+                }
+            }
         }
-        mBatchMaterialRecordsEditAdapter.notifyItemRangeChanged(mCurrentPosition, 1);
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void getEventPost(SelectDataEvent selectDataEvent) {
+//        if (selectDataEvent.getEntity() instanceof WarehouseEntity) {
+//            mBatchMaterialPartEntity.setWareId((WarehouseEntity) selectDataEvent.getEntity());
+//        } else if (selectDataEvent.getEntity() instanceof StoreSetEntity) {
+//            mBatchMaterialPartEntity.setStoreId((StoreSetEntity) selectDataEvent.getEntity());
+//        }
+//        mBatchInstructionPartsAdapter.notifyItemRangeChanged(mCurrentPosition, 1);
     }
 
 

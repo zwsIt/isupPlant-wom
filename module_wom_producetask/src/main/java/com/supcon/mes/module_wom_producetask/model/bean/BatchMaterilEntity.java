@@ -17,6 +17,7 @@ import java.math.BigDecimal;
  * Email zhangwenshuai1@supcon.com
  * Desc 配料指令实体
  */
+@Deprecated
 public class BatchMaterilEntity extends BaseEntity {
 
     /**

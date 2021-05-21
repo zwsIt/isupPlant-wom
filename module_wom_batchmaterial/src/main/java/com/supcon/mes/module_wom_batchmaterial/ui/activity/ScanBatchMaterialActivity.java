@@ -1,4 +1,4 @@
-package com.supcon.mes.module_wom_replenishmaterial.ui.activity;
+package com.supcon.mes.module_wom_batchmaterial.ui.activity;
 
 import android.annotation.SuppressLint;
 import android.os.Bundle;
@@ -22,14 +22,14 @@ import com.supcon.mes.middleware.model.bean.QrCodeEntity;
 import com.supcon.mes.middleware.util.StringUtil;
 import com.supcon.mes.module_scan.controller.CommonScanController;
 import com.supcon.mes.module_scan.model.event.CodeResultEvent;
+import com.supcon.mes.module_wom_batchmaterial.IntentRouter;
+import com.supcon.mes.module_wom_batchmaterial.R;
+import com.supcon.mes.module_wom_batchmaterial.constant.BmConstant;
+import com.supcon.mes.module_wom_batchmaterial.model.api.BatchMaterialSetListAPI;
+import com.supcon.mes.module_wom_batchmaterial.model.bean.BatchMaterialSetEntity;
+import com.supcon.mes.module_wom_batchmaterial.model.contract.BatchMaterialSetListContract;
+import com.supcon.mes.module_wom_batchmaterial.presenter.BatchMaterialSetListPresenter;
 import com.supcon.mes.module_wom_producetask.util.MaterQRUtil;
-import com.supcon.mes.module_wom_replenishmaterial.IntentRouter;
-import com.supcon.mes.module_wom_replenishmaterial.R;
-import com.supcon.mes.module_wom_replenishmaterial.constant.ReplenishConstant;
-import com.supcon.mes.module_wom_replenishmaterial.model.api.ReplenishMaterialTableListAPI;
-import com.supcon.mes.module_wom_replenishmaterial.model.bean.ReplenishMaterialTableEntity;
-import com.supcon.mes.module_wom_replenishmaterial.model.contract.ReplenishMaterialTableListContract;
-import com.supcon.mes.module_wom_replenishmaterial.presenter.ReplenishMaterialTableListPresenter;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -41,13 +41,13 @@ import io.reactivex.functions.Consumer;
 
 /**
  * @author created by zhangwenshuai1
- * @desc 补料快速扫描补料桶
+ * @desc 配料快速扫描补料桶
  * @date 2021/5/17
  */
-@Router(value = Constant.AppCode.WOM_ReplenishMaterial_Scan)
-@Presenter(ReplenishMaterialTableListPresenter.class)
+@Router(value = Constant.AppCode.WOM_BATCH_MATERIAL_SCAN)
+@Presenter(BatchMaterialSetListPresenter.class)
 @Controller(value = {CommonScanController.class})
-public class ScanReplenishActivity extends BaseControllerActivity implements ReplenishMaterialTableListContract.View {
+public class ScanBatchMaterialActivity extends BaseControllerActivity implements BatchMaterialSetListContract.View {
 
     @BindByTag("leftBtn")
     CustomImageButton leftBtn;
@@ -68,7 +68,7 @@ public class ScanReplenishActivity extends BaseControllerActivity implements Rep
     @Override
     protected void onInit() {
         super.onInit();
-        titleText.setText(context.getResources().getString(R.string.replenish_quick_scan_bucket));
+        titleText.setText(context.getResources().getString(R.string.batch_quick_scan_bucket));
         rightBtn.setVisibility(View.VISIBLE);
         rightBtn.setImageResource(R.drawable.ic_scan);
         StatusBarUtils.setWindowStatusBarColor(this, R.color.themeColor);
@@ -110,7 +110,7 @@ public class ScanReplenishActivity extends BaseControllerActivity implements Rep
                 if (qrCodeEntity != null && qrCodeEntity.getType() == 1) {
                     onLoading(getString(R.string.wom_dealing));
                     queryParams.put(Constant.BAPQuery.CODE, qrCodeEntity.getCode());
-                    presenterRouter.create(ReplenishMaterialTableListAPI.class).listReplenishMaterialTables(1, ReplenishConstant.URL.REPLENISH_MATERIAL_SCAN_LIST_URL, false, queryParams);
+                    presenterRouter.create(BatchMaterialSetListAPI.class).listBatchMaterialSets(1, null,false, queryParams);
                 }
             }
         }
@@ -124,21 +124,28 @@ public class ScanReplenishActivity extends BaseControllerActivity implements Rep
     }
 
     @Override
-    public void listReplenishMaterialTablesSuccess(CommonBAP5ListEntity entity) {
+    public void listBatchMaterialSetsSuccess(CommonBAP5ListEntity entity) {
         onLoadSuccess();
         if (entity.data.result != null && entity.data.result.size() > 0) {
             Bundle bundle = new Bundle();
-            ReplenishMaterialTableEntity replenishMaterialTableEntity = (ReplenishMaterialTableEntity) entity.data.result.get(0);
-            bundle.putSerializable(ReplenishConstant.IntentKey.REPLENISH_MATERIAL_TABLE, replenishMaterialTableEntity);
-            IntentRouter.go(context, ReplenishConstant.Router.REPLENISH_MATERIAL_SCAN,bundle);
+            BatchMaterialSetEntity batchMaterialSetEntity = (BatchMaterialSetEntity) entity.data.result.get(0);
+            bundle.putSerializable(BmConstant.IntentKey.BATCH_MATERIAL_SET,batchMaterialSetEntity);
+            // 判断是否已经配料完成
+            if (BmConstant.SystemCode.TASK_TRANSPORT.equals(batchMaterialSetEntity.getFmTask().id)){
+
+            }else {
+                IntentRouter.go(context,BmConstant.Router.BATCH_MATERIAL_INSTRUCTION_LIST,bundle);
+            }
+//            bundle.putSerializable(ReplenishConstant.IntentKey.REPLENISH_MATERIAL_TABLE, batchMaterialSetEntity);
+//            IntentRouter.go(context, ReplenishConstant.Router.REPLENISH_MATERIAL_SCAN,bundle);
         } else {
-            ToastUtils.show(context, getString(R.string.replenish_no_match_bucket));
+            ToastUtils.show(context, getString(R.string.batch_no_match_bucket));
         }
 
     }
 
     @Override
-    public void listReplenishMaterialTablesFailed(String errorMsg) {
+    public void listBatchMaterialSetsFailed(String errorMsg) {
         onLoadFailed(errorMsg);
         ToastUtils.show(context, errorMsg);
     }

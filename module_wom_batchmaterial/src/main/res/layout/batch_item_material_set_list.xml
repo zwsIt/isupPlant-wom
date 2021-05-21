@@ -6,36 +6,50 @@
     android:background="@color/white"
     android:orientation="vertical"
     android:elevation="@dimen/dp_2">
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:padding="@dimen/dp_10">
-        <TextView
-            android:layout_width="0dp"
+        android:layout_height="wrap_content">
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:gravity="center_vertical"
-            android:layout_marginEnd="@dimen/dp_10"
-            android:textStyle="bold"
-            android:textColor="@color/dark_text"
-            android:id="@+id/activityNameTv"
-            android:tag="activityNameTv"/>
-        <TextView
-            android:id="@+id/statusTv"
+            android:layout_marginEnd="@dimen/dp_20"
+            android:padding="@dimen/dp_10">
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center_vertical"
+                android:layout_marginEnd="@dimen/dp_10"
+                android:textStyle="bold"
+                android:textColor="@color/dark_text"
+                android:id="@+id/activityNameTv"
+                android:tag="activityNameTv"/>
+            <TextView
+                android:id="@+id/statusTv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/sh_status"
+                android:maxWidth="@dimen/dp_120"
+                android:maxLines="1"
+                android:paddingStart="12dp"
+                android:paddingTop="3dp"
+                android:paddingEnd="12dp"
+                android:paddingBottom="3dp"
+                android:tag="statusTv"
+                android:textColor="@color/wom_tv_status_color"
+                android:textSize="14sp"
+                android:text="@string/wom_executing" />
+        </LinearLayout>
+        <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@drawable/sh_status"
-            android:maxWidth="@dimen/dp_120"
-            android:maxLines="1"
-            android:paddingStart="12dp"
-            android:paddingTop="3dp"
-            android:paddingEnd="12dp"
-            android:paddingBottom="3dp"
-            android:tag="statusTv"
-            android:textColor="@color/wom_tv_status_color"
-            android:textSize="14sp"
-            android:text="@string/wom_executing" />
-    </LinearLayout>
+            android:layout_alignParentEnd="true"
+            android:id="@+id/autoBatchIv"
+            android:tag="autoBatchIv"
+            android:src="@drawable/wom_ic_batch"
+            android:visibility="visible"/>
+    </RelativeLayout>
+
     <include layout="@layout/ly_line_light"/>
     <LinearLayout
         android:layout_width="match_parent"
@@ -157,7 +171,7 @@
         </LinearLayout>
     </LinearLayout>
     <TextView
-        android:layout_width="wrap_content"
+        android:layout_width="@dimen/dp_60"
         android:layout_height="@dimen/dp_25"
         android:id="@+id/bindBucket"
         style="@style/operateBtnStyle"

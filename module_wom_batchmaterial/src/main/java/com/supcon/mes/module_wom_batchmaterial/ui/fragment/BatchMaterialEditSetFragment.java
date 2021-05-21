@@ -21,17 +21,20 @@ import com.jakewharton.rxbinding2.widget.RxTextView;
 import com.supcon.common.view.base.activity.BaseRefreshRecyclerActivity;
 import com.supcon.common.view.base.adapter.IListAdapter;
 import com.supcon.common.view.base.fragment.BaseRefreshRecyclerFragment;
+import com.supcon.common.view.listener.OnChildViewClickListener;
 import com.supcon.common.view.util.DisplayUtil;
 import com.supcon.common.view.util.StatusBarUtils;
 import com.supcon.common.view.util.ToastUtils;
 import com.supcon.mes.mbap.utils.GsonUtil;
 import com.supcon.mes.mbap.view.CustomDialog;
+import com.supcon.mes.mbap.view.CustomEditText;
 import com.supcon.mes.mbap.view.CustomHorizontalSearchTitleBar;
 import com.supcon.mes.middleware.constant.Constant;
 import com.supcon.mes.middleware.model.bean.BAP5CommonEntity;
 import com.supcon.mes.middleware.model.bean.CommonBAP5ListEntity;
 import com.supcon.mes.middleware.model.bean.CommonBAPListEntity;
 import com.supcon.mes.middleware.model.bean.MaterialQRCodeEntity;
+import com.supcon.mes.middleware.model.bean.QrCodeEntity;
 import com.supcon.mes.middleware.model.event.RefreshEvent;
 import com.supcon.mes.middleware.model.listener.OnAPIResultListener;
 import com.supcon.mes.middleware.util.EmptyAdapterHelper;
@@ -42,10 +45,14 @@ import com.supcon.mes.module_wom_batchmaterial.R;
 import com.supcon.mes.module_wom_batchmaterial.constant.BmConstant;
 import com.supcon.mes.module_wom_batchmaterial.controller.BatchMaterialRecordsSubmitController;
 import com.supcon.mes.module_wom_batchmaterial.model.api.BatchMaterialSetListAPI;
+import com.supcon.mes.module_wom_batchmaterial.model.api.BatchSetBindBucketAPI;
 import com.supcon.mes.module_wom_batchmaterial.model.bean.BatchMaterialSetEntity;
 import com.supcon.mes.module_wom_batchmaterial.model.contract.BatchMaterialSetListContract;
+import com.supcon.mes.module_wom_batchmaterial.model.contract.BatchSetBindBucketContract;
 import com.supcon.mes.module_wom_batchmaterial.presenter.BatchMaterialSetListPresenter;
+import com.supcon.mes.module_wom_batchmaterial.presenter.BatchSetBindBucketPresenter;
 import com.supcon.mes.module_wom_batchmaterial.presenter.batchMaterialRecordsPresenter;
+import com.supcon.mes.module_wom_batchmaterial.ui.activity.BatchMaterialInstructionSetListActivity;
 import com.supcon.mes.module_wom_batchmaterial.ui.adapter.BatchMaterialSetListAdapter;
 import com.supcon.mes.module_wom_producetask.model.api.CommonListAPI;
 import com.supcon.mes.module_wom_producetask.model.bean.BatchMaterialPartEntity;
@@ -71,16 +78,17 @@ import io.reactivex.schedulers.Schedulers;
  * Email zhangwenshuai1@supcon.com
  * Desc 配料指令集list
  */
-@Presenter(value = {BatchMaterialSetListPresenter.class})
+@Presenter(value = {BatchMaterialSetListPresenter.class, BatchSetBindBucketPresenter.class})
 @Controller(value = {CommonScanController.class})
-public class BatchMaterialEditSetFragment extends BaseRefreshRecyclerFragment<BatchMaterialSetEntity> implements BatchMaterialSetListContract.View, OnAPIResultListener {
+public class BatchMaterialEditSetFragment extends BaseRefreshRecyclerFragment<BatchMaterialSetEntity> implements BatchMaterialSetListContract.View, BatchSetBindBucketContract.View {
     @BindByTag("contentView")
     RecyclerView contentView;
 
-    // 配料记录查询
+    // 配料查询
     ArrayMap<String, Object> queryParams = new ArrayMap<>();
 
     private BatchMaterialSetListAdapter mBatchMaterialSetListAdapter;
+    private CustomEditText mBucketCode;
 
     @Override
     protected IListAdapter<BatchMaterialSetEntity> createAdapter() {
@@ -115,6 +123,7 @@ public class BatchMaterialEditSetFragment extends BaseRefreshRecyclerFragment<Ba
     protected void initView() {
         super.initView();
     }
+
     @Override
     protected void initData() {
         super.initData();
@@ -125,69 +134,95 @@ public class BatchMaterialEditSetFragment extends BaseRefreshRecyclerFragment<Ba
     protected void initListener() {
         super.initListener();
         refreshListController.setOnRefreshPageListener(pageIndex -> {
-            presenterRouter.create(BatchMaterialSetListAPI.class).listBatchMaterialSets(pageIndex, null,false, queryParams);
+            queryParams.put(Constant.BAPQuery.CODE, ((BatchMaterialInstructionSetListActivity) context).getSearch());
+            // 配料状态
+        queryParams.put(Constant.BAPQuery.FM_TASK,BmConstant.SystemCode.TASK_BATCH);
+            presenterRouter.create(BatchMaterialSetListAPI.class).listBatchMaterialSets(pageIndex, null, false, queryParams);
         });
 
         mBatchMaterialSetListAdapter.setOnItemChildViewClickListener((childView, position, action, obj) -> {
             String tag = childView.getTag().toString();
-            if ("bindBucket".equals(tag)){
-
+            BatchMaterialSetEntity batchMaterialSetEntity = (BatchMaterialSetEntity) obj;
+            if ("bindBucket".equals(tag)) {
+                showBindDialog(batchMaterialSetEntity);
             }
         });
 
     }
 
     /**
-     * @author zhangwenshuai1 2020/4/20
      * @param
+     * @param batchMaterialSetEntity
      * @return
-     * @description 配料记录撤回
-     *
+     * @author zhangwenshuai1 2020/4/20
+     * @description 绑桶操作
      */
-    private void doRecallSubmit() {
-//        if (checkSubmit()){
-//            return;
-//        }
-        CustomDialog customDialog = new CustomDialog(context).layout(R.layout.wom_dialog_confirm,(DisplayUtil.getScreenWidth(context))*4/5, ViewGroup.LayoutParams.WRAP_CONTENT);
+    private void showBindDialog(BatchMaterialSetEntity batchMaterialSetEntity) {
+        CustomDialog customDialog = new CustomDialog(context).layout(R.layout.batch_dialog_bind_bucket, (DisplayUtil.getScreenWidth(context)) * 4 / 5, ViewGroup.LayoutParams.WRAP_CONTENT);
         customDialog.getDialog().getWindow().setBackgroundDrawableResource(R.color.transparent);
-        customDialog.bindView(R.id.tipContentTv,getString(R.string.wom_confirm_batch_material_operate)+getString(R.string.wom_recall)+getString(R.string.wom_middle_right_brackets))
-                .bindClickListener(R.id.cancelTv,null,true)
+        mBucketCode = customDialog.getDialog().findViewById(R.id.bucketCode);
+        customDialog.bindClickListener(R.id.customEditIcon, new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        getController(CommonScanController.class).openCameraScan(context.getClass().getSimpleName());
+                    }
+                }, false)
+                .bindClickListener(R.id.cancelTv, null, true)
                 .bindClickListener(R.id.confirmTv, v -> {
+
+                    if (TextUtils.isEmpty(mBucketCode.getContent())){
+                        ToastUtils.show(context,getString(R.string.batch_please_input_bucket_code));
+                        return;
+                    }
+                    customDialog.getDialog().dismiss();
                     onLoading(getString(R.string.wom_dealing));
-//                    Map<String,Object> paramsMap = new ArrayMap<>();
+                    Map<String,Object> paramsMap = new ArrayMap<>();
+                    paramsMap.put("id",batchMaterialSetEntity.getId());
+                    paramsMap.put("bucketCode",mBucketCode.getContent().trim());
 //                    getController(BatchMaterialRecordsSubmitController.class).submit(paramsMap,null,false);
-                }, true)
+                    presenterRouter.create(BatchSetBindBucketAPI.class).submit(paramsMap);
+                }, false)
                 .show();
     }
 
     public void search(String searchContent) {
-        queryParams.put(Constant.BAPQuery.PRODUCE_BATCH_NUM,searchContent);
-        refreshListController.refreshBegin();
-    }
-
-    @Override
-    public void onFail(String errorMsg) {
-        onLoadFailed(ErrorMsgHelper.msgParse(errorMsg));
-    }
-
-    @Override
-    public void onSuccess(Object result) {
-        onLoadSuccess(getString(R.string.wom_dealt_success));
         refreshListController.refreshBegin();
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void refresh(RefreshEvent refreshEvent){
+    public void refresh(RefreshEvent refreshEvent) {
         refreshListController.refreshBegin();
     }
 
     /**
      * 扫描功能：红外、摄像头扫描监听事件
+     *
      * @param codeResultEvent
      */
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onCodeReceiver(CodeResultEvent codeResultEvent) {
-//        if (context.getClass().getSimpleName().equals(codeResultEvent.scanTag)){
+        if (context.getClass().getSimpleName().equals(codeResultEvent.scanTag) && ((BatchMaterialInstructionSetListActivity)context).getTabPos() == 0){
+            QrCodeEntity qrCodeEntity = MaterQRUtil.getQRCode(context,codeResultEvent.scanResult);
+            if (qrCodeEntity != null) {
+                switch (qrCodeEntity.getType()){
+                    // 扫描设备
+                    case 0:
+//                        mScanEam = true;
+//                        ((BatchMaterialInstructionSetListActivity) context).setSearch(qrCodeEntity.getName());
+//                        refreshListController.refreshBegin();
+                        break;
+                    // 扫描桶
+                    case 1:
+//                        mScanBucket = true;
+                        if (mBucketCode != null){
+                            mBucketCode.setContent(qrCodeEntity.getCode());
+                        }
+                        break;
+                    case 2:
+                        break;
+                    default:
+                }
+            }
 //            if (mBatchMaterialSetListAdapter.getList().size() == 0){
 //                ToastUtils.show(context,getResources().getString(R.string.middleware_no_data));
 //                return;
@@ -228,7 +263,7 @@ public class BatchMaterialEditSetFragment extends BaseRefreshRecyclerFragment<Ba
 //                    ToastUtils.show(context, context.getResources().getString(R.string.wom_no_scan_material_info));
 //                }
 //            }
-//        }
+        }
 
     }
 
@@ -236,10 +271,6 @@ public class BatchMaterialEditSetFragment extends BaseRefreshRecyclerFragment<Ba
     public void onDestroy() {
         super.onDestroy();
         EventBus.getDefault().unregister(this);
-    }
-
-    public void search(){
-        refreshListController.refreshBegin();
     }
 
     @Override
@@ -251,5 +282,17 @@ public class BatchMaterialEditSetFragment extends BaseRefreshRecyclerFragment<Ba
     public void listBatchMaterialSetsFailed(String errorMsg) {
         refreshListController.refreshComplete();
         ToastUtils.show(context, errorMsg);
+    }
+
+    @Override
+    public void submitSuccess(BAP5CommonEntity entity) {
+        onLoadSuccess(getString(R.string.wom_dealt_success));
+        refreshListController.refreshBegin();
+    }
+
+    @Override
+    public void submitFailed(String errorMsg) {
+        onLoadFailed(errorMsg);
+        ToastUtils.show(context,errorMsg);
     }
 }

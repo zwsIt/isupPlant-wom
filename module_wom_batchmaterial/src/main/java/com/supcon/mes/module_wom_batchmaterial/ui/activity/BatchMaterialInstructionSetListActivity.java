@@ -110,7 +110,7 @@ public class BatchMaterialInstructionSetListActivity extends BaseControllerActiv
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(charSequence -> {
                     if (customTab.getCurrentPosition() == 0){
-                        mBatchMaterialEditSetFragment.search();
+                        mBatchMaterialEditSetFragment.search(charSequence.toString());
                     }else if (customTab.getCurrentPosition() == 1){
                         mBatchMaterialScanSetFragment.search();
                     }
@@ -148,6 +148,10 @@ public class BatchMaterialInstructionSetListActivity extends BaseControllerActiv
 
     public void setSearch(String code) {
         searchTitleBar.searchView().setInput(code);
+    }
+
+    public int getTabPos(){
+        return customTab.getCurrentPosition();
     }
 
     private class InnerFragmentPagerAdapter extends FragmentPagerAdapter {

@@ -130,8 +130,6 @@ public class ReplenishMaterialTableScanActivity extends BaseRefreshRecyclerActiv
     Map<String, Object> queryParams = new HashMap<>();
     Map<String, Object> customCondition = new HashMap<>();
     private ReplenishMaterialRecordsScanAdapter mReplenishMaterialRecordsScanAdapter;
-    private ReplenishMaterialTablePartEntity mReplenishMaterialTablePartEntity;
-    private WorkFlowButtonInfo mWorkFlowButtonInfo;
 
     @Override
     protected IListAdapter<ReplenishMaterialTablePartEntity> createAdapter() {
@@ -149,7 +147,6 @@ public class ReplenishMaterialTableScanActivity extends BaseRefreshRecyclerActiv
         super.onInit();
         EventBus.getDefault().register(this);
         mReplenishMaterialTableEntity = (ReplenishMaterialTableEntity) getIntent().getSerializableExtra(ReplenishConstant.IntentKey.REPLENISH_MATERIAL_TABLE);
-        mWorkFlowButtonInfo = (WorkFlowButtonInfo) getIntent().getSerializableExtra(ReplenishConstant.IntentKey.WORK_FLOW_BTN_INFO);
         refreshListController.setPullDownRefreshEnabled(true);
         refreshListController.setAutoPullDownRefresh(true);
         contentView.setLayoutManager(new SmoothScrollLayoutManager(context));
@@ -232,7 +229,7 @@ public class ReplenishMaterialTableScanActivity extends BaseRefreshRecyclerActiv
         super.initListener();
         leftBtn.setOnClickListener(v -> finish());
         rightBtn.setOnClickListener(v -> {
-            getController(CommonScanController.class).openCameraScan(this.getClass().getSimpleName());
+            getController(CommonScanController.class).openCameraScan(context.getClass().getSimpleName());
         });
 
         refreshListController.setOnRefreshListener(() -> presenterRouter.create(CommonListAPI.class).list(1, customCondition, queryParams,
@@ -433,7 +430,7 @@ public class ReplenishMaterialTableScanActivity extends BaseRefreshRecyclerActiv
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void getScanResult(CodeResultEvent codeResultEvent) {
-        if (this.getClass().getSimpleName().equals(codeResultEvent.scanTag)) {
+        if (context.getClass().getSimpleName().equals(codeResultEvent.scanTag)) {
 
             QrCodeEntity qrCodeEntity = MaterQRUtil.getQRCode(context, codeResultEvent.scanResult);
 

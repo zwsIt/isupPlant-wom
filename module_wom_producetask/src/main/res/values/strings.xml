@@ -157,4 +157,5 @@
     <string name="wom_work_unit_set">工作单元设置</string>
     <string name="wom_check_submit_tip">确认点击完成操作？ \n注：检查项全部通过点击完成则自动结束当前活动，否则会重新生成新的检查报工单</string>
     <string name="wom_total_num_greater_plan_num">当前扫描量与列表投料量总和已经超出计划投料量！是否继续？</string>
+    <string name="wom_red_scan">设备红外扫码</string>
 </resources>

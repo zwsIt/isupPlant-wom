@@ -37,10 +37,17 @@
     <string name="batch_material_instruction_set">配料指令集</string>
     <string name="batch_please_input_bucket_code">请输入桶编码</string>
     <string name="batch_material_executing">配料执行</string>
-    <string name="batch_bind_bucket">绑桶</string>
+    <string name="batch_material_scan_transport">扫码转运</string>
+    <string name="batch_bind_bucket">绑  桶</string>
     <string name="batch_bucket_code">桶编码</string>
     <string name="batch_current_area">当前配料区</string>
     <string name="batch_current_workline">当前配料线</string>
     <string name="batch_next_area">下游区</string>
     <string name="batch_no_bind_bucket">未绑桶</string>
+    <string name="batch_bind_bucket_tip">绑 桶</string>
+    <string name="batch_please_scan_bind_bucket">请扫描桶绑定</string>
+    <string name="batch_end">已完成</string>
+    <string name="batch_instruction_execute">配料指令执行</string>
+    <string name="batch_no_match_bucket">未能匹配桶号，请再次确认！</string>
+    <string name="batch_quick_scan_bucket">快速扫桶配料</string>
 </resources>

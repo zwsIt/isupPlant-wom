@@ -29,9 +29,9 @@
             android:layout_height="@dimen/dp_40"
             android:paddingStart="@dimen/dp_12"
             android:paddingEnd="@dimen/dp_12"
-            android:id="@+id/batchMode"
-            android:tag="batchMode"
-            app:key="@string/wom_batch_material_mode"
+            android:id="@+id/bucketCode"
+            android:tag="bucketCode"
+            app:key="@string/batch_bucket_code"
             app:key_size="14"
             app:key_color="@color/titleTextColor"
             app:content_color="@color/dark_text"/>

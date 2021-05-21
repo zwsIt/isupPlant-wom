@@ -55,7 +55,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textSize="@dimen/fontSize_16sp"
-                android:text="@string/replenish_red_scan"/>
+                android:text="@string/wom_red_scan"/>
             <ImageView
                 android:layout_gravity="center_vertical"
                 android:layout_width="@dimen/dp_20"

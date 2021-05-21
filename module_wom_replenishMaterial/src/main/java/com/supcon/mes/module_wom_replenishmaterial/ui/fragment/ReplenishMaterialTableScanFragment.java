@@ -73,8 +73,6 @@ public class ReplenishMaterialTableScanFragment extends BaseRefreshRecyclerFragm
         refreshListController.setAutoPullDownRefresh(true);
         refreshListController.setPullDownRefreshEnabled(true);
 
-        queryParams.put(Constant.BAPQuery.NAME, ((ReplenishMaterialTableListActivity) context).getSearch());
-
         refreshListController.setEmpterAdapter(EmptyAdapterHelper.getRecyclerEmptyAdapter(context, getString(R.string.wom_no_data_operate)));
         contentView.setLayoutManager(new LinearLayoutManager(context));
         contentView.addItemDecoration(new RecyclerView.ItemDecoration() {

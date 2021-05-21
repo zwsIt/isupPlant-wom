@@ -43,7 +43,7 @@ import org.greenrobot.eventbus.ThreadMode;
  * ClassName
  * Created by zhangwenshuai1 on 2020/4/15
  * Email zhangwenshuai1@supcon.com
- * Desc 配料记录
+ * Desc 配料指令集扫描
  */
 
 @Presenter(value = {BatchMaterialSetListPresenter.class})
@@ -71,8 +71,6 @@ public class BatchMaterialScanSetFragment extends BaseRefreshRecyclerFragment<Ba
         refreshListController.setAutoPullDownRefresh(true);
         refreshListController.setPullDownRefreshEnabled(true);
 
-        queryParams.put(Constant.BAPQuery.NAME, ((BatchMaterialInstructionSetListActivity) context).getSearch());
-
         refreshListController.setEmpterAdapter(EmptyAdapterHelper.getRecyclerEmptyAdapter(context, getString(R.string.wom_no_data_operate)));
         contentView.setLayoutManager(new LinearLayoutManager(context));
         contentView.addItemDecoration(new RecyclerView.ItemDecoration() {
@@ -82,7 +80,6 @@ public class BatchMaterialScanSetFragment extends BaseRefreshRecyclerFragment<Ba
                 outRect.set(DisplayUtil.dip2px(10, context), DisplayUtil.dip2px(10, context), DisplayUtil.dip2px(10, context), 0);
             }
         });
-
     }
 
     @Override
@@ -100,7 +97,9 @@ public class BatchMaterialScanSetFragment extends BaseRefreshRecyclerFragment<Ba
     protected void initListener() {
         super.initListener();
         refreshListController.setOnRefreshPageListener(pageIndex -> {
-            queryParams.put(Constant.BAPQuery.NAME, ((BatchMaterialInstructionSetListActivity) context).getSearch());
+            queryParams.put(Constant.BAPQuery.CODE, ((BatchMaterialInstructionSetListActivity) context).getSearch());
+            // 配料状态
+            queryParams.put(Constant.BAPQuery.FM_TASK,BmConstant.SystemCode.TASK_TRANSPORT);
             presenterRouter.create(BatchMaterialSetListAPI.class).listBatchMaterialSets(pageIndex, null,false, queryParams);
         });
     }
@@ -121,7 +120,7 @@ public class BatchMaterialScanSetFragment extends BaseRefreshRecyclerFragment<Ba
      */
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onCodeReceiver(CodeResultEvent codeResultEvent) {
-        if (context.getClass().getSimpleName().equals(codeResultEvent.scanTag)){
+        if (context.getClass().getSimpleName().equals(codeResultEvent.scanTag) && ((BatchMaterialInstructionSetListActivity)context).getTabPos() == 1){
             if (mBatchMaterialSetListAdapter.getList().size() == 0){
                 ToastUtils.show(context,getResources().getString(R.string.middleware_no_data));
                 return;
@@ -132,9 +131,9 @@ public class BatchMaterialScanSetFragment extends BaseRefreshRecyclerFragment<Ba
                 switch (qrCodeEntity.getType()){
                     // 扫描设备
                     case 0:
-                        mScanEam = true;
-                        ((BatchMaterialInstructionSetListActivity) context).setSearch(qrCodeEntity.getName());
-                        refreshListController.refreshBegin();
+//                        mScanEam = true;
+//                        ((BatchMaterialInstructionSetListActivity) context).setSearch(qrCodeEntity.getName());
+//                        refreshListController.refreshBegin();
                         break;
                     // 扫描桶
                     case 1:

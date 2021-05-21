@@ -240,7 +240,7 @@ public class ReplenishMaterialTableEditActivity extends BaseRefreshRecyclerActiv
         rightBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                getController(CommonScanController.class).openCameraScan(this.getClass().getSimpleName());
+                getController(CommonScanController.class).openCameraScan(context.getClass().getSimpleName());
             }
         });
 
@@ -335,6 +335,7 @@ public class ReplenishMaterialTableEditActivity extends BaseRefreshRecyclerActiv
             replenishMaterialTablePartEntity.setFmNumber(qrCodeEntity.getNum());
         }
         replenishMaterialTablePartEntity.setFmTime(System.currentTimeMillis());
+        replenishMaterialTablePartEntity.setFmBill(mReplenishMaterialTableEntity);
 
         if (mReplenishMaterialRecordsEditAdapter.getItemCount() <= 0) {
             mReplenishMaterialRecordsEditAdapter.addData(replenishMaterialTablePartEntity);
@@ -521,7 +522,7 @@ public class ReplenishMaterialTableEditActivity extends BaseRefreshRecyclerActiv
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void getScanResult(CodeResultEvent codeResultEvent) {
-        if (this.getClass().getSimpleName().equals(codeResultEvent.scanTag)) {
+        if (context.getClass().getSimpleName().equals(codeResultEvent.scanTag)) {
             QrCodeEntity qrCodeEntity = MaterQRUtil.getQRCode(context, codeResultEvent.scanResult);
             if (qrCodeEntity != null) {
                 switch (qrCodeEntity.getType()) {

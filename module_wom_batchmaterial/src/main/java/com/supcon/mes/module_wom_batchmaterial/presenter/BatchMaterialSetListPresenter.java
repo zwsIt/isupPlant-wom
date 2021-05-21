@@ -15,6 +15,7 @@ import com.supcon.mes.module_wom_batchmaterial.model.contract.BatchMaterialSetLi
 import com.supcon.mes.module_wom_batchmaterial.model.network.BmHttpClient;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -28,28 +29,13 @@ public class BatchMaterialSetListPresenter extends BatchMaterialSetListContract.
     @Override
     public void listBatchMaterialSets(int pageIndex, String url,boolean pending, ArrayMap<String, Object> queryMap) {
         Map<String, Object> pageQueryParams = PageParamUtil.pageParam(pageIndex, 20, true);
+        HashMap<String,Object> taskStateMap = new HashMap<>(1);
+        taskStateMap.put(Constant.BAPQuery.FM_TASK,queryMap.get(Constant.BAPQuery.FM_TASK));
+        FastQueryCondEntity fastQueryCondEntity = BAPQueryParamsHelper.createSingleFastQueryCond(taskStateMap);
 
-//        if (!pending){
-//            ArrayMap<String,Object> customCondition = new ArrayMap<>();
-//            customCondition.put("needFM",true);
-//            pageQueryParams.put("customCondition",customCondition);
-//        }
-
-        FastQueryCondEntity fastQueryCondEntity = new FastQueryCondEntity();
-        fastQueryCondEntity.subconds = new ArrayList<>();
-
-        if (queryMap.containsKey(Constant.BAPQuery.CODE)){
-            // 桶编码
-            BAPQueryParamsHelper.setLike(false);
-            JoinSubcondEntity joinSubcondEntityBucket = BAPQueryParamsHelper.crateJoinSubcondEntity(queryMap, "WOM_VESSELS,ID,WOM_FM_BILLS,VESSEL");
-            fastQueryCondEntity.subconds.add(joinSubcondEntityBucket);
-            queryMap.remove(Constant.BAPQuery.CODE);
-        }
-
-        // 设备
-        JoinSubcondEntity joinSubcondEntity = BAPQueryParamsHelper.crateJoinSubcondEntity(queryMap, "HM_FTY_EQUIPMENTS,ID,WOM_FMN_NOTICES,EQUIPMENT");
-        fastQueryCondEntity.subconds.add(joinSubcondEntity);
-
+        // 桶编码
+        queryMap.remove(Constant.BAPQuery.FM_TASK);
+        fastQueryCondEntity.subconds.add(BAPQueryParamsHelper.crateJoinSubcondEntity(queryMap, "WOM_VESSELS,ID,WOM_BM_SETS,VESSEL"));
 
         fastQueryCondEntity.modelAlias = "bmSet";
         fastQueryCondEntity.viewCode = "WOM_1.0.0_batchMaterialSet_bmSetList";
