@@ -534,6 +534,10 @@ public class PutInActivityReportActivity extends BaseRefreshRecyclerActivity<Put
     }
 
     private boolean checkMaterial(MaterialQRCodeEntity materialQRCodeEntity) {
+        if (TextUtils.isEmpty(materialQRCodeEntity.getMaterial().getCode())){
+            ToastUtils.show(context,getString(R.string.wom_qr_material_null));
+            return true;
+        }
         if (!materialQRCodeEntity.getMaterial().getCode().equals(mWaitPutinRecordEntity.getTaskActiveId().getMaterialId().getCode())) {
             ToastUtils.show(context, context.getResources().getString(R.string.wom_scan_material_error));
             return true;
