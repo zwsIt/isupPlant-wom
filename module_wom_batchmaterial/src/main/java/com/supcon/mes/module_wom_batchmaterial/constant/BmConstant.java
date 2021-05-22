@@ -81,6 +81,7 @@ public interface BmConstant {
 
     interface Router {
         String BATCH_MATERIAL_INSTRUCTION_LIST = "BATCH_MATERIAL_INSTRUCTION_LIST"; // 指令列表
+        String BATCH_TRUNK_AREA_SCAN = "BATCH_TRUNK_AREA_SCAN"; // 配料中继位扫描
     }
 
     interface IntentKey {

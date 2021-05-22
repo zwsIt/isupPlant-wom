@@ -114,7 +114,6 @@ public class ScanBatchMaterialActivity extends BaseControllerActivity implements
                 }
             }
         }
-
     }
 
     @Override
@@ -132,7 +131,7 @@ public class ScanBatchMaterialActivity extends BaseControllerActivity implements
             bundle.putSerializable(BmConstant.IntentKey.BATCH_MATERIAL_SET,batchMaterialSetEntity);
             // 判断是否已经配料完成
             if (BmConstant.SystemCode.TASK_TRANSPORT.equals(batchMaterialSetEntity.getFmTask().id)){
-
+                IntentRouter.go(context,BmConstant.Router.BATCH_TRUNK_AREA_SCAN,bundle);
             }else {
                 IntentRouter.go(context,BmConstant.Router.BATCH_MATERIAL_INSTRUCTION_LIST,bundle);
             }

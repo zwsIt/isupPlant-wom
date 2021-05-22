@@ -82,12 +82,12 @@ public class BatchMaterialSetListAdapter extends BaseListDataRecyclerViewAdapter
                         @Override
                         public void accept(Object o) throws Exception {
                             BatchMaterialSetEntity batchMaterialSetEntity = getItem(getAdapterPosition());
+                            Bundle bundle = new Bundle();
+                            bundle.putSerializable(BmConstant.IntentKey.BATCH_MATERIAL_SET,batchMaterialSetEntity);
                             if (BmConstant.SystemCode.TASK_BATCH.equals(batchMaterialSetEntity.getFmTask().id)){
-                                Bundle bundle = new Bundle();
-                                bundle.putSerializable(BmConstant.IntentKey.BATCH_MATERIAL_SET,batchMaterialSetEntity);
                                 IntentRouter.go(context,BmConstant.Router.BATCH_MATERIAL_INSTRUCTION_LIST,bundle);
                             }else if (BmConstant.SystemCode.TASK_TRANSPORT.equals(batchMaterialSetEntity.getFmTask().id)){
-
+                                IntentRouter.go(context,BmConstant.Router.BATCH_TRUNK_AREA_SCAN,bundle);
                             }
                         }
                     });

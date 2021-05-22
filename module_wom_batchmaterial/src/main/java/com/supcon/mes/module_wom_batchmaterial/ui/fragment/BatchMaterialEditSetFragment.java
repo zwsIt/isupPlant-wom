@@ -177,9 +177,8 @@ public class BatchMaterialEditSetFragment extends BaseRefreshRecyclerFragment<Ba
                     customDialog.getDialog().dismiss();
                     onLoading(getString(R.string.wom_dealing));
                     Map<String,Object> paramsMap = new ArrayMap<>();
-                    paramsMap.put("id",batchMaterialSetEntity.getId());
-                    paramsMap.put("bucketCode",mBucketCode.getContent().trim());
-//                    getController(BatchMaterialRecordsSubmitController.class).submit(paramsMap,null,false);
+                    paramsMap.put("bmSetId",batchMaterialSetEntity.getId());
+                    paramsMap.put("vesselCode",mBucketCode.getContent().trim());
                     presenterRouter.create(BatchSetBindBucketAPI.class).submit(paramsMap);
                 }, false)
                 .show();

@@ -50,4 +50,11 @@
     <string name="batch_instruction_execute">配料指令执行</string>
     <string name="batch_no_match_bucket">未能匹配桶号，请再次确认！</string>
     <string name="batch_quick_scan_bucket">快速扫桶配料</string>
+    <string name="batch_bucket_info">配料通信息</string>
+    <string name="batch_index">配料顺序</string>
+    <string name="batch_trunk_area_info">中继位信息</string>
+    <string name="batch_trunk_code">中继位编码</string>
+    <string name="batch_bucket_scan_into">配料桶上料扫码</string>
+    <string name="batch_pass_make_sure_into">校验通过，确认上料！</string>
+    <string name="batch_ing_please_end_first">当前桶处于配料中，请先配料结束</string>
 </resources>

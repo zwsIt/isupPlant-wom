@@ -51,7 +51,7 @@ public class MaterQRUtil {
      * @author zhangwenshuai1 2020/8/17
      * @param
      * @return
-     * @description 产品模式格式
+     * @description 天味家园
      *
      */
     public static QrCodeEntity getQRCode(Context context,String code){

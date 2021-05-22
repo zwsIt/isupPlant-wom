@@ -74,12 +74,12 @@ public interface NetworkService {
      * 配料指令集绑桶
      * @return
      */
-    @POST("")
+    @POST("/msService/WOM/batchMaterialSet/bmSet/bindingVessel")
     Flowable<BAP5CommonEntity<Object>> bindBucketSubmit(@QueryMap Map<String, Object> paramsMap);
 
     /**
      * 获取配料指令配料记录
-     * @param paramMap
+     * @param id
      * @return
      */
     @POST("")

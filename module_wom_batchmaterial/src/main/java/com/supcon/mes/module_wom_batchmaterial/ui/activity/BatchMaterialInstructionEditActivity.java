@@ -208,8 +208,7 @@ public class BatchMaterialInstructionEditActivity extends BaseRefreshRecyclerAct
         super.initListener();
         leftBtn.setOnClickListener(v -> finish());
         rightBtn.setOnClickListener(v -> getController(CommonScanController.class).openCameraScan(context.getClass().getSimpleName()));
-        refreshListController.setOnRefreshListener(() -> presenterRouter.create(CommonListAPI.class).list(1, customCondition, queryParams,
-                BmConstant.URL.BATCH_MATERIAL_INSTRUCTION_DG_LIST_URL + "&id=" + mBatchInstructionEntity.getId(), ""));
+        refreshListController.setOnRefreshListener(() -> presenterRouter.create(BatchMaterialInstructionEditAPI.class).listBatchParts(mBatchInstructionEntity.getId()));
         customListWidgetAdd.setOnClickListener(v -> {
             addItem(null);
         });
