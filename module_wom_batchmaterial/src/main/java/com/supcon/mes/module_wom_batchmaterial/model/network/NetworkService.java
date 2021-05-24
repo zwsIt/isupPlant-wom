@@ -15,6 +15,7 @@ import java.util.Map;
 
 import io.reactivex.Flowable;
 import retrofit2.http.Body;
+import retrofit2.http.GET;
 import retrofit2.http.POST;
 import retrofit2.http.Query;
 import retrofit2.http.QueryMap;
@@ -38,8 +39,8 @@ public interface NetworkService {
      * 天味家园：配料指令编辑提交
      * @return
      */
-    @POST("")
-    Flowable<BAP5CommonEntity<BapResultEntity>> batchMaterialInstructionSubmit(@Query("id") Long id, @Body BatchMaterialInstructionDTO batchMaterialInstructionDTO);
+    @POST("/msService/WOM/batchMaterialSet/bmRecord/addAnUpdateBmRecord")
+    Flowable<BAP5CommonEntity<BapResultEntity>> batchMaterialInstructionSubmit(@Body BatchInstructionPartEntity[] batchInstructionPartEntityDTO);
 
     /**
      * 配料记录提交：配料完成、撤回、派送、配放
@@ -74,15 +75,15 @@ public interface NetworkService {
      * 配料指令集绑桶
      * @return
      */
-    @POST("/msService/WOM/batchMaterialSet/bmSet/bindingVessel")
+    @GET("/msService/WOM/batchMaterialSet/bmSet/bindingVessel")
     Flowable<BAP5CommonEntity<Object>> bindBucketSubmit(@QueryMap Map<String, Object> paramsMap);
 
     /**
      * 获取配料指令配料记录
-     * @param id
+     * @param paramMap
      * @return
      */
-    @POST("")
-    Flowable<CommonBAP5ListEntity<BatchInstructionPartEntity>> listBatchParts(@Query("id") Long id);
+    @POST("/msService/WOM/batchMaterialSet/bmRecord/bmRecordList-query")
+    Flowable<CommonBAP5ListEntity<BatchInstructionPartEntity>> listBatchParts(@Body Map<String, Object> paramMap);
 
 }

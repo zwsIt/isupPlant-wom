@@ -247,10 +247,13 @@ public class BatchMaterialInstructionEditActivity extends BaseRefreshRecyclerAct
         BatchInstructionPartEntity batchInstructionPartEntity = new BatchInstructionPartEntity();
         if (qrCodeEntity != null){
             batchInstructionPartEntity.setBatch(qrCodeEntity.getBatch());
-            batchInstructionPartEntity.setFmNumber(qrCodeEntity.getNum());
+            batchInstructionPartEntity.setBmNumber(qrCodeEntity.getNum());
         }
-        batchInstructionPartEntity.setBmTime(System.currentTimeMillis());
-        batchInstructionPartEntity.setBatchInstructionEntity(mBatchInstructionEntity);
+        batchInstructionPartEntity.setOperatorTime(System.currentTimeMillis());
+        StaffEntity staffEntity = new StaffEntity();
+        staffEntity.id = SupPlantApplication.getAccountInfo().staffId;
+        batchInstructionPartEntity.setOperator(staffEntity);
+        batchInstructionPartEntity.setBmSetDetail(mBatchInstructionEntity);
 
         if (mBatchInstructionPartsAdapter.getItemCount() <= 0) {
             mBatchInstructionPartsAdapter.addData(batchInstructionPartEntity);
@@ -273,7 +276,7 @@ public class BatchMaterialInstructionEditActivity extends BaseRefreshRecyclerAct
             return;
         }
         onLoading(context.getResources().getString(R.string.wom_dealing));
-        BatchMaterialInstructionDTO batchMaterialInstructionDTO = new BatchMaterialInstructionDTO();
+//        BatchMaterialInstructionDTO batchMaterialInstructionDTO = new BatchMaterialInstructionDTO();
 //        batchMaterialInstructionDTO.setWorkFlowVarDTO(getWorkFlowVar());
 //        batchMaterialInstructionDTO.setOperateType("save");
 //        batchMaterialInstructionDTO.setDeploymentId(String.valueOf(mBatchMaterialEntity.getPending().deploymentId));
@@ -293,7 +296,7 @@ public class BatchMaterialInstructionEditActivity extends BaseRefreshRecyclerAct
 //        batchMaterialInstructionDTO.setBatchMateril(mBatchMaterialEntity);
 //        batchMaterialInstructionDTO.setIds2del("");
 //        batchMaterialInstructionDTO.setViewCode("WOM_1.0.0_batchMaterial_batchMaterialOrder");
-        presenterRouter.create(BatchMaterialInstructionEditAPI.class).submit(mBatchInstructionEntity.getId(),  batchMaterialInstructionDTO);
+        presenterRouter.create(BatchMaterialInstructionEditAPI.class).submit(mBatchInstructionPartsAdapter.getList());
 
     }
 
@@ -317,7 +320,7 @@ public class BatchMaterialInstructionEditActivity extends BaseRefreshRecyclerAct
                 ToastUtils.show(context, context.getResources().getString(R.string.wom_di) + (mBatchInstructionPartsAdapter.getList().indexOf(batchInstructionPartEntity) + 1) + context.getResources().getString(R.string.wom_please_write_material_batch));
                 return true;
             }
-            if (batchInstructionPartEntity.getFmNumber() == null) {
+            if (batchInstructionPartEntity.getBmNumber() == null) {
                 ToastUtils.show(context, context.getResources().getString(R.string.wom_di) + (mBatchInstructionPartsAdapter.getList().indexOf(batchInstructionPartEntity) + 1) + context.getResources().getString(R.string.wom_pleasr_write_num));
                 return true;
             }

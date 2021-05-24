@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.app.annotation.BindByTag;
@@ -13,9 +14,9 @@ import com.supcon.common.view.base.adapter.viewholder.BaseRecyclerViewHolder;
 import com.supcon.mes.mbap.utils.DateUtil;
 import com.supcon.mes.mbap.view.CustomContentTextDialog;
 import com.supcon.mes.mbap.view.CustomTextView;
+import com.supcon.mes.middleware.IntentRouter;
 import com.supcon.mes.middleware.constant.Constant;
 import com.supcon.mes.middleware.util.UrlUtil;
-import com.supcon.mes.module_wom_replenishmaterial.IntentRouter;
 import com.supcon.mes.module_wom_replenishmaterial.R;
 import com.supcon.mes.module_wom_replenishmaterial.constant.ReplenishConstant;
 import com.supcon.mes.module_wom_replenishmaterial.model.bean.ReplenishMaterialTableEntity;
@@ -57,6 +58,8 @@ public class ReplenishMaterialTableEditListAdapter extends BaseListDataRecyclerV
         CustomTextView eamPoint;
         @BindByTag("vessel")
         CustomTextView vessel;
+        @BindByTag("replenishModelIv")
+        ImageView replenishModelIv;
 
         public ViewHolder(Context context) {
             super(context,parent);
@@ -102,6 +105,14 @@ public class ReplenishMaterialTableEditListAdapter extends BaseListDataRecyclerV
             numCustomTv.setContent((data.getActualNumber() == null ? 0 : data.getActualNumber().toString()) + "/" + (data.getPlanNumber() == null ? 0 : data.getPlanNumber().toString()));
             eamPoint.setContent(data.getEquipment().getName() + "("+data.getEquipment().getCode()+")");
             vessel.setContent(data.getVessel() == null ? "--" : data.getVessel().getCode());
+
+            if (data.getEquipment() != null && data.getEquipment().getRunModel() != null
+                    && ReplenishConstant.SystemCode.MODEL_NOTIFY.equals(data.getEquipment().getRunModel().id)){
+                replenishModelIv.setImageResource(R.drawable.ic_notify);
+            }else if (data.getEquipment() != null && data.getEquipment().getRunModel() != null
+                    && ReplenishConstant.SystemCode.MODEL_MANUAL.equals(data.getEquipment().getRunModel().id)){
+                replenishModelIv.setImageResource(R.drawable.ic_active);
+            }
         }
     }
 

@@ -438,7 +438,7 @@ public class PutInActivityReportActivity extends BaseRefreshRecyclerActivity<Put
 //            if (putInDetailEntity.getWareId() == null) {
 //                ToastUtils.show(context, context.getResources().getString(R.string.wom_di) + (list.indexOf(putInDetailEntity) + 1) + context.getResources().getString(R.string.wom_please_write_ware));
 //                return true;
-//            }
+//            }                    k
 //            if (putInDetailEntity.getWareId() != null && putInDetailEntity.getWareId().getStoreSetState() && putInDetailEntity.getStoreId() == null) {
 //                ToastUtils.show(context, context.getResources().getString(R.string.wom_di) + (list.indexOf(putInDetailEntity) + 1) + context.getResources().getString(R.string.wom_warehouse_enable_please_write_storage));
 //                return true;

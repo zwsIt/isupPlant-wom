@@ -46,7 +46,7 @@
             android:layout_alignParentEnd="true"
             android:id="@+id/autoBatchIv"
             android:tag="autoBatchIv"
-            android:src="@drawable/wom_ic_batch"
+            android:src="@drawable/ic_automatic"
             android:visibility="visible"/>
     </RelativeLayout>
 

@@ -2,6 +2,7 @@ package com.supcon.mes.module_wom_batchmaterial.model.bean;
 
 import com.google.gson.annotations.Expose;
 import com.supcon.common.com_http.BaseEntity;
+import com.supcon.mes.middleware.model.bean.StaffEntity;
 
 import java.math.BigDecimal;
 
@@ -29,7 +30,7 @@ public class BatchInstructionPartEntity extends BaseEntity {
      * 配料指令
      */
     @Expose(serialize = false)
-    private BatchInstructionEntity batchInstructionEntity;
+    private BatchInstructionEntity bmSetDetail;
     /**
      * 配料数量
      */
@@ -39,7 +40,7 @@ public class BatchInstructionPartEntity extends BaseEntity {
      * 配料时间
      */
     @Expose
-    private Long bmTime;
+    private Long operatorTime;
     /**
      * id
      */
@@ -60,13 +61,34 @@ public class BatchInstructionPartEntity extends BaseEntity {
      */
     @Expose
     private int version;
+    /**
+     * operator
+     */
+    @Expose
+    private StaffEntity operator;
 
-    public BatchInstructionEntity getBatchInstructionEntity() {
-        return batchInstructionEntity;
+    public BatchInstructionEntity getBmSetDetail() {
+        return bmSetDetail;
     }
 
-    public void setBatchInstructionEntity(BatchInstructionEntity batchInstructionEntity) {
-        this.batchInstructionEntity = batchInstructionEntity;
+    public void setBmSetDetail(BatchInstructionEntity bmSetDetail) {
+        this.bmSetDetail = bmSetDetail;
+    }
+
+    public Long getOperatorTime() {
+        return operatorTime;
+    }
+
+    public void setOperatorTime(Long operatorTime) {
+        this.operatorTime = operatorTime;
+    }
+
+    public StaffEntity getOperator() {
+        return operator;
+    }
+
+    public void setOperator(StaffEntity operator) {
+        this.operator = operator;
     }
 
     public Object getAttrMap() {
@@ -90,22 +112,6 @@ public class BatchInstructionPartEntity extends BaseEntity {
     }
 
     public void setBmNumber(BigDecimal bmNumber) {
-        this.bmNumber = bmNumber;
-    }
-
-    public Long getBmTime() {
-        return bmTime;
-    }
-
-    public void setBmTime(Long bmTime) {
-        this.bmTime = bmTime;
-    }
-
-    public BigDecimal getFmNumber() {
-        return bmNumber;
-    }
-
-    public void setFmNumber(BigDecimal fmNumber) {
         this.bmNumber = bmNumber;
     }
 

@@ -3,7 +3,10 @@ package com.supcon.mes.module_wom_batchmaterial.model.api;
 import com.app.annotation.apt.ContractFactory;
 import com.supcon.mes.middleware.model.bean.BAP5CommonEntity;
 import com.supcon.mes.middleware.model.bean.CommonBAPListEntity;
+import com.supcon.mes.module_wom_batchmaterial.model.bean.BatchInstructionPartEntity;
 import com.supcon.mes.module_wom_batchmaterial.model.dto.BatchMaterialInstructionDTO;
+
+import java.util.List;
 
 /**
  * ClassName
@@ -26,10 +29,10 @@ public interface BatchMaterialInstructionEditAPI {
     /**
      * @author zhangwenshuai1 2020/3/25
      * @param
-     * @param batchMaterialInstructionDTO
+     * @param batchInstructionPartEntityList
      * @return
      * @description 提交
      *
      */
-    void submit(Long id, BatchMaterialInstructionDTO batchMaterialInstructionDTO);
+    void submit(List<BatchInstructionPartEntity> batchInstructionPartEntityList);
 }

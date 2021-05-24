@@ -114,9 +114,9 @@ public class BatchMaterialSetListAdapter extends BaseListDataRecyclerViewAdapter
             batchNextArea.setContent(data.getCurrentBurendManage().getAreaId().getNextArea().getName() + "("+data.getCurrentBurendManage().getAreaId().getNextArea().getCode()+")");
             time.setContent(data.getStartTime() == null ? "--" : DateUtil.dateTimeFormat(data.getStartTime()));
             if (data.getCurrentBurendManage().getAreaId().isAutoBurden()){
-                autoBatchIv.setImageResource(R.drawable.wom_ic_batch);
+                autoBatchIv.setVisibility(View.VISIBLE);
             }else {
-                autoBatchIv.setImageResource(R.drawable.wom_ic_batch);
+                autoBatchIv.setVisibility(View.GONE);
             }
             if (data.getVessel() != null && data.getVessel().getId() != null){
                 bindBucket.setVisibility(View.GONE);

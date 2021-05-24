@@ -97,7 +97,7 @@ public class BatchInstructionPartsAdapter extends BaseListDataRecyclerViewAdapte
                     .skipInitialValue()
                     .filter(charSequence -> {
                         if (TextUtils.isEmpty(charSequence.toString())){
-                            getItem(getAdapterPosition()).setFmNumber(null);
+                            getItem(getAdapterPosition()).setBmNumber(null);
                             return false;
                         }
                         if(charSequence.toString().startsWith(".")){
@@ -106,14 +106,14 @@ public class BatchInstructionPartsAdapter extends BaseListDataRecyclerViewAdapte
                         }
                         return true;
                     })
-                    .subscribe(charSequence -> getItem(getAdapterPosition()).setFmNumber(new BigDecimal(charSequence.toString().trim())));
+                    .subscribe(charSequence -> getItem(getAdapterPosition()).setBmNumber(new BigDecimal(charSequence.toString().trim())));
 
         }
 
         @Override
         protected void update(BatchInstructionPartEntity data) {
             batchNum.setContent(data.getBatch());
-            numEt.setContent(data.getFmNumber() == null ? "" : String.valueOf(data.getFmNumber()));
+            numEt.setContent(data.getBmNumber() == null ? "" : String.valueOf(data.getBmNumber()));
         }
     }
 
@@ -162,7 +162,7 @@ public class BatchInstructionPartsAdapter extends BaseListDataRecyclerViewAdapte
         protected void update(BatchInstructionPartEntity data) {
 //            materialRecordStateTv.setText(data.getBatRecordState().value);
             batchNum.setContent(data.getBatch());
-            numEt.setContent(data.getFmNumber() == null ? "" : String.valueOf(data.getFmNumber()));
+            numEt.setContent(data.getBmNumber() == null ? "" : String.valueOf(data.getBmNumber()));
         }
     }
 

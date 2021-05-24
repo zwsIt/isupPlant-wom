@@ -47,7 +47,7 @@
             android:layout_alignParentEnd="true"
             android:id="@+id/replenishModelIv"
             android:tag="replenishModelIv"
-            android:src="@drawable/wom_ic_batch"
+            android:src="@drawable/ic_notify"
             android:visibility="visible"/>
     </RelativeLayout>
 

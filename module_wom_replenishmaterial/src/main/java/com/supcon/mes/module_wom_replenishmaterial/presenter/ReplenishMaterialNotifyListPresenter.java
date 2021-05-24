@@ -78,23 +78,17 @@ public class ReplenishMaterialNotifyListPresenter extends ReplenishMaterialNotif
         ReplenishMaterialNotifyDTO dto[] = new ReplenishMaterialNotifyDTO[dtoList.size()];
         dtoList.toArray(dto);
         HttpClient.submit(dto)
-                .onErrorReturn(new Function<Throwable, BAP5CommonEntity<BapResultEntity>>() {
-                    @Override
-                    public BAP5CommonEntity<BapResultEntity> apply(@NonNull Throwable throwable) throws Exception {
-                        BAP5CommonEntity<BapResultEntity> bap5CommonEntity = new BAP5CommonEntity<>();
-                        bap5CommonEntity.success = false;
-                        bap5CommonEntity.msg = HttpErrorReturnUtil.getErrorInfo(throwable);
-                        return bap5CommonEntity;
-                    }
+                .onErrorReturn(throwable -> {
+                    BAP5CommonEntity<BapResultEntity> bap5CommonEntity = new BAP5CommonEntity<>();
+                    bap5CommonEntity.success = false;
+                    bap5CommonEntity.msg = HttpErrorReturnUtil.getErrorInfo(throwable);
+                    return bap5CommonEntity;
                 })
-                .subscribe(new Consumer<BAP5CommonEntity<BapResultEntity>>() {
-                    @Override
-                    public void accept(BAP5CommonEntity<BapResultEntity> bapResultEntityBAP5CommonEntity) throws Exception {
-                        if (bapResultEntityBAP5CommonEntity.success){
-                            getView().submitSuccess(bapResultEntityBAP5CommonEntity);
-                        }else {
-                            getView().submitFailed(bapResultEntityBAP5CommonEntity.msg);
-                        }
+                .subscribe(bapResultEntityBAP5CommonEntity -> {
+                    if (bapResultEntityBAP5CommonEntity.success){
+                        getView().submitSuccess(bapResultEntityBAP5CommonEntity);
+                    }else {
+                        getView().submitFailed(bapResultEntityBAP5CommonEntity.msg);
                     }
                 });
     }
