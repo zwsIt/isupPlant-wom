@@ -129,7 +129,7 @@ public class BatchTrunkAreaScanActivity extends BaseControllerActivity implement
         rightBtn.setVisibility(View.VISIBLE);
         rightBtn.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_top_scan));
 
-        batchLine.setContent(mBatchMaterialSetEntity.getCurrentBurendManage().getCode());
+        batchLine.setContent(mBatchMaterialSetEntity.getNextBurendManage().getCode());
         batchIndex.setContent(String.valueOf(mBatchMaterialSetEntity.getFmOrder()));
 
     }
@@ -244,7 +244,7 @@ public class BatchTrunkAreaScanActivity extends BaseControllerActivity implement
                        break;
                     // 中继位
                     case 3:
-                        if (qrCodeEntity.getPlx().equals(mBatchMaterialSetEntity.getCurrentBurendManage().getCode())){
+                        if (qrCodeEntity.getPlx().equals(mBatchMaterialSetEntity.getNextBurendManage().getCode())){
                             trunkCode.setContent(qrCodeEntity.getCode());
                             workLine.setContent(qrCodeEntity.getPlx());
                             trunkPassIv.setImageResource(R.drawable.replenish_ic_pass);
@@ -272,7 +272,7 @@ public class BatchTrunkAreaScanActivity extends BaseControllerActivity implement
             BatchMaterialSetEntity batchMaterialSetEntity = (BatchMaterialSetEntity) entity.data.result.get(0);
             // 判断是否已经配料完成
             if (BmConstant.SystemCode.TASK_TRANSPORT.equals(batchMaterialSetEntity.getFmTask().id)){
-                batchLine.setContent(batchMaterialSetEntity.getCurrentBurendManage().getCode());
+                batchLine.setContent(batchMaterialSetEntity.getNextBurendManage().getCode());
                 batchIndex.setContent(String.valueOf(batchMaterialSetEntity.getFmOrder()));
             }else {
                 ToastUtils.show(context, getString(R.string.batch_ing_please_end_first));

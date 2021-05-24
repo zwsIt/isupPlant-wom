@@ -37,6 +37,10 @@ public class BatchMaterialSetEntity extends BaseEntity {
      */
     private BatchLineEntity currentBurendManage;
     /**
+     *下游配料线
+     */
+    private BatchLineEntity nextBurendManage;
+    /**
      * endTime
      */
     private Long endTime;
@@ -92,6 +96,14 @@ public class BatchMaterialSetEntity extends BaseEntity {
      * 容器
      */
     private VesselEntity vessel;
+
+    public BatchLineEntity getNextBurendManage() {
+        return nextBurendManage;
+    }
+
+    public void setNextBurendManage(BatchLineEntity nextBurendManage) {
+        this.nextBurendManage = nextBurendManage;
+    }
 
     public Object getAttrMap() {
         return attrMap;

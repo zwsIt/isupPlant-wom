@@ -111,7 +111,7 @@ public class BatchMaterialSetListAdapter extends BaseListDataRecyclerViewAdapter
             bucketCodeTv.setText(data.getVessel() == null || TextUtils.isEmpty(data.getVessel().getCode()) ? context.getResources().getString(R.string.batch_no_bind_bucket) : data.getVessel().getCode());
             batchCurrentArea.setContent(data.getCurrentBurendManage().getAreaId().getName() + "("+data.getCurrentBurendManage().getAreaId().getCode()+")");
             batchCurrentWorkLine.setContent(data.getCurrentBurendManage().getName() + "("+data.getCurrentBurendManage().getCode()+")");
-            batchNextArea.setContent(data.getCurrentBurendManage().getAreaId().getNextArea().getName() + "("+data.getCurrentBurendManage().getAreaId().getNextArea().getCode()+")");
+            batchNextArea.setContent(data.getNextBurendManage() == null || data.getNextBurendManage().getAreaId() == null ? "--":data.getNextBurendManage().getAreaId().getName() + "("+data.getNextBurendManage().getAreaId().getCode()+")");
             time.setContent(data.getStartTime() == null ? "--" : DateUtil.dateTimeFormat(data.getStartTime()));
             if (data.getCurrentBurendManage().getAreaId().isAutoBurden()){
                 autoBatchIv.setVisibility(View.VISIBLE);
