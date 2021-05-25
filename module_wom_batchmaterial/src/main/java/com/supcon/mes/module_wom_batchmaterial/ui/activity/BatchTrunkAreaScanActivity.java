@@ -254,6 +254,7 @@ public class BatchTrunkAreaScanActivity extends BaseControllerActivity implement
                             trunkPassIv.setImageResource(R.drawable.replenish_ic_no_pass);
                             submitBtn.setEnabled(false);
                             submitBtn.setAlpha(0.3f);
+                            ToastUtils.show(context,getString(R.string.batch_no_match_please_confirm_current_line_right));
                         }
                         break;
                     default:

@@ -38,7 +38,7 @@
                 android:paddingEnd="@dimen/dp_12"
                 android:id="@+id/batchLine"
                 android:tag="batchLine"
-                app:key="@string/batch_current_workline"
+                app:key="@string/batch_next_workline"
                 app:key_size="14"
                 app:content_color="@color/dark_text"
                 app:editable="false"/>

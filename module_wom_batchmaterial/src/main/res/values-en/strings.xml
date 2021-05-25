@@ -57,4 +57,6 @@
     <string name="batch_ing_please_end_first">当前桶处于配料中，请先配料结束</string>
     <string name="batch_upload_material">上 料</string>
     <string name="batch_please_bind_bucket_first">请先绑定配料桶</string>
+    <string name="batch_next_workline">下游配料线</string>
+    <string name="batch_no_match_please_confirm_current_line_right">未能匹配中继位，请确认当前配料线是否正确！</string>
 </resources>
