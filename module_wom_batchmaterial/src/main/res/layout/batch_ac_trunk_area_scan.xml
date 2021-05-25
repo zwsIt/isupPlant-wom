@@ -127,7 +127,7 @@
         android:background="@color/themeColor"
         android:id="@+id/submitBtn"
         android:tag="submitBtn"
-        android:text="@string/wom_start"
+        android:text="@string/batch_upload_material"
         android:textColor="@color/white"
         android:textSize="@dimen/fontSize_16sp"
         android:enabled="false"

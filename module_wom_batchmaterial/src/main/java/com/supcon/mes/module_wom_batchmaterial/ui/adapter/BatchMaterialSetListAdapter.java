@@ -12,6 +12,7 @@ import com.app.annotation.BindByTag;
 import com.jakewharton.rxbinding2.view.RxView;
 import com.supcon.common.view.base.adapter.BaseListDataRecyclerViewAdapter;
 import com.supcon.common.view.base.adapter.viewholder.BaseRecyclerViewHolder;
+import com.supcon.common.view.util.ToastUtils;
 import com.supcon.mes.mbap.utils.DateUtil;
 import com.supcon.mes.mbap.view.CustomContentTextDialog;
 import com.supcon.mes.mbap.view.CustomTextView;
@@ -23,7 +24,9 @@ import com.supcon.mes.module_wom_batchmaterial.model.bean.BatchMaterialSetEntity
 import java.util.TreeMap;
 import java.util.concurrent.TimeUnit;
 
+import io.reactivex.annotations.NonNull;
 import io.reactivex.functions.Consumer;
+import io.reactivex.functions.Predicate;
 
 
 /**
@@ -77,7 +80,18 @@ public class BatchMaterialSetListAdapter extends BaseListDataRecyclerViewAdapter
         protected void initListener() {
             super.initListener();
             RxView.clicks(itemView)
-//                    .throttleFirst(300,TimeUnit.MILLISECONDS)
+                    .throttleFirst(300,TimeUnit.MILLISECONDS)
+                    .filter(new Predicate<Object>() {
+                        @Override
+                        public boolean test(@NonNull Object o) throws Exception {
+                            BatchMaterialSetEntity data = getItem(getAdapterPosition());
+                            if (data.getVessel() == null || data.getVessel().getId() == null){
+                                ToastUtils.show(context,context.getResources().getString(R.string.batch_please_bind_bucket_first));
+                                return false;
+                            }
+                            return true;
+                        }
+                    })
                     .subscribe(new Consumer<Object>() {
                         @Override
                         public void accept(Object o) throws Exception {

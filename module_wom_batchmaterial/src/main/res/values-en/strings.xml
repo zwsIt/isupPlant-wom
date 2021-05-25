@@ -55,4 +55,6 @@
     <string name="batch_trunk_area_info">中继位信息</string>
     <string name="batch_bucket_scan_into">配料桶上料扫码</string>
     <string name="batch_ing_please_end_first">当前桶处于配料中，请先配料结束</string>
+    <string name="batch_upload_material">上 料</string>
+    <string name="batch_please_bind_bucket_first">请先绑定配料桶</string>
 </resources>

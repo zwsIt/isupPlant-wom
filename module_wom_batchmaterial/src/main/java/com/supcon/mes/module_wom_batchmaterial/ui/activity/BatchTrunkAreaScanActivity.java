@@ -53,9 +53,11 @@ import com.supcon.mes.module_wom_batchmaterial.IntentRouter;
 import com.supcon.mes.module_wom_batchmaterial.R;
 import com.supcon.mes.module_wom_batchmaterial.constant.BmConstant;
 import com.supcon.mes.module_wom_batchmaterial.model.api.BatchMaterialSetListAPI;
+import com.supcon.mes.module_wom_batchmaterial.model.api.BatchTrunkScanAPI;
 import com.supcon.mes.module_wom_batchmaterial.model.bean.BatchMaterialSetEntity;
 import com.supcon.mes.module_wom_batchmaterial.model.contract.BatchMaterialSetListContract;
 import com.supcon.mes.module_wom_batchmaterial.model.contract.BatchTrunkScanContract;
+import com.supcon.mes.module_wom_batchmaterial.presenter.BatchTrunkScanPresenter;
 import com.supcon.mes.module_wom_producetask.model.api.CommonListAPI;
 import com.supcon.mes.module_wom_producetask.util.MaterQRUtil;
 
@@ -80,7 +82,7 @@ import io.reactivex.functions.Consumer;
  * Desc 配料中继位扫码
  */
 @Router(value = BmConstant.Router.BATCH_TRUNK_AREA_SCAN)
-@Presenter(value = {/*ReplenishMaterialTableScanPresenter.class*/})
+@Presenter(value = {BatchTrunkScanPresenter.class})
 @Controller(value = {CommonScanController.class})
 public class BatchTrunkAreaScanActivity extends BaseControllerActivity implements BatchMaterialSetListContract.View, BatchTrunkScanContract.View {
 
@@ -188,7 +190,7 @@ public class BatchTrunkAreaScanActivity extends BaseControllerActivity implement
 //                    list.addAll(mReplenishMaterialRecordsScanAdapter.getList());
 //                    replenishMaterialScanDTO.setFmBillDetais(list);
 //
-//                    presenterRouter.create(ReplenishMaterialTableScanAPI.class).submit(replenishMaterialScanDTO);
+                    presenterRouter.create(BatchTrunkScanAPI.class).submit(mBatchMaterialSetEntity.getId(),trunkCode.getContent());
                 }, true)
                 .show();
     }
@@ -212,10 +214,6 @@ public class BatchTrunkAreaScanActivity extends BaseControllerActivity implement
         ToastUtils.show(context, errorMsg);
     }
 
-    /**
-     * 物料是否全部扫描通过
-     */
-    private int scanPassCount;
     /**
      * 循环次数
      */

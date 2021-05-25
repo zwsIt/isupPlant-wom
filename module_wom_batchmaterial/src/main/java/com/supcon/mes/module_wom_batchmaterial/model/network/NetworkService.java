@@ -86,4 +86,13 @@ public interface NetworkService {
     @POST("/msService/WOM/batchMaterialSet/bmRecord/bmRecordList-query")
     Flowable<CommonBAP5ListEntity<BatchInstructionPartEntity>> listBatchParts(@Body Map<String, Object> paramMap);
 
+    /**
+     * 中继位上料
+     * @param bmSetId 配料指令集
+     * @param zjwCode 中继位编码
+     * @return
+     */
+    @GET("/msService/WOM/batchMaterialSet/bmSet/loadMaterial")
+    Flowable<BAP5CommonEntity<Object>> loadMaterial(@Query("bmSetId") Long bmSetId, @Query("zjwCode") String zjwCode);
+
 }

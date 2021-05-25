@@ -14,9 +14,10 @@ import java.util.Map;
 @ContractFactory(entites = {BAP5CommonEntity.class})
 public interface BatchTrunkScanAPI {
     /**
-     * @param id
+     * @param bmSetId 配料指令集id
+     * @param trunkCode 中继位code
      * @author zhangwenshuai1 2020/4/20
      * @description 配料中继位扫描
      */
-    void submit(Long id);
+    void submit(Long bmSetId, String trunkCode);
 }
