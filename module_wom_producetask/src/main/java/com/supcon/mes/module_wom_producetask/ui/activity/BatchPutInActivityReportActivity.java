@@ -384,8 +384,8 @@ public class BatchPutInActivityReportActivity extends BaseRefreshRecyclerActivit
             putInDetailEntity.setBatchingRecordId(entity.getId()); // require
             putInDetailEntity.setMaterialId(entity.getMaterialId());
             putInDetailEntity.setMaterialBatchNum(entity.getMaterialBatchNum());
-            putInDetailEntity.setWareId(entity.getWareId());
-            putInDetailEntity.setStoreId(entity.getStoreId());
+//            putInDetailEntity.setWareId(entity.getWareId());
+//            putInDetailEntity.setStoreId(entity.getStoreId());
             putInDetailEntity.setPutinNum(entity.getOfferNum());
             putInDetailEntity.setUseNum(entity.getOfferNum());
             putInDetailEntity.setAvailableNum(entity.getOfferNum());

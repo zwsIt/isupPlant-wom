@@ -277,10 +277,15 @@ public class PutInAgileActivityReportActivity extends BaseRefreshRecyclerActivit
         }
 
         putInDetailEntity.setPutinTime(System.currentTimeMillis());  // 投料时间
-        mPutInAgileReportDetailAdapter.addData(putInDetailEntity);
-        mPutInAgileReportDetailAdapter.notifyItemRangeInserted(mPutInAgileReportDetailAdapter.getItemCount() - 1, 1);
-        mPutInAgileReportDetailAdapter.notifyItemRangeChanged(mPutInAgileReportDetailAdapter.getItemCount() - 1, 1);
-        contentView.smoothScrollToPosition(mPutInAgileReportDetailAdapter.getItemCount() - 1);
+        putInDetailEntity.setUseNum(putInDetailEntity.getPutinNum());
+        if (mPutInAgileReportDetailAdapter.getItemCount() <= 0){
+            mPutInAgileReportDetailAdapter.addData(putInDetailEntity);
+        }else {
+            mPutInAgileReportDetailAdapter.getList().add(0,putInDetailEntity);
+        }
+        mPutInAgileReportDetailAdapter.notifyItemRangeInserted(0, 1);
+        mPutInAgileReportDetailAdapter.notifyItemRangeChanged(0, 1);
+        contentView.smoothScrollToPosition(0);
     }
 
     /**

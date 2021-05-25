@@ -375,10 +375,15 @@ public class PutInActivityReportActivity extends BaseRefreshRecyclerActivity<Put
      * @description 执行添加
      */
     private void addItem(PutInDetailEntity putInDetailEntity) {
-        mPutInReportDetailAdapter.addData(putInDetailEntity);
-        mPutInReportDetailAdapter.notifyItemRangeInserted(mPutInReportDetailAdapter.getItemCount() - 1, 1);
-        mPutInReportDetailAdapter.notifyItemRangeChanged(mPutInReportDetailAdapter.getItemCount() - 1, 1);
-        contentView.smoothScrollToPosition(mPutInReportDetailAdapter.getItemCount() - 1);
+        putInDetailEntity.setUseNum(putInDetailEntity.getPutinNum());
+        if (mPutInReportDetailAdapter.getItemCount() <= 0){
+            mPutInReportDetailAdapter.addData(putInDetailEntity);
+        }else {
+            mPutInReportDetailAdapter.getList().add(0,putInDetailEntity);
+        }
+        mPutInReportDetailAdapter.notifyItemRangeInserted(0, 1);
+        mPutInReportDetailAdapter.notifyItemRangeChanged(0, 1);
+        contentView.smoothScrollToPosition(0);
     }
 
     /**

@@ -222,6 +222,10 @@ public class PutInReportDetailAdapter extends BaseListDataRecyclerViewAdapter<Pu
                         PutInDetailEntity data = getItem(getAdapterPosition());
                         if (TextUtils.isEmpty(charSequence.toString())) {
                             data.setRemainNum(null);
+                            if (data.getSpecificationNum() != null){
+                                data.setPutinNum(data.getSpecificationNum());
+                                numEt.setContent(data.getSpecificationNum().toString());
+                            }
                             return false;
                         }
 
