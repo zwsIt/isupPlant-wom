@@ -90,7 +90,7 @@ public class ScanBatchMaterialActivity extends BaseControllerActivity implements
                     @SuppressLint("CheckResult")
                     @Override
                     public void accept(Object o) throws Exception {
-                        getController(CommonScanController.class).openCameraScan(this.getClass().getSimpleName());
+                        getController(CommonScanController.class).openCameraScan(context.getClass().getSimpleName());
                     }
                 });
 
@@ -104,7 +104,7 @@ public class ScanBatchMaterialActivity extends BaseControllerActivity implements
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onCodeReceiver(CodeResultEvent codeResultEvent) {
-        if (this.getClass().getSimpleName().equals(codeResultEvent.scanTag)) {
+        if (context.getClass().getSimpleName().equals(codeResultEvent.scanTag)) {
             if (!StringUtil.isEmpty(codeResultEvent.scanResult)) {
                 QrCodeEntity qrCodeEntity = MaterQRUtil.getQRCode(context, codeResultEvent.scanResult);
                 if (qrCodeEntity != null && qrCodeEntity.getType() == 1) {

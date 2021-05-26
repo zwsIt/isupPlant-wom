@@ -22,6 +22,7 @@ import com.supcon.mes.mbap.utils.GsonUtil;
 import com.supcon.mes.middleware.constant.Constant;
 import com.supcon.mes.middleware.model.bean.BAP5CommonEntity;
 import com.supcon.mes.middleware.model.bean.CommonBAPListEntity;
+import com.supcon.mes.middleware.model.event.RefreshEvent;
 import com.supcon.mes.middleware.util.EmptyAdapterHelper;
 import com.supcon.mes.middleware.util.ErrorMsgHelper;
 import com.supcon.mes.module_wom_batchmaterial.R;
@@ -32,6 +33,10 @@ import com.supcon.mes.module_wom_batchmaterial.ui.adapter.BatchInstructionListAd
 import com.supcon.mes.module_wom_producetask.model.api.CommonListAPI;
 import com.supcon.mes.module_wom_producetask.model.contract.CommonListContract;
 import com.supcon.mes.module_wom_producetask.presenter.CommonListPresenter;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -76,6 +81,7 @@ public class BatchInstructionListActivity extends BaseRefreshRecyclerActivity<Ba
     protected void onInit() {
         super.onInit();
 
+        EventBus.getDefault().register(this);
         refreshListController.setPullDownRefreshEnabled(true);
         refreshListController.setAutoPullDownRefresh(true);
         refreshListController.setEmpterAdapter(EmptyAdapterHelper.getRecyclerEmptyAdapter(context,context.getResources().getString(R.string.middleware_no_data)));
@@ -118,6 +124,7 @@ public class BatchInstructionListActivity extends BaseRefreshRecyclerActivity<Ba
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        EventBus.getDefault().unregister(this);
         mOnRefreshListener = null;
         mItemDecoration = null;
     }
@@ -132,6 +139,11 @@ public class BatchInstructionListActivity extends BaseRefreshRecyclerActivity<Ba
     public void listFailed(String errorMsg) {
         refreshListController.refreshComplete();
         ToastUtils.show(context, ErrorMsgHelper.msgParse(errorMsg));
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void refresh(RefreshEvent refreshEvent){
+        refreshListController.refreshBegin();
     }
 
     public String getBucketCode() {

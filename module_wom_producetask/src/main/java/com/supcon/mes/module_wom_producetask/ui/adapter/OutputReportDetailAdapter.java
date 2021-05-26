@@ -12,6 +12,7 @@ import com.app.annotation.BindByTag;
 import com.jakewharton.rxbinding2.widget.RxTextView;
 import com.supcon.common.view.base.adapter.BaseListDataRecyclerViewAdapter;
 import com.supcon.common.view.base.adapter.viewholder.BaseRecyclerViewHolder;
+import com.supcon.common.view.listener.OnChildViewClickListener;
 import com.supcon.common.view.util.ToastUtils;
 import com.supcon.mes.mbap.view.CustomEditText;
 import com.supcon.mes.mbap.view.CustomTextView;
@@ -64,8 +65,6 @@ public class OutputReportDetailAdapter extends BaseListDataRecyclerViewAdapter<O
         CustomTextView warehouseTv;
         @BindByTag("storeSetTv")
         CustomTextView storeSetTv;
-        @BindByTag("warehouseIcon")
-        TextView warehouseIcon;
         @BindByTag("numEt")
         CustomEditText numEt;
         @BindByTag("remainderNumEt")
@@ -78,6 +77,8 @@ public class OutputReportDetailAdapter extends BaseListDataRecyclerViewAdapter<O
         TextView preNumTv;
         @BindByTag("remainderNumEtLl")
         LinearLayout remainderNumEtLl;
+        @BindByTag("vessel")
+        CustomEditText vessel;
 
         public ReportViewHolder(Context context) {
             super(context,parent);
@@ -172,6 +173,13 @@ public class OutputReportDetailAdapter extends BaseListDataRecyclerViewAdapter<O
                         OutputDetailEntity data = getItem(getAdapterPosition());
                         data.setRemainNum(new BigDecimal(charSequence.toString().trim()));
                     });
+
+            vessel.findViewById(R.id.customEditIcon).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    ToastUtils.show(context,"容器编码  扫描");
+                }
+            });
         }
 
         @Override
@@ -181,6 +189,7 @@ public class OutputReportDetailAdapter extends BaseListDataRecyclerViewAdapter<O
             remainderNumEt.setContent(data.getRemainNum() == null ? "" : String.valueOf(data.getRemainNum()));
             warehouseTv.setContent(data.getWareId() == null ? "" : data.getWareId().getName());
             storeSetTv.setContent(data.getStoreId() == null ? "" : data.getStoreId().getName());
+            vessel.setContent("容器编码....");
         }
     }
 
