@@ -40,8 +40,10 @@ import com.supcon.mes.middleware.controller.GetPowerCodeController;
 import com.supcon.mes.middleware.model.bean.BAP5CommonEntity;
 import com.supcon.mes.middleware.model.bean.CommonBAPListEntity;
 import com.supcon.mes.middleware.model.bean.MaterialQRCodeEntity;
+import com.supcon.mes.middleware.model.bean.QrCodeEntity;
 import com.supcon.mes.middleware.model.bean.SystemCodeEntity;
 import com.supcon.mes.middleware.model.bean.wom.StoreSetEntity;
+import com.supcon.mes.middleware.model.bean.wom.VesselEntity;
 import com.supcon.mes.middleware.model.bean.wom.WarehouseEntity;
 import com.supcon.mes.middleware.model.event.RefreshEvent;
 import com.supcon.mes.middleware.model.event.SelectDataEvent;
@@ -70,6 +72,7 @@ import com.supcon.mes.module_wom_producetask.ui.adapter.OutputReportDetailAdapte
 import com.supcon.mes.module_wom_producetask.ui.adapter.PutInReportDetailAdapter;
 import com.supcon.mes.module_wom_producetask.util.MaterQRUtil;
 import com.supcon.mes.module_wom_producetask.util.SmoothScrollLayoutManager;
+import com.supcon.mes.scale.model.event.ScaleEvent;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -104,6 +107,8 @@ public class OutputActivityReportActivity extends BaseRefreshRecyclerActivity<Ou
     TextView titleText;
     @BindByTag("rightBtn")
     CustomImageButton rightBtn;
+    @BindByTag("titleSetting")
+    ImageView titleSetting;
     @BindByTag("customListWidgetName")
     TextView customListWidgetName;
     @BindByTag("customListWidgetEdit")
@@ -112,10 +117,6 @@ public class OutputActivityReportActivity extends BaseRefreshRecyclerActivity<Ou
     ImageView customListWidgetAdd;
     @BindByTag("materialName")
     CustomTextView materialName;
-    //    @BindByTag("materialCode")
-//    CustomTextView materialCode;
-//    @BindByTag("planNum")
-//    CustomTextView planNum;
     @BindByTag("sumNumTv")
     TextView sumNumTv;
     @BindByTag("planNumTv")
@@ -163,10 +164,10 @@ public class OutputActivityReportActivity extends BaseRefreshRecyclerActivity<Ou
         });
         contentView.addOnItemTouchListener(new CustomSwipeLayout.OnSwipeItemTouchListener(context));
 
-        if (!WomConstant.SystemCode.MATERIAL_BATCH_02.equals(mWaitPutinRecordEntity.getTaskActiveId().getMaterialId().getIsBatch().id)){
+        if (!WomConstant.SystemCode.MATERIAL_BATCH_02.equals(mWaitPutinRecordEntity.getTaskActiveId().getMaterialId().getIsBatch().id)) {
             mOutputReportDetailAdapter.setNoMaterialBatchNo(true);
         }
-        if (WomConstant.SystemCode.RM_activeType_PIPE_OUTPUT.equals(mWaitPutinRecordEntity.getTaskActiveId().getActiveType().id)){
+        if (WomConstant.SystemCode.RM_activeType_PIPE_OUTPUT.equals(mWaitPutinRecordEntity.getTaskActiveId().getActiveType().id)) {
             mOutputReportDetailAdapter.setPipe(true);
         }
 
@@ -177,7 +178,9 @@ public class OutputActivityReportActivity extends BaseRefreshRecyclerActivity<Ou
         super.initView();
         StatusBarUtils.setWindowStatusBarColor(this, R.color.themeColor);
         titleText.setText(String.format("%s%s", mWaitPutinRecordEntity.getTaskActiveId().getActiveType().value, getString(R.string.wom_report)));
-        rightBtn.setVisibility(View.GONE);
+        titleSetting.setVisibility(View.VISIBLE);
+        titleSetting.setImageResource(R.drawable.ic_ble_disconnect);
+        rightBtn.setVisibility(View.VISIBLE);
         rightBtn.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_top_scan));
         customListWidgetName.setText(context.getResources().getString(R.string.wom_produce_task_report_detail));
 
@@ -257,6 +260,9 @@ public class OutputActivityReportActivity extends BaseRefreshRecyclerActivity<Ou
                             dgDeletedIds += mOutputDetailEntity.getId() + ",";
                         }
                         break;
+                    case "numEt":
+
+                        break;
                     default:
                 }
             }
@@ -279,28 +285,21 @@ public class OutputActivityReportActivity extends BaseRefreshRecyclerActivity<Ou
      */
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onCodeReceiver(CodeResultEvent codeResultEvent) {
-        if (context.getClass().getSimpleName().equals(codeResultEvent.scanTag)){
-            MaterialQRCodeEntity materialQRCodeEntity = MaterQRUtil.materialQRCode(context,codeResultEvent.scanResult);
-            if (materialQRCodeEntity == null) return;
-            if (!mWaitPutinRecordEntity.getTaskActiveId().getMaterialId().getCode().equals(materialQRCodeEntity.getMaterial().getCode())){
-                ToastUtils.show(context, context.getResources().getString(R.string.wom_scan_material_error));
-                return;
-            }
-            if (!TextUtils.isEmpty(mWaitPutinRecordEntity.getTaskActiveId().getMaterialBatchNum()) && !materialQRCodeEntity.getMaterialBatchNo().equals(mWaitPutinRecordEntity.getTaskActiveId().getMaterialBatchNum())){
-                ToastUtils.show(context, context.getResources().getString(R.string.wom_scan_batchNo_error));
-                return;
-            }
-            if (materialQRCodeEntity.isRequest()){
-                //TODO...
-                ToastUtils.show(context,context.getResources().getString(R.string.wom_no_realize));
-            }else {
+        if (context.getClass().getSimpleName().equals(codeResultEvent.scanTag)) {
+            QrCodeEntity qrCodeEntity = MaterQRUtil.getQRCode(context, codeResultEvent.scanResult);
+            if (qrCodeEntity != null && qrCodeEntity.getType() == 1) {
                 OutputDetailEntity outputDetailEntity = new OutputDetailEntity();
-                outputDetailEntity.setMaterialBatchNum(materialQRCodeEntity.getMaterialBatchNo());
-                outputDetailEntity.setOutputNum(materialQRCodeEntity.getNum());
-                outputDetailEntity.setProduct(mWaitPutinRecordEntity.getTaskActiveId().getMaterialId()); // 物料
-                outputDetailEntity.setWareId(materialQRCodeEntity.getToWare());
-                outputDetailEntity.setStoreId(materialQRCodeEntity.getToStore());
-                outputDetailEntity.setPutinTime(System.currentTimeMillis());  // 报工时间
+                // 物料
+                outputDetailEntity.setProduct(mWaitPutinRecordEntity.getTaskActiveId().getMaterialId());
+                // 报工时间
+                outputDetailEntity.setPutinTime(System.currentTimeMillis());
+                outputDetailEntity.setPutinEndTime(outputDetailEntity.getPutinTime());
+                // 桶编码
+                VesselEntity vesselEntity = new VesselEntity();
+                vesselEntity.setId(qrCodeEntity.getId());
+                vesselEntity.setCode(qrCodeEntity.getCode());
+                outputDetailEntity.setVessel(vesselEntity);
+
                 mOutputReportDetailAdapter.addData(outputDetailEntity);
                 mOutputReportDetailAdapter.notifyItemRangeInserted(mOutputReportDetailAdapter.getItemCount() - 1, 1);
                 mOutputReportDetailAdapter.notifyItemRangeChanged(mOutputReportDetailAdapter.getItemCount() - 1, 1);
@@ -413,7 +412,7 @@ public class OutputActivityReportActivity extends BaseRefreshRecyclerActivity<Ou
     public void getEventPost(SelectDataEvent selectDataEvent) {
         if (selectDataEvent.getEntity() instanceof WarehouseEntity) {
             WarehouseEntity warehouseEntity = (WarehouseEntity) selectDataEvent.getEntity();
-            if (mOutputDetailEntity.getWareId() != null && !warehouseEntity.getId().equals(mOutputDetailEntity.getWareId().getId())){
+            if (mOutputDetailEntity.getWareId() != null && !warehouseEntity.getId().equals(mOutputDetailEntity.getWareId().getId())) {
                 mOutputDetailEntity.setStoreId(null);
             }
             mOutputDetailEntity.setWareId(warehouseEntity);
@@ -421,6 +420,42 @@ public class OutputActivityReportActivity extends BaseRefreshRecyclerActivity<Ou
             mOutputDetailEntity.setStoreId((StoreSetEntity) selectDataEvent.getEntity());
         }
         mOutputReportDetailAdapter.notifyItemRangeChanged(mCurrentPosition, 1);
+    }
+
+    /**
+     * 蓝牙电子称接收
+     * @param scaleEvent
+     */
+    private long lastClickTime;
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onBluetoothReceiver(ScaleEvent scaleEvent) {
+        int eventId = scaleEvent.getEventId();
+        if (eventId == -200 || eventId == -201) {
+            titleSetting.setImageResource(R.drawable.ic_ble_disconnect);
+//            connected = false;
+//            mOutputReportDetailAdapter.isBleConnected = false;
+        } else if (eventId == 200 || eventId == 201) {
+//            connected = true;
+//            mOutputReportDetailAdapter.isBleConnected = true;
+            titleSetting.setImageResource(R.drawable.ic_ble_connect);
+        } else if (eventId == 2000) {
+//            if (!connected) {
+//                connected = true;
+//                mOutputReportDetailAdapter.isBleConnected = true;
+                titleSetting.setImageResource(R.drawable.ic_ble_connect);
+//            }
+
+            long curClickTime = System.currentTimeMillis();
+            if (curClickTime - lastClickTime >= 2000) {
+                lastClickTime = curClickTime;
+                String data = scaleEvent.getValue().toString();
+                if (mOutputDetailEntity != null) {
+                    float putinNum=Float.valueOf(data);
+                    mOutputDetailEntity.setOutputNum(new BigDecimal(putinNum!=0?putinNum*100/1000:0).setScale(3, BigDecimal.ROUND_DOWN));
+                    mOutputReportDetailAdapter.notifyItemChanged(mCurrentPosition);
+                }
+            }
+        }
     }
 
 

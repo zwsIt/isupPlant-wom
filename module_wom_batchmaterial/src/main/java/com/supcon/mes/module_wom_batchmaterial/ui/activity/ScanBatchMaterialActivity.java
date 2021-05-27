@@ -107,6 +107,7 @@ public class ScanBatchMaterialActivity extends BaseControllerActivity implements
         if (context.getClass().getSimpleName().equals(codeResultEvent.scanTag)) {
             if (!StringUtil.isEmpty(codeResultEvent.scanResult)) {
                 QrCodeEntity qrCodeEntity = MaterQRUtil.getQRCode(context, codeResultEvent.scanResult);
+                // 桶
                 if (qrCodeEntity != null && qrCodeEntity.getType() == 1) {
                     onLoading(getString(R.string.wom_dealing));
                     queryParams.put(Constant.BAPQuery.CODE, qrCodeEntity.getCode());

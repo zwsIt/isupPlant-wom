@@ -174,10 +174,10 @@ public class OutputReportDetailAdapter extends BaseListDataRecyclerViewAdapter<O
                         data.setRemainNum(new BigDecimal(charSequence.toString().trim()));
                     });
 
-            vessel.findViewById(R.id.customEditIcon).setOnClickListener(new View.OnClickListener() {
+            numEt.findViewById(R.id.customEditIcon).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    ToastUtils.show(context,"容器编码  扫描");
+                    onItemChildViewClick(numEt,0,getItem(getAdapterPosition()));
                 }
             });
         }
@@ -189,7 +189,7 @@ public class OutputReportDetailAdapter extends BaseListDataRecyclerViewAdapter<O
             remainderNumEt.setContent(data.getRemainNum() == null ? "" : String.valueOf(data.getRemainNum()));
             warehouseTv.setContent(data.getWareId() == null ? "" : data.getWareId().getName());
             storeSetTv.setContent(data.getStoreId() == null ? "" : data.getStoreId().getName());
-            vessel.setContent("容器编码....");
+            vessel.setContent(data.getVessel() == null ? "" : data.getVessel().getCode());
         }
     }
 

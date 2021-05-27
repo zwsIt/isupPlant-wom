@@ -6,6 +6,7 @@ import com.supcon.mes.middleware.model.bean.wom.FactoryModelEntity;
 import com.supcon.mes.middleware.model.bean.wom.FormulaEntity;
 import com.supcon.mes.middleware.model.bean.wom.MaterialEntity;
 import com.supcon.mes.middleware.model.bean.wom.StoreSetEntity;
+import com.supcon.mes.middleware.model.bean.wom.VesselEntity;
 import com.supcon.mes.middleware.model.bean.wom.WarehouseEntity;
 
 import java.math.BigDecimal;
@@ -38,6 +39,18 @@ public class OutputDetailEntity extends BaseEntity {
     private Long putinTime;             // 报工时间
     private BigDecimal remainNum;       // 尾料数量
     private SystemCodeEntity remainOperate; // 尾料处理
+    /**
+     * 容器
+     */
+    private VesselEntity vessel;
+
+    public VesselEntity getVessel() {
+        return vessel;
+    }
+
+    public void setVessel(VesselEntity vessel) {
+        this.vessel = vessel;
+    }
 
     public SystemCodeEntity getRemainOperate() {
         return remainOperate;

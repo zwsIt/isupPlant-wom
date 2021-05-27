@@ -122,6 +122,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/dp_40"
                 app:gravity="right|vertical_center"
+                app:icon_res="@drawable/ic_weight_use"
                 android:id="@+id/numEt"
                 android:tag="numEt"
                 app:text_width="0dp"
@@ -180,7 +181,6 @@
                 app:gravity="right|vertical_center"
                 android:id="@+id/vessel"
                 android:tag="vessel"
-                app:icon_res="@drawable/ic_scan33"
                 app:text_width="0dp"
                 app:text_color="@color/dark_text"/>
         </LinearLayout>
