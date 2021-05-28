@@ -132,7 +132,7 @@ public class BatchMaterialSetListAdapter extends BaseListDataRecyclerViewAdapter
             }else {
                 autoBatchIv.setVisibility(View.GONE);
             }
-            if (data.getVessel() != null && data.getVessel().getId() != null){
+            if (data.getCurrentBurendManage().getAreaId().isAutoBurden() || (data.getVessel() != null && data.getVessel().getId() != null)){
                 bindBucket.setVisibility(View.GONE);
             }else {
                 bindBucket.setVisibility(View.VISIBLE);

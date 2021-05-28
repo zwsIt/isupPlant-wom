@@ -217,8 +217,6 @@ public class BatchTrunkAreaScanActivity extends BaseControllerActivity implement
     /**
      * 循环次数
      */
-    private int count;
-
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void getScanResult(CodeResultEvent codeResultEvent) {
         if (context.getClass().getSimpleName().equals(codeResultEvent.scanTag)) {
