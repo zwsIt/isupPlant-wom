@@ -88,10 +88,10 @@ public class ProduceTaskListAdapter extends BaseListDataRecyclerViewAdapter<Wait
         CustomTextView timeCustomTv;
         @BindByTag("startTv")
         TextView startTv;
-        @BindByTag("pauseTv")
-        TextView pauseTv;
-        @BindByTag("resumeTv")
-        TextView resumeTv;
+        @BindByTag("holdTv")
+        TextView holdTv;
+        @BindByTag("restartTv")
+        TextView restartTv;
         @BindByTag("stopTv")
         TextView stopTv;
         @BindByTag("tvOperateLl")
@@ -137,15 +137,15 @@ public class ProduceTaskListAdapter extends BaseListDataRecyclerViewAdapter<Wait
                         }
                     });
             initOperateViewListener(startTv);
-            initOperateViewListener(pauseTv);
-            initOperateViewListener(resumeTv);
+            initOperateViewListener(holdTv);
+            initOperateViewListener(restartTv);
             initOperateViewListener(stopTv);
             initOperateViewListener(dischargeTv);
             RxView.clicks(expandIv).throttleFirst(100, TimeUnit.MILLISECONDS)
                     .subscribe(o -> {
                         WaitPutinRecordEntity entity = getItem(getAdapterPosition());
 
-                        if (WomConstant.SystemCode.EXE_STATE_PAUSED.equals(entity.getExeState().id) || WomConstant.SystemCode.EXE_STATE_STOPPED.equals(entity.getExeState().id)
+                        if (WomConstant.SystemCode.EXE_STATE_HOLD.equals(entity.getExeState().id) || WomConstant.SystemCode.EXE_STATE_STOPPED.equals(entity.getExeState().id)
                          || WomConstant.SystemCode.EXE_STATE_ABANDONED.equals(entity.getExeState().id)){
                             ToastUtils.show(context, context.getResources().getString(R.string.wom_no_process_view));
                             return;
@@ -196,8 +196,8 @@ public class ProduceTaskListAdapter extends BaseListDataRecyclerViewAdapter<Wait
                 statusTv.setTextColor(context.getResources().getColor(R.color.status_orange));
 //                workNum.setVisibility(View.GONE);
                 startTv.setVisibility(View.VISIBLE);
-                pauseTv.setVisibility(View.GONE);
-                resumeTv.setVisibility(View.GONE);
+                holdTv.setVisibility(View.GONE);
+                restartTv.setVisibility(View.GONE);
                 stopTv.setVisibility(View.GONE);
                 timeCustomTv.setContent(data.getPlanStartTime() == null ? "" : DateUtil.dateTimeFormat(data.getPlanStartTime()));
             } else if (WomConstant.SystemCode.EXE_STATE_ING.equals(data.getExeState().id)) { // 执行中
@@ -208,8 +208,8 @@ public class ProduceTaskListAdapter extends BaseListDataRecyclerViewAdapter<Wait
 //                }
                 statusTv.setTextColor(context.getResources().getColor(R.color.wom_tv_status_color));
                 startTv.setVisibility(View.GONE);
-                pauseTv.setVisibility(View.VISIBLE);
-                resumeTv.setVisibility(View.GONE);
+                holdTv.setVisibility(View.VISIBLE);
+                restartTv.setVisibility(View.GONE);
                 stopTv.setVisibility(View.VISIBLE);
                 timeCustomTv.setContent(data.getActualStartTime() == null ? "" : DateUtil.dateTimeFormat(data.getActualStartTime()));
 
@@ -219,11 +219,11 @@ public class ProduceTaskListAdapter extends BaseListDataRecyclerViewAdapter<Wait
                     dischargeTv.setVisibility(View.GONE);
                 }
 
-            } else if (WomConstant.SystemCode.EXE_STATE_PAUSED.equals(data.getExeState().id)) { // 已暂停
+            } else if (WomConstant.SystemCode.EXE_STATE_HOLD.equals(data.getExeState().id)) { // 已保持
                 statusTv.setTextColor(context.getResources().getColor(R.color.status_blue));
                 startTv.setVisibility(View.GONE);
-                pauseTv.setVisibility(View.GONE);
-                resumeTv.setVisibility(View.VISIBLE);
+                holdTv.setVisibility(View.GONE);
+                restartTv.setVisibility(View.VISIBLE);
                 stopTv.setVisibility(View.VISIBLE);
                 timeCustomTv.setContent(data.getActualStartTime() == null ? "" : DateUtil.dateTimeFormat(data.getActualStartTime()));
             } else {

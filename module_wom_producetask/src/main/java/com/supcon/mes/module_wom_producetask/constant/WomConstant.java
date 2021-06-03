@@ -25,6 +25,7 @@ public interface WomConstant {
         String EXE_STATE_ING = "WOM_runState/runing";           // 执行中
         String EXE_STATE_PAUSING = "WOM_runState/pausing";      // 暂停中
         String EXE_STATE_PAUSED = "WOM_runState/paused";        // 已暂停
+        String EXE_STATE_HOLD = "WOM_runState/iskeep";          // 已保持
         String EXE_STATE_RESUMING = "WOM_runState/resuming";    // 恢复中
         String EXE_STATE_STOPPING = "WOM_runState/stoping";     // 停止中
         String EXE_STATE_STOPPED = "WOM_runState/stoped";       // 已停止

@@ -231,7 +231,7 @@ public class BatchMaterialRecordsRecallAbandonListActivity extends BaseRefreshRe
             return;
         }
         CustomDialog customDialog = new CustomDialog(context).layout(R.layout.wom_dialog_confirm,(DisplayUtil.getScreenWidth(context))*4/5, ViewGroup.LayoutParams.WRAP_CONTENT);
-        customDialog.getDialog().getWindow().setBackgroundDrawableResource(R.color.transparent);
+//        customDialog.getDialog().getWindow().setBackgroundDrawableResource(R.color.transparent);
         customDialog.bindView(R.id.tipContentTv,getString(R.string.wom_confirm_batch_material_operate)+getString(R.string.wom_recall_back)+getString(R.string.wom_middle_right_brackets))
                 .bindClickListener(R.id.cancelTv,null,true)
                 .bindClickListener(R.id.confirmTv, v -> {

@@ -1,7 +1,10 @@
 package com.supcon.mes.module_wom_producetask.ui.fragment;
 
 import android.annotation.SuppressLint;
+import android.graphics.Color;
 import android.graphics.Rect;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.LinearLayoutManager;
@@ -9,6 +12,8 @@ import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.RadioGroup;
 
 import com.app.annotation.BindByTag;
@@ -143,7 +148,7 @@ public class CommonProduceTaskListFragment extends BaseRefreshRecyclerFragment<W
                 queryParams.put(Constant.BAPQuery.EXE_STATE, WomConstant.SystemCode.EXE_STATE_WAIT);
             } else if (checkedId == R.id.executingRBtn) {
                 queryParams.put(Constant.BAPQuery.EXE_STATE, WomConstant.SystemCode.EXE_STATE_ING);
-            } else if (checkedId == R.id.pausedRBtn) {
+            } else if (checkedId == R.id.heldRBtn) {
                 queryParams.put(Constant.BAPQuery.EXE_STATE, WomConstant.SystemCode.EXE_STATE_PAUSED);
             } else if (checkedId == R.id.stoppedRBtn) {
                 queryParams.put(Constant.BAPQuery.EXE_STATE, WomConstant.SystemCode.EXE_STATE_STOPPED);
@@ -166,25 +171,24 @@ public class CommonProduceTaskListFragment extends BaseRefreshRecyclerFragment<W
                     paramsList.add("start");
                     showOperateConfirmDialog(paramsList, mWaitPutinRecordEntity, true);
                     break;
-                case "pauseTv":
-                    paramsList.add(context.getResources().getString(R.string.wom_pause));
-                    paramsList.add("pause");
+                case "holdTv":
+                    paramsList.add(context.getResources().getString(R.string.wom_hold));
+                    paramsList.add("hold");
                     showOperateConfirmDialog(paramsList, mWaitPutinRecordEntity, true);
                     break;
-                case "resumeTv":
-                    paramsList.add(context.getResources().getString(R.string.wom_resume));
-                    paramsList.add("resume");
+                case "restartTv":
+                    paramsList.add(context.getResources().getString(R.string.wom_restart));
+                    paramsList.add("restart");
                     showOperateConfirmDialog(paramsList, mWaitPutinRecordEntity, true);
                     break;
                 case "stopTv":
                     // 结束工单报工
-
                     if (mWaitPutinRecordEntity != null && mWaitPutinRecordEntity.getTaskId() != null
                             && mWaitPutinRecordEntity.getTaskId().getBatchContral() != null
                             && mWaitPutinRecordEntity.getTaskId().getBatchContral()) {
                         paramsList.add(context.getResources().getString(R.string.wom_end));
                         paramsList.add("stop");
-                        showOperateConfirmDialog(paramsList, mWaitPutinRecordEntity, true);
+                        endConfirmDialog(paramsList, mWaitPutinRecordEntity);
                     } else {
                         endProduceTaskReport();
                     }
@@ -215,6 +219,7 @@ public class CommonProduceTaskListFragment extends BaseRefreshRecyclerFragment<W
                     paramsList.add("discharge");
                     showOperateConfirmDialog(paramsList, mWaitPutinRecordEntity, true);
                     break;
+                default:
             }
 
         });
@@ -250,7 +255,7 @@ public class CommonProduceTaskListFragment extends BaseRefreshRecyclerFragment<W
     private void updateCurrentFactory() {
         CustomDialog customDialog = new CustomDialog(context)
                 .layout(R.layout.wom_dialog_set_factory, DisplayUtil.getScreenWidth(context) * 4 / 5, ViewGroup.LayoutParams.WRAP_CONTENT);
-        customDialog.getDialog().getWindow().setBackgroundDrawableResource(R.color.transparent);
+//        customDialog.getDialog().getWindow().setBackgroundDrawableResource(R.color.transparent);
         mFactoryCustomTv = customDialog.getDialog().findViewById(R.id.factoryCustomTv);
         mFactoryCustomTv.setContent(mWaitPutinRecordEntity.getTaskProcessId().getEquipmentId().getName());
         customDialog.bindChildListener(R.id.factoryCustomTv, (childView, action, obj) -> {
@@ -284,7 +289,8 @@ public class CommonProduceTaskListFragment extends BaseRefreshRecyclerFragment<W
     private void showOperateConfirmDialog(List<Object> paramsList, WaitPutinRecordEntity waitPutinRecordEntity, boolean isTask) {
         CustomDialog customDialog = new CustomDialog(context)
                 .layout(R.layout.wom_dialog_confirm, DisplayUtil.getScreenWidth(context) * 4 / 5, ViewGroup.LayoutParams.WRAP_CONTENT);
-        Objects.requireNonNull(customDialog.getDialog().getWindow()).setBackgroundDrawableResource(R.color.transparent);
+//        Objects.requireNonNull(customDialog.getDialog().getWindow()).setBackgroundDrawable(new ColorDrawable(0x00000000));
+        customDialog.getDialog().setCanceledOnTouchOutside(true);
         if (isTask) {
             if ("discharge".equals(paramsList.get(1))) { // "提前放料"
                 customDialog.bindView(R.id.tipContentTv, String.valueOf(paramsList.get(0)))
@@ -316,6 +322,27 @@ public class CommonProduceTaskListFragment extends BaseRefreshRecyclerFragment<W
         }
 
     }
+    /**
+     * @param
+     * @return
+     * @description 工单操作确认：结束
+     * @author zhangwenshuai1 2020/3/25
+     */
+    private void endConfirmDialog(List<Object> paramsList, WaitPutinRecordEntity waitPutinRecordEntity) {
+        CustomDialog customDialog = new CustomDialog(context,R.style.custom_dialog_transparent)
+                .layout(R.layout.wom_dialog_end_confirm, DisplayUtil.getScreenWidth(context) * 4 / 5, ViewGroup.LayoutParams.WRAP_CONTENT);
+//        customDialog.getDialog().getWindow().setBackgroundDrawableResource(R.color.transparent);
+//        customDialog.getDialog().getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        customDialog.getDialog().setCanceledOnTouchOutside(true);
+
+        customDialog.bindView(R.id.tipContentTv, context.getResources().getString(R.string.wom_confirm_tip) + paramsList.get(0) + context.getResources().getString(R.string.wom_task_operate))
+                .bindClickListener(R.id.cancelTv, null, true)
+                .bindClickListener(R.id.confirmTv, v -> {
+                    onLoading(getString(R.string.wom_dealing));
+                    presenterRouter.create(ProduceTaskOperateAPI.class).operateProduceTask(waitPutinRecordEntity.getId(), String.valueOf(paramsList.get(1)), null);
+                }, true)
+                .show();
+    }
 
     @Override
     public void onDestroy() {
@@ -344,7 +371,6 @@ public class CommonProduceTaskListFragment extends BaseRefreshRecyclerFragment<W
 
     @Override
     public void listWaitPutinRecordsSuccess(CommonBAPListEntity entity) {
-//        List<WaitPutinRecordEntity> list = GsonUtil.jsonToList(GsonUtil.gsonString(entity.result),WaitPutinRecordEntity.class);
         if (mIsTaskLoad) {
             refreshListController.refreshComplete(entity.result);
         } else {

@@ -53,14 +53,14 @@
                 android:textColor="@drawable/wom_sl_radio_text"
                 android:textSize="@dimen/fontSize_14sp" />
             <RadioButton
-                android:id="@+id/pausedRBtn"
+                android:id="@+id/heldRBtn"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_gravity="center_vertical"
                 android:layout_marginStart="@dimen/dp_20"
                 android:button="@null"
-                android:tag="pausedRBtn"
-                android:text="@string/wom_paused"
+                android:tag="heldRBtn"
+                android:text="@string/wom_held"
                 android:textColor="@drawable/wom_sl_radio_text"
                 android:textSize="@dimen/fontSize_14sp" />
             <RadioButton

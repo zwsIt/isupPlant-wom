@@ -116,7 +116,7 @@ public class SimpleProduceTaskListFragment extends BaseRefreshRecyclerFragment<W
                 queryParams.put(Constant.BAPQuery.EXE_STATE, WomConstant.SystemCode.EXE_STATE_WAIT);
             } else if (checkedId == R.id.executingRBtn) {
                 queryParams.put(Constant.BAPQuery.EXE_STATE, WomConstant.SystemCode.EXE_STATE_ING);
-            } else if (checkedId == R.id.pausedRBtn) {
+            } else if (checkedId == R.id.heldRBtn) {
                 queryParams.put(Constant.BAPQuery.EXE_STATE, WomConstant.SystemCode.EXE_STATE_PAUSED);
             } else if (checkedId == R.id.stoppedRBtn) {
                 queryParams.put(Constant.BAPQuery.EXE_STATE, WomConstant.SystemCode.EXE_STATE_STOPPED);
@@ -138,23 +138,23 @@ public class SimpleProduceTaskListFragment extends BaseRefreshRecyclerFragment<W
                     paramsList.add("start");
                     showOperateConfirmDialog(paramsList, mWaitPutinRecordEntity, true);
                     break;
-                case "pauseTv":
-                    paramsList.add(context.getResources().getString(R.string.wom_pause));
-                    paramsList.add("pause");
+                case "holdTv":
+                    paramsList.add(context.getResources().getString(R.string.wom_hold));
+                    paramsList.add("hold");
                     showOperateConfirmDialog(paramsList, mWaitPutinRecordEntity, true);
                     break;
-                case "resumeTv":
-                    paramsList.add(context.getResources().getString(R.string.wom_resume));
-                    paramsList.add("resume");
+                case "restartTv":
+                    paramsList.add(context.getResources().getString(R.string.wom_restart));
+                    paramsList.add("restart");
                     showOperateConfirmDialog(paramsList, mWaitPutinRecordEntity, true);
                     break;
                 case "stopTv":
                     // 结束工单报工
                     endProduceTaskReport();
-                    // TODO...
                     break;
                 case "expandIv":
                     break;
+                default:
             }
 
         });
@@ -181,9 +181,9 @@ public class SimpleProduceTaskListFragment extends BaseRefreshRecyclerFragment<W
      * @author zhangwenshuai1 2020/3/25
      */
     private void showOperateConfirmDialog(List<Object> paramsList, WaitPutinRecordEntity waitPutinRecordEntity, boolean isTask) {
-        CustomDialog customDialog = new CustomDialog(context)
+        CustomDialog customDialog = new CustomDialog(context,R.style.custom_dialog_transparent)
                 .layout(R.layout.wom_dialog_confirm, DisplayUtil.getScreenWidth(context) * 4 / 5, ViewGroup.LayoutParams.WRAP_CONTENT);
-        Objects.requireNonNull(customDialog.getDialog().getWindow()).setBackgroundDrawableResource(R.color.transparent);
+//        Objects.requireNonNull(customDialog.getDialog().getWindow()).setBackgroundDrawableResource(R.color.transparent);
         customDialog.bindView(R.id.tipContentTv, context.getResources().getString(R.string.wom_confirm_tip) + paramsList.get(0) + context.getResources().getString(R.string.wom_task_operate))
                 .bindClickListener(R.id.cancelTv, null, true)
                 .bindClickListener(R.id.confirmTv, v -> {

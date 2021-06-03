@@ -196,8 +196,9 @@ public class AdjustActivityListActivity extends BaseRefreshRecyclerActivity<Wait
             }
         }
 
-        CustomDialog customDialog = new CustomDialog(context).layout(R.layout.wom_dialog_confirm, DisplayUtil.getScreenWidth(context) * 4 / 5, ViewGroup.LayoutParams.WRAP_CONTENT);
-        Objects.requireNonNull(customDialog.getDialog().getWindow()).setBackgroundDrawableResource(R.color.transparent);
+        CustomDialog customDialog = new CustomDialog(context,R.style.custom_dialog_transparent)
+                .layout(R.layout.wom_dialog_confirm, DisplayUtil.getScreenWidth(context) * 4 / 5, ViewGroup.LayoutParams.WRAP_CONTENT);
+//        Objects.requireNonNull(customDialog.getDialog().getWindow()).setBackgroundDrawableResource(R.color.transparent);
         customDialog.bindView(R.id.tipContentTv, context.getResources().getString(R.string.wom_start_quality_operate))
                 .bindClickListener(R.id.cancelTv, null, true)
                 .bindClickListener(R.id.confirmTv, v -> {
@@ -215,9 +216,9 @@ public class AdjustActivityListActivity extends BaseRefreshRecyclerActivity<Wait
      * @author zhangwenshuai1 2020/3/25
      */
     private void showOperateConfirmDialog(String checkTip) {
-        CustomDialog customDialog = new CustomDialog(context)
+        CustomDialog customDialog = new CustomDialog(context,R.style.custom_dialog_transparent)
                 .layout(R.layout.wom_dialog_confirm, DisplayUtil.getScreenWidth(context) * 4 / 5, ViewGroup.LayoutParams.WRAP_CONTENT);
-        Objects.requireNonNull(customDialog.getDialog().getWindow()).setBackgroundDrawableResource(R.color.transparent);
+//        Objects.requireNonNull(customDialog.getDialog().getWindow()).setBackgroundDrawableResource(R.color.transparent);
         if (WomConstant.SystemCode.EXE_STATE_WAIT.equals(mWaitPutinRecordEntity.getExeState().id)) {
             customDialog.bindView(R.id.tipContentTv, context.getResources().getString(R.string.wom_start_activity_operate))
                     .bindClickListener(R.id.cancelTv, null, true)

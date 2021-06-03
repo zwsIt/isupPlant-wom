@@ -167,18 +167,18 @@
                 android:text="@string/wom_start" />
 
             <TextView
-                android:id="@+id/pauseTv"
+                android:id="@+id/holdTv"
                 style="@style/operateBtnStyle"
                 android:background="@drawable/wom_sh_pause_bg"
-                android:tag="pauseTv"
-                android:text="@string/wom_pause" />
+                android:tag="holdTv"
+                android:text="@string/wom_hold" />
 
             <TextView
-                android:id="@+id/resumeTv"
+                android:id="@+id/restartTv"
                 style="@style/operateBtnStyle"
                 android:background="@drawable/wom_sh_resume_bg"
-                android:tag="resumeTv"
-                android:text="@string/wom_resume" />
+                android:tag="restartTv"
+                android:text="@string/wom_restart" />
 
             <TextView
                 android:id="@+id/stopTv"
