@@ -161,4 +161,5 @@
     <string name="wom_hold">hold</string>
     <string name="wom_restart">restart</string>
     <string name="wom_held">held</string>
+    <string name="wom_task_held">工单已保持，请先重启</string>
 </resources>

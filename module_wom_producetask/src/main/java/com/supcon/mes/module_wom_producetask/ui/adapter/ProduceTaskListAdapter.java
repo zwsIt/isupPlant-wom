@@ -128,6 +128,10 @@ public class ProduceTaskListAdapter extends BaseListDataRecyclerViewAdapter<Wait
                                 ToastUtils.show(context, context.getResources().getString(R.string.wom_task_paused));
                                 return;
                             }
+                            if (WomConstant.SystemCode.EXE_STATE_HOLD.equals(getItem(getAdapterPosition()).getExeState().id)){
+                                ToastUtils.show(context, context.getResources().getString(R.string.wom_task_held));
+                                return;
+                            }
 
                             Bundle bundle = new Bundle();
                             bundle.putSerializable(Constant.IntentKey.WAIT_PUT_RECORD,getItem(getAdapterPosition()));
