@@ -38,7 +38,7 @@ public interface ReplenishConstant {
 
     interface URL {
         String REPLENISH_MATERIAL_PENDING_LIST_URL = "/msService/WOM/fillMaterial/fmBill/fmBillList-pending"; // 补料单待办
-        String REPLENISH_MATERIAL_SCAN_LIST_URL = "/msService/WOM/fillMaterial/fmBill/fmBillRef-query"; // 补料单参照（PC特殊处理页面）
+        String REPLENISH_MATERIAL_SCAN_LIST_URL = "/msService/WOM/fillMaterial/fmBill/fmBillRef-query"; // 补料单参照（PC特殊处理页面，已生效待补料单）
         String REPLENISH_MATERIAL_TABLE_EDIT_DG_LIST_URL = "/msService/WOM/fillMaterial/fmBill/data-" + DG_NAME.DG_REPLENISH_MATERIAL_EDIT
                 + "?datagridCode=WOM_1.0.0_fillMaterial_fmBillEdit"+ DG_NAME.DG_REPLENISH_MATERIAL_EDIT; // 补料单编辑dg
         String ASSOCIATION_EQUIPMENT_LIST_REF_URL = "/msService/HierarchicalMod/factoryModel/ftyEquipment/relationEquRef-query";

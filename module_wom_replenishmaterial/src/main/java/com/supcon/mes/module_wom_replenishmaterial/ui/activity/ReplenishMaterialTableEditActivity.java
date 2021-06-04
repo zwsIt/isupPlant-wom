@@ -390,7 +390,9 @@ public class ReplenishMaterialTableEditActivity extends BaseRefreshRecyclerActiv
         replenishMaterialTableDTO.setActivityName(deploymentEntity.code);
         replenishMaterialTableDTO.setTaskDescription(deploymentEntity.name);
         replenishMaterialTableDTO.setViewCode(deploymentEntity.viewCode);
-//        replenishMaterialTableDTO.setPendingId(String.valueOf(mReplenishMaterialTableEntity.getPending().id));
+        if (mReplenishMaterialTableEntity.getPending() != null){
+            replenishMaterialTableDTO.setPendingId(String.valueOf(mReplenishMaterialTableEntity.getPending().id));
+        }
 
         // bap 6.0  传输会单据异常
         mReplenishMaterialTableEntity.setPending(null);
