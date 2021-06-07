@@ -32,8 +32,10 @@ import com.supcon.mes.mbap.view.CustomTextView;
 import com.supcon.mes.middleware.constant.Constant;
 import com.supcon.mes.middleware.model.bean.BAP5CommonEntity;
 import com.supcon.mes.middleware.model.bean.MaterialQRCodeEntity;
+import com.supcon.mes.middleware.model.bean.QrCodeEntity;
 import com.supcon.mes.middleware.model.bean.SystemCodeEntity;
 import com.supcon.mes.middleware.model.bean.wom.StoreSetEntity;
+import com.supcon.mes.middleware.model.bean.wom.VesselEntity;
 import com.supcon.mes.middleware.model.bean.wom.WarehouseEntity;
 import com.supcon.mes.middleware.model.event.RefreshEvent;
 import com.supcon.mes.middleware.model.event.SelectDataEvent;
@@ -141,7 +143,7 @@ public class ProduceTaskEndReportActivity extends BaseRefreshRecyclerActivity<Ou
         super.initView();
         StatusBarUtils.setWindowStatusBarColor(this,R.color.themeColor);
         titleText.setText(context.getResources().getString(R.string.wom_produce_task_end_report));
-        rightBtn.setVisibility(View.GONE);
+        rightBtn.setVisibility(View.VISIBLE);
         rightBtn.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_top_scan));
 
         productName.setContent(mWaitPutinRecordEntity.getProductId().getName());
@@ -210,32 +212,24 @@ public class ProduceTaskEndReportActivity extends BaseRefreshRecyclerActivity<Ou
      */
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onCodeReceiver(CodeResultEvent codeResultEvent) {
-        if (context.getClass().getSimpleName().equals(codeResultEvent.scanTag)){
-            MaterialQRCodeEntity materialQRCodeEntity = MaterQRUtil.materialQRCode(context,codeResultEvent.scanResult);
-            if (materialQRCodeEntity == null) return;
-            if (!mWaitPutinRecordEntity.getProductId().getCode().equals(materialQRCodeEntity.getMaterial().getCode())){
-                ToastUtils.show(context, context.getResources().getString(R.string.wom_scan_material_error));
-                return;
-            }
-            if (!materialQRCodeEntity.getMaterialBatchNo().equals(mWaitPutinRecordEntity.getProduceBatchNum())){
-                ToastUtils.show(context, context.getResources().getString(R.string.wom_scan_batchNo_error));
-                return;
-            }
-
-            if(materialQRCodeEntity.isRequest()){
-                // TODO...
-            }else {
+        if (context.getClass().getSimpleName().equals(codeResultEvent.scanTag)) {
+            QrCodeEntity qrCodeEntity = MaterQRUtil.getQRCode(context, codeResultEvent.scanResult);
+            if (qrCodeEntity != null && qrCodeEntity.getType() == 1) {
                 OutputDetailEntity outputDetailEntity = new OutputDetailEntity();
-                outputDetailEntity.setProduct(mWaitPutinRecordEntity.getProductId()); // 产品
-                outputDetailEntity.setMaterialBatchNum(materialQRCodeEntity.getMaterialBatchNo()); // 生产批默认入库批号
-                outputDetailEntity.setOutputNum(materialQRCodeEntity.getNum());  // 扫描数量
-                outputDetailEntity.setWareId(materialQRCodeEntity.getToWare());
-                outputDetailEntity.setStoreId(materialQRCodeEntity.getToStore());
-                outputDetailEntity.setPutinTime(System.currentTimeMillis());  // 报工时间
+                // 物料
+                outputDetailEntity.setProduct(mWaitPutinRecordEntity.getTaskActiveId().getMaterialId());
+                // 报工时间
+                outputDetailEntity.setPutinTime(System.currentTimeMillis());
+                outputDetailEntity.setPutinEndTime(outputDetailEntity.getPutinTime());
+                // 桶编码
+                VesselEntity vesselEntity = new VesselEntity();
+                vesselEntity.setId(qrCodeEntity.getId());
+                vesselEntity.setCode(qrCodeEntity.getCode());
+                outputDetailEntity.setVessel(vesselEntity);
+
                 mProduceTaskEndReportDetailAdapter.addData(outputDetailEntity);
                 mProduceTaskEndReportDetailAdapter.notifyItemRangeInserted(mProduceTaskEndReportDetailAdapter.getItemCount() - 1, 1);
                 mProduceTaskEndReportDetailAdapter.notifyItemRangeChanged(mProduceTaskEndReportDetailAdapter.getItemCount() - 1, 1);
-
                 contentView.smoothScrollToPosition(mProduceTaskEndReportDetailAdapter.getItemCount() - 1);
             }
         }

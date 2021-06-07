@@ -57,6 +57,8 @@ public class ProduceTaskEndReportDetailAdapter extends BaseListDataRecyclerViewA
         TextView itemViewDelBtn;
         @BindByTag("preNumTv")
         TextView preNumTv;
+        @BindByTag("vessel")
+        CustomEditText vessel;
 
         public ReportViewHolder(Context context) {
             super(context,parent);
@@ -159,6 +161,7 @@ public class ProduceTaskEndReportDetailAdapter extends BaseListDataRecyclerViewA
             remainderNumEt.setContent(data.getRemainNum() == null ? "" : String.valueOf(data.getRemainNum()));
             warehouseTv.setContent(data.getWareId() == null ? "" : data.getWareId().getName());
             storeSetTv.setContent(data.getStoreId() == null ? "" : data.getStoreId().getName());
+            vessel.setContent(data.getVessel() == null ? "" : data.getVessel().getCode());
         }
     }
 
