@@ -149,7 +149,7 @@ public class CommonProduceTaskListFragment extends BaseRefreshRecyclerFragment<W
             } else if (checkedId == R.id.executingRBtn) {
                 queryParams.put(Constant.BAPQuery.EXE_STATE, WomConstant.SystemCode.EXE_STATE_ING);
             } else if (checkedId == R.id.heldRBtn) {
-                queryParams.put(Constant.BAPQuery.EXE_STATE, WomConstant.SystemCode.EXE_STATE_PAUSED);
+                queryParams.put(Constant.BAPQuery.EXE_STATE, WomConstant.SystemCode.EXE_STATE_HOLD);
             } else if (checkedId == R.id.stoppedRBtn) {
                 queryParams.put(Constant.BAPQuery.EXE_STATE, WomConstant.SystemCode.EXE_STATE_STOPPED);
             } else if (checkedId == R.id.abandonedRBtn) {

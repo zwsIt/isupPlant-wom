@@ -76,6 +76,7 @@ public class WaitPutinRecordEntity extends BaseEntity {
     private String lineName;            // 生产线名称
     private Long planEndTime;           // 计划结束时间
     private BigDecimal planNum;         // 计划数量
+    private BigDecimal actualNum;         // 实际数量
     private Long planStartTime;         // 计划开始时间
     private ProcReportEntity procReportId; // 过程报工单
     private String processName;             // 工序名称
@@ -101,6 +102,14 @@ public class WaitPutinRecordEntity extends BaseEntity {
 
     private Boolean isForTemp; // 可机动执行
     private Boolean isForAdjust; // 可用于调整
+
+    public BigDecimal getActualNum() {
+        return actualNum;
+    }
+
+    public void setActualNum(BigDecimal actualNum) {
+        this.actualNum = actualNum;
+    }
 
     public Boolean getForTemp() {
         return isForTemp;

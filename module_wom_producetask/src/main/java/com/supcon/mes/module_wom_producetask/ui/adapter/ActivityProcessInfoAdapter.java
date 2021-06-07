@@ -92,13 +92,13 @@ public class ActivityProcessInfoAdapter extends BaseListDataRecyclerViewAdapter<
                 activityName.setTextColor(context.getResources().getColor(R.color.wom_black_333333));
                 itemAreaDot.setImageResource(R.drawable.wom_ic_node_blue);
                 itemAreaLineBottom.setBackgroundColor(context.getResources().getColor(R.color.wom_blue_5DB7FF));
-                dealTime.setText(DateUtil.dateFormat(data.getActEndTime(), "MM-dd HH:mm"));
+                dealTime.setText(data.getActEndTime() == null? "--" : DateUtil.dateFormat(data.getActEndTime(), "MM-dd HH:mm"));
                 statusTv.setTextColor(context.getResources().getColor(R.color.dark_green));
             }else if (WomConstant.SystemCode.EXE_STATE_ING.equals(data.getRunState().id)){
                 activityName.setTextColor(context.getResources().getColor(R.color.wom_blue_5DB7FF));
                 itemAreaDot.setImageResource(R.drawable.wom_ic_node_blue);
                 itemAreaLineBottom.setBackgroundColor(context.getResources().getColor(R.color.wom_blue_5DB7FF));
-                dealTime.setText(DateUtil.dateFormat(data.getActStartTime(), "MM-dd HH:mm"));
+                dealTime.setText(data.getActStartTime() == null? "--" : DateUtil.dateFormat(data.getActStartTime(), "MM-dd HH:mm"));
                 statusTv.setTextColor(context.getResources().getColor(R.color.wom_blue_5DB7FF));
             }else {
                 activityName.setTextColor(context.getResources().getColor(R.color.gray_text));
