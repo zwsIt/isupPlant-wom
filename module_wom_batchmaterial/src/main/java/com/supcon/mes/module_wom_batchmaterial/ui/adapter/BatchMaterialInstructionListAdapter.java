@@ -28,6 +28,7 @@ import java.util.concurrent.TimeUnit;
  * Email zhangwenshuai1@supcon.com
  * Desc 配料指令Adapter
  */
+@Deprecated
 public class BatchMaterialInstructionListAdapter extends BaseListDataRecyclerViewAdapter<BatchMaterilEntity> {
     public BatchMaterialInstructionListAdapter(Context context) {
         super(context);

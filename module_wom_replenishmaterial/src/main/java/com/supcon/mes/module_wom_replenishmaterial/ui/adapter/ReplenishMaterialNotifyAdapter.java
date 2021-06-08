@@ -92,7 +92,7 @@ public class ReplenishMaterialNotifyAdapter extends BaseListDataRecyclerViewAdap
             productNameTv.setText(data.getMaterial().name);
             materialCode.setContent(data.getMaterial().code);
             numCustomTv.setContent((data.getActualNumber() == null ? 0 : data.getActualNumber().toString()) + "/" + (data.getPlanNumber() == null ? 0 : data.getPlanNumber().toString()));
-            eamPoint.setContent(data.getEquipment().getName() + "("+data.getEquipment().getCode()+")");
+            eamPoint.setContent(data.getEquipment().getName()/* + "("+data.getEquipment().getCode()+")"*/);
             time.setContent(data.getCreateTime() == null ? "--" : DateUtil.dateTimeFormat(data.getCreateTime()));
         }
     }

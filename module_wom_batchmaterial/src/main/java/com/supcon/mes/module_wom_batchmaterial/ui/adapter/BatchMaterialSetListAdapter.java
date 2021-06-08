@@ -85,6 +85,12 @@ public class BatchMaterialSetListAdapter extends BaseListDataRecyclerViewAdapter
                         @Override
                         public boolean test(@NonNull Object o) throws Exception {
                             BatchMaterialSetEntity data = getItem(getAdapterPosition());
+                            if (data.getCurrentBurendManage().getAreaId().isAutoBurden()){
+                                Bundle bundle = new Bundle();
+                                bundle.putSerializable(BmConstant.IntentKey.BATCH_MATERIAL_SET,data);
+                                IntentRouter.go(context,BmConstant.Router.BATCH_MATERIAL_INSTRUCTION_LIST,bundle);
+                                return false;
+                            }
                             if (data.getVessel() == null || data.getVessel().getId() == null){
                                 ToastUtils.show(context,context.getResources().getString(R.string.batch_please_bind_bucket_first));
                                 return false;
@@ -123,9 +129,9 @@ public class BatchMaterialSetListAdapter extends BaseListDataRecyclerViewAdapter
             activityNameTv.setText(data.getFormulaActiveId().getName());
             statusTv.setText(data.getFmState() == null ? "--" : data.getFmState().value);
             bucketCodeTv.setText(data.getVessel() == null || TextUtils.isEmpty(data.getVessel().getCode()) ? context.getResources().getString(R.string.batch_no_bind_bucket) : data.getVessel().getCode());
-            batchCurrentArea.setContent(data.getCurrentBurendManage().getAreaId().getName() + "("+data.getCurrentBurendManage().getAreaId().getCode()+")");
-            batchCurrentWorkLine.setContent(data.getCurrentBurendManage().getName() + "("+data.getCurrentBurendManage().getCode()+")");
-            batchNextArea.setContent(data.getNextBurendManage() == null || data.getNextBurendManage().getAreaId() == null ? "--":data.getNextBurendManage().getAreaId().getName() + "("+data.getNextBurendManage().getAreaId().getCode()+")");
+            batchCurrentArea.setContent(data.getCurrentBurendManage().getAreaId().getName()/* + "("+data.getCurrentBurendManage().getAreaId().getCode()+")"*/);
+            batchCurrentWorkLine.setContent(data.getCurrentBurendManage().getName()/* + "("+data.getCurrentBurendManage().getCode()+")"*/);
+            batchNextArea.setContent(data.getNextBurendManage() == null || data.getNextBurendManage().getAreaId() == null ? "--":data.getNextBurendManage().getAreaId().getName()/* + "("+data.getNextBurendManage().getAreaId().getCode()+")"*/);
             time.setContent(data.getStartTime() == null ? "--" : DateUtil.dateTimeFormat(data.getStartTime()));
             if (data.getCurrentBurendManage().getAreaId().isAutoBurden()){
                 autoBatchIv.setVisibility(View.VISIBLE);

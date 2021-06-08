@@ -103,7 +103,7 @@ public class ReplenishMaterialTableEditListAdapter extends BaseListDataRecyclerV
             productNameTv.setText(data.getMaterial().name);
             materialCode.setContent(data.getMaterial().code);
             numCustomTv.setContent((data.getActualNumber() == null ? 0 : data.getActualNumber().toString()) + "/" + (data.getPlanNumber() == null ? 0 : data.getPlanNumber().toString()));
-            eamPoint.setContent(data.getEquipment().getName() + "("+data.getEquipment().getCode()+")");
+            eamPoint.setContent(data.getEquipment().getName()/* + "("+data.getEquipment().getCode()+")"*/);
             vessel.setContent(data.getVessel() == null ? "--" : data.getVessel().getCode());
 
             if (data.getEquipment() != null && data.getEquipment().getRunModel() != null

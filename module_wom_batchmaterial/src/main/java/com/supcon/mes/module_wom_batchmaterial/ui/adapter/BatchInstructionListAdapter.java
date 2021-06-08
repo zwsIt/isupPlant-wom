@@ -102,6 +102,7 @@ public class BatchInstructionListAdapter extends BaseListDataRecyclerViewAdapter
                     });
         }
 
+        @SuppressLint("SetTextI18n")
         @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
         @Override
         protected void update(BatchInstructionEntity data) {
@@ -122,7 +123,7 @@ public class BatchInstructionListAdapter extends BaseListDataRecyclerViewAdapter
             }
 
             index.setText(String.valueOf(data.getPlOrder()));
-            batchArea.setText(data.getAreaMange().getName());
+            batchArea.setText(/*data.getAreaMange().getName()*/(data.getActualNumber() == null ? "0" : data.getActualNumber()) + "/" + data.getPlanNumber());
 
             if (getAdapterPosition() == 0) {
                 itemAreaLineTop.setBackgroundColor(context.getResources().getColor(R.color.white));
@@ -179,8 +180,8 @@ public class BatchInstructionListAdapter extends BaseListDataRecyclerViewAdapter
                 itemAreaLineBottom.setVisibility(View.VISIBLE);
             }
 
-            if (data.getMaterial() != null && !TextUtils.isEmpty(data.getMaterial().getCode())) {
-                material.setText(String.format("%s(%s)", data.getMaterial().getName(), data.getMaterial().getCode()));
+            if (data.getMaterial() != null && !TextUtils.isEmpty(data.getMaterial().getName())) {
+                material.setText(/*String.format("%s(%s)", */data.getMaterial().getName()/*, data.getMaterial().getCode())*/);
             } else {
                 material.setText("--");
             }

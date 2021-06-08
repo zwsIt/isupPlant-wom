@@ -133,6 +133,7 @@
                     android:layout_gravity="center_vertical"
                     android:gravity="center_vertical"
                     android:text="@string/batch_next_area"
+                    android:textSize="@dimen/dp_12"
                     android:textColor="@color/titleTextColor"
                     android:drawableStart="@drawable/ic_area"
                     android:drawablePadding="@dimen/dp_5"/>
@@ -156,6 +157,7 @@
                     android:layout_gravity="center_vertical"
                     android:gravity="center_vertical"
                     android:text="@string/wom_time"
+                    android:textSize="@dimen/dp_12"
                     android:textColor="@color/titleTextColor"
                     android:drawableStart="@drawable/ic_time"
                     android:drawablePadding="@dimen/dp_5"/>

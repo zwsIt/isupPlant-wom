@@ -41,6 +41,7 @@ import java.util.Map;
  * Email zhangwenshuai1@supcon.com
  * Desc 配料指令
  */
+@Deprecated
 @Presenter(value = {CommonListPresenter.class})
 public class BatchMaterialInstructionFragment extends BaseRefreshRecyclerFragment<BatchMaterilEntity> implements CommonListContract.View {
 
