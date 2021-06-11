@@ -59,8 +59,8 @@ public class BatchInstructionListAdapter extends BaseListDataRecyclerViewAdapter
         View itemAreaLineBottom;
         @BindByTag("itemAreaDotLayout")
         LinearLayout itemAreaDotLayout;
-        @BindByTag("batchArea")
-        TextView batchArea;
+        @BindByTag("num")
+        TextView num;
         @BindByTag("material")
         TextView material;
         @BindByTag("dealTime")
@@ -69,6 +69,8 @@ public class BatchInstructionListAdapter extends BaseListDataRecyclerViewAdapter
         TextView statusTv;
         @BindByTag("intoIv")
         ImageView intoIv;
+        @BindByTag("autoBatchIv")
+        ImageView autoBatchIv;
 
         public ViewHolder(Context context) {
             super(context, parent);
@@ -123,7 +125,7 @@ public class BatchInstructionListAdapter extends BaseListDataRecyclerViewAdapter
             }
 
             index.setText(String.valueOf(data.getPlOrder()));
-            batchArea.setText(/*data.getAreaMange().getName()*/(data.getActualNumber() == null ? "0" : data.getActualNumber()) + "/" + data.getPlanNumber());
+            num.setText(/*data.getAreaMange().getName()*/(data.getActualNumber() == null ? "0" : data.getActualNumber()) + "/" + data.getPlanNumber());
 
             if (getAdapterPosition() == 0) {
                 itemAreaLineTop.setBackgroundColor(context.getResources().getColor(R.color.white));
@@ -184,6 +186,14 @@ public class BatchInstructionListAdapter extends BaseListDataRecyclerViewAdapter
                 material.setText(/*String.format("%s(%s)", */data.getMaterial().getName()/*, data.getMaterial().getCode())*/);
             } else {
                 material.setText("--");
+            }
+
+            if (data.getAreaMange().isAutoBurden()){
+                autoBatchIv.setVisibility(View.VISIBLE);
+                itemView.setPadding(DisplayUtil.dip2px(10,context),0,0,0);
+            }else {
+                autoBatchIv.setVisibility(View.GONE);
+                itemView.setPadding(DisplayUtil.dip2px(10,context),0,DisplayUtil.dip2px(20,context),0);
             }
         }
     }

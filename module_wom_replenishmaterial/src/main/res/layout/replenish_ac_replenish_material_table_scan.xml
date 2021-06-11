@@ -29,7 +29,7 @@
                 app:key="@string/scan_eam"
                 app:key_size="14"
                 app:content_color="@color/dark_text"
-                app:editable="true"/>
+                app:editable="false"/>
             <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -55,7 +55,7 @@
             app:key="@string/wom_material"
             app:key_size="14"
             app:content_color="@color/dark_text"
-            app:editable="true"/>
+            app:editable="false"/>
         <include layout="@layout/ly_line_light"/>
         <com.supcon.mes.mbap.view.CustomEditText
             android:layout_width="match_parent"
@@ -68,7 +68,8 @@
             app:edit_hint="@string/wom_please_input_plan_num"
             app:key="@string/wom_plan_num"
             app:key_size="14"
-            app:text_color="@color/dark_black"/>
+            app:text_color="@color/dark_black"
+            app:editable="false"/>
 
         <com.supcon.mes.mbap.view.CustomEditText
             android:layout_width="match_parent"
@@ -81,7 +82,8 @@
             app:edit_hint="@string/wom_please_input_actual_num"
             app:key="@string/replenish_actual_num"
             app:key_size="14"
-            app:text_color="@color/dark_black"/>
+            app:text_color="@color/dark_black"
+            app:editable="false"/>
         <include layout="@layout/ly_line_light"/>
         <RelativeLayout
             android:layout_width="match_parent"
@@ -101,7 +103,7 @@
                 app:key="@string/replenish_bucket"
                 app:key_size="14"
                 app:content_color="@color/dark_text"
-                app:editable="true"/>
+                app:editable="false"/>
             <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

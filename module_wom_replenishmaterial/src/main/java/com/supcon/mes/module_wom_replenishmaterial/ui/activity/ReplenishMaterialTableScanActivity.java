@@ -235,61 +235,61 @@ public class ReplenishMaterialTableScanActivity extends BaseRefreshRecyclerActiv
         refreshListController.setOnRefreshListener(() -> presenterRouter.create(CommonListAPI.class).list(1, customCondition, queryParams,
                 ReplenishConstant.URL.REPLENISH_MATERIAL_TABLE_EDIT_DG_LIST_URL + "&id=" + mReplenishMaterialTableEntity.getId(), ""));
 
-        eamPoint.setOnChildViewClickListener((childView, action, obj) -> IntentRouter.go(context, ReplenishConstant.Router.ASSOCIATION_EQUIPMENT_LIST_REF));
-        material.setOnChildViewClickListener((childView, action, obj) -> {
-            Bundle bundle = new Bundle();
-            bundle.putBoolean(Constant.IntentKey.SINGLE_CHOICE, true);
-            IntentRouter.go(context, Constant.Router.PRODUCT_DETAIL, bundle);
-        });
-        RxTextView.textChanges(planNum.editText())
-                .skipInitialValue()
-                .filter(charSequence -> {
-                    if (TextUtils.isEmpty(charSequence.toString())) {
-                        mReplenishMaterialTableEntity.setPlanNumber(null);
-                        return false;
-                    }
-                    if (charSequence.toString().startsWith(".")) {
-                        planNum.editText().setText("0.");
-                        return false;
-                    }
-                    return true;
-                })
-                .subscribe(charSequence -> mReplenishMaterialTableEntity.setPlanNumber(new BigDecimal(charSequence.toString())));
-        RxTextView.textChanges(actualNum.editText())
-                .skipInitialValue()
-                .filter(charSequence -> {
-                    if (TextUtils.isEmpty(charSequence.toString())) {
-                        mReplenishMaterialTableEntity.setActualNumber(null);
-                        return false;
-                    }
-                    if (charSequence.toString().startsWith(".")) {
-                        actualNum.editText().setText("0.");
-                        return false;
-                    }
-                    return true;
-                })
-                .subscribe(charSequence -> mReplenishMaterialTableEntity.setActualNumber(new BigDecimal(charSequence.toString())));
-        bucket.setOnChildViewClickListener((childView, action, obj) -> {
-            Bundle bundle = new Bundle();
-            bundle.putString(Constant.IntentKey.URL, "/msService/WOM/vesselMg/vessel/vesselRef-query");
-            bundle.putString(Constant.IntentKey.MODEL_ALIAS, "vessel");
-            IntentRouter.go(context, Constant.Router.COMMON_LIST_REF, bundle);
-        });
-        customListWidgetAdd.setOnClickListener(v -> {
-            ReplenishMaterialTablePartEntity replenishMaterialTablePartEntity = new ReplenishMaterialTablePartEntity();
-//            replenishMaterialTablePartEntity.setMaterialId(mReplenishMaterialTableEntity.getMaterial()); // 物料
-            replenishMaterialTablePartEntity.setFmTime(System.currentTimeMillis());
-
-            if (mReplenishMaterialRecordsScanAdapter.getItemCount() <= 0) {
-                mReplenishMaterialRecordsScanAdapter.addData(replenishMaterialTablePartEntity);
-            } else {
-                mReplenishMaterialRecordsScanAdapter.getList().add(0, replenishMaterialTablePartEntity);
-            }
-            mReplenishMaterialRecordsScanAdapter.notifyItemRangeInserted(0, 1);
-            mReplenishMaterialRecordsScanAdapter.notifyItemRangeChanged(0, 1);
-            contentView.smoothScrollToPosition(0);
-
-        });
+//        eamPoint.setOnChildViewClickListener((childView, action, obj) -> IntentRouter.go(context, ReplenishConstant.Router.ASSOCIATION_EQUIPMENT_LIST_REF));
+//        material.setOnChildViewClickListener((childView, action, obj) -> {
+//            Bundle bundle = new Bundle();
+//            bundle.putBoolean(Constant.IntentKey.SINGLE_CHOICE, true);
+//            IntentRouter.go(context, Constant.Router.PRODUCT_DETAIL, bundle);
+//        });
+//        RxTextView.textChanges(planNum.editText())
+//                .skipInitialValue()
+//                .filter(charSequence -> {
+//                    if (TextUtils.isEmpty(charSequence.toString())) {
+//                        mReplenishMaterialTableEntity.setPlanNumber(null);
+//                        return false;
+//                    }
+//                    if (charSequence.toString().startsWith(".")) {
+//                        planNum.editText().setText("0.");
+//                        return false;
+//                    }
+//                    return true;
+//                })
+//                .subscribe(charSequence -> mReplenishMaterialTableEntity.setPlanNumber(new BigDecimal(charSequence.toString())));
+//        RxTextView.textChanges(actualNum.editText())
+//                .skipInitialValue()
+//                .filter(charSequence -> {
+//                    if (TextUtils.isEmpty(charSequence.toString())) {
+//                        mReplenishMaterialTableEntity.setActualNumber(null);
+//                        return false;
+//                    }
+//                    if (charSequence.toString().startsWith(".")) {
+//                        actualNum.editText().setText("0.");
+//                        return false;
+//                    }
+//                    return true;
+//                })
+//                .subscribe(charSequence -> mReplenishMaterialTableEntity.setActualNumber(new BigDecimal(charSequence.toString())));
+//        bucket.setOnChildViewClickListener((childView, action, obj) -> {
+//            Bundle bundle = new Bundle();
+//            bundle.putString(Constant.IntentKey.URL, "/msService/WOM/vesselMg/vessel/vesselRef-query");
+//            bundle.putString(Constant.IntentKey.MODEL_ALIAS, "vessel");
+//            IntentRouter.go(context, Constant.Router.COMMON_LIST_REF, bundle);
+//        });
+//        customListWidgetAdd.setOnClickListener(v -> {
+//            ReplenishMaterialTablePartEntity replenishMaterialTablePartEntity = new ReplenishMaterialTablePartEntity();
+////            replenishMaterialTablePartEntity.setMaterialId(mReplenishMaterialTableEntity.getMaterial()); // 物料
+//            replenishMaterialTablePartEntity.setFmTime(System.currentTimeMillis());
+//
+//            if (mReplenishMaterialRecordsScanAdapter.getItemCount() <= 0) {
+//                mReplenishMaterialRecordsScanAdapter.addData(replenishMaterialTablePartEntity);
+//            } else {
+//                mReplenishMaterialRecordsScanAdapter.getList().add(0, replenishMaterialTablePartEntity);
+//            }
+//            mReplenishMaterialRecordsScanAdapter.notifyItemRangeInserted(0, 1);
+//            mReplenishMaterialRecordsScanAdapter.notifyItemRangeChanged(0, 1);
+//            contentView.smoothScrollToPosition(0);
+//
+//        });
 //        mReplenishMaterialRecordsScanAdapter.setOnItemChildViewClickListener((childView, position, action, obj) -> {
 //            mCurrentPosition = position;
 //            mReplenishMaterialTablePartEntity = (ReplenishMaterialTablePartEntity) obj;

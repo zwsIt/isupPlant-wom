@@ -6,7 +6,6 @@
     android:background="@drawable/white"
     android:orientation="horizontal"
     android:paddingLeft="@dimen/dp_10"
-    android:paddingRight="@dimen/dp_15"
     android:elevation="@dimen/dp_2">
 
     <TextView
@@ -57,8 +56,9 @@
     </RelativeLayout>
 
     <LinearLayout
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_weight="1"
         android:layout_marginStart="@dimen/dp_10"
         android:paddingTop="@dimen/dp_10"
         android:orientation="vertical">
@@ -101,10 +101,10 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/batchArea"
+            android:id="@+id/num"
             android:paddingTop="@dimen/dp_5"
-            android:tag="batchArea"
-            android:text="@string/batch_material_area"
+            android:tag="num"
+            android:text="@string/wom_num"
             android:textColor="@color/textColorlightblack"
             android:textSize="@dimen/fontSize_12sp" />
         <TextView
@@ -118,4 +118,11 @@
             android:textSize="@dimen/fontSize_12sp" />
     </LinearLayout>
 
+    <ImageView
+        android:layout_width="@dimen/dp_20"
+        android:layout_height="@dimen/dp_20"
+        android:id="@+id/autoBatchIv"
+        android:tag="autoBatchIv"
+        android:src="@drawable/ic_automatic"
+        android:visibility="visible"/>
 </LinearLayout>

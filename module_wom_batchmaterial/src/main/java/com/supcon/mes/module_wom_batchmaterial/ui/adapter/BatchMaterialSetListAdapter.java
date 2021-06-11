@@ -85,7 +85,7 @@ public class BatchMaterialSetListAdapter extends BaseListDataRecyclerViewAdapter
                         @Override
                         public boolean test(@NonNull Object o) throws Exception {
                             BatchMaterialSetEntity data = getItem(getAdapterPosition());
-                            if (data.getCurrentBurendManage().getAreaId().isAutoBurden()){
+                            if (BmConstant.SystemCode.TASK_BATCH.equals(data.getFmTask().id) && data.getCurrentBurendManage().getAreaId().isAutoBurden()){
                                 Bundle bundle = new Bundle();
                                 bundle.putSerializable(BmConstant.IntentKey.BATCH_MATERIAL_SET,data);
                                 IntentRouter.go(context,BmConstant.Router.BATCH_MATERIAL_INSTRUCTION_LIST,bundle);
