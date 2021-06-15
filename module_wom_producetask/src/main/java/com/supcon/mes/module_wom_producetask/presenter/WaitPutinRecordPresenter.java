@@ -1,8 +1,11 @@
 package com.supcon.mes.module_wom_producetask.presenter;
 
+import com.supcon.common.view.util.LogUtil;
 import com.supcon.mes.mbap.utils.GsonUtil;
+import com.supcon.mes.middleware.SupPlantApplication;
 import com.supcon.mes.middleware.constant.Constant;
 import com.supcon.mes.middleware.model.bean.BAP5CommonEntity;
+import com.supcon.mes.middleware.model.bean.BaseSubcondEntity;
 import com.supcon.mes.middleware.model.bean.CommonBAPListEntity;
 import com.supcon.mes.middleware.model.bean.FastQueryCondEntity;
 import com.supcon.mes.middleware.util.BAPQueryParamsHelper;
@@ -28,6 +31,8 @@ import io.reactivex.Flowable;
  */
 public class WaitPutinRecordPresenter extends WaitPutinRecordsListContract.Presenter {
 
+    private final FastQueryCondEntity fastQueryCondEntity = new FastQueryCondEntity();
+
     @Override
     public void listWaitPutinRecords(int pageNo, int pageSize, Map<String, Object> queryParams, boolean like) {
         BAPQueryParamsHelper.setLike(like);
@@ -35,7 +40,6 @@ public class WaitPutinRecordPresenter extends WaitPutinRecordsListContract.Prese
         Map<String, Object> subconds = new HashMap<>();
         Map<String, Object> joinSubconds = new HashMap<>();
 
-        FastQueryCondEntity fastQueryCondEntity = new FastQueryCondEntity();
         fastQueryCondEntity.subconds = new ArrayList<>();
         fastQueryCondEntity.modelAlias = "waitPutRecord";
 //        fastQueryCondEntity.viewCode = "WOM_1.0.0_waitPutinRecord_waitPutTaskList";
@@ -45,6 +49,14 @@ public class WaitPutinRecordPresenter extends WaitPutinRecordsListContract.Prese
             if (Constant.BAPQuery.FORMULA_SET_PROCESS.equals(key)) { // 配方属性(普通/标准工单)
                 joinSubconds.put(key, Objects.requireNonNull(queryParams.get(key)));
                 fastQueryCondEntity.subconds.add(BAPQueryParamsHelper.crateJoinSubcondEntity(joinSubconds, "RM_FORMULAS,ID,WOM_WAIT_PUT_RECORDS,FORMULA_ID"));
+
+                if ("com.supcon.supplantLKA".equals(SupPlantApplication.getAppContext().getPackageName())){
+                    // 默认当前部门
+                    Map<String,Object> deptMap = new HashMap<>(1);
+                    deptMap.put(Constant.BAPQuery.DEPARTMENT_ID_SUBORDINATE, SupPlantApplication.getAccountInfo().departmentId);
+                    fastQueryCondEntity.subconds.add(BAPQueryParamsHelper.crateJoinSubcondEntity(deptMap,"BASE_DEPARTMENT,ID,WOM_WAIT_PUT_RECORDS,MAIN_DEP"));
+                }
+
             } else if (Constant.BAPQuery.IS_MORE_OTHER.equals(key)) { // 是否其他活动(配方/其他活动{机动、调整活动})
                 joinSubconds.put(key, Objects.requireNonNull(queryParams.get(key)));
                 fastQueryCondEntity.subconds.add(BAPQueryParamsHelper.crateJoinSubcondEntity(joinSubconds, "WOM_TASK_ACTIVES,ID,WOM_WAIT_PUT_RECORDS,TASK_ACTIVE_ID"));
