@@ -255,7 +255,7 @@ public class CommonProduceTaskListFragment extends BaseRefreshRecyclerFragment<W
     private void updateCurrentFactory() {
         CustomDialog customDialog = new CustomDialog(context)
                 .layout(R.layout.wom_dialog_set_factory, DisplayUtil.getScreenWidth(context) * 4 / 5, ViewGroup.LayoutParams.WRAP_CONTENT);
-//        customDialog.getDialog().getWindow().setBackgroundDrawableResource(R.color.transparent);
+        customDialog.getDialog().getWindow().setBackgroundDrawableResource(R.color.transparent);
         mFactoryCustomTv = customDialog.getDialog().findViewById(R.id.factoryCustomTv);
         mFactoryCustomTv.setContent(mWaitPutinRecordEntity.getTaskProcessId().getEquipmentId().getName());
         customDialog.bindChildListener(R.id.factoryCustomTv, (childView, action, obj) -> {
@@ -289,7 +289,7 @@ public class CommonProduceTaskListFragment extends BaseRefreshRecyclerFragment<W
     private void showOperateConfirmDialog(List<Object> paramsList, WaitPutinRecordEntity waitPutinRecordEntity, boolean isTask) {
         CustomDialog customDialog = new CustomDialog(context)
                 .layout(R.layout.wom_dialog_confirm, DisplayUtil.getScreenWidth(context) * 4 / 5, ViewGroup.LayoutParams.WRAP_CONTENT);
-//        Objects.requireNonNull(customDialog.getDialog().getWindow()).setBackgroundDrawable(new ColorDrawable(0x00000000));
+        Objects.requireNonNull(customDialog.getDialog().getWindow()).setBackgroundDrawable(new ColorDrawable(0x00000000));
         customDialog.getDialog().setCanceledOnTouchOutside(true);
         if (isTask) {
             if ("discharge".equals(paramsList.get(1))) { // "提前放料"
@@ -331,7 +331,7 @@ public class CommonProduceTaskListFragment extends BaseRefreshRecyclerFragment<W
     private void endConfirmDialog(List<Object> paramsList, WaitPutinRecordEntity waitPutinRecordEntity) {
         CustomDialog customDialog = new CustomDialog(context,R.style.custom_dialog_transparent)
                 .layout(R.layout.wom_dialog_end_confirm, DisplayUtil.getScreenWidth(context) * 4 / 5, ViewGroup.LayoutParams.WRAP_CONTENT);
-//        customDialog.getDialog().getWindow().setBackgroundDrawableResource(R.color.transparent);
+        customDialog.getDialog().getWindow().setBackgroundDrawableResource(R.color.transparent);
 //        customDialog.getDialog().getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         customDialog.getDialog().setCanceledOnTouchOutside(true);
 

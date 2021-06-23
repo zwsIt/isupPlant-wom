@@ -354,7 +354,7 @@ public class PutInActivityReportActivity extends BaseRefreshRecyclerActivity<Put
                 if (totalNum.compareTo(mWaitPutinRecordEntity.getPlanNum() == null ? new BigDecimal(0) : mWaitPutinRecordEntity.getPlanNum()) > 0) {
                     CustomDialog customDialog = new CustomDialog(context,R.style.custom_dialog_transparent)
                             .layout(R.layout.wom_dialog_confirm, DisplayUtil.getScreenWidth(context) * 4 / 5, ViewGroup.LayoutParams.WRAP_CONTENT);
-//                    Objects.requireNonNull(customDialog.getDialog().getWindow()).setBackgroundDrawableResource(R.color.transparent);
+                    Objects.requireNonNull(customDialog.getDialog().getWindow()).setBackgroundDrawableResource(R.color.transparent);
                     customDialog.bindView(R.id.tipContentTv, context.getResources().getString(R.string.wom_total_num_greater_plan_num))
                             .bindClickListener(R.id.cancelTv, null, true)
                             .bindClickListener(R.id.confirmTv, v -> addItem(putInDetailEntity), true)

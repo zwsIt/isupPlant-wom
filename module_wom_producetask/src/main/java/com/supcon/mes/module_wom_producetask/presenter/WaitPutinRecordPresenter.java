@@ -54,7 +54,7 @@ public class WaitPutinRecordPresenter extends WaitPutinRecordsListContract.Prese
                     // 默认当前部门
                     Map<String,Object> deptMap = new HashMap<>(1);
                     deptMap.put(Constant.BAPQuery.DEPARTMENT_ID_SUBORDINATE, SupPlantApplication.getAccountInfo().departmentId);
-                    fastQueryCondEntity.subconds.add(BAPQueryParamsHelper.crateJoinSubcondEntity(deptMap,"BASE_DEPARTMENT,ID,WOM_WAIT_PUT_RECORDS,MAIN_DEP"));
+                    fastQueryCondEntity.subconds.add(BAPQueryParamsHelper.crateJoinSubcondEntity(deptMap,"BASE_DEPARTMENT,ID,WOM_WAIT_PUT_RECORDS,MAN_DEPTID"));
                 }
 
             } else if (Constant.BAPQuery.IS_MORE_OTHER.equals(key)) { // 是否其他活动(配方/其他活动{机动、调整活动})
