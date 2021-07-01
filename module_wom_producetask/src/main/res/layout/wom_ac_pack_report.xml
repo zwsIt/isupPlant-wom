@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:orientation="vertical">
+
+    <include layout="@layout/ly_titlebar_local" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@+id/submitBtn"
+        android:layout_marginTop="@dimen/dp_50"
+        android:orientation="vertical">
+
+        <com.supcon.mes.mbap.view.CustomTextView
+            android:id="@+id/materialName"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/dp_40"
+            android:paddingStart="@dimen/dp_12"
+            android:paddingEnd="@dimen/dp_12"
+            android:tag="materialName"
+            app:content_color="@color/titleTextColor"
+            app:key="@string/wom_material_name"
+            app:key_color="@color/dark_text"
+            app:key_size="16" />
+
+        <include layout="@layout/ly_line_light" />
+
+        <com.supcon.mes.mbap.view.CustomTextView
+            android:id="@+id/packMachine"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/dp_40"
+            android:layout_marginTop="@dimen/dp_1"
+            android:paddingStart="@dimen/dp_12"
+            android:paddingEnd="@dimen/dp_12"
+            android:tag="packMachine"
+            app:content_color="@color/titleTextColor"
+            app:gravity="right|center_vertical"
+            app:key="@string/wom_pack_machine"
+            app:key_size="16" />
+
+        <include layout="@layout/ly_line_light" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/dp_5"
+            android:gravity="center_vertical"
+            android:paddingStart="@dimen/dp_12"
+            android:paddingEnd="@dimen/dp_12">
+
+            <TextView
+                android:id="@+id/planNumTv"
+                android:layout_width="0dp"
+                android:layout_height="@dimen/dp_60"
+                android:layout_weight="1"
+                android:elevation="@dimen/dp_3"
+                android:gravity="center"
+                android:tag="planNumTv"
+                android:textColor="@color/dark_black"
+                android:textSize="@dimen/fontSize_12sp" />
+
+            <TextView
+                android:id="@+id/sumNumTv"
+                android:layout_width="0dp"
+                android:layout_height="@dimen/dp_60"
+                android:layout_marginStart="@dimen/dp_15"
+                android:layout_weight="1"
+                android:elevation="@dimen/dp_3"
+                android:gravity="center"
+                android:tag="sumNumTv"
+                android:textColor="@color/dark_black"
+                android:textSize="@dimen/fontSize_12sp" />
+
+            <TextView
+                android:id="@+id/remainderNumTv"
+                android:layout_width="0dp"
+                android:layout_height="@dimen/dp_60"
+                android:layout_marginStart="@dimen/dp_15"
+                android:layout_weight="1"
+                android:elevation="@dimen/dp_3"
+                android:gravity="center"
+                android:tag="remainderNumTv"
+                android:textColor="@color/dark_black"
+                android:textSize="@dimen/fontSize_12sp" />
+        </LinearLayout>
+
+        <include layout="@layout/ly_detail_title_bar_no_recycleview" />
+
+        <include layout="@layout/ly_recyclerview" />
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/submitBtn"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/dp_40"
+        android:layout_alignParentBottom="true"
+        android:layout_marginStart="@dimen/dp_12"
+        android:layout_marginTop="@dimen/dp_5"
+        android:layout_marginEnd="@dimen/dp_12"
+        android:layout_marginBottom="@dimen/dp_5"
+        android:background="@color/themeColor"
+        android:tag="submitBtn"
+        android:text="@string/wom_submit"
+        android:textColor="@color/white"
+        android:textSize="@dimen/fontSize_16sp" />
+
+</RelativeLayout>

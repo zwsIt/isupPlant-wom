@@ -4,17 +4,21 @@ import com.app.annotation.apt.ApiFactory;
 import com.supcon.mes.middleware.model.bean.BAP5CommonEntity;
 import com.supcon.mes.middleware.model.bean.BapResultEntity;
 import com.supcon.mes.middleware.model.bean.CommonBAP5ListEntity;
+import com.supcon.mes.module_wom_replenishmaterial.model.bean.BucketDetailEntity;
 import com.supcon.mes.module_wom_replenishmaterial.model.bean.ReplenishMaterialNotifyEntity;
 import com.supcon.mes.module_wom_replenishmaterial.model.bean.ReplenishMaterialTableEntity;
 import com.supcon.mes.module_wom_replenishmaterial.model.dto.ReplenishMaterialNotifyDTO;
 import com.supcon.mes.module_wom_replenishmaterial.model.dto.ReplenishMaterialScanDTO;
 import com.supcon.mes.module_wom_replenishmaterial.model.dto.ReplenishMaterialTableDTO;
 
+import java.util.List;
 import java.util.Map;
 
 import io.reactivex.Flowable;
 import retrofit2.http.Body;
+import retrofit2.http.GET;
 import retrofit2.http.POST;
+import retrofit2.http.Path;
 import retrofit2.http.Query;
 import retrofit2.http.Url;
 
@@ -42,7 +46,7 @@ interface NetworkService {
      * @return
      */
     @POST("/msService/WOM/fillMaterial/fmBill/createTask")
-    Flowable<BAP5CommonEntity<BapResultEntity>> submit(@Body ReplenishMaterialNotifyDTO[] dto);
+    Flowable<BAP5CommonEntity<List<ReplenishMaterialTableEntity>>> submit(@Body ReplenishMaterialNotifyDTO[] dto);
 
     /**
      * 获取补料单列表
@@ -63,5 +67,17 @@ interface NetworkService {
      */
     @POST("/msService/WOM/fillMaterial/fmBill/changeBillState")
     Flowable<BAP5CommonEntity<BapResultEntity>> changeBillState(@Body ReplenishMaterialScanDTO replenishMaterialScanDTO);
+    /**
+     * 获取补料单详情
+     * @return
+     */
+    @GET("/msService/WOM/fillMaterial/fmBill/data/{id}")
+    Flowable<BAP5CommonEntity<ReplenishMaterialTableEntity>> getTableInfo(@Path (value = "id") Long id,@Query(value = "pendingId") Long pendingId);
+    /**
+     * 获取补料单详情
+     * @return
+     */
+    @GET("/msService/WOM/vesselMg/vessel/getMaterials")
+    Flowable<BAP5CommonEntity<List<BucketDetailEntity>>> getBucketState(@Query (value = "noticeId") Long id, @Query(value = "vesselCode") String vesselCode);
 
 }

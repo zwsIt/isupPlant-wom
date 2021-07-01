@@ -89,19 +89,12 @@ public class ReplenishMaterialRecordsEditAdapter extends BaseListDataRecyclerVie
                     .skipInitialValue()
                     .subscribe(charSequence -> getItem(getAdapterPosition()).setBatch(charSequence.toString()));
 
-//            RxTextView.textChanges(numEt.editText())
-//                    .skipInitialValue()
-//                    .subscribe(new Consumer<CharSequence>() {
-//                        @Override
-//                        public void accept(CharSequence charSequence) throws Exception {
-//                            getItem(getAdapterPosition()).setFmNumber(new BigDecimal(charSequence.toString()));
-//                        }
-//                    });
             RxTextView.textChanges(numEt.editText())
                     .skipInitialValue()
                     .filter(charSequence -> {
                         if (TextUtils.isEmpty(charSequence.toString())){
                             getItem(getAdapterPosition()).setFmNumber(null);
+                            onItemChildViewClick(numEt,0,getItem(getAdapterPosition()));
                             return false;
                         }
                         if(charSequence.toString().startsWith(".")){
@@ -110,7 +103,13 @@ public class ReplenishMaterialRecordsEditAdapter extends BaseListDataRecyclerVie
                         }
                         return true;
                     })
-                    .subscribe(charSequence -> getItem(getAdapterPosition()).setFmNumber(new BigDecimal(charSequence.toString().trim())));
+                    .subscribe(new Consumer<CharSequence>() {
+                        @Override
+                        public void accept(CharSequence charSequence) throws Exception {
+                            getItem(RecordsEditViewHolder.this.getAdapterPosition()).setFmNumber(new BigDecimal(charSequence.toString().trim()));
+                            onItemChildViewClick(numEt,0,getItem(getAdapterPosition()));
+                        }
+                    });
 
         }
 

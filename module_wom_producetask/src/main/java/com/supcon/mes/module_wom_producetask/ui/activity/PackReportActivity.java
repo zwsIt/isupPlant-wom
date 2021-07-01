@@ -5,8 +5,13 @@ import android.graphics.Rect;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
+import android.text.SpannableString;
+import android.text.Spanned;
 import android.text.TextUtils;
+import android.text.style.AbsoluteSizeSpan;
+import android.text.style.ForegroundColorSpan;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -16,12 +21,9 @@ import com.app.annotation.BindByTag;
 import com.app.annotation.Controller;
 import com.app.annotation.Presenter;
 import com.app.annotation.apt.Router;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.jakewharton.rxbinding2.view.RxView;
 import com.supcon.common.view.base.activity.BaseRefreshRecyclerActivity;
 import com.supcon.common.view.base.adapter.IListAdapter;
-import com.supcon.common.view.listener.OnItemChildViewClickListener;
 import com.supcon.common.view.listener.OnRefreshListener;
 import com.supcon.common.view.util.DisplayUtil;
 import com.supcon.common.view.util.StatusBarUtils;
@@ -29,18 +31,16 @@ import com.supcon.common.view.util.ToastUtils;
 import com.supcon.common.view.view.CustomSwipeLayout;
 import com.supcon.mes.mbap.beans.WorkFlowVar;
 import com.supcon.mes.mbap.utils.GsonUtil;
+import com.supcon.mes.mbap.view.CustomDialog;
 import com.supcon.mes.mbap.view.CustomImageButton;
 import com.supcon.mes.mbap.view.CustomTextView;
 import com.supcon.mes.middleware.constant.Constant;
 import com.supcon.mes.middleware.controller.GetPowerCodeController;
-import com.supcon.mes.middleware.controller.ProductController;
 import com.supcon.mes.middleware.model.bean.BAP5CommonEntity;
 import com.supcon.mes.middleware.model.bean.CommonBAPListEntity;
-import com.supcon.mes.middleware.model.bean.Good;
 import com.supcon.mes.middleware.model.bean.MaterialQRCodeEntity;
 import com.supcon.mes.middleware.model.bean.QrCodeEntity;
 import com.supcon.mes.middleware.model.bean.SystemCodeEntity;
-import com.supcon.mes.middleware.model.bean.wom.MaterialEntity;
 import com.supcon.mes.middleware.model.bean.wom.StoreSetEntity;
 import com.supcon.mes.middleware.model.bean.wom.WarehouseEntity;
 import com.supcon.mes.middleware.model.event.RefreshEvent;
@@ -54,18 +54,21 @@ import com.supcon.mes.module_wom_producetask.R;
 import com.supcon.mes.module_wom_producetask.constant.WomConstant;
 import com.supcon.mes.module_wom_producetask.model.api.CommonListAPI;
 import com.supcon.mes.module_wom_producetask.model.api.PutInReportAPI;
-import com.supcon.mes.module_wom_producetask.model.api.RemainQRCodeAPI;
+import com.supcon.mes.module_wom_producetask.model.api.RemainWareQueryAPI;
 import com.supcon.mes.module_wom_producetask.model.bean.PutInDetailEntity;
 import com.supcon.mes.module_wom_producetask.model.bean.RemainMaterialEntity;
+import com.supcon.mes.module_wom_producetask.model.bean.RemainWareEntity;
 import com.supcon.mes.module_wom_producetask.model.bean.WaitPutinRecordEntity;
 import com.supcon.mes.module_wom_producetask.model.contract.CommonListContract;
 import com.supcon.mes.module_wom_producetask.model.contract.PutInReportContract;
 import com.supcon.mes.module_wom_producetask.model.contract.RemainQRCodeContract;
+import com.supcon.mes.module_wom_producetask.model.contract.RemainWareQueryContract;
 import com.supcon.mes.module_wom_producetask.model.dto.PutinDetailDTO;
 import com.supcon.mes.module_wom_producetask.presenter.CommonListPresenter;
 import com.supcon.mes.module_wom_producetask.presenter.PutInReportPresenter;
 import com.supcon.mes.module_wom_producetask.presenter.RemainQRCodePresenter;
-import com.supcon.mes.module_wom_producetask.ui.adapter.PutInAgileReportDetailAdapter;
+import com.supcon.mes.module_wom_producetask.presenter.RemainWareQueryPresenter;
+import com.supcon.mes.module_wom_producetask.ui.adapter.PutInReportDetailAdapter;
 import com.supcon.mes.module_wom_producetask.util.MaterQRUtil;
 import com.supcon.mes.module_wom_producetask.util.SmoothScrollLayoutManager;
 
@@ -73,25 +76,27 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
-import java.util.Date;
+import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 import io.reactivex.functions.Consumer;
 
 /**
  * ClassName
- * Created by zhangwenshuai1 on 2020/4/14
+ * Created by zhangwenshuai1 on 2020/4/9
  * Email zhangwenshuai1@supcon.com
- * Desc 灵活投料活动报工
+ * Desc 包装报工
  */
-@Router(Constant.Router.WOM_PUT_IN_AGILE_REPORT)
-@Presenter(value = {CommonListPresenter.class, PutInReportPresenter.class, RemainQRCodePresenter.class})
+@Router(WomConstant.Router.WOM_PACK_REPORT)
+@Presenter(value = {CommonListPresenter.class, PutInReportPresenter.class, RemainQRCodePresenter.class, RemainWareQueryPresenter.class})
 @PowerCode(entityCode = WomConstant.PowerCode.PRODUCE_TASK_LIST)
-@Controller(value = {GetPowerCodeController.class, CommonScanController.class, ProductController.class})
-public class PutInAgileActivityReportActivity extends BaseRefreshRecyclerActivity<PutInDetailEntity> implements CommonListContract.View, PutInReportContract.View, RemainQRCodeContract.View {
+@Controller(value = {GetPowerCodeController.class, CommonScanController.class})
+public class PackReportActivity extends BaseRefreshRecyclerActivity<PutInDetailEntity> implements CommonListContract.View, PutInReportContract.View,
+        RemainQRCodeContract.View, RemainWareQueryContract.View {
     @BindByTag("leftBtn")
     CustomImageButton leftBtn;
     @BindByTag("titleText")
@@ -108,31 +113,44 @@ public class PutInAgileActivityReportActivity extends BaseRefreshRecyclerActivit
     TextView customWidgetRightName;
     @BindByTag("customListWidgetAdd")
     ImageView customListWidgetAdd;
-    @BindByTag("taskProcess")
-    CustomTextView taskProcess;
-    @BindByTag("planNum")
-    CustomTextView planNum;
+    @BindByTag("materialName")
+    CustomTextView materialName;
+    @BindByTag("packMachine")
+    CustomTextView packMachine;
+//    @BindByTag("planNum")
+//    CustomTextView planNum;
+    @BindByTag("sumNumTv")
+    TextView sumNumTv;
+    @BindByTag("planNumTv")
+    TextView planNumTv;
+    @BindByTag("remainderNumTv")
+    TextView remainderNumTv;
     @BindByTag("submitBtn")
     Button submitBtn;
     @BindByTag("contentView")
     RecyclerView contentView;
+
+    private WaitPutinRecordEntity mWaitPutinRecordEntity;
     Map<String, Object> queryParams = new HashMap<>();
     Map<String, Object> customCondition = new HashMap<>();
-    private WaitPutinRecordEntity mWaitPutinRecordEntity;
-    private PutInAgileReportDetailAdapter mPutInAgileReportDetailAdapter;
+    private PutInReportDetailAdapter mPutInReportDetailAdapter;
     private int mCurrentPosition;
     private PutInDetailEntity mPutInDetailEntity;
     private String dgDeletedIds = "";
+    /**
+     * 参照尾料
+     */
+    private RemainMaterialEntity mRemainMaterialEntity;
 
     @Override
     protected IListAdapter<PutInDetailEntity> createAdapter() {
-        mPutInAgileReportDetailAdapter = new PutInAgileReportDetailAdapter(context);
-        return mPutInAgileReportDetailAdapter;
+        mPutInReportDetailAdapter = new PutInReportDetailAdapter(context);
+        return mPutInReportDetailAdapter;
     }
 
     @Override
     protected int getLayoutID() {
-        return R.layout.wom_ac_put_in_agile_report;
+        return R.layout.wom_ac_pack_report;
     }
 
     @Override
@@ -152,23 +170,53 @@ public class PutInAgileActivityReportActivity extends BaseRefreshRecyclerActivit
         });
         contentView.addOnItemTouchListener(new CustomSwipeLayout.OnSwipeItemTouchListener(context));
 
-
+        if (!WomConstant.SystemCode.MATERIAL_BATCH_02.equals(mWaitPutinRecordEntity.getTaskActiveId().getMaterialId().getIsBatch().id)) {
+            mPutInReportDetailAdapter.setNoMaterialBatchNo(true);
+        }
+        if (WomConstant.SystemCode.RM_activeType_PIPE_PUTIN.equals(mWaitPutinRecordEntity.getTaskActiveId().getActiveType().id)) {
+            mPutInReportDetailAdapter.setPipe(true);
+        }
     }
 
     @Override
     protected void initView() {
         super.initView();
         StatusBarUtils.setWindowStatusBarColor(this, R.color.themeColor);
-        titleText.setText(context.getResources().getString(R.string.wom_agile_put_in_report));
+        titleText.setText(String.format("%s%s", mWaitPutinRecordEntity.getTaskActiveId().getActiveType().value, getString(R.string.wom_report)));
         rightBtn.setVisibility(View.VISIBLE);
         rightBtn.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_top_scan));
         customListWidgetName.setText(context.getResources().getString(R.string.wom_material_report_detail));
-        customWidgetEditLl.setVisibility(View.VISIBLE);
-        customListWidgetEdit.setImageResource(R.drawable.ic_wxgd_reference);
-        customWidgetRightName.setText(context.getResources().getString(R.string.wom_remain_material_refence));
 
-        taskProcess.setContent(TextUtils.isEmpty(mWaitPutinRecordEntity.getTaskProcessId().getName()) ? mWaitPutinRecordEntity.getProcessName() : mWaitPutinRecordEntity.getTaskProcessId().getName());
-        planNum.setContent(mWaitPutinRecordEntity.getTaskActiveId().getPlanQuantity() == null ? "--" : mWaitPutinRecordEntity.getTaskActiveId().getPlanQuantity().toString());
+        if (WomConstant.SystemCode.RM_activeType_PUTIN.equals(mWaitPutinRecordEntity.getTaskActiveId().getActiveType().id)) {
+            customWidgetEditLl.setVisibility(View.VISIBLE);
+            customListWidgetEdit.setImageResource(R.drawable.ic_wxgd_reference);
+            customWidgetRightName.setText(context.getResources().getString(R.string.wom_remain_material_refence));
+        }
+
+        materialName.setContent(String.format("%s(%s)", mWaitPutinRecordEntity.getTaskActiveId().getMaterialId().getName(), mWaitPutinRecordEntity.getTaskActiveId().getMaterialId().getCode()));
+        packMachine.setContent(String.format("%s(%s)", mWaitPutinRecordEntity.getEuqId().getName(), mWaitPutinRecordEntity.getEuqId().getCode()));
+//        materialCode.setContent(mWaitPutinRecordEntity.getTaskActiveId().getMaterialId().getCode());
+//        planNum.setContent(String.valueOf(mWaitPutinRecordEntity.getTaskActiveId().getPlanQuantity()));
+
+        SpannableString planNumSpan = new SpannableString(getString(R.string.wom_plan) + "\n\n" + (mWaitPutinRecordEntity.getTaskActiveId().getPlanQuantity() == null ? "--" : mWaitPutinRecordEntity.getTaskActiveId().getPlanQuantity()));
+        planNumSpan.setSpan(new ForegroundColorSpan(context.getResources().getColor(R.color.dark_blue)), 4, planNumSpan.length(), Spanned.SPAN_INCLUSIVE_INCLUSIVE);
+        planNumSpan.setSpan(new AbsoluteSizeSpan(DisplayUtil.dip2px(18, context)), 4, planNumSpan.length(), Spanned.SPAN_INCLUSIVE_INCLUSIVE);
+        planNumTv.setText(planNumSpan);
+
+        SpannableString sumNumSpan = new SpannableString(getString(R.string.wom_sum) + "\n\n" + mWaitPutinRecordEntity.getTaskActiveId().getSumNum());
+        sumNumSpan.setSpan(new ForegroundColorSpan(context.getResources().getColor(R.color.dark_green)), 4, sumNumSpan.length(), Spanned.SPAN_INCLUSIVE_INCLUSIVE);
+        sumNumSpan.setSpan(new AbsoluteSizeSpan(DisplayUtil.dip2px(18, context)), 4, sumNumSpan.length(), Spanned.SPAN_INCLUSIVE_INCLUSIVE);
+        sumNumTv.setText(sumNumSpan);
+
+        SpannableString remainderNumSpan;
+        if (mWaitPutinRecordEntity.getTaskActiveId().getPlanQuantity() == null) {
+            remainderNumSpan = new SpannableString(getString(R.string.wom_remainder) + "\n\n" + 0);
+        } else {
+            remainderNumSpan = new SpannableString(getString(R.string.wom_remainder) + "\n\n" + mWaitPutinRecordEntity.getTaskActiveId().getPlanQuantity().subtract(mWaitPutinRecordEntity.getTaskActiveId().getSumNum()));
+        }
+        remainderNumSpan.setSpan(new ForegroundColorSpan(context.getResources().getColor(R.color.dark_yellow)), 4, remainderNumSpan.length(), Spanned.SPAN_INCLUSIVE_INCLUSIVE);
+        remainderNumSpan.setSpan(new AbsoluteSizeSpan(DisplayUtil.dip2px(18, context)), 4, remainderNumSpan.length(), Spanned.SPAN_INCLUSIVE_INCLUSIVE);
+        remainderNumTv.setText(remainderNumSpan);
 
     }
 
@@ -180,22 +228,29 @@ public class PutInAgileActivityReportActivity extends BaseRefreshRecyclerActivit
         rightBtn.setOnClickListener(v -> {
             getController(CommonScanController.class).openCameraScan(context.getClass().getSimpleName());
         });
-        refreshListController.setOnRefreshListener(() -> presenterRouter.create(CommonListAPI.class).list(1, customCondition, queryParams,
-                WomConstant.URL.PUT_IN_REPORT_LIST_URL + "&id=" + (mWaitPutinRecordEntity.getProcReportId().getId() == null ? -1 : mWaitPutinRecordEntity.getProcReportId().getId()), ""));
+        refreshListController.setOnRefreshListener(new OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                presenterRouter.create(CommonListAPI.class).list(1, customCondition, queryParams,
+                        WomConstant.URL.PUT_IN_REPORT_LIST_URL + "&id=" + (mWaitPutinRecordEntity.getProcReportId().getId() == null ? -1 : mWaitPutinRecordEntity.getProcReportId().getId()), "");
+            }
+        });
         customListWidgetAdd.setOnClickListener(v -> {
             addMaterialReport(null, null);
         });
         RxView.clicks(customWidgetEditLl).throttleFirst(300, TimeUnit.MILLISECONDS)
-                .subscribe(o -> IntentRouter.go(context, Constant.Router.WOM_REMAIN_MATERIAL_LIST));
-        mPutInAgileReportDetailAdapter.setOnItemChildViewClickListener((childView, position, action, obj) -> {
+                .subscribe(new Consumer<Object>() {
+                    @Override
+                    public void accept(Object o) throws Exception {
+                        Bundle bundle = new Bundle();
+                        bundle.putLong(Constant.IntentKey.ID, mWaitPutinRecordEntity.getTaskActiveId().getMaterialId().getId() == null ? -1L : mWaitPutinRecordEntity.getTaskActiveId().getMaterialId().getId());
+                        IntentRouter.go(context, Constant.Router.WOM_REMAIN_MATERIAL_LIST, bundle);
+                    }
+                });
+        mPutInReportDetailAdapter.setOnItemChildViewClickListener((childView, position, action, obj) -> {
             mCurrentPosition = position;
             mPutInDetailEntity = (PutInDetailEntity) obj;
-            Bundle bundle = new Bundle();
             switch (childView.getTag().toString()) {
-                case "materialName":
-                    bundle.putBoolean(Constant.IntentKey.SINGLE_CHOICE, true);
-                    IntentRouter.go(context, Constant.Router.PRODUCT_DETAIL, bundle);
-                    break;
                 case "warehouseTv":
                     IntentRouter.go(context, Constant.Router.WAREHOUSE_LIST_REF);
                     break;
@@ -204,13 +259,14 @@ public class PutInAgileActivityReportActivity extends BaseRefreshRecyclerActivit
                         ToastUtils.show(context, context.getResources().getString(R.string.wom_please_select_ware));
                         break;
                     }
+                    Bundle bundle = new Bundle();
                     bundle.putLong(Constant.IntentKey.WARE_ID, mPutInDetailEntity.getWareId().getId());
                     IntentRouter.go(context, Constant.Router.STORE_SET_LIST_REF, bundle);
                     break;
                 case "itemViewDelBtn":
-                    mPutInAgileReportDetailAdapter.getList().remove(obj);
-                    mPutInAgileReportDetailAdapter.notifyItemRangeRemoved(position, 1);
-                    mPutInAgileReportDetailAdapter.notifyItemRangeChanged(position, mPutInAgileReportDetailAdapter.getItemCount() - position);
+                    mPutInReportDetailAdapter.getList().remove(obj);
+                    mPutInReportDetailAdapter.notifyItemRangeRemoved(position, 1);
+                    mPutInReportDetailAdapter.notifyItemRangeChanged(position, mPutInReportDetailAdapter.getItemCount() - position);
                     if (mPutInDetailEntity.getId() != null) {
                         dgDeletedIds += mPutInDetailEntity.getId() + ",";
                     }
@@ -220,37 +276,33 @@ public class PutInAgileActivityReportActivity extends BaseRefreshRecyclerActivit
         });
         RxView.clicks(submitBtn)
                 .throttleFirst(200, TimeUnit.MILLISECONDS)
-                .subscribe(o -> submitReport());
+                .subscribe(new Consumer<Object>() {
+                    @Override
+                    public void accept(Object o) throws Exception {
+                        submitReport();
+                    }
+                });
     }
+
 
     /**
      * 扫描功能：红外、摄像头扫描监听事件
      *
      * @param codeResultEvent
      */
-//    Map<String, Object> goodMap = new HashMap<>();
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onCodeReceiver(CodeResultEvent codeResultEvent) {
-        if (context.getClass().getSimpleName().equals(codeResultEvent.scanTag)){
-//            MaterialQRCodeEntity materialQRCodeEntity = MaterQRUtil.materialQRCode(context, codeResultEvent.scanResult);
+        if (context.getClass().getSimpleName().equals(codeResultEvent.scanTag)) {
             QrCodeEntity materialQRCodeEntity = MaterQRUtil.getQRCode(context, codeResultEvent.scanResult);
             if (materialQRCodeEntity == null) return;
-
-//            if (materialQRCodeEntity.isRequest()) {
-//                if ("remain".equals(materialQRCodeEntity.getType())) { // 尾料
-//                    onLoading(context.getResources().getString(R.string.loading));
-//                    presenterRouter.create(RemainQRCodeAPI.class).getMaterialByQR(materialQRCodeEntity.getPK());
-//                } else {
-//                    //TODO...
-//                    ToastUtils.show(context, context.getResources().getString(R.string.wom_no_realize));
-//                }
-//            } else {
-            if (materialQRCodeEntity.getType() != 2){
-                ToastUtils.show(context, getResources().getString(R.string.produce_please_scan_material));
-                return;
-            }
+            if (materialQRCodeEntity.getType() == 2){
+                if (checkMaterial(materialQRCodeEntity)) {
+                    return;
+                }
                 addMaterialReport(materialQRCodeEntity, null);
-//            }
+            }else {
+                ToastUtils.show(context, getResources().getString(R.string.produce_please_scan_material));
+            }
         }
 
     }
@@ -259,9 +311,12 @@ public class PutInAgileActivityReportActivity extends BaseRefreshRecyclerActivit
      * 新增明细
      *
      * @param materialQRCodeEntity
+     * @param remainMaterialEntity
      */
     private void addMaterialReport(QrCodeEntity materialQRCodeEntity, RemainMaterialEntity remainMaterialEntity) {
         PutInDetailEntity putInDetailEntity = new PutInDetailEntity();
+        putInDetailEntity.setMaterialId(mWaitPutinRecordEntity.getTaskActiveId().getMaterialId()); // 物料
+        putInDetailEntity.setPutinTime(System.currentTimeMillis());  // 投料时间
 
         if (remainMaterialEntity != null) { // 尾料参照
             putInDetailEntity.setRemainId(remainMaterialEntity);
@@ -271,33 +326,50 @@ public class PutInAgileActivityReportActivity extends BaseRefreshRecyclerActivit
             putInDetailEntity.setPutinNum(remainMaterialEntity.getRemainNum());
             putInDetailEntity.setWareId(remainMaterialEntity.getWareId());
             putInDetailEntity.setStoreId(remainMaterialEntity.getStoreId());
+
+            addItem(putInDetailEntity);
         } else {
             if (materialQRCodeEntity != null) { // 扫描物料
-
-                MaterialEntity materialEntity = new MaterialEntity();
-                materialEntity.setId(materialQRCodeEntity.getId());
-                materialEntity.setCode(materialQRCodeEntity.getCode());
-                materialEntity.setName(materialEntity.getName());
-
-                putInDetailEntity.setMaterialId(materialEntity);
-//                putInDetailEntity.setWareId(materialQRCodeEntity.getFromWare());
-//                putInDetailEntity.setStoreId(materialQRCodeEntity.getFromStore());
                 putInDetailEntity.setMaterialBatchNum(materialQRCodeEntity.getBatch());
                 putInDetailEntity.setPutinNum(materialQRCodeEntity.getNum());
                 putInDetailEntity.setSpecificationNum(materialQRCodeEntity.getNum());
+//                putInDetailEntity.setWareId(materialQRCodeEntity.getFromWare());
+//                putInDetailEntity.setStoreId(materialQRCodeEntity.getFromStore());
+
+                BigDecimal totalNum = materialQRCodeEntity.getNum();
+                for (PutInDetailEntity detailEntity : mPutInReportDetailAdapter.getList()) {
+                    if (detailEntity.getPutinNum() != null) {
+                        totalNum = totalNum.add(detailEntity.getPutinNum());
+                    }
+                }
+                if (totalNum.compareTo(mWaitPutinRecordEntity.getPlanNum() == null ? new BigDecimal(0) : mWaitPutinRecordEntity.getPlanNum()) > 0) {
+                    CustomDialog customDialog = new CustomDialog(context)
+                            .layout(R.layout.wom_dialog_confirm, DisplayUtil.getScreenWidth(context) * 4 / 5, ViewGroup.LayoutParams.WRAP_CONTENT);
+                    Objects.requireNonNull(customDialog.getDialog().getWindow()).setBackgroundDrawableResource(R.color.transparent);
+                    customDialog.bindView(R.id.tipContentTv, context.getResources().getString(R.string.wom_total_num_greater_plan_num))
+                            .bindClickListener(R.id.cancelTv, null, true)
+                            .bindClickListener(R.id.confirmTv, v -> addItem(putInDetailEntity), true)
+                            .show();
+                } else {
+                    addItem(putInDetailEntity);
+                }
+            }else {
+                addItem(putInDetailEntity);
             }
         }
+    }
 
-        putInDetailEntity.setPutinTime(System.currentTimeMillis());  // 投料时间
-
-        if (mPutInAgileReportDetailAdapter.getList() == null || mPutInAgileReportDetailAdapter.getList().size() <= 0){
-            mPutInAgileReportDetailAdapter.addData(putInDetailEntity);
-        }else {
-            mPutInAgileReportDetailAdapter.getList().add(0,putInDetailEntity);
-        }
-        mPutInAgileReportDetailAdapter.notifyItemRangeInserted(0, 1);
-        mPutInAgileReportDetailAdapter.notifyItemRangeChanged(0, 1);
-        contentView.smoothScrollToPosition(0);
+    /**
+     * @param
+     * @return
+     * @author zhangwenshuai1 2021/3/23
+     * @description 执行添加
+     */
+    private void addItem(PutInDetailEntity putInDetailEntity) {
+        mPutInReportDetailAdapter.addData(putInDetailEntity);
+        mPutInReportDetailAdapter.notifyItemRangeInserted(mPutInReportDetailAdapter.getItemCount() - 1, 1);
+        mPutInReportDetailAdapter.notifyItemRangeChanged(mPutInReportDetailAdapter.getItemCount() - 1, 1);
+        contentView.smoothScrollToPosition(mPutInReportDetailAdapter.getItemCount() - 1);
     }
 
     /**
@@ -318,7 +390,9 @@ public class PutInAgileActivityReportActivity extends BaseRefreshRecyclerActivit
         putinDetailDTO.setWorkFlowVar(new WorkFlowVar());
         putinDetailDTO.setProcReport(mWaitPutinRecordEntity.getProcReportId());
 
-        for (PutInDetailEntity putInDetailEntity : mPutInAgileReportDetailAdapter.getList()) {
+        PutinDetailDTO.DgListEntity dgListEntity = new PutinDetailDTO.DgListEntity();
+
+        for (PutInDetailEntity putInDetailEntity : mPutInReportDetailAdapter.getList()) {
             // 尾料处理方式
             if (putInDetailEntity.getRemainId() == null) {
                 if (putInDetailEntity.getRemainNum() == null || putInDetailEntity.getRemainNum().floatValue() == 0) {
@@ -329,9 +403,7 @@ public class PutInAgileActivityReportActivity extends BaseRefreshRecyclerActivit
             }
         }
 
-        PutinDetailDTO.DgListEntity dgListEntity = new PutinDetailDTO.DgListEntity();
-//        Gson gsonBuilder = new GsonBuilder().serializeNulls().create(); // 保证不会过滤掉null字段
-        dgListEntity.setDg(GsonUtil.gsonStringSerializeNulls(mPutInAgileReportDetailAdapter.getList()));
+        dgListEntity.setDg(GsonUtil.gsonStringSerializeNulls(mPutInReportDetailAdapter.getList()));
         putinDetailDTO.setDgList(dgListEntity);
 
         PutinDetailDTO.DgDeletedIdsEntity dgDeletedIdsEntity = new PutinDetailDTO.DgDeletedIdsEntity();
@@ -343,24 +415,21 @@ public class PutInAgileActivityReportActivity extends BaseRefreshRecyclerActivit
     }
 
     private boolean checkSubmit() {
-        List<PutInDetailEntity> list = mPutInAgileReportDetailAdapter.getList();
+        List<PutInDetailEntity> list = mPutInReportDetailAdapter.getList();
         if (list == null || list.size() <= 0) {
             ToastUtils.show(context, context.getResources().getString(R.string.wom_no_data_operate));
             return true;
         }
+
         for (PutInDetailEntity putInDetailEntity : list) {
-            if (putInDetailEntity.getMaterialId() == null || TextUtils.isEmpty(putInDetailEntity.getMaterialId().getCode())) {
-                ToastUtils.show(context, context.getResources().getString(R.string.wom_di) + (list.indexOf(putInDetailEntity) + 1) + context.getResources().getString(R.string.wom_please_write_material));
-                return true;
-            }
-            if (WomConstant.SystemCode.MATERIAL_BATCH_02.equals(putInDetailEntity.getMaterialId().getIsBatch().id) && TextUtils.isEmpty(putInDetailEntity.getMaterialBatchNum())) {
+            if (WomConstant.SystemCode.MATERIAL_BATCH_02.equals(mWaitPutinRecordEntity.getTaskActiveId().getMaterialId().getIsBatch().id) && TextUtils.isEmpty(putInDetailEntity.getMaterialBatchNum())) {
                 ToastUtils.show(context, context.getResources().getString(R.string.wom_di) + (list.indexOf(putInDetailEntity) + 1) + context.getResources().getString(R.string.wom_please_write_material_batch));
                 return true;
             }
 //            if (putInDetailEntity.getWareId() == null) {
 //                ToastUtils.show(context, context.getResources().getString(R.string.wom_di) + (list.indexOf(putInDetailEntity) + 1) + context.getResources().getString(R.string.wom_please_write_ware));
 //                return true;
-//            }
+//            }                    k
 //            if (putInDetailEntity.getWareId() != null && putInDetailEntity.getWareId().getStoreSetState() && putInDetailEntity.getStoreId() == null) {
 //                ToastUtils.show(context, context.getResources().getString(R.string.wom_di) + (list.indexOf(putInDetailEntity) + 1) + context.getResources().getString(R.string.wom_warehouse_enable_please_write_storage));
 //                return true;
@@ -380,6 +449,7 @@ public class PutInAgileActivityReportActivity extends BaseRefreshRecyclerActivit
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        mRemainMaterialEntity = null;
         EventBus.getDefault().unregister(this);
     }
 
@@ -412,45 +482,41 @@ public class PutInAgileActivityReportActivity extends BaseRefreshRecyclerActivit
         Object object = selectDataEvent.getEntity();
         if (object instanceof WarehouseEntity) {
             WarehouseEntity warehouseEntity = (WarehouseEntity) selectDataEvent.getEntity();
-            if (mPutInDetailEntity.getWareId() != null && !warehouseEntity.getId().equals(mPutInDetailEntity.getWareId().getId())){
+            if (mPutInDetailEntity.getWareId() != null && !warehouseEntity.getId().equals(mPutInDetailEntity.getWareId().getId())) {
                 mPutInDetailEntity.setStoreId(null);
             }
             mPutInDetailEntity.setWareId(warehouseEntity);
-            mPutInAgileReportDetailAdapter.notifyItemRangeChanged(mCurrentPosition, 1);
+            mPutInReportDetailAdapter.notifyItemRangeChanged(mCurrentPosition, 1);
         } else if (object instanceof StoreSetEntity) {
             mPutInDetailEntity.setStoreId((StoreSetEntity) selectDataEvent.getEntity());
-            mPutInAgileReportDetailAdapter.notifyItemRangeChanged(mCurrentPosition, 1);
-        } else if (object instanceof Good) {
-            Good good = (Good) selectDataEvent.getEntity();
-            MaterialEntity materialEntity = new MaterialEntity();
-            materialEntity.setId(good.id);
-            materialEntity.setCode(good.code);
-            materialEntity.setName(good.name);
-            materialEntity.setIsBatch(good.isBatch);
-            mPutInDetailEntity.setMaterialId(materialEntity);
-            mPutInAgileReportDetailAdapter.notifyItemRangeChanged(mCurrentPosition, 1);
+            mPutInReportDetailAdapter.notifyItemRangeChanged(mCurrentPosition, 1);
         } else if (object instanceof RemainMaterialEntity) {
-            addMaterialReport(null, (RemainMaterialEntity) selectDataEvent.getEntity());
+            // 根据参照尾料id获取物料的车间仓信息
+            onLoading(context.getResources().getString(R.string.wom_query_workshop_warehouse));
+            mRemainMaterialEntity = (RemainMaterialEntity) selectDataEvent.getEntity();
+            presenterRouter.create(RemainWareQueryAPI.class).getWareByRemainId(mRemainMaterialEntity.getId());
+
+//            addMaterialReport(null, mRemainMaterialEntity);
         }
-
     }
-
 
     @Override
     public void getMaterialByQRSuccess(BAP5CommonEntity entity) {
         onLoadSuccess();
         MaterialQRCodeEntity materialQRCodeEntity = (MaterialQRCodeEntity) entity.data;
-        if ("remain".equals(materialQRCodeEntity.getType())){
-            RemainMaterialEntity remainMaterialEntity = new RemainMaterialEntity();
-            remainMaterialEntity.setId(materialQRCodeEntity.getPK());
-            remainMaterialEntity.setMaterial(materialQRCodeEntity.getMaterial());
-            remainMaterialEntity.setBatchText(materialQRCodeEntity.getMaterialBatchNo());
-            remainMaterialEntity.setRemainNum(materialQRCodeEntity.getNum());
-            remainMaterialEntity.setWareId(materialQRCodeEntity.getFromWare());
-            remainMaterialEntity.setStoreId(materialQRCodeEntity.getFromStore());
+//        if (checkMaterial(materialQRCodeEntity)) return;
 
-            addMaterialReport(null,remainMaterialEntity);
-        }
+//        if ("remain".equals(materialQRCodeEntity.getType())) {
+//            RemainMaterialEntity remainMaterialEntity = new RemainMaterialEntity();
+//            remainMaterialEntity.setId(materialQRCodeEntity.getPK());
+//            remainMaterialEntity.setMaterial(materialQRCodeEntity.getMaterial());
+//            remainMaterialEntity.setBatchText(materialQRCodeEntity.getMaterialBatchNo());
+//            remainMaterialEntity.setRemainNum(materialQRCodeEntity.getNum());
+//            remainMaterialEntity.setWareId(materialQRCodeEntity.getFromWare());
+//            remainMaterialEntity.setStoreId(materialQRCodeEntity.getFromStore());
+//
+//            addMaterialReport(null, remainMaterialEntity);
+//        }
     }
 
     @Override
@@ -458,14 +524,31 @@ public class PutInAgileActivityReportActivity extends BaseRefreshRecyclerActivit
         onLoadFailed(errorMsg);
     }
 
-//    @Subscribe(threadMode = ThreadMode.MAIN)
-//    public void getEventInfo(EventInfo eventInfo) {
-//        if (EventInfo.singleGood == eventInfo.getEventId()) {
-//            MaterialEntity materialEntity = (MaterialEntity) eventInfo.getValue();
-//            mPutInDetailEntity.setMaterialId(materialEntity);
-//        }
-//        mPutInAgileReportDetailAdapter.notifyItemRangeChanged(mCurrentPosition, 1);
-//    }
+    private boolean checkMaterial(QrCodeEntity materialQRCodeEntity) {
+        if (!materialQRCodeEntity.getCode().equals(mWaitPutinRecordEntity.getTaskActiveId().getMaterialId().getCode())) {
+            ToastUtils.show(context, context.getResources().getString(R.string.wom_scan_material_error));
+            return true;
+        }
+        if (!TextUtils.isEmpty(mWaitPutinRecordEntity.getTaskActiveId().getMaterialBatchNum()) && !materialQRCodeEntity.getBatch().equals(mWaitPutinRecordEntity.getTaskActiveId().getMaterialBatchNum())) {
+            ToastUtils.show(context, context.getResources().getString(R.string.wom_scan_batchNo_error));
+            return true;
+        }
+        return false;
+    }
 
+    @Override
+    public void getWareByRemainIdSuccess(BAP5CommonEntity entity) {
+        onLoadSuccess();
+        RemainWareEntity remainWareEntity = (RemainWareEntity) entity.data;
+        mRemainMaterialEntity.setWareId(remainWareEntity.warehouse);
+        mRemainMaterialEntity.setStoreId(remainWareEntity.storeSet);
+        addMaterialReport(null, mRemainMaterialEntity);
 
+    }
+
+    @Override
+    public void getWareByRemainIdFailed(String errorMsg) {
+        onLoadFailed(errorMsg);
+        addMaterialReport(null, mRemainMaterialEntity);
+    }
 }

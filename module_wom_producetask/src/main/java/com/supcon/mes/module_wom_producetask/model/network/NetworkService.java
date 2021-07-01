@@ -15,6 +15,7 @@ import com.supcon.mes.module_wom_producetask.model.bean.WaitPutinRecordEntity;
 import com.supcon.mes.module_wom_producetask.model.dto.BatchPutinDetailDTO;
 import com.supcon.mes.module_wom_producetask.model.dto.OutputDetailDTO;
 import com.supcon.mes.module_wom_producetask.model.dto.ProCheckDetailDTO;
+import com.supcon.mes.module_wom_producetask.model.dto.ProduceEndTaskDTO;
 import com.supcon.mes.module_wom_producetask.model.dto.PutinDetailDTO;
 
 import java.util.Map;
@@ -198,5 +199,12 @@ public interface NetworkService {
      */
     @GET("/msService/WOM/remainMaterial/remainMaterial/getWorkAreaId")
     Flowable<BAP5CommonEntity<RemainWareEntity>> getWorkAreaId(@Query("remianId") Long id);
+
+    /**
+     * 工单结束报工保存
+     * @return
+     */
+    @POST("/msService/WOM/procReport/procReport/outPutCommonTaskEdit/submit")
+    Flowable<BAP5CommonEntity<BapResultEntity>> produceEndReportSave(@Query("id") Long id, @Body ProduceEndTaskDTO produceEndTaskDTO);
 
 }

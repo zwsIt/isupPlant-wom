@@ -242,7 +242,7 @@ public class ProduceTaskListAdapter extends BaseListDataRecyclerViewAdapter<Wait
         @SuppressLint("CheckResult")
         private void initOperateViewListener(TextView view) {
             RxView.clicks(view)
-                    .throttleFirst(1, TimeUnit.SECONDS)
+                    .throttleFirst(500, TimeUnit.MILLISECONDS)
                     .subscribe(o -> onItemChildViewClick(view, getAdapterPosition(), getItem(getAdapterPosition())));
         }
     }

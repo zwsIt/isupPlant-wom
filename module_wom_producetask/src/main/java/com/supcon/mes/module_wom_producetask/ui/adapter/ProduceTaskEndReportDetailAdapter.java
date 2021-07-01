@@ -27,6 +27,8 @@ import io.reactivex.functions.Predicate;
  * Desc
  */
 public class ProduceTaskEndReportDetailAdapter extends BaseListDataRecyclerViewAdapter<OutputDetailEntity> {
+    private boolean edit = true;
+
     public ProduceTaskEndReportDetailAdapter(Context context) {
         super(context);
     }
@@ -34,6 +36,10 @@ public class ProduceTaskEndReportDetailAdapter extends BaseListDataRecyclerViewA
     @Override
     protected BaseRecyclerViewHolder<OutputDetailEntity> getViewHolder(int viewType) {
         return new ReportViewHolder(context);
+    }
+
+    public void setEnable(boolean b) {
+        this.edit = b;
     }
 
     /**
@@ -75,6 +81,15 @@ public class ProduceTaskEndReportDetailAdapter extends BaseListDataRecyclerViewA
             preNumTv.setText(context.getResources().getString(R.string.wom_output_num));
             numEt.setInputType(InputType.TYPE_CLASS_NUMBER|InputType.TYPE_NUMBER_FLAG_DECIMAL);
             remainderNumEt.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
+
+            if (!edit){
+                batchNum.setEditable(false);
+                warehouseTv.setEditable(false);
+                storeSetTv.setEditable(false);
+                numEt.setEditable(false);
+                remainderNumEt.setEditable(false);
+                vessel.setEditable(false);
+            }
         }
 
         @SuppressLint("CheckResult")

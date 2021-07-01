@@ -86,10 +86,6 @@ public class BatchInstructionListActivity extends BaseRefreshRecyclerActivity<Ba
         refreshListController.setAutoPullDownRefresh(true);
         refreshListController.setEmpterAdapter(EmptyAdapterHelper.getRecyclerEmptyAdapter(context,context.getResources().getString(R.string.middleware_no_data)));
         mBatchMaterialSetEntity = (BatchMaterialSetEntity) getIntent().getSerializableExtra(BmConstant.IntentKey.BATCH_MATERIAL_SET);
-//        queryParams.put("processId",waitPutinRecordEntity.getTaskProcessId().getId());
-//        queryParams.put("showBatch",false);
-//        customCondition.put("pageNo", 1);
-//        customCondition.put("pageSize", 65535);
 
         mItemDecoration = new RecyclerView.ItemDecoration() {
             @Override
@@ -116,9 +112,16 @@ public class BatchInstructionListActivity extends BaseRefreshRecyclerActivity<Ba
     @Override
     protected void initListener() {
         super.initListener();
-        leftBtn.setOnClickListener(v -> finish());
+        leftBtn.setOnClickListener(v -> onBackPressed());
 
         refreshListController.setOnRefreshListener(mOnRefreshListener);
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        EventBus.getDefault().post(new RefreshEvent());
+        finish();
     }
 
     @Override

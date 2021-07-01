@@ -32,8 +32,6 @@ public interface ReplenishConstant {
         String MODEL_BUCKET_AIR = "HierarchicalMod_feedStockTypeCode1/feedingAtSiloEntrance"; // 转运桶风送口补料
         String MODEL_BUCKET_SILO = "HierarchicalMod_feedStockTypeCode1/feedingPointReplenishment"; // 转运桶料仓补料
         String MODEL_BUCKET_POINT = "HierarchicalMod_feedStockTypeCode1/rackPoint"; // 转运桶上料点补料
-//        String MODEL_NOTIFY = "HierarchicalMod_runModelCode1/feedingAtSiloEntrance"; // 转运桶风送口补料
-
     }
 
     interface URL {

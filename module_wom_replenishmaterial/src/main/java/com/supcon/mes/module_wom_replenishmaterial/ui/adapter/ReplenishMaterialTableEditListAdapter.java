@@ -112,6 +112,8 @@ public class ReplenishMaterialTableEditListAdapter extends BaseListDataRecyclerV
             }else if (data.getEquipment() != null && data.getEquipment().getRunModel() != null
                     && ReplenishConstant.SystemCode.MODEL_MANUAL.equals(data.getEquipment().getRunModel().id)){
                 replenishModelIv.setImageResource(R.drawable.ic_active);
+            }else {
+                replenishModelIv.setImageResource(R.drawable.ic_active);
             }
         }
     }

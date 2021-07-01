@@ -69,20 +69,12 @@ public class ReplenishMaterialNotifyAdapter extends BaseListDataRecyclerViewAdap
         @Override
         protected void initListener() {
             super.initListener();
-            productNameTv.setOnLongClickListener(new View.OnLongClickListener() {
-                @Override
-                public boolean onLongClick(View v) {
-                    CustomContentTextDialog.showContent(context,productNameTv.getText().toString());
-                    return true;
-                }
+            productNameTv.setOnLongClickListener(v -> {
+                CustomContentTextDialog.showContent(context,productNameTv.getText().toString());
+                return true;
             });
             RxView.clicks(startTv).throttleFirst(300, TimeUnit.MILLISECONDS)
-                    .subscribe(new Consumer<Object>() {
-                        @Override
-                        public void accept(Object o) throws Exception {
-                            onItemChildViewClick(startTv,0,getItem(getAdapterPosition()));
-                        }
-                    });
+                    .subscribe(o -> onItemChildViewClick(startTv,0,getItem(getAdapterPosition())));
         }
 
         @Override
@@ -91,7 +83,8 @@ public class ReplenishMaterialNotifyAdapter extends BaseListDataRecyclerViewAdap
             statusTv.setText(data.getEquipment().getFeedStockType().value);
             productNameTv.setText(data.getMaterial().name);
             materialCode.setContent(data.getMaterial().code);
-            numCustomTv.setContent((data.getActualNumber() == null ? 0 : data.getActualNumber().toString()) + "/" + (data.getPlanNumber() == null ? 0 : data.getPlanNumber().toString()));
+            numCustomTv.setContent((data.getActualNumber() == null ? 0 : data.getActualNumber().toString()) + "/"
+                    +(data.getAssignNumber() == null ? 0 : data.getAssignNumber().toString()) + "/" + (data.getPlanNumber() == null ? 0 : data.getPlanNumber().toString()));
             eamPoint.setContent(data.getEquipment().getName()/* + "("+data.getEquipment().getCode()+")"*/);
             time.setContent(data.getCreateTime() == null ? "--" : DateUtil.dateTimeFormat(data.getCreateTime()));
         }

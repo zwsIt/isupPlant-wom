@@ -18,6 +18,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import static com.supcon.mes.middleware.constant.Constant.BAPQuery.TYPE_JOIN;
+
 /**
  * ClassName
  * Created by zhangwenshuai1 on 2021/5/12
@@ -33,8 +35,22 @@ public class BatchMaterialSetListPresenter extends BatchMaterialSetListContract.
         taskStateMap.put(Constant.BAPQuery.FM_TASK,queryMap.get(Constant.BAPQuery.FM_TASK));
         FastQueryCondEntity fastQueryCondEntity = BAPQueryParamsHelper.createSingleFastQueryCond(taskStateMap);
 
+        // 自动配料
+        if (pending){
+            HashMap<String,Object> autoBatchMap = new HashMap<>(1);
+            autoBatchMap.put(Constant.BAPQuery.AUTO_BURDEN,queryMap.get(Constant.BAPQuery.AUTO_BURDEN));
+
+            JoinSubcondEntity midJoinSubcondEntity = new JoinSubcondEntity();
+            midJoinSubcondEntity.joinInfo = "HM_BUREND_MENAGE,ID,WOM_BM_SETS,CURRENT_BUREND_MANAGE";
+            midJoinSubcondEntity.type = TYPE_JOIN;
+            midJoinSubcondEntity.subconds = new ArrayList<>();
+            midJoinSubcondEntity.subconds.add(BAPQueryParamsHelper.crateJoinSubcondEntity(autoBatchMap, "HM_AREA_MENGE,ID,HM_BUREND_MENAGE,AREA_ID"));
+            fastQueryCondEntity.subconds.add(midJoinSubcondEntity);
+        }
+
         // 桶编码
         queryMap.remove(Constant.BAPQuery.FM_TASK);
+        queryMap.remove(Constant.BAPQuery.AUTO_BURDEN);
         fastQueryCondEntity.subconds.add(BAPQueryParamsHelper.crateJoinSubcondEntity(queryMap, "WOM_VESSELS,ID,WOM_BM_SETS,VESSEL"));
 
         fastQueryCondEntity.modelAlias = "bmSet";

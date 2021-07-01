@@ -109,6 +109,10 @@ public class ReplenishMaterialTableScanActivity extends BaseRefreshRecyclerActiv
     Button endBtn;
     @BindByTag("eamPoint")
     CustomTextView eamPoint;
+    @BindByTag("eamAirPort")
+    CustomTextView eamAirPort;
+    @BindByTag("eamLoadPoint")
+    CustomTextView eamLoadPoint;
     @BindByTag("material")
     CustomTextView material;
     @BindByTag("planNum")
@@ -130,6 +134,7 @@ public class ReplenishMaterialTableScanActivity extends BaseRefreshRecyclerActiv
     Map<String, Object> queryParams = new HashMap<>();
     Map<String, Object> customCondition = new HashMap<>();
     private ReplenishMaterialRecordsScanAdapter mReplenishMaterialRecordsScanAdapter;
+    private boolean startFlag; // 开始标识
 
     @Override
     protected IListAdapter<ReplenishMaterialTablePartEntity> createAdapter() {
@@ -181,7 +186,18 @@ public class ReplenishMaterialTableScanActivity extends BaseRefreshRecyclerActiv
         eamPoint.setEditable(false);
         material.setEditable(false);
         planNum.setEditable(false);
+        actualNum.setEditable(false);
         bucket.setEditable(false);
+
+        // 判断是否显示料仓（设备）、风送口、上料点
+        if (ReplenishConstant.SystemCode.MODEL_AIR.equals(mReplenishMaterialTableEntity.getEquipment().getFeedStockType().id)
+        || ReplenishConstant.SystemCode.MODEL_BUCKET_AIR.equals(mReplenishMaterialTableEntity.getEquipment().getFeedStockType().id)){
+            eamAirPort.setVisibility(View.VISIBLE);
+        }else if (ReplenishConstant.SystemCode.MODEL_BUCKET_POINT.equals(mReplenishMaterialTableEntity.getEquipment().getFeedStockType().id)){
+            eamLoadPoint.setVisibility(View.VISIBLE);
+        }else {
+            eamPoint.setVisibility(View.VISIBLE);
+        }
 
         // 是否已经开始
         if (mReplenishMaterialTableEntity.isEqScanFlag()) {
@@ -207,6 +223,12 @@ public class ReplenishMaterialTableScanActivity extends BaseRefreshRecyclerActiv
         super.initData();
         if (mReplenishMaterialTableEntity.getEquipment() != null && !TextUtils.isEmpty(mReplenishMaterialTableEntity.getEquipment().getCode())) {
             eamPoint.setContent(mReplenishMaterialTableEntity.getEquipment().getName() + "(" + mReplenishMaterialTableEntity.getEquipment().getCode() + ")");
+        }
+        if (mReplenishMaterialTableEntity.getAirSupplyPor() != null && !TextUtils.isEmpty(mReplenishMaterialTableEntity.getAirSupplyPor().code)) {
+            eamAirPort.setContent(mReplenishMaterialTableEntity.getAirSupplyPor().name + "(" + mReplenishMaterialTableEntity.getAirSupplyPor().code + ")");
+        }
+        if (mReplenishMaterialTableEntity.getFeedPoint() != null && !TextUtils.isEmpty(mReplenishMaterialTableEntity.getFeedPoint().code)) {
+            eamLoadPoint.setContent(mReplenishMaterialTableEntity.getFeedPoint().name + "(" + mReplenishMaterialTableEntity.getFeedPoint().code + ")");
         }
         if (mReplenishMaterialTableEntity.getMaterial() != null && !TextUtils.isEmpty(mReplenishMaterialTableEntity.getMaterial().code)) {
             material.setContent(mReplenishMaterialTableEntity.getMaterial().name + "(" + mReplenishMaterialTableEntity.getMaterial().code + ")");
@@ -309,6 +331,7 @@ public class ReplenishMaterialTableScanActivity extends BaseRefreshRecyclerActiv
                 .subscribe(new Consumer<Object>() {
                     @Override
                     public void accept(Object o) throws Exception {
+                        startFlag = true;
                         showDialogOperate(0);
                     }
                 });
@@ -383,11 +406,21 @@ public class ReplenishMaterialTableScanActivity extends BaseRefreshRecyclerActiv
     public void submitSuccess(BAP5CommonEntity entity) {
         onLoadSuccess(context.getResources().getString(R.string.wom_dealt_success));
         EventBus.getDefault().post(new RefreshEvent());
-        finish();
+         // 开始操作
+        if (startFlag){
+            startFlag = false;
+            startBtn.setEnabled(false);
+            startBtn.setAlpha(0.3f);
+            endBtn.setEnabled(true);
+            endBtn.setAlpha(1.0f);
+        }else {
+            finish();
+        }
     }
 
     @Override
     public void submitFailed(String errorMsg) {
+        startFlag = false;
         onLoadFailed(errorMsg);
         ToastUtils.show(context, errorMsg);
     }
@@ -436,30 +469,57 @@ public class ReplenishMaterialTableScanActivity extends BaseRefreshRecyclerActiv
 
             if (qrCodeEntity != null) {
                 switch (qrCodeEntity.getType()) {
-                    // 扫描设备
+                    // 扫描设备(料仓)
                     case 0:
+                        if (ReplenishConstant.SystemCode.MODEL_AIR.equals(mReplenishMaterialTableEntity.getEquipment().getFeedStockType().id)
+                                || ReplenishConstant.SystemCode.MODEL_BUCKET_AIR.equals(mReplenishMaterialTableEntity.getEquipment().getFeedStockType().id)){
+                            ToastUtils.show(context, R.string.replenish_please_scan_air_port);
+                            return;
+                        }
+                        if (ReplenishConstant.SystemCode.MODEL_BUCKET_POINT.equals(mReplenishMaterialTableEntity.getEquipment().getFeedStockType().id)){
+                            ToastUtils.show(context, R.string.replenish_please_scan_load_point);
+                            return;
+                        }
+
                         if (qrCodeEntity.getCode().equals(mReplenishMaterialTableEntity.getEquipment().getCode())) {
-                            // 已经通过无需再次设置
-                            if (mReplenishMaterialTableEntity.isEqScanFlag()) {
-                                return;
-                            }
-                            mReplenishMaterialTableEntity.setEqScanFlag(true);
-                            eamPassIv.setImageResource(R.drawable.replenish_ic_pass);
-                            if (mReplenishMaterialTableEntity.getVessel() != null && !TextUtils.isEmpty(mReplenishMaterialTableEntity.getVessel().getCode())){
-                                // 是否桶已经校验
-                                if (mReplenishMaterialTableEntity.isVesselScanFlag()) {
-                                    startBtn.setEnabled(true);
-                                    startBtn.setAlpha(1);
-                                }
-                            }else {
-                                // 是否物料已经校验
-                                if (scanPassCount >= mReplenishMaterialRecordsScanAdapter.getList().size()){
-                                    startBtn.setEnabled(true);
-                                    startBtn.setAlpha(1);
-                                }
-                            }
+                            checkEamScan();
                         } else {
-                            ToastUtils.show(context, getString(R.string.replenish_no_match_bucket));
+                            ToastUtils.show(context, getString(R.string.replenish_no_match_eam));
+                        }
+                        break;
+                    // 风送口
+                    case 4:
+                        if (ReplenishConstant.SystemCode.MODEL_BUCKET_SILO.equals(mReplenishMaterialTableEntity.getEquipment().getFeedStockType().id)){
+                            ToastUtils.show(context, R.string.replenish_please_scan_eam);
+                            return;
+                        }
+                        if (ReplenishConstant.SystemCode.MODEL_BUCKET_POINT.equals(mReplenishMaterialTableEntity.getEquipment().getFeedStockType().id)){
+                            ToastUtils.show(context, R.string.replenish_please_scan_load_point);
+                            return;
+                        }
+
+                        if (qrCodeEntity.getCode().equals(mReplenishMaterialTableEntity.getAirSupplyPor().code)) {
+                            checkEamScan();
+                        }else {
+                            ToastUtils.show(context, getString(R.string.replenish_no_match_eam));
+                        }
+                        break;
+                    // 上料点
+                    case 5:
+                        if (ReplenishConstant.SystemCode.MODEL_AIR.equals(mReplenishMaterialTableEntity.getEquipment().getFeedStockType().id)
+                                || ReplenishConstant.SystemCode.MODEL_BUCKET_AIR.equals(mReplenishMaterialTableEntity.getEquipment().getFeedStockType().id)){
+                            ToastUtils.show(context, R.string.replenish_please_scan_air_port);
+                            return;
+                        }
+                        if (ReplenishConstant.SystemCode.MODEL_BUCKET_SILO.equals(mReplenishMaterialTableEntity.getEquipment().getFeedStockType().id)){
+                            ToastUtils.show(context, R.string.replenish_please_scan_eam);
+                            return;
+                        }
+
+                        if (qrCodeEntity.getCode().equals(mReplenishMaterialTableEntity.getFeedPoint().code)) {
+                            checkEamScan();
+                        }else {
+                            ToastUtils.show(context, getString(R.string.replenish_no_match_load_point));
                         }
                         break;
                     // 扫描桶
@@ -488,7 +548,7 @@ public class ReplenishMaterialTableScanActivity extends BaseRefreshRecyclerActiv
                             return;
                         }
                         for (ReplenishMaterialTablePartEntity partEntity : mReplenishMaterialRecordsScanAdapter.getList()){
-                            if (qrCodeEntity.getCode().equals(mReplenishMaterialTableEntity.getMaterial().code) && partEntity.getBatch().equals(qrCodeEntity.getBatch())){
+                            if (!TextUtils.isEmpty(qrCodeEntity.getCode()) && qrCodeEntity.getCode().equals(mReplenishMaterialTableEntity.getMaterial().code) && partEntity.getBatch().equals(qrCodeEntity.getBatch())){
                                 count = 0;
                                 partEntity.setScanFlag(true);
                                 mReplenishMaterialRecordsScanAdapter.notifyItemRangeChanged(mReplenishMaterialRecordsScanAdapter.getList().indexOf(partEntity),1,partEntity);
@@ -498,7 +558,6 @@ public class ReplenishMaterialTableScanActivity extends BaseRefreshRecyclerActiv
                         }
                         if (count >= mReplenishMaterialRecordsScanAdapter.getList().size()){
                             ToastUtils.show(context,getString(R.string.replenish_check_failed_please_check_material_right));
-                            LogUtil.d("------scan------",getString(R.string.replenish_check_failed_please_check_material_right));
                             return;
                         }
                          // 判断物料是否全部校验
@@ -509,7 +568,7 @@ public class ReplenishMaterialTableScanActivity extends BaseRefreshRecyclerActiv
                             scanPassCount ++;
                         }
                         // 是否设备已经校验
-                        if (/*scanPassCount >= mReplenishMaterialRecordsScanAdapter.getList().size() && */mReplenishMaterialTableEntity.isEqScanFlag()) {
+                        if (mReplenishMaterialTableEntity.isEqScanFlag()) {
                             startBtn.setEnabled(true);
                             startBtn.setAlpha(1);
                         }
@@ -518,6 +577,31 @@ public class ReplenishMaterialTableScanActivity extends BaseRefreshRecyclerActiv
                 }
             }
 
+        }
+    }
+
+    /**
+     * 设备（料仓）、风送口、上料点 扫描校验
+     */
+    private void checkEamScan() {
+        // 已经通过无需再次设置
+        if (mReplenishMaterialTableEntity.isEqScanFlag()) {
+            return;
+        }
+        mReplenishMaterialTableEntity.setEqScanFlag(true);
+        eamPassIv.setImageResource(R.drawable.replenish_ic_pass);
+        if (mReplenishMaterialTableEntity.getVessel() != null && !TextUtils.isEmpty(mReplenishMaterialTableEntity.getVessel().getCode())){
+            // 是否桶已经校验
+            if (mReplenishMaterialTableEntity.isVesselScanFlag()) {
+                startBtn.setEnabled(true);
+                startBtn.setAlpha(1);
+            }
+        }else {
+            // 是否物料已经校验
+            if (scanPassCount >= mReplenishMaterialRecordsScanAdapter.getList().size()){
+                startBtn.setEnabled(true);
+                startBtn.setAlpha(1);
+            }
         }
     }
 

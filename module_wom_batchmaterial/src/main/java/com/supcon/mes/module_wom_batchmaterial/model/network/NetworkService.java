@@ -40,7 +40,7 @@ public interface NetworkService {
      * @return
      */
     @POST("/msService/WOM/batchMaterialSet/bmRecord/addAnUpdateBmRecord")
-    Flowable<BAP5CommonEntity<BapResultEntity>> batchMaterialInstructionSubmit(@Body BatchInstructionPartEntity[] batchInstructionPartEntityDTO);
+    Flowable<BAP5CommonEntity<Boolean>> batchMaterialInstructionSubmit(@Body BatchInstructionPartEntity[] batchInstructionPartEntityDTO);
 
     /**
      * 配料记录提交：配料完成、撤回、派送、配放

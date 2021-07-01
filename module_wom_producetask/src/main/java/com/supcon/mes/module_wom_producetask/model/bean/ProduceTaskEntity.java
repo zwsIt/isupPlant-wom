@@ -1,6 +1,7 @@
 package com.supcon.mes.module_wom_producetask.model.bean;
 
 import com.supcon.common.com_http.BaseEntity;
+import com.supcon.mes.middleware.model.bean.SystemCodeEntity;
 import com.supcon.mes.middleware.model.bean.wom.FactoryModelEntity;
 import com.supcon.mes.middleware.model.bean.wom.FormulaEntity;
 
@@ -33,6 +34,36 @@ public class ProduceTaskEntity extends BaseEntity {
     private Boolean isAdvanced;         // 是否提前放料
     private String feedCondition;       // 放料条件
     private BigDecimal actualPlanNum;   // 回掺后计划总量
+    private String produceBatchNum;     // 生产批号
+    private boolean needPack;           // 是否包装
+    private SystemCodeEntity reportType; // 报工模式
+
+    public SystemCodeEntity getReportType() {
+        if (reportType == null){
+            reportType =  new SystemCodeEntity();
+        }
+        return reportType;
+    }
+
+    public void setReportType(SystemCodeEntity reportType) {
+        this.reportType = reportType;
+    }
+
+    public boolean isNeedPack() {
+        return needPack;
+    }
+
+    public void setNeedPack(boolean needPack) {
+        this.needPack = needPack;
+    }
+
+    public String getProduceBatchNum() {
+        return produceBatchNum;
+    }
+
+    public void setProduceBatchNum(String produceBatchNum) {
+        this.produceBatchNum = produceBatchNum;
+    }
 
     public BigDecimal getActualPlanNum() {
         return actualPlanNum;

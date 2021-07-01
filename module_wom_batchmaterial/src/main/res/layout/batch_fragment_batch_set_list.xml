@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+    <HorizontalScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/white"
+        android:fillViewport="true"
+        android:scrollbars="none">
+        <RadioGroup
+            android:id="@+id/waitStateRadioGroup"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:gravity="center"
+            android:orientation="horizontal"
+            android:padding="@dimen/dp_5"
+            android:tag="waitStateRadioGroup">
+
+            <RadioButton
+                android:id="@+id/manualRBtn"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_gravity="center_vertical"
+                android:button="@null"
+                android:tag="manualRBtn"
+                android:text="@string/batch_manual"
+                android:textColor="@drawable/wom_sl_radio_text"
+                android:textSize="@dimen/fontSize_14sp"
+                android:checked="true"/>
+            <RadioButton
+                android:id="@+id/autoRBtn"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_gravity="center_vertical"
+                android:layout_marginStart="@dimen/dp_20"
+                android:button="@null"
+                android:tag="autoRBtn"
+                android:text="@string/batch_auto"
+                android:textColor="@drawable/wom_sl_radio_text"
+                android:textSize="@dimen/fontSize_14sp" />
+            <RadioButton
+                android:id="@+id/allRBtn"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_gravity="center_vertical"
+                android:layout_marginStart="@dimen/dp_20"
+                android:button="@null"
+                android:tag="allRBtn"
+                android:text="@string/wom_all"
+                android:textSize="@dimen/fontSize_14sp"
+                android:textColor="@drawable/wom_sl_radio_text" />
+
+        </RadioGroup>
+    </HorizontalScrollView>
+
+    <include layout="@layout/ly_recyclerview"/>
+</LinearLayout>

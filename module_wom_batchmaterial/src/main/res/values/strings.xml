@@ -50,7 +50,7 @@
     <string name="batch_instruction_execute">配料指令执行</string>
     <string name="batch_no_match_bucket">未能匹配桶号，请再次确认！</string>
     <string name="batch_quick_scan_bucket">快速扫桶配料</string>
-    <string name="batch_bucket_info">配料通信息</string>
+    <string name="batch_bucket_info">配料桶信息</string>
     <string name="batch_index">配料顺序</string>
     <string name="batch_trunk_area_info">中继位信息</string>
     <string name="batch_trunk_code">中继位编码</string>
@@ -61,4 +61,10 @@
     <string name="batch_please_bind_bucket_first">请先绑定配料桶</string>
     <string name="batch_next_workline">下游配料线</string>
     <string name="batch_no_match_please_confirm_current_line_right">未能匹配中继位，请确认当前配料线是否正确！</string>
+    <string name="batch_no_match_bucket_please_check">非当前配料桶上料，请检查确认！</string>
+    <string name="batch_please_scan_bucket_or_trunk">请扫描配料桶或者中继位</string>
+    <string name="batch_material_transport_next_area">转移下游</string>
+    <string name="batch_auto">自动</string>
+    <string name="batch_manual">人工</string>
+    <string name="batch_no_match_current_material">非当前所需配料物料</string>
 </resources>

@@ -78,6 +78,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center_vertical"
+                android:visibility="gone"
                 android:orientation="horizontal">
                 <TextView
                     android:layout_width="80dp"
@@ -94,6 +95,30 @@
                     android:layout_height="@dimen/dp_36"
                     android:id="@+id/batchCurrentArea"
                     android:tag="batchCurrentArea"
+                    app:key_width="0dp"
+                    app:content_size="15"
+                    app:content_color="@color/dark_text"/>
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+                <TextView
+                    android:layout_width="80dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:gravity="center_vertical"
+                    android:text="@string/wom_produce_batch_num"
+                    android:textColor="@color/titleTextColor"
+                    android:textSize="@dimen/dp_12"
+                    android:drawableStart="@drawable/ic_wms_encrypt"
+                    android:drawablePadding="@dimen/dp_5"/>
+                <com.supcon.mes.mbap.view.CustomTextView
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/dp_36"
+                    android:id="@+id/produceBatchNum"
+                    android:tag="produceBatchNum"
                     app:key_width="0dp"
                     app:content_size="15"
                     app:content_color="@color/dark_text"/>

@@ -88,5 +88,6 @@ public interface BmConstant {
         String BATCH_MATERIAL_SET = "BATCH_MATERIAL_SET";
         String BATCH_MATERIAL_INSTRUCTION = "BATCH_MATERIAL_INSTRUCTION";
         String BUCKET_CODE = "BUCKET_CODE";
+        String BATCH_AREA_AUTO = "BATCH_AREA_AUTO";
     }
 }

@@ -39,6 +39,7 @@ public class OutputDetailEntity extends BaseEntity {
     private Long putinTime;             // 报工时间
     private BigDecimal remainNum;       // 尾料数量
     private SystemCodeEntity remainOperate; // 尾料处理
+    public int version;
     /**
      * 容器
      */

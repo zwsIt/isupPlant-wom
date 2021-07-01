@@ -19,6 +19,7 @@ import com.supcon.mes.module_wom_producetask.IntentRouter;
 import com.supcon.mes.module_wom_producetask.R;
 import com.supcon.mes.module_wom_producetask.constant.WomConstant;
 import com.supcon.mes.module_wom_producetask.model.bean.WaitPutinRecordEntity;
+import com.supcon.mes.module_wom_producetask.ui.activity.SimpleActivityListActivity;
 
 import java.util.concurrent.TimeUnit;
 
@@ -78,6 +79,8 @@ public class SimpleActivityListAdapter extends BaseListDataRecyclerViewAdapter<W
         CustomTextView timeCustomTv;
         @BindByTag("putInStartTv")
         TextView putInStartTv;
+        @BindByTag("factoryModelUnitCustomTv")
+        CustomTextView factoryModelUnitCustomTv;
 
         public PutInItemViewHolder(Context context) {
             super(context);
@@ -93,19 +96,20 @@ public class SimpleActivityListAdapter extends BaseListDataRecyclerViewAdapter<W
         protected void initListener() {
             super.initListener();
             RxView.clicks(itemView).throttleFirst(200, TimeUnit.MILLISECONDS)
-                    .filter(new Predicate<Object>() {
-                        @Override
-                        public boolean test(Object o) throws Exception {
-                            if (WomConstant.SystemCode.EXE_STATE_WAIT.equals(getItem(getAdapterPosition()).getExeState().id)) {
-                                ToastUtils.show(context, context.getResources().getString(R.string.wom_first_start_activity));
-                                return false;
-                            }
-                            return true;
+                    .filter(o -> {
+                        if (WomConstant.SystemCode.EXE_STATE_WAIT.equals(getItem(getAdapterPosition()).getExeState().id)) {
+                            ToastUtils.show(context, context.getResources().getString(R.string.wom_first_start_activity));
+                            return false;
                         }
+                        return true;
                     })
                     .subscribe(o -> {
                         Bundle bundle = new Bundle();
                         bundle.putSerializable(Constant.IntentKey.WAIT_PUT_RECORD, getItem(getAdapterPosition()));
+                        if (((SimpleActivityListActivity)context).isPack()){
+                            ToastUtils.show(context, context.getResources().getString(R.string.wom_please_scan_pack_machine));
+                            return;
+                        }
                         IntentRouter.go(context, Constant.Router.WOM_PUT_IN_REPORT, bundle);
                     });
             RxView.clicks(putInStartTv).throttleFirst(200, TimeUnit.MILLISECONDS)
@@ -116,6 +120,7 @@ public class SimpleActivityListAdapter extends BaseListDataRecyclerViewAdapter<W
         protected void update(WaitPutinRecordEntity data) {
             materialNameTv.setText(data.getTaskActiveId().getMaterialId().getName());
             activityTypeTv.setText(data.getTaskActiveId().getActiveType().value);
+            factoryModelUnitCustomTv.setContent(data.getEuqId().getName());
             numCustomTv.setContent(data.getTaskActiveId().getPlanQuantity() == null ? "" : data.getTaskActiveId().getPlanQuantity().toString());
             timeCustomTv.setContent(data.getActualStartTime() == null ? "" : DateUtil.dateTimeFormat(data.getActualStartTime()));
             if (WomConstant.SystemCode.EXE_STATE_WAIT.equals(data.getExeState().id)) {
@@ -125,7 +130,6 @@ public class SimpleActivityListAdapter extends BaseListDataRecyclerViewAdapter<W
                 putInStartTv.setText(context.getResources().getString(R.string.wom_end));
                 putInStartTv.setBackgroundResource(R.drawable.wom_sh_end_bg);
             }
-
         }
     }
 

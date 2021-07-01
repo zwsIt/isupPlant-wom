@@ -1,4 +1,4 @@
-package com.supcon.mes.module_wom_replenishmaterial.ui.activity;
+package com.supcon.mes.module_wom_replenishmaterial.ui.fragment;
 
 import android.annotation.SuppressLint;
 import android.graphics.Rect;
@@ -12,36 +12,26 @@ import android.util.ArrayMap;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.RelativeLayout;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import com.app.annotation.BindByTag;
 import com.app.annotation.Presenter;
 import com.app.annotation.apt.Router;
-import com.jakewharton.rxbinding2.view.RxView;
 import com.jakewharton.rxbinding2.widget.RxTextView;
 import com.supcon.common.view.base.activity.BaseRefreshRecyclerActivity;
 import com.supcon.common.view.base.adapter.IListAdapter;
+import com.supcon.common.view.base.fragment.BaseRefreshRecyclerFragment;
 import com.supcon.common.view.listener.OnItemChildViewClickListener;
 import com.supcon.common.view.listener.OnRefreshPageListener;
-import com.supcon.common.view.ptr.PtrFrameLayout;
 import com.supcon.common.view.util.DisplayUtil;
 import com.supcon.common.view.util.ToastUtils;
-import com.supcon.common.view.view.loader.base.OnLoaderFinishListener;
-import com.supcon.mes.mbap.listener.OnTextListener;
-import com.supcon.mes.mbap.listener.OnTitleSearchExpandListener;
-import com.supcon.mes.mbap.utils.GsonUtil;
 import com.supcon.mes.mbap.utils.StatusBarUtils;
 import com.supcon.mes.mbap.view.CustomDialog;
 import com.supcon.mes.mbap.view.CustomEditText;
 import com.supcon.mes.mbap.view.CustomHorizontalSearchTitleBar;
-import com.supcon.mes.mbap.view.CustomImageButton;
 import com.supcon.mes.mbap.view.CustomTextView;
 import com.supcon.mes.middleware.constant.Constant;
 import com.supcon.mes.middleware.model.bean.BAP5CommonEntity;
 import com.supcon.mes.middleware.model.bean.CommonBAP5ListEntity;
-import com.supcon.mes.middleware.model.bean.CommonBAPListEntity;
 import com.supcon.mes.middleware.util.EmptyAdapterHelper;
 import com.supcon.mes.middleware.util.ErrorMsgHelper;
 import com.supcon.mes.module_wom_replenishmaterial.IntentRouter;
@@ -54,15 +44,11 @@ import com.supcon.mes.module_wom_replenishmaterial.model.contract.ReplenishMater
 import com.supcon.mes.module_wom_replenishmaterial.model.dto.ReplenishMaterialNotifyDTO;
 import com.supcon.mes.module_wom_replenishmaterial.presenter.ReplenishMaterialNotifyListPresenter;
 import com.supcon.mes.module_wom_replenishmaterial.ui.adapter.ReplenishMaterialNotifyAdapter;
-import com.yaobing.module_middleware.Utils.ToastUtil;
 
-import java.lang.reflect.Array;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
-
-import io.reactivex.functions.Consumer;
 
 /**
  * ClassName
@@ -72,7 +58,7 @@ import io.reactivex.functions.Consumer;
  */
 @Presenter(value = {ReplenishMaterialNotifyListPresenter.class})
 @Router(value = Constant.AppCode.WOM_ReplenishMaterial_Notify)
-public class ReplenishMaterialNotifyListActivity extends BaseRefreshRecyclerActivity<ReplenishMaterialNotifyEntity> implements ReplenishMaterialNotifyListContract.View {
+public class ReplenishMaterialNotifyFragment extends BaseRefreshRecyclerFragment<ReplenishMaterialNotifyEntity> implements ReplenishMaterialNotifyListContract.View {
 
     @BindByTag("searchTitleBar")
     CustomHorizontalSearchTitleBar searchTitleBar;
@@ -87,8 +73,6 @@ public class ReplenishMaterialNotifyListActivity extends BaseRefreshRecyclerActi
     protected void onInit() {
         super.onInit();
 
-        StatusBarUtils.setWindowStatusBarColor(this, R.color.themeColor);
-        contentView.setLayoutManager(new LinearLayoutManager(this));
         refreshListController.setAutoPullDownRefresh(true);
         refreshListController.setPullDownRefreshEnabled(true);
 
@@ -129,7 +113,6 @@ public class ReplenishMaterialNotifyListActivity extends BaseRefreshRecyclerActi
     @Override
     protected void initListener() {
         super.initListener();
-        searchTitleBar.leftBtn().setOnClickListener(v -> onBackPressed());
         refreshListController.setOnRefreshPageListener(new OnRefreshPageListener() {
             @Override
             public void onRefresh(int pageIndex) {
@@ -218,8 +201,7 @@ public class ReplenishMaterialNotifyListActivity extends BaseRefreshRecyclerActi
         List<ReplenishMaterialTableEntity> replenishMaterialTableEntityList = (List<ReplenishMaterialTableEntity>) entity.data;
         Bundle bundle = new Bundle();
         bundle.putSerializable(ReplenishConstant.IntentKey.REPLENISH_MATERIAL_TABLE,replenishMaterialTableEntityList.get(0));
-        IntentRouter.go(context,Constant.AppCode.WOM_ReplenishMaterial_Table,bundle);
-        finish();
+        IntentRouter.go(context,ReplenishConstant.Router.REPLENISH_MATERIAL_EDIT,bundle);
     }
 
     @Override

@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -10,32 +9,22 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="@dimen/dp_30"
-        android:text="@string/wom_create"
+        android:text="@string/wom_title_tip"
         android:textStyle="bold"
         android:gravity="center"
         android:textColor="@color/black"/>
-    <com.supcon.mes.mbap.view.CustomTextView
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/dp_40"
-        android:id="@+id/material"
-        android:tag="material"
-        app:key="@string/wom_material"
-        app:editable="false"/>
-    <com.supcon.mes.mbap.view.CustomTextView
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/dp_40"
-        android:id="@+id/eamPoint"
-        android:tag="eamPoint"
-        app:key="@string/scan_eam"
-        app:editable="false"/>
-    <com.supcon.mes.mbap.view.CustomEditText
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/dp_40"
-        android:id="@+id/planNum"
-        android:tag="planNum"
-        app:key="@string/wom_plan_num"
-        app:edit_hint="@string/wom_please_input_plan_num"
-        app:editable="true"/>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/dp_50"
+        android:id="@+id/tipContentTv"
+        android:tag="tipContentTv"
+        android:textStyle="bold"
+        android:drawableStart="@drawable/ic_warning"
+        android:drawablePadding="@dimen/dp_10"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:textColor="@color/red"
+        android:textSize="@dimen/fontSize_18sp"/>
     <include layout="@layout/ly_line_light"/>
     <LinearLayout
         android:layout_width="match_parent"
@@ -60,8 +49,8 @@
             android:background="@drawable/sl_press_no_stroke"
             android:id="@+id/confirmTv"
             android:tag="confirmTv"
-            android:text="@string/replenish_create"
-            android:textColor="@color/themeColor"
+            android:text="@string/wom_end"
+            android:textColor="@color/red"
             android:gravity="center"/>
     </LinearLayout>
 

@@ -9,6 +9,8 @@ import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.RadioGroup;
 
 import com.app.annotation.BindByTag;
@@ -178,13 +180,14 @@ public class CommonProduceTaskListFragment extends BaseRefreshRecyclerFragment<W
                     break;
                 case "stopTv":
                     // 结束工单报工
-
                     if (mWaitPutinRecordEntity != null && mWaitPutinRecordEntity.getTaskId() != null
                             && mWaitPutinRecordEntity.getTaskId().getBatchContral() != null
-                            && mWaitPutinRecordEntity.getTaskId().getBatchContral()) {
+                            && mWaitPutinRecordEntity.getTaskId().getBatchContral() || mWaitPutinRecordEntity.getTaskId().isNeedPack() ||
+                            WomConstant.SystemCode.RM_reportType_01.equals(mWaitPutinRecordEntity.getTaskId().getReportType().id)) {
+                        // 批控、包装、不报工-----无需报工
                         paramsList.add(context.getResources().getString(R.string.wom_end));
                         paramsList.add("stop");
-                        showOperateConfirmDialog(paramsList, mWaitPutinRecordEntity, true);
+                        endConfirmDialog(paramsList, mWaitPutinRecordEntity);
                     } else {
                         endProduceTaskReport();
                     }
@@ -315,6 +318,26 @@ public class CommonProduceTaskListFragment extends BaseRefreshRecyclerFragment<W
                     .show();
         }
 
+    }
+    /**
+     * @param
+     * @return
+     * @description 工单操作确认：结束
+     * @author zhangwenshuai1 2020/3/25
+     */
+    private void endConfirmDialog(List<Object> paramsList, WaitPutinRecordEntity waitPutinRecordEntity) {
+        CustomDialog customDialog = new CustomDialog(context)
+                .layout(R.layout.wom_dialog_end_confirm, DisplayUtil.getScreenWidth(context) * 4 / 5, ViewGroup.LayoutParams.WRAP_CONTENT);
+        customDialog.getDialog().getWindow().setBackgroundDrawableResource(R.color.transparent);
+        customDialog.getDialog().setCanceledOnTouchOutside(true);
+
+        customDialog.bindView(R.id.tipContentTv, context.getResources().getString(R.string.wom_confirm_tip) + paramsList.get(0) + context.getResources().getString(R.string.wom_task_operate))
+                .bindClickListener(R.id.cancelTv, null, true)
+                .bindClickListener(R.id.confirmTv, v -> {
+                    onLoading(getString(R.string.wom_dealing));
+                    presenterRouter.create(ProduceTaskOperateAPI.class).operateProduceTask(waitPutinRecordEntity.getId(), String.valueOf(paramsList.get(1)), null);
+                }, true)
+                .show();
     }
 
     @Override

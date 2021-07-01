@@ -9,6 +9,7 @@ import android.support.v7.widget.LinearSmoothScroller;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
@@ -22,15 +23,20 @@ import com.jakewharton.rxbinding2.view.RxView;
 import com.supcon.common.view.base.activity.BaseControllerActivity;
 import com.supcon.common.view.base.activity.BaseRefreshRecyclerActivity;
 import com.supcon.common.view.base.adapter.IListAdapter;
+import com.supcon.common.view.listener.OnRefreshListener;
 import com.supcon.common.view.util.DisplayUtil;
 import com.supcon.common.view.util.StatusBarUtils;
 import com.supcon.common.view.util.ToastUtils;
 import com.supcon.common.view.view.CustomSwipeLayout;
+import com.supcon.mes.mbap.beans.WorkFlowVar;
+import com.supcon.mes.mbap.utils.GsonUtil;
+import com.supcon.mes.mbap.view.CustomDialog;
 import com.supcon.mes.mbap.view.CustomImageButton;
 import com.supcon.mes.mbap.view.CustomListWidget;
 import com.supcon.mes.mbap.view.CustomTextView;
 import com.supcon.mes.middleware.constant.Constant;
 import com.supcon.mes.middleware.model.bean.BAP5CommonEntity;
+import com.supcon.mes.middleware.model.bean.CommonBAPListEntity;
 import com.supcon.mes.middleware.model.bean.MaterialQRCodeEntity;
 import com.supcon.mes.middleware.model.bean.QrCodeEntity;
 import com.supcon.mes.middleware.model.bean.SystemCodeEntity;
@@ -46,10 +52,18 @@ import com.supcon.mes.module_wom_producetask.IntentRouter;
 import com.supcon.mes.module_wom_producetask.R;
 import com.supcon.mes.module_wom_producetask.constant.WomConstant;
 import com.supcon.mes.module_wom_producetask.controller.ProduceTaskEndReportDetailController;
+import com.supcon.mes.module_wom_producetask.model.api.CommonListAPI;
+import com.supcon.mes.module_wom_producetask.model.api.ProcessOperateAPI;
+import com.supcon.mes.module_wom_producetask.model.api.ProduceEndTaskAPI;
 import com.supcon.mes.module_wom_producetask.model.api.ProduceTaskOperateAPI;
 import com.supcon.mes.module_wom_producetask.model.bean.OutputDetailEntity;
 import com.supcon.mes.module_wom_producetask.model.bean.WaitPutinRecordEntity;
+import com.supcon.mes.module_wom_producetask.model.contract.CommonListContract;
+import com.supcon.mes.module_wom_producetask.model.contract.ProduceEndTaskContract;
 import com.supcon.mes.module_wom_producetask.model.contract.ProduceTaskOperateContract;
+import com.supcon.mes.module_wom_producetask.model.dto.ProduceEndTaskDTO;
+import com.supcon.mes.module_wom_producetask.presenter.CommonListPresenter;
+import com.supcon.mes.module_wom_producetask.presenter.ProduceEndTaskPresenter;
 import com.supcon.mes.module_wom_producetask.presenter.ProduceTaskOperatePresenter;
 import com.supcon.mes.module_wom_producetask.ui.adapter.ProduceTaskEndReportDetailAdapter;
 import com.supcon.mes.module_wom_producetask.util.MaterQRUtil;
@@ -61,7 +75,9 @@ import org.greenrobot.eventbus.ThreadMode;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import io.reactivex.functions.Consumer;
@@ -74,14 +90,16 @@ import io.reactivex.functions.Consumer;
  */
 @Router(Constant.Router.WOM_PRODUCE_TASK_END_REPORT)
 @Controller(value = {CommonScanController.class})
-@Presenter(value = {ProduceTaskOperatePresenter.class})
-public class ProduceTaskEndReportActivity extends BaseRefreshRecyclerActivity<OutputDetailEntity> implements ProduceTaskOperateContract.View {
+@Presenter(value = {ProduceTaskOperatePresenter.class, ProduceEndTaskPresenter.class, CommonListPresenter.class})
+public class ProduceTaskEndReportActivity extends BaseRefreshRecyclerActivity<OutputDetailEntity> implements ProduceTaskOperateContract.View, ProduceEndTaskContract.View, CommonListContract.View {
     @BindByTag("leftBtn")
     CustomImageButton leftBtn;
     @BindByTag("titleText")
     TextView titleText;
     @BindByTag("rightBtn")
     CustomImageButton rightBtn;
+    @BindByTag("titleSetting")
+    ImageView titleSetting;
     @BindByTag("productName")
     CustomTextView productName;
     @BindByTag("productCode")
@@ -90,6 +108,8 @@ public class ProduceTaskEndReportActivity extends BaseRefreshRecyclerActivity<Ou
     CustomTextView planNum;
     @BindByTag("submitBtn")
     Button submitBtn;
+    @BindByTag("saveBtn")
+    Button saveBtn;
     @BindByTag("contentView")
     RecyclerView contentView;
     @BindByTag("customListWidgetIc")
@@ -107,12 +127,18 @@ public class ProduceTaskEndReportActivity extends BaseRefreshRecyclerActivity<Ou
     private WaitPutinRecordEntity mWaitPutinRecordEntity;
     private OutputDetailEntity mOutputDetailEntity;
     private int mCurrentPosition;
+    private String dgDeletedIds = "";
+    Map<String, Object> queryParams = new HashMap<>();
+    Map<String, Object> customCondition = new HashMap<>();
+    // 已保存报工明细
+    private List<OutputDetailEntity> saveOutputDetailEntityList;
 
     @Override
     protected IListAdapter<OutputDetailEntity> createAdapter() {
         mProduceTaskEndReportDetailAdapter = new ProduceTaskEndReportDetailAdapter(context);
         return mProduceTaskEndReportDetailAdapter;
     }
+
     @Override
     protected int getLayoutID() {
         return R.layout.wom_ac_produce_task_end_report;
@@ -122,7 +148,7 @@ public class ProduceTaskEndReportActivity extends BaseRefreshRecyclerActivity<Ou
     protected void onInit() {
         super.onInit();
         EventBus.getDefault().register(this);
-        refreshListController.setAutoPullDownRefresh(false);
+        refreshListController.setAutoPullDownRefresh(true);
         refreshListController.setPullDownRefreshEnabled(false);
         mWaitPutinRecordEntity = (WaitPutinRecordEntity) getIntent().getSerializableExtra(Constant.IntentKey.WAIT_PUT_RECORD);
 
@@ -131,7 +157,7 @@ public class ProduceTaskEndReportActivity extends BaseRefreshRecyclerActivity<Ou
             @Override
             public void getItemOffsets(@NonNull Rect outRect, @NonNull View view, @NonNull RecyclerView parent, @NonNull RecyclerView.State state) {
                 super.getItemOffsets(outRect, view, parent, state);
-                outRect.set(0,0,0, DisplayUtil.dip2px(10, context));
+                outRect.set(0, 0, 0, DisplayUtil.dip2px(10, context));
             }
         });
         contentView.addOnItemTouchListener(new CustomSwipeLayout.OnSwipeItemTouchListener(context));
@@ -141,7 +167,7 @@ public class ProduceTaskEndReportActivity extends BaseRefreshRecyclerActivity<Ou
     @Override
     protected void initView() {
         super.initView();
-        StatusBarUtils.setWindowStatusBarColor(this,R.color.themeColor);
+        StatusBarUtils.setWindowStatusBarColor(this, R.color.themeColor);
         titleText.setText(context.getResources().getString(R.string.wom_produce_task_end_report));
         rightBtn.setVisibility(View.VISIBLE);
         rightBtn.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_top_scan));
@@ -151,7 +177,8 @@ public class ProduceTaskEndReportActivity extends BaseRefreshRecyclerActivity<Ou
         planNum.setContent(String.valueOf(mWaitPutinRecordEntity.getTaskId().getActualPlanNum()));
 
         customListWidgetName.setText(context.getResources().getString(R.string.wom_produce_task_report_detail));
-        customListWidgetEdit.setVisibility(View.GONE);
+//        customListWidgetEdit.setVisibility(View.GONE);
+        customListWidgetEdit.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_work_describe));
 
     }
 
@@ -160,20 +187,29 @@ public class ProduceTaskEndReportActivity extends BaseRefreshRecyclerActivity<Ou
     protected void initListener() {
         super.initListener();
         leftBtn.setOnClickListener(v -> finish());
-        rightBtn.setOnClickListener(v -> {
-            getController(CommonScanController.class).openCameraScan(context.getClass().getSimpleName());
+        rightBtn.setOnClickListener(v -> getController(CommonScanController.class).openCameraScan(context.getClass().getSimpleName()));
+        customListWidgetEdit.setOnClickListener(v -> {
+            Bundle bundle = new Bundle();
+            bundle.putSerializable(Constant.IntentKey.WAIT_PUT_RECORD,mWaitPutinRecordEntity);
+            IntentRouter.go(context,WomConstant.Router.REPORT_DETAIL_LIST,bundle);
         });
+        refreshListController.setOnRefreshListener(() -> presenterRouter.create(CommonListAPI.class).list(1, customCondition, queryParams,
+                WomConstant.URL.PRODUCE_END_REPORT_LIST_URL + "&id=" + (mWaitPutinRecordEntity.getProcReportId().getId() == null ? -1 : mWaitPutinRecordEntity.getProcReportId().getId()), ""));
         customListWidgetAdd.setOnClickListener(v -> {
             OutputDetailEntity outputDetailEntity = new OutputDetailEntity();
             outputDetailEntity.setProduct(mWaitPutinRecordEntity.getProductId()); // 产品
             outputDetailEntity.setMaterialBatchNum(mWaitPutinRecordEntity.getProduceBatchNum()); // 生产批默认入库批号
-            outputDetailEntity.setOutputNum(mWaitPutinRecordEntity.getTaskId().getActualPlanNum());  // 默认入库数量为回掺计划数量
+            outputDetailEntity.setOutputNum(mWaitPutinRecordEntity.getTaskId().getActualPlanNum());  // 默认入库数量为计划数量
             outputDetailEntity.setPutinTime(System.currentTimeMillis());  // 报工时间
-            mProduceTaskEndReportDetailAdapter.addData(outputDetailEntity);
-            mProduceTaskEndReportDetailAdapter.notifyItemRangeInserted(mProduceTaskEndReportDetailAdapter.getItemCount() - 1, 1);
-            mProduceTaskEndReportDetailAdapter.notifyItemRangeChanged(mProduceTaskEndReportDetailAdapter.getItemCount() - 1, 1);
 
-            contentView.smoothScrollToPosition(mProduceTaskEndReportDetailAdapter.getItemCount() - 1);
+            if (mProduceTaskEndReportDetailAdapter.getItemCount() <= 0){
+                mProduceTaskEndReportDetailAdapter.addData(outputDetailEntity);
+            }else {
+                mProduceTaskEndReportDetailAdapter.getList().add(0,outputDetailEntity);
+            }
+            mProduceTaskEndReportDetailAdapter.notifyItemRangeInserted(0, 1);
+            mProduceTaskEndReportDetailAdapter.notifyItemRangeChanged(0, 1);
+            contentView.smoothScrollToPosition(0);
 
         });
 
@@ -193,21 +229,69 @@ public class ProduceTaskEndReportActivity extends BaseRefreshRecyclerActivity<Ou
                     bundle.putLong(Constant.IntentKey.WARE_ID, mOutputDetailEntity.getWareId().getId());
                     IntentRouter.go(context, Constant.Router.STORE_SET_LIST_REF, bundle);
                     break;
+                case "itemViewDelBtn":
+                    mProduceTaskEndReportDetailAdapter.getList().remove(obj);
+                    mProduceTaskEndReportDetailAdapter.notifyItemRangeRemoved(position, 1);
+                    mProduceTaskEndReportDetailAdapter.notifyItemRangeChanged(position, mProduceTaskEndReportDetailAdapter.getItemCount() - position);
+                    if (mOutputDetailEntity.getId() != null) {
+                        dgDeletedIds += mOutputDetailEntity.getId() + ",";
+                    }
+                    break;
                 default:
             }
         });
+        RxView.clicks(saveBtn)
+                .throttleFirst(200, TimeUnit.MILLISECONDS)
+                .subscribe(new Consumer<Object>() {
+                    @Override
+                    public void accept(Object o) throws Exception {
+                        saveReport();
+                    }
+                });
         RxView.clicks(submitBtn)
                 .throttleFirst(200, TimeUnit.MILLISECONDS)
                 .subscribe(new Consumer<Object>() {
                     @Override
-                     public void accept(Object o) throws Exception {
+                    public void accept(Object o) throws Exception {
                         submitReport();
                     }
                 });
     }
 
+    private void saveReport() {
+        if (checkSubmit()) {
+            return;
+        }
+        onLoading(getString(R.string.wom_dealing));
+        for (OutputDetailEntity outputDetailEntity : mProduceTaskEndReportDetailAdapter.getList()) {
+            // 尾料处理方式
+            if (outputDetailEntity.getRemainNum() == null || outputDetailEntity.getRemainNum().floatValue() == 0) {
+                outputDetailEntity.setRemainOperate(new SystemCodeEntity(WomConstant.SystemCode.WOM_remainOperate_03));
+            } else {
+                outputDetailEntity.setRemainOperate(new SystemCodeEntity(WomConstant.SystemCode.WOM_remainOperate_01));
+            }
+        }
+        ProduceEndTaskDTO produceEndTaskDTO = new ProduceEndTaskDTO();
+        produceEndTaskDTO.setOperateType("save");
+        produceEndTaskDTO.setIds2del("");
+        produceEndTaskDTO.setViewCode("WOM_1.0.0_procReport_outPutCommonTaskEdit");
+        produceEndTaskDTO.setWorkFlowVar(new WorkFlowVar());
+        produceEndTaskDTO.setProcReport(mWaitPutinRecordEntity.getProcReportId());
+
+        ProduceEndTaskDTO.DgListEntity dgListEntity = new ProduceEndTaskDTO.DgListEntity();
+        dgListEntity.setDg(GsonUtil.gsonStringSerializeNulls(mProduceTaskEndReportDetailAdapter.getList()));
+        produceEndTaskDTO.setDgList(dgListEntity);
+
+        ProduceEndTaskDTO.DgDeletedIdsEntity dgDeletedIdsEntity = new ProduceEndTaskDTO.DgDeletedIdsEntity();
+        dgDeletedIdsEntity.setDg(TextUtils.isEmpty(dgDeletedIds) ? null : dgDeletedIds);
+        produceEndTaskDTO.setDgDeletedIds(dgDeletedIdsEntity);
+
+        presenterRouter.create(ProduceEndTaskAPI.class).save(mWaitPutinRecordEntity.getProcReportId().getId(), produceEndTaskDTO);
+    }
+
     /**
      * 扫描功能：红外、摄像头扫描监听事件
+     *
      * @param codeResultEvent
      */
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -216,8 +300,10 @@ public class ProduceTaskEndReportActivity extends BaseRefreshRecyclerActivity<Ou
             QrCodeEntity qrCodeEntity = MaterQRUtil.getQRCode(context, codeResultEvent.scanResult);
             if (qrCodeEntity != null && qrCodeEntity.getType() == 1) {
                 OutputDetailEntity outputDetailEntity = new OutputDetailEntity();
-                // 物料
-                outputDetailEntity.setProduct(mWaitPutinRecordEntity.getTaskActiveId().getMaterialId());
+                // 产品
+                outputDetailEntity.setProduct(mWaitPutinRecordEntity.getProductId());
+                outputDetailEntity.setMaterialBatchNum(mWaitPutinRecordEntity.getProduceBatchNum()); // 生产批默认入库批号
+                outputDetailEntity.setOutputNum(mWaitPutinRecordEntity.getTaskId().getActualPlanNum());  // 默认入库数量为计划数量
                 // 报工时间
                 outputDetailEntity.setPutinTime(System.currentTimeMillis());
                 outputDetailEntity.setPutinEndTime(outputDetailEntity.getPutinTime());
@@ -227,40 +313,58 @@ public class ProduceTaskEndReportActivity extends BaseRefreshRecyclerActivity<Ou
                 vesselEntity.setCode(qrCodeEntity.getCode());
                 outputDetailEntity.setVessel(vesselEntity);
 
-                mProduceTaskEndReportDetailAdapter.addData(outputDetailEntity);
-                mProduceTaskEndReportDetailAdapter.notifyItemRangeInserted(mProduceTaskEndReportDetailAdapter.getItemCount() - 1, 1);
-                mProduceTaskEndReportDetailAdapter.notifyItemRangeChanged(mProduceTaskEndReportDetailAdapter.getItemCount() - 1, 1);
-                contentView.smoothScrollToPosition(mProduceTaskEndReportDetailAdapter.getItemCount() - 1);
+                if (mProduceTaskEndReportDetailAdapter.getItemCount() <= 0){
+                    mProduceTaskEndReportDetailAdapter.addData(outputDetailEntity);
+                }else {
+                    mProduceTaskEndReportDetailAdapter.getList().add(0,outputDetailEntity);
+                }
+                mProduceTaskEndReportDetailAdapter.notifyItemRangeInserted(0, 1);
+                mProduceTaskEndReportDetailAdapter.notifyItemRangeChanged(0, 1);
+                contentView.smoothScrollToPosition(0);
             }
         }
     }
+
     /**
-     * @author zhangwenshuai1 2020/4/2
      * @param
      * @return
+     * @author zhangwenshuai1 2020/4/2
      * @description 报工
-     *
      */
     private void submitReport() {
-        if (checkSubmit()){
+        if (checkSubmit()) {
             return;
         }
-        onLoading(getString(R.string.wom_dealing));
+        CustomDialog customDialog = new CustomDialog(context)
+                .layout(R.layout.wom_dialog_end_confirm, DisplayUtil.getScreenWidth(context) * 4 / 5, ViewGroup.LayoutParams.WRAP_CONTENT);
+        customDialog.getDialog().getWindow().setBackgroundDrawableResource(R.color.transparent);
+        customDialog.getDialog().setCanceledOnTouchOutside(true);
 
-        for (OutputDetailEntity outputDetailEntity : mProduceTaskEndReportDetailAdapter.getList()) {
-            // 尾料处理方式
-            if (outputDetailEntity.getRemainNum() == null || outputDetailEntity.getRemainNum().floatValue() == 0) {
-                outputDetailEntity.setRemainOperate(new SystemCodeEntity(WomConstant.SystemCode.WOM_remainOperate_03));
-            } else {
-                outputDetailEntity.setRemainOperate(new SystemCodeEntity(WomConstant.SystemCode.WOM_remainOperate_01));
-            }
-        }
-        presenterRouter.create(ProduceTaskOperateAPI.class).operateProduceTask(mWaitPutinRecordEntity.getId(),"stop",mProduceTaskEndReportDetailAdapter.getList());
+        customDialog.bindView(R.id.tipContentTv, context.getResources().getString(R.string.wom_end_task_and_report))
+                .bindClickListener(R.id.cancelTv, null, true)
+                .bindClickListener(R.id.confirmTv, v -> {
+                    onLoading(getString(R.string.wom_dealing));
+
+                    for (OutputDetailEntity outputDetailEntity : mProduceTaskEndReportDetailAdapter.getList()) {
+                        // 尾料处理方式
+                        if (outputDetailEntity.getRemainNum() == null || outputDetailEntity.getRemainNum().floatValue() == 0) {
+                            outputDetailEntity.setRemainOperate(new SystemCodeEntity(WomConstant.SystemCode.WOM_remainOperate_03));
+                        } else {
+                            outputDetailEntity.setRemainOperate(new SystemCodeEntity(WomConstant.SystemCode.WOM_remainOperate_01));
+                        }
+                    }
+
+                    presenterRouter.create(ProduceTaskOperateAPI.class).operateProduceTask(mWaitPutinRecordEntity.getId(), "stop", mProduceTaskEndReportDetailAdapter.getList());
+                }, true)
+                .show();
 
     }
 
     public boolean checkSubmit() {
         List<OutputDetailEntity> list = mProduceTaskEndReportDetailAdapter.getList();
+        if (saveOutputDetailEntityList != null){
+            list.addAll(saveOutputDetailEntityList);
+        }
         if (list == null || list.size() <= 0) {
             ToastUtils.show(context, "请添加报工明细");
             return true;
@@ -323,7 +427,7 @@ public class ProduceTaskEndReportActivity extends BaseRefreshRecyclerActivity<Ou
     public void getEventPost(SelectDataEvent selectDataEvent) {
         if (selectDataEvent.getEntity() instanceof WarehouseEntity) {
             WarehouseEntity warehouseEntity = (WarehouseEntity) selectDataEvent.getEntity();
-            if (mOutputDetailEntity.getWareId() != null && !warehouseEntity.getId().equals(mOutputDetailEntity.getWareId().getId())){
+            if (mOutputDetailEntity.getWareId() != null && !warehouseEntity.getId().equals(mOutputDetailEntity.getWareId().getId())) {
                 mOutputDetailEntity.setStoreId(null);
             }
             mOutputDetailEntity.setWareId(warehouseEntity);
@@ -333,4 +437,32 @@ public class ProduceTaskEndReportActivity extends BaseRefreshRecyclerActivity<Ou
         mProduceTaskEndReportDetailAdapter.notifyItemRangeChanged(mCurrentPosition, 1);
     }
 
+    @Override
+    public void saveSuccess(BAP5CommonEntity entity) {
+        onLoadSuccess(context.getResources().getString(R.string.wom_dealt_success));
+        refreshListController.refreshBegin();
+    }
+
+    @Override
+    public void saveFailed(String errorMsg) {
+        onLoadFailed(ErrorMsgHelper.msgParse(errorMsg));
+    }
+
+    @Override
+    public void listSuccess(BAP5CommonEntity entity) {
+        if (mProduceTaskEndReportDetailAdapter.getList() != null){
+            mProduceTaskEndReportDetailAdapter.getList().clear();
+        }
+        refreshListController.refreshComplete(mProduceTaskEndReportDetailAdapter.getList());
+
+        // 已保存数据另外窗口展示
+        CommonBAPListEntity commonBAPListEntity = GsonUtil.gsonToBean(GsonUtil.gsonString(entity.data), CommonBAPListEntity.class);
+        saveOutputDetailEntityList = GsonUtil.jsonToList(GsonUtil.gsonString((Object) commonBAPListEntity.result), OutputDetailEntity.class);
+    }
+
+    @Override
+    public void listFailed(String errorMsg) {
+        refreshListController.refreshComplete();
+        ToastUtils.show(context, ErrorMsgHelper.msgParse(errorMsg));
+    }
 }

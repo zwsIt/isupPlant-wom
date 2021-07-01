@@ -99,7 +99,7 @@ public class ScanReplenishActivity extends BaseControllerActivity implements Rep
     @Override
     protected void initData() {
         super.initData();
-        getController(CommonScanController.class).openCameraScan(this.getClass().getSimpleName());
+//        getController(CommonScanController.class).openCameraScan(this.getClass().getSimpleName());
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)

@@ -28,9 +28,31 @@
                 android:layout_marginLeft="@dimen/dp_23"
                 android:text="@string/batch_bucket_info"/>
         </LinearLayout>
-<!--        <RelativeLayout-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="wrap_content">-->
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <com.supcon.mes.mbap.view.CustomTextView
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/dp_40"
+                android:paddingStart="@dimen/dp_12"
+                android:paddingEnd="@dimen/dp_12"
+                android:id="@+id/bucketCode"
+                android:tag="bucketCode"
+                app:key="@string/batch_bucket_code"
+                app:key_size="14"
+                app:content_color="@color/dark_text"
+                app:editable="false"/>
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_alignParentEnd="true"
+                android:layout_marginEnd="@dimen/dp_20"
+                android:id="@+id/bucketPassIv"
+                android:tag="bucketPassIv"
+                android:src="@drawable/replenish_ic_no_pass"
+                android:visibility="visible"/>
+        </RelativeLayout>
             <com.supcon.mes.mbap.view.CustomTextView
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/dp_40"
@@ -42,15 +64,6 @@
                 app:key_size="14"
                 app:content_color="@color/dark_text"
                 app:editable="false"/>
-<!--            <ImageView-->
-<!--                android:layout_width="wrap_content"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:layout_centerVertical="true"-->
-<!--                android:layout_alignParentEnd="true"-->
-<!--                android:layout_marginEnd="@dimen/dp_20"-->
-<!--                android:src="@drawable/replenish_ic_no_pass"-->
-<!--                android:visibility="visible"/>-->
-<!--        </RelativeLayout>-->
         <com.supcon.mes.mbap.view.CustomTextView
             android:layout_width="match_parent"
             android:layout_height="@dimen/dp_40"

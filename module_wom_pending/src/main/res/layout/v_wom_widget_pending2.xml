@@ -38,7 +38,7 @@
         android:id="@+id/noDataTv"
         android:tag="noDataTv"
         android:layout_marginTop="@dimen/dp_10"
-        android:drawableTop="@drawable/ic_nodata_new"
+        android:drawableTop="@drawable/ic_nodata_new2"
         android:drawablePadding="@dimen/dp_10"
         android:text="暂无数据"
         android:gravity="center_horizontal"

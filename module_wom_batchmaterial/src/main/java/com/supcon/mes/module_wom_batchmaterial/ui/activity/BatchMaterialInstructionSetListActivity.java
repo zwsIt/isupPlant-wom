@@ -1,11 +1,14 @@
 package com.supcon.mes.module_wom_batchmaterial.ui.activity;
 
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.app.annotation.BindByTag;
 import com.app.annotation.Controller;
@@ -13,7 +16,10 @@ import com.app.annotation.apt.Router;
 import com.jakewharton.rxbinding2.view.RxView;
 import com.jakewharton.rxbinding2.widget.RxTextView;
 import com.supcon.common.view.base.activity.BaseControllerActivity;
+import com.supcon.common.view.util.DisplayUtil;
+import com.supcon.common.view.util.LogUtil;
 import com.supcon.common.view.util.StatusBarUtils;
+import com.supcon.common.view.util.ToastUtils;
 import com.supcon.mes.mbap.view.CustomHorizontalSearchTitleBar;
 import com.supcon.mes.mbap.view.CustomTab;
 import com.supcon.mes.mbap.view.NoScrollViewPager;
@@ -25,6 +31,7 @@ import com.supcon.mes.module_wom_batchmaterial.R;
 import com.supcon.mes.module_wom_batchmaterial.constant.BmConstant;
 import com.supcon.mes.module_wom_batchmaterial.model.bean.BatchMaterialSetEntity;
 import com.supcon.mes.module_wom_batchmaterial.ui.fragment.BatchMaterialEditSetFragment;
+import com.supcon.mes.module_wom_batchmaterial.ui.fragment.BatchMaterialNextAreaSetFragment;
 import com.supcon.mes.module_wom_batchmaterial.ui.fragment.BatchMaterialScanSetFragment;
 
 import java.util.concurrent.TimeUnit;
@@ -40,7 +47,6 @@ import io.reactivex.schedulers.Schedulers;
  * Desc 配料指令集list
  */
 @Router(value = Constant.AppCode.WOM_BATCH_MATERIAL_SET)
-//@Controller(value = {WorkFlowButtonInfoController.class})
 public class BatchMaterialInstructionSetListActivity extends BaseControllerActivity {
 
     @BindByTag("searchTitleBar")
@@ -51,6 +57,7 @@ public class BatchMaterialInstructionSetListActivity extends BaseControllerActiv
     NoScrollViewPager viewPager;
     private BatchMaterialEditSetFragment mBatchMaterialEditSetFragment;
     private BatchMaterialScanSetFragment mBatchMaterialScanSetFragment;
+    private BatchMaterialNextAreaSetFragment mBatchMaterialNextAreaSetFragment;
 
     @Override
     protected int getLayoutID() {
@@ -77,14 +84,21 @@ public class BatchMaterialInstructionSetListActivity extends BaseControllerActiv
     private void initTab() {
         customTab.addTab(context.getResources().getString(R.string.batch_material_executing));
         customTab.addTab(context.getResources().getString(R.string.batch_material_scan_transport));
+        customTab.addTab(context.getResources().getString(R.string.batch_material_transport_next_area));
         customTab.setCurrentTab(0);
+        viewPager.setOffscreenPageLimit(3);
+//        customTab.setTabNum(1,10);
+//        LinearLayout tabLayout = customTab.findViewById(R.id.tabLayout);
+//        TextView tab = (TextView) tabLayout.getChildAt(1);
+//        tab.setCompoundDrawablesWithIntrinsicBounds(0,0,R.drawable.ic_necessary,0);
+//        tab.setPadding(0,0, DisplayUtil.dip2px(100,context),0);
     }
 
     private void initViewPager() {
         mBatchMaterialEditSetFragment = new BatchMaterialEditSetFragment();
         mBatchMaterialScanSetFragment = new BatchMaterialScanSetFragment();
+        mBatchMaterialNextAreaSetFragment = new BatchMaterialNextAreaSetFragment();
         viewPager.setAdapter(new InnerFragmentPagerAdapter(getSupportFragmentManager()));
-        viewPager.setCurrentItem(0);
     }
 
     @Override
@@ -113,6 +127,8 @@ public class BatchMaterialInstructionSetListActivity extends BaseControllerActiv
                         mBatchMaterialEditSetFragment.search(charSequence.toString());
                     }else if (customTab.getCurrentPosition() == 1){
                         mBatchMaterialScanSetFragment.search();
+                    }else if (customTab.getCurrentPosition() == 2){
+                        mBatchMaterialNextAreaSetFragment.search();
                     }
                 });
         customTab.setOnTabChangeListener(current -> viewPager.setCurrentItem(current));
@@ -127,12 +143,6 @@ public class BatchMaterialInstructionSetListActivity extends BaseControllerActiv
                 if (customTab.getCurrentPosition() != i){
                     customTab.setCurrentTab(i);
                 }
-
-                if (i == 1){
-                    searchTitleBar.rightBtn().setImageResource(R.drawable.ic_scan);
-                }else {
-                    searchTitleBar.rightBtn().setImageResource(R.drawable.ic_btn_add);
-                }
             }
 
             @Override
@@ -140,6 +150,21 @@ public class BatchMaterialInstructionSetListActivity extends BaseControllerActiv
 
             }
         });
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        if (intent.getBooleanExtra(BmConstant.IntentKey.BATCH_AREA_AUTO,false)){
+            viewPager.setCurrentItem(1);
+        }else {
+            viewPager.setCurrentItem(0);
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
     }
 
     public String getSearch(){
@@ -154,6 +179,14 @@ public class BatchMaterialInstructionSetListActivity extends BaseControllerActiv
         return customTab.getCurrentPosition();
     }
 
+    /**
+     * 设置扫码转运代办数量
+     * @param size
+     */
+    public void setPendingNum(int size) {
+        customTab.setTabNum(1,size);
+    }
+
     private class InnerFragmentPagerAdapter extends FragmentPagerAdapter {
 
         public InnerFragmentPagerAdapter(FragmentManager fm) {
@@ -163,6 +196,8 @@ public class BatchMaterialInstructionSetListActivity extends BaseControllerActiv
         @Override
         public Fragment getItem(int i) {
             switch (i) {
+                case 2:
+                    return mBatchMaterialNextAreaSetFragment;
                 case 1:
                     return mBatchMaterialScanSetFragment;
                 case 0:
@@ -174,7 +209,7 @@ public class BatchMaterialInstructionSetListActivity extends BaseControllerActiv
 
         @Override
         public int getCount() {
-            return 2;
+            return 3;
         }
     }
 

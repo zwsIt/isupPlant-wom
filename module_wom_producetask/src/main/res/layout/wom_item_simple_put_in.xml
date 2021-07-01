@@ -51,6 +51,31 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+                <TextView
+                    android:layout_width="80dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:gravity="center_vertical"
+                    android:id="@+id/factoryModelUnitTv"
+                    android:tag="factoryModelUnitTv"
+                    android:text="@string/wom_equipment_name"
+                    android:textColor="@color/titleTextColor"
+                    android:drawableStart="@drawable/ic_factory_model_unit"
+                    android:drawablePadding="@dimen/dp_5"/>
+                <com.supcon.mes.mbap.view.CustomTextView
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/dp_36"
+                    android:id="@+id/factoryModelUnitCustomTv"
+                    android:tag="factoryModelUnitCustomTv"
+                    app:key_width="0dp"
+                    app:content_size="15"
+                    app:content_color="@color/dark_text"/>
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
                 android:id="@+id/numLl"
                 android:tag="numLl"
                 android:gravity="center_vertical"

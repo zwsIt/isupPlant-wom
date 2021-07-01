@@ -60,19 +60,54 @@
 
         </LinearLayout>
 <!--    </ScrollView>-->
-    <Button
+<!--    <Button-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="@dimen/dp_40"-->
+<!--        android:layout_marginStart="@dimen/dp_12"-->
+<!--        android:layout_marginEnd="@dimen/dp_12"-->
+<!--        android:layout_marginBottom="@dimen/dp_5"-->
+<!--        android:layout_marginTop="@dimen/dp_5"-->
+<!--        android:layout_alignParentBottom="true"-->
+<!--        android:background="@color/themeColor"-->
+<!--        android:id="@+id/submitBtn"-->
+<!--        android:tag="submitBtn"-->
+<!--        android:text="@string/wom_submit"-->
+<!--        android:textColor="@color/white"-->
+<!--        android:textSize="@dimen/fontSize_16sp"/>-->
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="@dimen/dp_40"
-        android:layout_marginStart="@dimen/dp_12"
-        android:layout_marginEnd="@dimen/dp_12"
-        android:layout_marginBottom="@dimen/dp_5"
-        android:layout_marginTop="@dimen/dp_5"
+        android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:background="@color/themeColor"
-        android:id="@+id/submitBtn"
-        android:tag="submitBtn"
-        android:text="@string/wom_submit"
-        android:textColor="@color/white"
-        android:textSize="@dimen/fontSize_16sp"/>
+        android:orientation="horizontal"
+        android:id="@+id/btnLl">
+        <Button
+            android:layout_width="0dp"
+            android:layout_height="@dimen/dp_40"
+            android:layout_weight="1"
+            android:layout_marginStart="@dimen/dp_12"
+            android:layout_marginEnd="@dimen/dp_12"
+            android:layout_marginBottom="@dimen/dp_5"
+            android:layout_marginTop="@dimen/dp_5"
+            android:background="@color/themeColor"
+            android:id="@+id/saveBtn"
+            android:tag="saveBtn"
+            android:text="@string/save"
+            android:textColor="@color/white"
+            android:textSize="@dimen/fontSize_16sp"/>
+        <Button
+            android:layout_width="0dp"
+            android:layout_height="@dimen/dp_40"
+            android:layout_weight="1"
+            android:layout_marginStart="@dimen/dp_12"
+            android:layout_marginEnd="@dimen/dp_12"
+            android:layout_marginBottom="@dimen/dp_5"
+            android:layout_marginTop="@dimen/dp_5"
+            android:background="@color/red"
+            android:id="@+id/submitBtn"
+            android:tag="submitBtn"
+            android:text="@string/wom_end"
+            android:textColor="@color/white"
+            android:textSize="@dimen/fontSize_16sp"/>
+    </LinearLayout>
 
 </RelativeLayout>

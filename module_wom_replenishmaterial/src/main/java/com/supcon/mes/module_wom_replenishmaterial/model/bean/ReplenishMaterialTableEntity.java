@@ -2,6 +2,7 @@ package com.supcon.mes.module_wom_replenishmaterial.model.bean;
 
 import com.supcon.common.com_http.BaseEntity;
 import com.supcon.mes.middleware.model.bean.Good;
+import com.supcon.mes.middleware.model.bean.ObjectEntity;
 import com.supcon.mes.middleware.model.bean.PendingEntity;
 import com.supcon.mes.middleware.model.bean.StaffEntity;
 import com.supcon.mes.middleware.model.bean.SystemCodeEntity;
@@ -43,6 +44,14 @@ public class ReplenishMaterialTableEntity extends BaseEntity {
      * 节点设备
      */
     private AssociatedEquipmentEntity equipment;
+    /**
+     * 风送口
+     */
+    private ObjectEntity airSupplyPor;
+    /**
+     * 上料点
+     */
+    private ObjectEntity feedPoint;
     /**
      * 状态
      */
@@ -104,6 +113,22 @@ public class ReplenishMaterialTableEntity extends BaseEntity {
      *容器扫描标识
      */
     private boolean vesselScanFlag;
+
+    public ObjectEntity getAirSupplyPor() {
+        return airSupplyPor;
+    }
+
+    public void setAirSupplyPor(ObjectEntity airSupplyPor) {
+        this.airSupplyPor = airSupplyPor;
+    }
+
+    public ObjectEntity getFeedPoint() {
+        return feedPoint;
+    }
+
+    public void setFeedPoint(ObjectEntity feedPoint) {
+        this.feedPoint = feedPoint;
+    }
 
     public boolean isEqScanFlag() {
         return eqScanFlag;

@@ -67,16 +67,19 @@ public class BatchMaterialInstructionEditPresenter extends BatchMaterialInstruct
         mCompositeSubscription.add(
                 BmHttpClient.batchMaterialInstructionSubmit(batchInstructionPartEntities)
                         .onErrorReturn(throwable -> {
-                            BAP5CommonEntity<BapResultEntity> bap5CommonEntity = new BAP5CommonEntity<>();
+                            BAP5CommonEntity<Boolean> bap5CommonEntity = new BAP5CommonEntity<>();
                             bap5CommonEntity.msg = HttpErrorReturnUtil.getErrorInfo(throwable);
                             bap5CommonEntity.success = false;
                             return bap5CommonEntity;
                         })
-                        .subscribe(bapResultEntityBAP5CommonEntity -> {
-                            if (bapResultEntityBAP5CommonEntity.success){
-                                getView().submitSuccess(bapResultEntityBAP5CommonEntity);
-                            }else {
-                                getView().submitFailed(bapResultEntityBAP5CommonEntity.msg);
+                        .subscribe(new Consumer<BAP5CommonEntity<Boolean>>() {
+                            @Override
+                            public void accept(BAP5CommonEntity<Boolean> booleanBAP5CommonEntity) throws Exception {
+                                if (booleanBAP5CommonEntity.success){
+                                    getView().submitSuccess(booleanBAP5CommonEntity);
+                                }else {
+                                    getView().submitFailed(booleanBAP5CommonEntity.msg);
+                                }
                             }
                         })
         );

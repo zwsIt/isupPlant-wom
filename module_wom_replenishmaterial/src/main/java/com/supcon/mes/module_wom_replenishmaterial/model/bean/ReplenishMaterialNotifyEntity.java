@@ -45,6 +45,19 @@ public class ReplenishMaterialNotifyEntity extends BaseEntity {
      */
     private Long createTime;
 
+    /**
+     * 下达数量
+     */
+    private BigDecimal assignNumber;
+
+    public BigDecimal getAssignNumber() {
+        return assignNumber;
+    }
+
+    public void setAssignNumber(BigDecimal assignNumber) {
+        this.assignNumber = assignNumber;
+    }
+
     public Long getCreateTime() {
         return createTime;
     }

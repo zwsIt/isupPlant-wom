@@ -42,6 +42,7 @@ import com.supcon.mes.middleware.controller.GetPowerCodeController;
 import com.supcon.mes.middleware.model.bean.BAP5CommonEntity;
 import com.supcon.mes.middleware.model.bean.CommonBAPListEntity;
 import com.supcon.mes.middleware.model.bean.MaterialQRCodeEntity;
+import com.supcon.mes.middleware.model.bean.QrCodeEntity;
 import com.supcon.mes.middleware.model.bean.SystemCodeEntity;
 import com.supcon.mes.middleware.model.bean.wom.StoreSetEntity;
 import com.supcon.mes.middleware.model.bean.wom.WarehouseEntity;
@@ -296,22 +297,26 @@ public class PutInActivityReportActivity extends BaseRefreshRecyclerActivity<Put
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onCodeReceiver(CodeResultEvent codeResultEvent) {
         if (context.getClass().getSimpleName().equals(codeResultEvent.scanTag)) {
-            MaterialQRCodeEntity materialQRCodeEntity = MaterQRUtil.materialQRCode(context, codeResultEvent.scanResult);
+            QrCodeEntity materialQRCodeEntity = MaterQRUtil.getQRCode(context, codeResultEvent.scanResult);
             if (materialQRCodeEntity == null) return;
-            if (materialQRCodeEntity.isRequest()) {
-                if ("remain".equals(materialQRCodeEntity.getType())) { // 尾料
-                    onLoading(context.getResources().getString(R.string.loading));
-                    presenterRouter.create(RemainQRCodeAPI.class).getMaterialByQR(materialQRCodeEntity.getPK());
-                } else {
-                    //TODO...
-                    ToastUtils.show(context, context.getResources().getString(R.string.wom_no_realize));
-                }
-            } else {
+//            if (materialQRCodeEntity.isRequest()) {
+//                if ("remain".equals(materialQRCodeEntity.getType())) { // 尾料
+//                    onLoading(context.getResources().getString(R.string.loading));
+//                    presenterRouter.create(RemainQRCodeAPI.class).getMaterialByQR(materialQRCodeEntity.getPK());
+//                } else {
+//                    //TODO...
+//                    ToastUtils.show(context, context.getResources().getString(R.string.wom_no_realize));
+//                }
+//            } else {
+            if (materialQRCodeEntity.getType() == 2){
                 if (checkMaterial(materialQRCodeEntity)) {
                     return;
                 }
                 addMaterialReport(materialQRCodeEntity, null);
+            }else {
+                ToastUtils.show(context, getResources().getString(R.string.produce_please_scan_material));
             }
+//            }
         }
 
     }
@@ -322,7 +327,7 @@ public class PutInActivityReportActivity extends BaseRefreshRecyclerActivity<Put
      * @param materialQRCodeEntity
      * @param remainMaterialEntity
      */
-    private void addMaterialReport(MaterialQRCodeEntity materialQRCodeEntity, RemainMaterialEntity remainMaterialEntity) {
+    private void addMaterialReport(QrCodeEntity materialQRCodeEntity, RemainMaterialEntity remainMaterialEntity) {
         PutInDetailEntity putInDetailEntity = new PutInDetailEntity();
         putInDetailEntity.setMaterialId(mWaitPutinRecordEntity.getTaskActiveId().getMaterialId()); // 物料
         putInDetailEntity.setPutinTime(System.currentTimeMillis());  // 投料时间
@@ -339,13 +344,13 @@ public class PutInActivityReportActivity extends BaseRefreshRecyclerActivity<Put
             addItem(putInDetailEntity);
         } else {
             if (materialQRCodeEntity != null) { // 扫描物料
-                putInDetailEntity.setMaterialBatchNum(materialQRCodeEntity.getMaterialBatchNo());
+                putInDetailEntity.setMaterialBatchNum(materialQRCodeEntity.getBatch());
                 putInDetailEntity.setPutinNum(materialQRCodeEntity.getNum());
                 putInDetailEntity.setSpecificationNum(materialQRCodeEntity.getNum());
-                putInDetailEntity.setWareId(materialQRCodeEntity.getFromWare());
-                putInDetailEntity.setStoreId(materialQRCodeEntity.getFromStore());
+//                putInDetailEntity.setWareId(materialQRCodeEntity.getFromWare());
+//                putInDetailEntity.setStoreId(materialQRCodeEntity.getFromStore());
 
-                BigDecimal totalNum = materialQRCodeEntity.getNum();
+                BigDecimal totalNum = materialQRCodeEntity.getNum() == null ?  new BigDecimal(0) : materialQRCodeEntity.getNum();
                 for (PutInDetailEntity detailEntity : mPutInReportDetailAdapter.getList()) {
                     if (detailEntity.getPutinNum() != null) {
                         totalNum = totalNum.add(detailEntity.getPutinNum());
@@ -375,10 +380,14 @@ public class PutInActivityReportActivity extends BaseRefreshRecyclerActivity<Put
      * @description 执行添加
      */
     private void addItem(PutInDetailEntity putInDetailEntity) {
-        mPutInReportDetailAdapter.addData(putInDetailEntity);
-        mPutInReportDetailAdapter.notifyItemRangeInserted(mPutInReportDetailAdapter.getItemCount() - 1, 1);
-        mPutInReportDetailAdapter.notifyItemRangeChanged(mPutInReportDetailAdapter.getItemCount() - 1, 1);
-        contentView.smoothScrollToPosition(mPutInReportDetailAdapter.getItemCount() - 1);
+        if (mPutInReportDetailAdapter.getList() == null || mPutInReportDetailAdapter.getList().size() <= 0){
+            mPutInReportDetailAdapter.addData(putInDetailEntity);
+        }else {
+            mPutInReportDetailAdapter.getList().add(0,putInDetailEntity);
+        }
+        mPutInReportDetailAdapter.notifyItemRangeInserted(0, 1);
+        mPutInReportDetailAdapter.notifyItemRangeChanged(0, 1);
+        contentView.smoothScrollToPosition(0);
     }
 
     /**
@@ -513,19 +522,19 @@ public class PutInActivityReportActivity extends BaseRefreshRecyclerActivity<Put
     public void getMaterialByQRSuccess(BAP5CommonEntity entity) {
         onLoadSuccess();
         MaterialQRCodeEntity materialQRCodeEntity = (MaterialQRCodeEntity) entity.data;
-        if (checkMaterial(materialQRCodeEntity)) return;
+//        if (checkMaterial(materialQRCodeEntity)) return;
 
-        if ("remain".equals(materialQRCodeEntity.getType())) {
-            RemainMaterialEntity remainMaterialEntity = new RemainMaterialEntity();
-            remainMaterialEntity.setId(materialQRCodeEntity.getPK());
-            remainMaterialEntity.setMaterial(materialQRCodeEntity.getMaterial());
-            remainMaterialEntity.setBatchText(materialQRCodeEntity.getMaterialBatchNo());
-            remainMaterialEntity.setRemainNum(materialQRCodeEntity.getNum());
-            remainMaterialEntity.setWareId(materialQRCodeEntity.getFromWare());
-            remainMaterialEntity.setStoreId(materialQRCodeEntity.getFromStore());
-
-            addMaterialReport(null, remainMaterialEntity);
-        }
+//        if ("remain".equals(materialQRCodeEntity.getType())) {
+//            RemainMaterialEntity remainMaterialEntity = new RemainMaterialEntity();
+//            remainMaterialEntity.setId(materialQRCodeEntity.getPK());
+//            remainMaterialEntity.setMaterial(materialQRCodeEntity.getMaterial());
+//            remainMaterialEntity.setBatchText(materialQRCodeEntity.getMaterialBatchNo());
+//            remainMaterialEntity.setRemainNum(materialQRCodeEntity.getNum());
+//            remainMaterialEntity.setWareId(materialQRCodeEntity.getFromWare());
+//            remainMaterialEntity.setStoreId(materialQRCodeEntity.getFromStore());
+//
+//            addMaterialReport(null, remainMaterialEntity);
+//        }
     }
 
     @Override
@@ -533,12 +542,12 @@ public class PutInActivityReportActivity extends BaseRefreshRecyclerActivity<Put
         onLoadFailed(errorMsg);
     }
 
-    private boolean checkMaterial(MaterialQRCodeEntity materialQRCodeEntity) {
-        if (!materialQRCodeEntity.getMaterial().getCode().equals(mWaitPutinRecordEntity.getTaskActiveId().getMaterialId().getCode())) {
+    private boolean checkMaterial(QrCodeEntity materialQRCodeEntity) {
+        if (!materialQRCodeEntity.getCode().equals(mWaitPutinRecordEntity.getTaskActiveId().getMaterialId().getCode())) {
             ToastUtils.show(context, context.getResources().getString(R.string.wom_scan_material_error));
             return true;
         }
-        if (!TextUtils.isEmpty(mWaitPutinRecordEntity.getTaskActiveId().getMaterialBatchNum()) && !materialQRCodeEntity.getMaterialBatchNo().equals(mWaitPutinRecordEntity.getTaskActiveId().getMaterialBatchNum())) {
+        if (!TextUtils.isEmpty(mWaitPutinRecordEntity.getTaskActiveId().getMaterialBatchNum()) && !materialQRCodeEntity.getBatch().equals(mWaitPutinRecordEntity.getTaskActiveId().getMaterialBatchNum())) {
             ToastUtils.show(context, context.getResources().getString(R.string.wom_scan_batchNo_error));
             return true;
         }

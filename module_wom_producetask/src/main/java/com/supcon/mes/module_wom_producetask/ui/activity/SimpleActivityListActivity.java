@@ -10,10 +10,12 @@ import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.app.annotation.BindByTag;
+import com.app.annotation.Controller;
 import com.app.annotation.Presenter;
 import com.app.annotation.apt.Router;
 import com.jakewharton.rxbinding2.view.RxView;
@@ -27,11 +29,14 @@ import com.supcon.mes.mbap.view.CustomImageButton;
 import com.supcon.mes.middleware.constant.Constant;
 import com.supcon.mes.middleware.model.bean.BAP5CommonEntity;
 import com.supcon.mes.middleware.model.bean.CommonBAPListEntity;
+import com.supcon.mes.middleware.model.bean.QrCodeEntity;
 import com.supcon.mes.middleware.model.bean.wom.FactoryModelEntity;
 import com.supcon.mes.middleware.model.event.RefreshEvent;
 import com.supcon.mes.middleware.model.event.SelectDataEvent;
 import com.supcon.mes.middleware.util.EmptyAdapterHelper;
 import com.supcon.mes.middleware.util.ErrorMsgHelper;
+import com.supcon.mes.module_scan.controller.CommonScanController;
+import com.supcon.mes.module_scan.model.event.CodeResultEvent;
 import com.supcon.mes.module_wom_producetask.IntentRouter;
 import com.supcon.mes.module_wom_producetask.R;
 import com.supcon.mes.module_wom_producetask.constant.WomConstant;
@@ -43,6 +48,7 @@ import com.supcon.mes.module_wom_producetask.model.contract.WaitPutinRecordsList
 import com.supcon.mes.module_wom_producetask.presenter.ActivityOperatePresenter;
 import com.supcon.mes.module_wom_producetask.presenter.WaitPutinRecordPresenter;
 import com.supcon.mes.module_wom_producetask.ui.adapter.SimpleActivityListAdapter;
+import com.supcon.mes.module_wom_producetask.util.MaterQRUtil;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -61,6 +67,7 @@ import java.util.concurrent.TimeUnit;
  */
 @Router(value = Constant.Router.WOM_SIMPLE_ACTIVITY_LIST)
 @Presenter(value = {WaitPutinRecordPresenter.class, ActivityOperatePresenter.class})
+@Controller(value = {CommonScanController.class})
 public class SimpleActivityListActivity extends BaseRefreshRecyclerActivity<WaitPutinRecordEntity> implements WaitPutinRecordsListContract.View, ActivityOperateContract.View{
 
     @BindByTag("contentView")
@@ -71,6 +78,8 @@ public class SimpleActivityListActivity extends BaseRefreshRecyclerActivity<Wait
     TextView titleText;
     @BindByTag("rightBtn")
     CustomImageButton rightBtn;
+    @BindByTag("titleSetting")
+    ImageView titleSetting;
 
     private SimpleActivityListAdapter mSimpleActivityListAdapter;
     Map<String, Object> queryParams = new HashMap<>();          // 活动查询
@@ -118,6 +127,12 @@ public class SimpleActivityListActivity extends BaseRefreshRecyclerActivity<Wait
         titleText.setText(getResources().getString(R.string.wom_activity_list));
         rightBtn.setVisibility(View.VISIBLE);
         rightBtn.setImageResource(R.drawable.ic_wts_reference_white);
+
+        if (isPack()){
+            titleSetting.setVisibility(View.VISIBLE);
+            titleSetting.setImageResource(R.drawable.ic_scan);
+        }
+
     }
     @Override
     protected void initData() {
@@ -129,6 +144,9 @@ public class SimpleActivityListActivity extends BaseRefreshRecyclerActivity<Wait
     protected void initListener() {
         super.initListener();
         leftBtn.setOnClickListener(v -> finish());
+        titleSetting.setOnClickListener(v -> {
+            getController(CommonScanController.class).openCameraScan(context.getClass().getSimpleName());
+        });
         RxView.clicks(rightBtn)
                 .throttleFirst(2000, TimeUnit.MILLISECONDS)
                 .subscribe(o->{
@@ -202,6 +220,37 @@ public class SimpleActivityListActivity extends BaseRefreshRecyclerActivity<Wait
             mWaitPutinRecordEntity.getTaskProcessId().setEquipmentId((FactoryModelEntity) selectDataEvent.getEntity());
         }
     }
+    /**
+     * 扫描功能：红外、摄像头扫描监听事件
+     *
+     * @param codeResultEvent
+     */
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onCodeReceiver(CodeResultEvent codeResultEvent) {
+        if (context.getClass().getSimpleName().equals(codeResultEvent.scanTag)) {
+            QrCodeEntity materialQRCodeEntity = MaterQRUtil.getQRCode(context, codeResultEvent.scanResult);
+            if (materialQRCodeEntity == null) return;
+            if (materialQRCodeEntity.getType() == 0){
+                // 包装 机台校验
+                int count = 0;
+                for (WaitPutinRecordEntity waitPutinRecordEntity : mSimpleActivityListAdapter.getList()){
+                    if (materialQRCodeEntity.getCode().equals(waitPutinRecordEntity.getEuqId() == null ? "" : waitPutinRecordEntity.getEuqId().getCode())){
+                       Bundle bundle = new Bundle();
+                        bundle.putSerializable(Constant.IntentKey.WAIT_PUT_RECORD, waitPutinRecordEntity);
+                        IntentRouter.go(context, WomConstant.Router.WOM_PACK_REPORT, bundle);
+                        break;
+                    }
+                    count ++;
+                }
+                if (count == mSimpleActivityListAdapter.getList().size()){
+                    ToastUtils.show(context, getResources().getString(R.string.wom_no_match_pack_machine));
+                }
+            }else {
+                ToastUtils.show(context, getResources().getString(R.string.wom_please_scan_pack_machine_qr));
+            }
+        }
+
+    }
 
     @Override
     public void listWaitPutinRecordsSuccess(CommonBAPListEntity entity) {
@@ -225,5 +274,9 @@ public class SimpleActivityListActivity extends BaseRefreshRecyclerActivity<Wait
     @Override
     public void operateActivityFailed(String errorMsg) {
         onLoadFailed(ErrorMsgHelper.msgParse(errorMsg));
+    }
+
+    public boolean isPack() {
+        return mWaitPutinRecordParam.getTaskId().isNeedPack();
     }
 }

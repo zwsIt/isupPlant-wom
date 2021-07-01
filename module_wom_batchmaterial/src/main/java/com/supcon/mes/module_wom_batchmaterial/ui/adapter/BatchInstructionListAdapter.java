@@ -87,20 +87,17 @@ public class BatchInstructionListAdapter extends BaseListDataRecyclerViewAdapter
             super.initListener();
             RxView.clicks(itemView)
                     .throttleFirst(200, TimeUnit.MILLISECONDS)
-                    .filter(new Predicate<Object>() {
-                        @Override
-                        public boolean test(@NonNull Object o) throws Exception {
-                            return intoIv.getVisibility() == View.VISIBLE;
-                        }
-                    })
-                    .subscribe(new Consumer<Object>() {
-                        @Override
-                        public void accept(Object o) throws Exception {
-                            Bundle bundle = new Bundle();
-                            bundle.putSerializable(BmConstant.IntentKey.BATCH_MATERIAL_INSTRUCTION,getItem(getAdapterPosition()));
-                            bundle.putString(BmConstant.IntentKey.BUCKET_CODE,((BatchInstructionListActivity)context).getBucketCode());
-                            IntentRouter.go(context, Constant.Router.BATCH_MATERIAL_INSTRUCTION_EDIT,bundle);
-                        }
+                    .filter(o -> intoIv.getVisibility() == View.VISIBLE)
+                    .subscribe(o -> {
+                        Bundle bundle = new Bundle();
+                        bundle.putSerializable(BmConstant.IntentKey.BATCH_MATERIAL_INSTRUCTION,getItem(getAdapterPosition()));
+                        bundle.putString(BmConstant.IntentKey.BUCKET_CODE,((BatchInstructionListActivity)context).getBucketCode());
+
+                        // 判断是否有下一个自动配料区
+//                        if (getItem(getAdapterPosition() +1) != null && getItem(getAdapterPosition() +1).getAreaMange().isAutoBurden()){
+//                            bundle.putBoolean(BmConstant.IntentKey.BATCH_AREA_AUTO,true);
+//                        }
+                        IntentRouter.go(context, Constant.Router.BATCH_MATERIAL_INSTRUCTION_EDIT,bundle);
                     });
         }
 
@@ -125,7 +122,7 @@ public class BatchInstructionListAdapter extends BaseListDataRecyclerViewAdapter
             }
 
             index.setText(String.valueOf(data.getPlOrder()));
-            num.setText(/*data.getAreaMange().getName()*/(data.getActualNumber() == null ? "0" : data.getActualNumber()) + "/" + data.getPlanNumber());
+            num.setText("实配/需配：" + (data.getActualNumber() == null ? "0" : data.getActualNumber()) + "/" + data.getPlanNumber());
 
             if (getAdapterPosition() == 0) {
                 itemAreaLineTop.setBackgroundColor(context.getResources().getColor(R.color.white));

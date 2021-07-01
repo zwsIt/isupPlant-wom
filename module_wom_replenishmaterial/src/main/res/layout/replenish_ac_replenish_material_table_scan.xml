@@ -29,7 +29,36 @@
                 app:key="@string/scan_eam"
                 app:key_size="14"
                 app:content_color="@color/dark_text"
-                app:editable="false"/>
+                app:editable="false"
+                android:visibility="gone"/>
+            <com.supcon.mes.mbap.view.CustomTextView
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/dp_40"
+                android:paddingStart="@dimen/dp_12"
+                android:paddingEnd="@dimen/dp_12"
+                app:icon_res="@drawable/ic_into"
+                android:id="@+id/eamAirPort"
+                android:tag="eamAirPort"
+                app:necessary="true"
+                app:key="@string/replenish_air_port"
+                app:key_size="14"
+                app:content_color="@color/dark_text"
+                app:editable="false"
+                android:visibility="gone"/>
+            <com.supcon.mes.mbap.view.CustomTextView
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/dp_40"
+                android:paddingStart="@dimen/dp_12"
+                android:paddingEnd="@dimen/dp_12"
+                app:icon_res="@drawable/ic_into"
+                android:id="@+id/eamLoadPoint"
+                android:tag="eamLoadPoint"
+                app:necessary="true"
+                app:key="@string/replenish_load_point"
+                app:key_size="14"
+                app:content_color="@color/dark_text"
+                app:editable="false"
+                android:visibility="gone"/>
             <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

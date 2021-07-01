@@ -79,7 +79,7 @@ public class ReplenishMaterialNotifyListPresenter extends ReplenishMaterialNotif
         dtoList.toArray(dto);
         HttpClient.submit(dto)
                 .onErrorReturn(throwable -> {
-                    BAP5CommonEntity<BapResultEntity> bap5CommonEntity = new BAP5CommonEntity<>();
+                    BAP5CommonEntity<List<ReplenishMaterialTableEntity>> bap5CommonEntity = new BAP5CommonEntity<>();
                     bap5CommonEntity.success = false;
                     bap5CommonEntity.msg = HttpErrorReturnUtil.getErrorInfo(throwable);
                     return bap5CommonEntity;

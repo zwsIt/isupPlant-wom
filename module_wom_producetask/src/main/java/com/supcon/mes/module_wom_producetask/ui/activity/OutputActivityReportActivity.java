@@ -229,10 +229,7 @@ public class OutputActivityReportActivity extends BaseRefreshRecyclerActivity<Ou
             OutputDetailEntity outputDetailEntity = new OutputDetailEntity();
             outputDetailEntity.setProduct(mWaitPutinRecordEntity.getTaskActiveId().getMaterialId()); // 物料
             outputDetailEntity.setPutinTime(System.currentTimeMillis());  // 投料时间
-            mOutputReportDetailAdapter.addData(outputDetailEntity);
-            mOutputReportDetailAdapter.notifyItemRangeInserted(mOutputReportDetailAdapter.getItemCount() - 1, 1);
-            mOutputReportDetailAdapter.notifyItemRangeChanged(mOutputReportDetailAdapter.getItemCount() - 1, 1);
-            contentView.smoothScrollToPosition(mOutputReportDetailAdapter.getItemCount() - 1);
+            addItem(outputDetailEntity);
         });
         mOutputReportDetailAdapter.setOnItemChildViewClickListener(new OnItemChildViewClickListener() {
             @Override
@@ -300,12 +297,20 @@ public class OutputActivityReportActivity extends BaseRefreshRecyclerActivity<Ou
                 vesselEntity.setCode(qrCodeEntity.getCode());
                 outputDetailEntity.setVessel(vesselEntity);
 
-                mOutputReportDetailAdapter.addData(outputDetailEntity);
-                mOutputReportDetailAdapter.notifyItemRangeInserted(mOutputReportDetailAdapter.getItemCount() - 1, 1);
-                mOutputReportDetailAdapter.notifyItemRangeChanged(mOutputReportDetailAdapter.getItemCount() - 1, 1);
-                contentView.smoothScrollToPosition(mOutputReportDetailAdapter.getItemCount() - 1);
+                addItem(outputDetailEntity);
             }
         }
+    }
+
+    private void addItem(OutputDetailEntity outputDetailEntity) {
+        if (mOutputReportDetailAdapter.getList() == null || mOutputReportDetailAdapter.getList().size() <= 0){
+            mOutputReportDetailAdapter.addData(outputDetailEntity);
+        }else {
+            mOutputReportDetailAdapter.getList().add(0,outputDetailEntity);
+        }
+        mOutputReportDetailAdapter.notifyItemRangeInserted(0, 1);
+        mOutputReportDetailAdapter.notifyItemRangeChanged(0, 1);
+        contentView.smoothScrollToPosition(0);
     }
 
     /**

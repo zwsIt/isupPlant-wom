@@ -32,6 +32,7 @@ import com.supcon.mes.middleware.model.bean.CommonBAPListEntity;
 import com.supcon.mes.middleware.model.bean.ContactEntity;
 import com.supcon.mes.middleware.model.bean.MaterialQRCodeEntity;
 import com.supcon.mes.middleware.model.bean.ObjectEntity;
+import com.supcon.mes.middleware.model.bean.QrCodeEntity;
 import com.supcon.mes.middleware.model.bean.SearchHistoryEntity;
 import com.supcon.mes.middleware.model.bean.wom.StoreSetEntity;
 import com.supcon.mes.middleware.model.event.SelectDataEvent;
@@ -310,7 +311,8 @@ public class PreMaterialReceiveListActivity extends BaseRefreshRecyclerActivity<
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onCodeReceiver(CodeResultEvent codeResultEvent) {
         if (context.getClass().getSimpleName().equals(codeResultEvent.scanTag)){
-            MaterialQRCodeEntity materialQRCodeEntity = MaterQRUtil.materialQRCode(context, codeResultEvent.scanResult);
+//            MaterialQRCodeEntity materialQRCodeEntity = MaterQRUtil.materialQRCode(context, codeResultEvent.scanResult);
+            QrCodeEntity materialQRCodeEntity = MaterQRUtil.getQRCode(context, codeResultEvent.scanResult);
             if (materialQRCodeEntity == null) return;
 
             // doReceive
@@ -321,22 +323,26 @@ public class PreMaterialReceiveListActivity extends BaseRefreshRecyclerActivity<
     /**
      * 扫描：匹配确认接收
      */
-    private void doReceive(MaterialQRCodeEntity materialQRCodeEntity) {
-        if (materialQRCodeEntity.isRequest()){
-            // 请求数据
-            ToastUtils.show(context, context.getResources().getString(R.string.wom_no_realize_request_data));
-        }else {
+    private void doReceive(QrCodeEntity materialQRCodeEntity) {
+//        if (materialQRCodeEntity.isRequest()){
+//            // 请求数据
+//            ToastUtils.show(context, context.getResources().getString(R.string.wom_no_realize_request_data));
+//        }else {
+        if (materialQRCodeEntity.getType() != 2){
+            ToastUtils.show(context, getResources().getString(R.string.produce_please_scan_material));
+            return;
+        }
             int index = 0;
             for (PreMaterialEntity preMaterialEntity : mPreMaterialReceiveListAdapter.getList()){
                 if (TextUtils.isEmpty(preMaterialEntity.materialBatchNum)){
-                    if (preMaterialEntity.materialId.getCode().equals(materialQRCodeEntity.getMaterial().getCode())){
+                    if (preMaterialEntity.materialId.getCode().equals(materialQRCodeEntity.getCode())){
                         confirmShow(preMaterialEntity);
                         return;
                     }
 
                 }else {
-                    if (preMaterialEntity.materialId.getCode().equals(materialQRCodeEntity.getMaterial().getCode())
-                            && preMaterialEntity.materialBatchNum.equals(materialQRCodeEntity.getMaterialBatchNo())){
+                    if (preMaterialEntity.materialId.getCode().equals(materialQRCodeEntity.getCode())
+                            && preMaterialEntity.materialBatchNum.equals(materialQRCodeEntity.getBatch())){
                         confirmShow(preMaterialEntity);
                         return;
                     }
@@ -347,7 +353,7 @@ public class PreMaterialReceiveListActivity extends BaseRefreshRecyclerActivity<
                     ToastUtils.show(context, context.getResources().getString(R.string.wom_no_scan_prepare_result));
                 }
             }
-        }
+//        }
     }
 
     private void confirmShow(PreMaterialEntity preMaterialEntity) {

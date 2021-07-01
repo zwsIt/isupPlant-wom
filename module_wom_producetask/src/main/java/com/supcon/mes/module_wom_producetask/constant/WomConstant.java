@@ -64,6 +64,11 @@ public interface WomConstant {
         String WOM_remainOperate_02 = "WOM_remainOperate/updateRemain"; // 使用
         String WOM_remainOperate_03 = "WOM_remainOperate/noOperate"; // 无关
 
+        // 报工模式
+        String RM_reportType_01 = "RM_reportType/noReport"; // 不报名
+        String RM_reportType_02 = "RM_reportType/effectReport"; // 报工并生效
+        String RM_reportType_03 = "RM_reportType/editReport"; // 报工可编辑
+
     }
 
     /**
@@ -84,6 +89,7 @@ public interface WomConstant {
         String PUT_IN_REPORT_LIST_URL = "/msService/WOM/procReport/procReport/data-"+DG_NAME.DG_PUT_IN_ACTIVITY_REPORT+"?datagridCode=WOM_1.0.0_procReport_putInFeedBackEdit"+DG_NAME.DG_PUT_IN_ACTIVITY_REPORT; // 投料活动报工list
         String BATCH_PUT_IN_REPORT_LIST_URL = "/msService/WOM/procReport/procReport/data-"+DG_NAME.DG_BATCH_PUT_IN_ACTIVITY_REPORT+"?datagridCode=WOM_1.0.0_procReport_batchFeedBackEdit"+DG_NAME.DG_BATCH_PUT_IN_ACTIVITY_REPORT; // 投配料活动报工list
         String OUTPUT_REPORT_LIST_URL = "/msService/WOM/procReport/procReport/data-"+DG_NAME.DG_OUTPUT_ACTIVITY_REPORT+"?datagridCode=WOM_1.0.0_procReport_outputFeedBackEdit"+DG_NAME.DG_OUTPUT_ACTIVITY_REPORT; // 产出活动报工list
+        String PRODUCE_END_REPORT_LIST_URL = "/msService/WOM/procReport/procReport/data-"+DG_NAME.DG_PRODUCE_END_TASK_REPORT+"?datagridCode=WOM_1.0.0_procReport_outPutCommonTaskEdit"+DG_NAME.DG_PRODUCE_END_TASK_REPORT; // 工单结束报工list
 
         String BATCH_MATERIAL_LIST_REF_URL = "/msService/WOM/batchMaterial/batMaterilPart/recodRefForReport-query"; // 配料记录参照list
         String BATCH_MATERIAL_RELECT_LIST_REF_URL = "/msService/WOM/batchMaterial/batMaterilPart/recodRefForReject-query"; // 退料配料记录参照list
@@ -100,6 +106,12 @@ public interface WomConstant {
         String DG_PUT_IN_ACTIVITY_REPORT = "dg1576141500525"; // 投料活动报工dg
         String DG_BATCH_PUT_IN_ACTIVITY_REPORT = "dg1576142566684"; // 投配料活动报工dg
         String DG_OUTPUT_ACTIVITY_REPORT = "dg1576221919090"; // 产出活动报工dg
+        String DG_PRODUCE_END_TASK_REPORT = "dg1575977843605"; // 工单结束报工dg
+    }
+
+    interface Router {
+        String WOM_PACK_REPORT = "WOM_PACK_REPORT"; // 包装投入报工
+        String REPORT_DETAIL_LIST = "REPORT_DETAIL_LIST"; // 已保存报工明细
     }
 
 }

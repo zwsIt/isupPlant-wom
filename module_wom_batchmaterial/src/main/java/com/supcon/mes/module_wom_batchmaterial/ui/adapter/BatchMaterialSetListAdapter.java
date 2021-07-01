@@ -57,6 +57,8 @@ public class BatchMaterialSetListAdapter extends BaseListDataRecyclerViewAdapter
         TextView bucketCodeTv;
         @BindByTag("batchCurrentArea")
         CustomTextView batchCurrentArea;
+        @BindByTag("produceBatchNum")
+        CustomTextView produceBatchNum;
         @BindByTag("batchCurrentWorkLine")
         CustomTextView batchCurrentWorkLine;
         @BindByTag("batchNextArea")
@@ -108,6 +110,8 @@ public class BatchMaterialSetListAdapter extends BaseListDataRecyclerViewAdapter
                                 IntentRouter.go(context,BmConstant.Router.BATCH_MATERIAL_INSTRUCTION_LIST,bundle);
                             }else if (BmConstant.SystemCode.TASK_TRANSPORT.equals(batchMaterialSetEntity.getFmTask().id)){
                                 IntentRouter.go(context,BmConstant.Router.BATCH_TRUNK_AREA_SCAN,bundle);
+                            }else {
+                                IntentRouter.go(context,BmConstant.Router.BATCH_MATERIAL_INSTRUCTION_LIST,bundle);
                             }
                         }
                     });
@@ -129,6 +133,7 @@ public class BatchMaterialSetListAdapter extends BaseListDataRecyclerViewAdapter
             activityNameTv.setText(data.getFormulaActiveId().getName());
             statusTv.setText(data.getFmState() == null ? "--" : data.getFmState().value);
             bucketCodeTv.setText(data.getVessel() == null || TextUtils.isEmpty(data.getVessel().getCode()) ? context.getResources().getString(R.string.batch_no_bind_bucket) : data.getVessel().getCode());
+            produceBatchNum.setContent(data.getTask().getProduceBatchNum());
             batchCurrentArea.setContent(data.getCurrentBurendManage().getAreaId().getName()/* + "("+data.getCurrentBurendManage().getAreaId().getCode()+")"*/);
             batchCurrentWorkLine.setContent(data.getCurrentBurendManage().getName()/* + "("+data.getCurrentBurendManage().getCode()+")"*/);
             batchNextArea.setContent(data.getNextBurendManage() == null || data.getNextBurendManage().getAreaId() == null ? "--":data.getNextBurendManage().getAreaId().getName()/* + "("+data.getNextBurendManage().getAreaId().getCode()+")"*/);

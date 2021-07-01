@@ -363,6 +363,11 @@ public class BatchMaterialInstructionEditActivity extends BaseRefreshRecyclerAct
     public void submitSuccess(BAP5CommonEntity entity) {
         onLoadSuccess(context.getResources().getString(R.string.wom_dealt_success));
         EventBus.getDefault().post(new RefreshEvent());
+        if ((Boolean)entity.data){
+            Bundle bundle = new Bundle();
+            bundle.putBoolean(BmConstant.IntentKey.BATCH_AREA_AUTO,true);
+            IntentRouter.go(context,Constant.AppCode.WOM_BATCH_MATERIAL_SET,bundle);
+        }
         finish();
     }
 
@@ -398,7 +403,12 @@ public class BatchMaterialInstructionEditActivity extends BaseRefreshRecyclerAct
                     // 扫描物料
                     case 2:
                         // 目前暂时按照MES产品定义格式
-                        addItem(qrCodeEntity);
+                        if (mBatchInstructionEntity.getMaterial() != null && mBatchInstructionEntity.getMaterial().getCode().equals(qrCodeEntity.getCode())){
+                            addItem(qrCodeEntity);
+                        }else {
+                            ToastUtils.show(context, getResources().getString(R.string.batch_no_match_current_material));
+                        }
+
                         break;
                     default:
                 }

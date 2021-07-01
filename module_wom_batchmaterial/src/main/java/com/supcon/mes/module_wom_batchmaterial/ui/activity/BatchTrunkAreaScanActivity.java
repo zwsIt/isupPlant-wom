@@ -21,6 +21,7 @@ import com.app.annotation.Presenter;
 import com.app.annotation.apt.Router;
 import com.jakewharton.rxbinding2.view.RxView;
 import com.jakewharton.rxbinding2.widget.RxTextView;
+import com.supcon.common.view.base.activity.BaseActivity;
 import com.supcon.common.view.base.activity.BaseControllerActivity;
 import com.supcon.common.view.base.activity.BaseRefreshRecyclerActivity;
 import com.supcon.common.view.base.adapter.IListAdapter;
@@ -57,6 +58,7 @@ import com.supcon.mes.module_wom_batchmaterial.model.api.BatchTrunkScanAPI;
 import com.supcon.mes.module_wom_batchmaterial.model.bean.BatchMaterialSetEntity;
 import com.supcon.mes.module_wom_batchmaterial.model.contract.BatchMaterialSetListContract;
 import com.supcon.mes.module_wom_batchmaterial.model.contract.BatchTrunkScanContract;
+import com.supcon.mes.module_wom_batchmaterial.presenter.BatchMaterialSetListPresenter;
 import com.supcon.mes.module_wom_batchmaterial.presenter.BatchTrunkScanPresenter;
 import com.supcon.mes.module_wom_producetask.model.api.CommonListAPI;
 import com.supcon.mes.module_wom_producetask.util.MaterQRUtil;
@@ -82,7 +84,7 @@ import io.reactivex.functions.Consumer;
  * Desc 配料中继位扫码
  */
 @Router(value = BmConstant.Router.BATCH_TRUNK_AREA_SCAN)
-@Presenter(value = {BatchTrunkScanPresenter.class})
+@Presenter(value = {BatchTrunkScanPresenter.class, BatchMaterialSetListPresenter.class})
 @Controller(value = {CommonScanController.class})
 public class BatchTrunkAreaScanActivity extends BaseControllerActivity implements BatchMaterialSetListContract.View, BatchTrunkScanContract.View {
 
@@ -100,6 +102,10 @@ public class BatchTrunkAreaScanActivity extends BaseControllerActivity implement
     CustomTextView batchLine;
     @BindByTag("batchIndex")
     CustomTextView batchIndex;
+    @BindByTag("bucketCode")
+    CustomTextView bucketCode;
+    @BindByTag("bucketPassIv")
+    ImageView bucketPassIv;
     @BindByTag("trunkCode")
     CustomTextView trunkCode;
     @BindByTag("workLine")
@@ -133,6 +139,7 @@ public class BatchTrunkAreaScanActivity extends BaseControllerActivity implement
 
         batchLine.setContent(mBatchMaterialSetEntity.getNextBurendManage().getCode());
         batchIndex.setContent(String.valueOf(mBatchMaterialSetEntity.getFmOrder()));
+        bucketCode.setContent(mBatchMaterialSetEntity.getVessel().getCode());
 
     }
 
@@ -215,8 +222,11 @@ public class BatchTrunkAreaScanActivity extends BaseControllerActivity implement
     }
 
     /**
-     * 循环次数
+     * 扫描标识
      */
+    private boolean isBucket;
+    private boolean isTrunk;
+
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void getScanResult(CodeResultEvent codeResultEvent) {
         if (context.getClass().getSimpleName().equals(codeResultEvent.scanTag)) {
@@ -227,16 +237,27 @@ public class BatchTrunkAreaScanActivity extends BaseControllerActivity implement
                 switch (qrCodeEntity.getType()) {
                     // 扫描设备
                     case 0:
+                        ToastUtils.show(context, R.string.batch_please_scan_bucket_or_trunk);
                         break;
                     // 扫描桶
                     case 1:
-                        onLoading(getString(R.string.wom_dealing));
+                        if (!mBatchMaterialSetEntity.getVessel().getCode().equals(qrCodeEntity.getCode())){
+                            bucketPassIv.setImageResource(R.drawable.replenish_ic_no_pass);
+                            submitBtn.setEnabled(false);
+                            submitBtn.setAlpha(0.3f);
+                            ToastUtils.show(context,context.getResources().getString(R.string.batch_no_match_bucket_please_check));
+                            isBucket = false;
+                            return;
+                        }
+                        /*((BaseActivity)context).onLoading();*/
+                        onLoading(context.getResources().getString(R.string.wom_dealing));
                         queryParams.put(Constant.BAPQuery.CODE, qrCodeEntity.getCode());
                         presenterRouter.create(BatchMaterialSetListAPI.class).listBatchMaterialSets(1, null,false, queryParams);
                         break;
                     // 扫描物料
                     case 2:
                         // 目前暂时按照MES产品定义格式
+                        ToastUtils.show(context, R.string.batch_please_scan_bucket_or_trunk);
                        break;
                     // 中继位
                     case 3:
@@ -244,14 +265,19 @@ public class BatchTrunkAreaScanActivity extends BaseControllerActivity implement
                             trunkCode.setContent(qrCodeEntity.getCode());
                             workLine.setContent(qrCodeEntity.getPlx());
                             trunkPassIv.setImageResource(R.drawable.replenish_ic_pass);
-                            submitBtn.setEnabled(true);
-                            submitBtn.setAlpha(1);
+                            isTrunk = true;
+                            if (isBucket){
+                                submitBtn.setEnabled(true);
+                                submitBtn.setAlpha(1);
+                            }
+
                         }else {
                             trunkCode.setContent(null);
                             workLine.setContent(null);
                             trunkPassIv.setImageResource(R.drawable.replenish_ic_no_pass);
                             submitBtn.setEnabled(false);
                             submitBtn.setAlpha(0.3f);
+                            isTrunk = false;
                             ToastUtils.show(context,getString(R.string.batch_no_match_please_confirm_current_line_right));
                         }
                         break;
@@ -269,8 +295,15 @@ public class BatchTrunkAreaScanActivity extends BaseControllerActivity implement
             BatchMaterialSetEntity batchMaterialSetEntity = (BatchMaterialSetEntity) entity.data.result.get(0);
             // 判断是否已经配料完成
             if (BmConstant.SystemCode.TASK_TRANSPORT.equals(batchMaterialSetEntity.getFmTask().id)){
-                batchLine.setContent(batchMaterialSetEntity.getNextBurendManage().getCode());
-                batchIndex.setContent(String.valueOf(batchMaterialSetEntity.getFmOrder()));
+//                batchLine.setContent(batchMaterialSetEntity.getNextBurendManage().getCode());
+//                batchIndex.setContent(String.valueOf(batchMaterialSetEntity.getFmOrder()));
+                // 确认
+                isBucket = true;
+                bucketPassIv.setImageResource(R.drawable.replenish_ic_pass);
+                if (isTrunk){
+                    submitBtn.setEnabled(true);
+                    submitBtn.setAlpha(1);
+                }
             }else {
                 ToastUtils.show(context, getString(R.string.batch_ing_please_end_first));
             }

@@ -159,4 +159,11 @@
     <string name="wom_total_num_greater_plan_num">当前扫描量与列表投料量总和已经超出计划投料量！是否继续？</string>
     <string name="wom_red_scan">设备红外扫码</string>
     <string name="wom_vessel_code">容器编码</string>
+    <string name="produce_please_scan_material">请扫描物料</string>
+    <string name="wom_end_task_and_report">确认结束当前工单且报工！</string>
+    <string name="wom_please_scan_pack_machine">请先扫描包装机确认！</string>
+    <string name="wom_please_scan_pack_machine_qr">请扫描机台码！</string>
+    <string name="wom_no_match_pack_machine">未能匹配包装机台！</string>
+    <string name="wom_pack_machine">机台</string>
+    <string name="wom_saved_report_detail">已保存报工明细</string>
 </resources>
