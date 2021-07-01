@@ -69,7 +69,9 @@ public class ReplenishMaterialTableScanFragment extends BaseRefreshRecyclerFragm
     @Override
     protected void onInit() {
         super.onInit();
-        EventBus.getDefault().register(this);
+        if (!EventBus.getDefault().isRegistered(this)){
+            EventBus.getDefault().register(this);
+        }
         refreshListController.setAutoPullDownRefresh(true);
         refreshListController.setPullDownRefreshEnabled(true);
 

@@ -61,7 +61,9 @@ public class ReplenishMaterialTableEditFragment extends BaseRefreshRecyclerFragm
     @Override
     protected void onInit() {
         super.onInit();
-        EventBus.getDefault().register(this);
+        if (!EventBus.getDefault().isRegistered(this)){
+            EventBus.getDefault().register(this);
+        }
         refreshListController.setAutoPullDownRefresh(true);
         refreshListController.setPullDownRefreshEnabled(true);
         refreshListController.setEmpterAdapter(EmptyAdapterHelper.getRecyclerEmptyAdapter(context,getString(R.string.wom_no_data_operate)));

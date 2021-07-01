@@ -32,6 +32,7 @@ import com.supcon.mes.mbap.view.CustomTextView;
 import com.supcon.mes.middleware.constant.Constant;
 import com.supcon.mes.middleware.model.bean.BAP5CommonEntity;
 import com.supcon.mes.middleware.model.bean.CommonBAP5ListEntity;
+import com.supcon.mes.middleware.model.event.RefreshEvent;
 import com.supcon.mes.middleware.util.EmptyAdapterHelper;
 import com.supcon.mes.middleware.util.ErrorMsgHelper;
 import com.supcon.mes.module_wom_replenishmaterial.IntentRouter;
@@ -43,7 +44,12 @@ import com.supcon.mes.module_wom_replenishmaterial.model.bean.ReplenishMaterialT
 import com.supcon.mes.module_wom_replenishmaterial.model.contract.ReplenishMaterialNotifyListContract;
 import com.supcon.mes.module_wom_replenishmaterial.model.dto.ReplenishMaterialNotifyDTO;
 import com.supcon.mes.module_wom_replenishmaterial.presenter.ReplenishMaterialNotifyListPresenter;
+import com.supcon.mes.module_wom_replenishmaterial.ui.activity.ReplenishMaterialTableListActivity;
 import com.supcon.mes.module_wom_replenishmaterial.ui.adapter.ReplenishMaterialNotifyAdapter;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -57,25 +63,24 @@ import java.util.concurrent.TimeUnit;
  * Desc 补料通知列表
  */
 @Presenter(value = {ReplenishMaterialNotifyListPresenter.class})
-@Router(value = Constant.AppCode.WOM_ReplenishMaterial_Notify)
 public class ReplenishMaterialNotifyFragment extends BaseRefreshRecyclerFragment<ReplenishMaterialNotifyEntity> implements ReplenishMaterialNotifyListContract.View {
 
-    @BindByTag("searchTitleBar")
-    CustomHorizontalSearchTitleBar searchTitleBar;
     @BindByTag("contentView")
     RecyclerView contentView;
-    @BindByTag("submitBtn")
-    Button submitBtn;
+
     private ArrayMap<String, Object> queryMap = new ArrayMap<>();
     private ReplenishMaterialNotifyAdapter mReplenishMaterialNotifyAdapter;
 
     @Override
     protected void onInit() {
         super.onInit();
-
+        if (!EventBus.getDefault().isRegistered(this)){
+            EventBus.getDefault().register(this);
+        }
         refreshListController.setAutoPullDownRefresh(true);
         refreshListController.setPullDownRefreshEnabled(true);
-
+        refreshListController.setEmpterAdapter(EmptyAdapterHelper.getRecyclerEmptyAdapter(context,getString(R.string.wom_no_data_operate)));
+        contentView.setLayoutManager(new LinearLayoutManager(context));
         contentView.addItemDecoration(new RecyclerView.ItemDecoration() {
             @Override
             public void getItemOffsets(@NonNull Rect outRect, @NonNull View view, @NonNull RecyclerView parent, @NonNull RecyclerView.State state) {
@@ -93,16 +98,13 @@ public class ReplenishMaterialNotifyFragment extends BaseRefreshRecyclerFragment
 
     @Override
     protected int getLayoutID() {
-        return R.layout.wom_ac_search_list;
+        return R.layout.wom_fragment_common_list;
     }
 
     @Override
     protected void initView() {
         super.initView();
-        searchTitleBar.title().setText(context.getResources().getString(R.string.replenishNotify));
-        searchTitleBar.searchView().setHint(getString(R.string.please_input_eam_name));
-        searchTitleBar.disableRightBtn();
-        initEmpty();
+//        initEmpty();
     }
 
     private void initEmpty() {
@@ -117,21 +119,10 @@ public class ReplenishMaterialNotifyFragment extends BaseRefreshRecyclerFragment
             @Override
             public void onRefresh(int pageIndex) {
                 queryMap.put(Constant.BAPQuery.NOTICE_STATE, ReplenishConstant.SystemCode.NOTIFY_INSTRUCTION);
+                queryMap.put(Constant.BAPQuery.NAME, ((ReplenishMaterialTableListActivity) context).getSearch());
                 presenterRouter.create(ReplenishMaterialNotifyListAPI.class).listReplenishMaterialNotifies(pageIndex, queryMap);
             }
         });
-        searchTitleBar.setOnExpandListener(isExpand -> {
-            if (!isExpand) {
-                searchTitleBar.searchView().setInputTextColor(R.color.black);
-            }
-        });
-        RxTextView.textChanges(searchTitleBar.editText())
-                .skipInitialValue()
-                .debounce(300, TimeUnit.MILLISECONDS)
-                .subscribe(charSequence -> {
-                    queryMap.put(Constant.BAPQuery.NAME,charSequence.toString());
-                    refreshListController.refreshBegin();
-                });
         mReplenishMaterialNotifyAdapter.setOnItemChildViewClickListener(new OnItemChildViewClickListener() {
             @Override
             public void onItemChildViewClick(View childView, int position, int action, Object obj) {
@@ -207,5 +198,20 @@ public class ReplenishMaterialNotifyFragment extends BaseRefreshRecyclerFragment
     @Override
     public void submitFailed(String errorMsg) {
         onLoadFailed(errorMsg);
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        EventBus.getDefault().unregister(this);
+    }
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void refresh(RefreshEvent refreshEvent){
+        refreshListController.refreshBegin();
+    }
+
+
+    public void search(){
+        refreshListController.refreshBegin();
     }
 }

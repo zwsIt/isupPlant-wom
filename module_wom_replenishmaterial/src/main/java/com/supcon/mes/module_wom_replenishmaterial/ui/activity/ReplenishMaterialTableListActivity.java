@@ -53,7 +53,7 @@ public class ReplenishMaterialTableListActivity extends BaseControllerActivity {
     NoScrollViewPager viewPager;
     private ReplenishMaterialTableEditFragment mReplenishMaterialTableEditFragment;
     private ReplenishMaterialTableScanFragment mReplenishMaterialTableScanFragment;
-    private ReplenishMaterialNotifyFragment mRplenishMaterialNotifyFragment;
+    private ReplenishMaterialNotifyFragment mReplenishMaterialNotifyFragment;
     private boolean isHas;
 
     @Override
@@ -78,12 +78,12 @@ public class ReplenishMaterialTableListActivity extends BaseControllerActivity {
         StatusBarUtils.setWindowStatusBarColor(this, R.color.themeColor);
         searchTitleBar.title().setText(R.string.replenish_material_table);
         searchTitleBar.editText().setHint(context.getResources().getString(R.string.please_input_eam_name));
-
+        searchTitleBar.disableRightBtn();
         getController(WorkFlowButtonInfoController.class).checkWorkFlowButtonStatus("WOM_1.0.0_fillMaterial_fmBillList", "WOM_1.0.0_fillMaterial", isHas -> {
             this.isHas = isHas;
-            if (!isHas) {
-                searchTitleBar.disableRightBtn();
-            }
+//            if (!isHas) {
+//                searchTitleBar.disableRightBtn();
+//            }
         });
 
         initTab();
@@ -98,11 +98,12 @@ public class ReplenishMaterialTableListActivity extends BaseControllerActivity {
     }
 
     private void initViewPager() {
-        mRplenishMaterialNotifyFragment = new ReplenishMaterialNotifyFragment();
+        mReplenishMaterialNotifyFragment = new ReplenishMaterialNotifyFragment();
         mReplenishMaterialTableEditFragment = new ReplenishMaterialTableEditFragment();
         mReplenishMaterialTableScanFragment = new ReplenishMaterialTableScanFragment();
         viewPager.setAdapter(new InnerFragmentPagerAdapter(getSupportFragmentManager()));
         viewPager.setCurrentItem(0);
+        viewPager.setOffscreenPageLimit(3);
     }
 
     @Override
@@ -139,6 +140,7 @@ public class ReplenishMaterialTableListActivity extends BaseControllerActivity {
             if (isExpand) {
 //                    searchTitleBar.searchView().setInputTextColor(R.color.black);
             } else {
+                searchTitleBar.disableRightBtn();
                 searchTitleBar.searchView().setInputTextColor(R.color.black);
             }
         });
@@ -151,6 +153,8 @@ public class ReplenishMaterialTableListActivity extends BaseControllerActivity {
                         mReplenishMaterialTableEditFragment.search();
                     } else if (customTab.getCurrentPosition() == 2) {
                         mReplenishMaterialTableScanFragment.search();
+                    }else if (customTab.getCurrentPosition() == 0) {
+                        mReplenishMaterialNotifyFragment.search();
                     }
                 });
         customTab.setOnTabChangeListener(current -> viewPager.setCurrentItem(current));
@@ -167,17 +171,19 @@ public class ReplenishMaterialTableListActivity extends BaseControllerActivity {
                 }
 
                 if (i == 2) {
-                    if (isHas) {
+                    if (isHas && !searchTitleBar.getStatus()) {
                         searchTitleBar.enableRightBtn();
                     }
                     searchTitleBar.rightBtn().setImageResource(R.drawable.ic_scan);
                 } else if (i == 1) {
-                    if (isHas) {
+                    if (isHas && !searchTitleBar.getStatus()) {
                         searchTitleBar.enableRightBtn();
                     }
                     searchTitleBar.rightBtn().setImageResource(R.drawable.ic_btn_add);
                 }else {
-                    searchTitleBar.disableRightBtn();
+                    if (!searchTitleBar.getStatus()) {
+                        searchTitleBar.disableRightBtn();
+                    }
                 }
             }
 
@@ -211,14 +217,14 @@ public class ReplenishMaterialTableListActivity extends BaseControllerActivity {
                     return mReplenishMaterialTableEditFragment;
                 case 0:
                 default:
-                    return mRplenishMaterialNotifyFragment;
+                    return mReplenishMaterialNotifyFragment;
             }
 
         }
 
         @Override
         public int getCount() {
-            return 2;
+            return 3;
         }
     }
 
