@@ -68,7 +68,7 @@ import java.util.concurrent.TimeUnit;
 @Router(value = Constant.Router.WOM_SIMPLE_ACTIVITY_LIST)
 @Presenter(value = {WaitPutinRecordPresenter.class, ActivityOperatePresenter.class})
 @Controller(value = {CommonScanController.class})
-public class SimpleActivityListActivity extends BaseRefreshRecyclerActivity<WaitPutinRecordEntity> implements WaitPutinRecordsListContract.View, ActivityOperateContract.View{
+public class SimpleActivityListActivity extends BaseRefreshRecyclerActivity<WaitPutinRecordEntity> implements WaitPutinRecordsListContract.View, ActivityOperateContract.View {
 
     @BindByTag("contentView")
     RecyclerView contentView;
@@ -115,7 +115,7 @@ public class SimpleActivityListActivity extends BaseRefreshRecyclerActivity<Wait
 
         queryParams.put(Constant.BAPQuery.RECORD_TYPE, WomConstant.SystemCode.RECORD_TYPE_ACTIVE); // 默认活动查询
         queryParams.put(Constant.BAPQuery.IS_MORE_OTHER, false); // 非其他活动
-        mWaitPutinRecordParam = (WaitPutinRecordEntity)getIntent().getSerializableExtra(Constant.IntentKey.WAIT_PUT_RECORD);
+        mWaitPutinRecordParam = (WaitPutinRecordEntity) getIntent().getSerializableExtra(Constant.IntentKey.WAIT_PUT_RECORD);
         queryParams.put(Constant.BAPQuery.PRODUCE_BATCH_NUM, mWaitPutinRecordParam.getProduceBatchNum()); // 当前生产批
 
     }
@@ -123,17 +123,18 @@ public class SimpleActivityListActivity extends BaseRefreshRecyclerActivity<Wait
     @Override
     protected void initView() {
         super.initView();
-        StatusBarUtils.setWindowStatusBarColor(this,R.color.themeColor);
+        StatusBarUtils.setWindowStatusBarColor(this, R.color.themeColor);
         titleText.setText(getResources().getString(R.string.wom_activity_list));
         rightBtn.setVisibility(View.VISIBLE);
         rightBtn.setImageResource(R.drawable.ic_wts_reference_white);
 
-        if (isPack()){
+        if (isPack()) {
             titleSetting.setVisibility(View.VISIBLE);
             titleSetting.setImageResource(R.drawable.ic_scan);
         }
 
     }
+
     @Override
     protected void initData() {
         super.initData();
@@ -149,13 +150,13 @@ public class SimpleActivityListActivity extends BaseRefreshRecyclerActivity<Wait
         });
         RxView.clicks(rightBtn)
                 .throttleFirst(2000, TimeUnit.MILLISECONDS)
-                .subscribe(o->{
-                    Bundle bundle=new Bundle();
-                    bundle.putSerializable(Constant.IntentKey.WAIT_PUT_RECORD,mWaitPutinRecordParam);
-                    IntentRouter.go(context,Constant.Router.ACTIVITY_EXEREDS_LIST,bundle);
+                .subscribe(o -> {
+                    Bundle bundle = new Bundle();
+                    bundle.putSerializable(Constant.IntentKey.WAIT_PUT_RECORD, mWaitPutinRecordParam);
+                    IntentRouter.go(context, Constant.Router.ACTIVITY_EXEREDS_LIST, bundle);
                 });
         refreshListController.setOnRefreshPageListener(pageIndex -> {
-            presenterRouter.create(WaitPutinRecordsListAPI.class).listWaitPutinRecords(pageIndex, 20, queryParams,false);
+            presenterRouter.create(WaitPutinRecordsListAPI.class).listWaitPutinRecords(pageIndex, 20, queryParams, false);
         });
 
         mSimpleActivityListAdapter.setOnItemChildViewClickListener((childView, position, action, obj) -> {
@@ -196,7 +197,7 @@ public class SimpleActivityListActivity extends BaseRefreshRecyclerActivity<Wait
                     .bindClickListener(R.id.cancelTv, null, true)
                     .bindClickListener(R.id.confirmTv, v -> {
                         onLoading(context.getResources().getString(R.string.wom_dealing));
-                        presenterRouter.create(ActivityOperateAPI.class).operateActivity(mWaitPutinRecordEntity.getId(),null, true);
+                        presenterRouter.create(ActivityOperateAPI.class).operateActivity(mWaitPutinRecordEntity.getId(), null, true);
                     }, true)
                     .show();
         }
@@ -213,13 +214,15 @@ public class SimpleActivityListActivity extends BaseRefreshRecyclerActivity<Wait
     public void refresh(RefreshEvent refreshEvent) {
         refreshListController.refreshBegin();
     }
+
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void getSelectDataEvent(SelectDataEvent selectDataEvent) {
-        if (selectDataEvent.getEntity() instanceof FactoryModelEntity){
+        if (selectDataEvent.getEntity() instanceof FactoryModelEntity) {
             mWaitPutinRecordEntity.setEuqId((FactoryModelEntity) selectDataEvent.getEntity());
             mWaitPutinRecordEntity.getTaskProcessId().setEquipmentId((FactoryModelEntity) selectDataEvent.getEntity());
         }
     }
+
     /**
      * 扫描功能：红外、摄像头扫描监听事件
      *
@@ -230,22 +233,28 @@ public class SimpleActivityListActivity extends BaseRefreshRecyclerActivity<Wait
         if (context.getClass().getSimpleName().equals(codeResultEvent.scanTag)) {
             QrCodeEntity materialQRCodeEntity = MaterQRUtil.getQRCode(context, codeResultEvent.scanResult);
             if (materialQRCodeEntity == null) return;
-            if (materialQRCodeEntity.getType() == 0){
+            if (materialQRCodeEntity.getType() == 0) {
                 // 包装 机台校验
                 int count = 0;
-                for (WaitPutinRecordEntity waitPutinRecordEntity : mSimpleActivityListAdapter.getList()){
-                    if (materialQRCodeEntity.getCode().equals(waitPutinRecordEntity.getEuqId() == null ? "" : waitPutinRecordEntity.getEuqId().getCode())){
-                       Bundle bundle = new Bundle();
+                for (WaitPutinRecordEntity waitPutinRecordEntity : mSimpleActivityListAdapter.getList()) {
+                    if (materialQRCodeEntity.getCode().equals(waitPutinRecordEntity.getEuqId() == null ? "" : waitPutinRecordEntity.getEuqId().getCode())) {
+
+                        if (WomConstant.SystemCode.EXE_STATE_WAIT.equals(waitPutinRecordEntity.getExeState().id)) {
+                            ToastUtils.show(context, context.getResources().getString(R.string.wom_first_start_activity));
+                            return;
+                        }
+
+                        Bundle bundle = new Bundle();
                         bundle.putSerializable(Constant.IntentKey.WAIT_PUT_RECORD, waitPutinRecordEntity);
                         IntentRouter.go(context, WomConstant.Router.WOM_PACK_REPORT, bundle);
                         break;
                     }
-                    count ++;
+                    count++;
                 }
-                if (count == mSimpleActivityListAdapter.getList().size()){
+                if (count == mSimpleActivityListAdapter.getList().size()) {
                     ToastUtils.show(context, getResources().getString(R.string.wom_no_match_pack_machine));
                 }
-            }else {
+            } else {
                 ToastUtils.show(context, getResources().getString(R.string.wom_please_scan_pack_machine_qr));
             }
         }
